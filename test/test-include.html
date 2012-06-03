@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<h1>嵌入子模板</h1>
+<script id="test" type="text/html">
+<% for (var i = 0; i < list.length; i ++) { %>
+    <!-- include(id, data) 中的data参数默认传入当前模板数据 -->
+    <%= include(list[i].type, list[i]) %>
+<% } %>
+</script>
+
+<script id="art" type="text/html">
+我是模板一<span style="color:red"> <%= content %> </span>
+</script>
+
+<script id="music" type="text/html">
+| 我是模板二<span style="color:blue"> <%= content %> </span>
+</script>
+
+<script>
+var html = '';
+
+
+var data = {
+	list: [{
+        type: 'art',
+        content: '让心灵回归'
+    }, {
+        type: 'music',
+        content: '天籁之音'
+    }]
+};
+
+html = template('test', data);
+document.write(html);
+</script>
+</body>
+</html>

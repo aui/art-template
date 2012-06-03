@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<h1>未定义数据</h1>
+<script id="test" type="text/html">
+"undefined" 的数据输出空值：
+<%=hello%>
+</script>
+
+<script>
+document.write(template('test', {}));
+</script>
+</body>
+</html>
+
+
+

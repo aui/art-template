@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+<script src="../template-statement.js"></script>
+</head>
+
+<body>
+<h1>自定义语法</h1>
+<script id="test" type="template">
+<ul>
+    {each list as val i}
+        {if i === list.length - 1}
+            <li>条目 {echo i + 1} ：{echo val}...</li>
+        {else if i >= 98}
+            <li>其他</li>
+        {else}
+            <li>条目 {echo i + 1} ：{echo val}</li>
+        {/if}
+    {/each}
+</ul>
+{include 'sub'}
+</script>
+
+<script id="sub" type="template">
+<h3>我是子模板</h3>
+<ol>
+    {each list as val i}
+        {if i === list.length - 1}
+            <li>条目 {echo i + 1} ：{echo val}...</li>
+        {else}
+            <li>条目 {echo i + 1} ：{echo val}</li>
+        {/if}
+    {/each}
+</ol>
+</script>
+
+<script>
+
+
+var html = '';
+var data = {
+    title: '标签',
+	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+};
+
+html = template('test', data);
+document.write(html);
+</script>
+</body>
+</html>
+
+
+

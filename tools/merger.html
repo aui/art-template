@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>artTemplate tools</title>
+<style>
+
+</style>
+</head>
+
+<body>
+<p><textarea id="tmpl-source" name="source" cols="80" rows="12"><html>
+<head>
+<title></title>
+</head>
+<body>
+<script id="list" type="text/html">
+    <% for (var i in list) { %>
+        <li><%=list[i] === 'tang' ? 'tang' : 'bin'%></li>
+    <% } %>
+</script>
+
+<script id="test" type="text/html">
+    <% for (var i in test) { %>
+        <li><%=i%>:         -<%=test[i]%></li>
+    <% } %>
+</script>
+</body>
+</html></textarea></p>
+<p><button id="submit">merger</button></p>
+<div>
+<textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
+</div>
+<script>
+/*!
+ * Copyright (C) 2012 Tencent Inc.
+ * Author  tangbin
+ * Email   1987.tangbin@gmail.com
+ */
+ 
+if (!Array.prototype.forEach) {
+
+    Array.prototype.forEach =  function(block, thisObject) {
+        var len = this.length >>> 0;
+        
+        for (var i = 0; i < len; i++) {
+            if (i in this) {
+                block.call(thisObject, this[i], i, this);
+            }
+        }
+        
+    };
+    
+}
+
+if (!String.prototype.trim) {
+
+    String.prototype.trim = (function () {
+        var trimLeft = /^\s+/, trimRight = /\s+$/;
+        
+        return function () {
+			return this == null ?
+				'' :
+				this.toString().replace(trimLeft, '').replace(trimRight, '');
+        };
+    })();
+    
+}
+
+/** 模板合并 */
+var merger = function (code) {
+    
+    //\sid=("|')([^"]+?)\1
+    var rtmpl = /<script([^>]*?)>([\w\W]*?)<\/script>/ig;
+    var rtype = /type=("|')text\/html\1/i;
+    var rid = /id=("|')([^"]+?)\1/;
+    
+    var string = [];
+    
+    // 提取模板片段
+    while ((val = rtmpl.exec(code)) !== null) {
+        if (rtype.test(val[1])) {
+            string.push(merger.compress(val[1].match(rid)[2], val[2]));
+        }
+    }
+    
+    string = string.join('\r\n');
+    
+    if (!string) {
+        string = merger.compress('id', code);
+    }
+    
+    return string;
+};
+
+merger.compress = function (id, code) {
+    
+    
+    var openTag = '<%';
+    var closeTag = '%>';
+    
+    if (typeof template !== 'undefined') {
+        openTag = template.openTag;
+        closeTag = template.closeTag
+    }
+    
+    code = code
+    // 去除 html 与 js 多行注释
+    .replace(/\/\*[^\*\/]*\*\/|<!--.*?-->/g, '')
+    // 去除多余制表符、TAB符、回车符
+    .replace(/\n/g, '')
+    .replace(/[\r\t]/g, ' ')
+    // “\” 转义
+    .replace(/\\/g, "\\\\")
+    // “'” 转义
+    .replace(/'/g, "\\'");
+    
+    
+    // 语法分析
+    var strings = '';
+    code.split(openTag).forEach(function (text, i) {
+        text = text.split(closeTag);
+        
+        var $0 = text[0];
+        var $1 = text[1];
+        
+        // text: [html]
+        if (text.length === 1) {
+            
+            strings += html($0);
+         
+        // text: [logic, html]
+        } else {
+                   
+            strings += logic($0);    
+            
+            if ($1) {
+                strings += html($1);
+            }
+        }
+        
+
+    });
+    
+    function html (text) {
+        return text.replace(/\s+/g, ' ');
+    };
+    
+    function logic (text) {
+        return openTag + text.trim() + closeTag;
+    };
+
+    code = strings;
+    
+    
+    // ANSI 转义
+    var unicode = [], ansi;
+    for (var i = 0 ; i < code.length; i ++) {
+        ansi = code.charCodeAt(i);
+        if (ansi > 255) {
+            unicode.push('\\u' + ansi.toString(16));
+        } else {
+            unicode.push(code.charAt(i));
+        } 
+    }
+    code = unicode.join('').trim();
+    
+    
+
+	code = "template('" + id + "', '" + code + "');";
+    
+	return code;
+};
+
+
+
+
+document.getElementById('tmpl-source').onclick = function () {
+    this.select();
+};
+
+document.getElementById('submit').onclick = function () {
+	var source = document.getElementById('tmpl-source').value;
+	document.getElementById('tmpl-code').value = merger(source);
+	document.getElementById('tmpl-code').select();
+	return false;
+};
+
+</script>
+</body>
+</html>

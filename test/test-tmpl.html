@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<h1>与tmpl兼容</h1>
+<script id="test" type="text/html">
+<% if (title) { %>
+    <h3><%= title %></h3>
+<% } else { %>
+    <h3>无标题</h3>
+<% } %>
+<ul>
+    <% for (var i = 0; i < list.length; i ++) { %>
+        <li>索引 <%= i + 1 %> ：<%= list[i] %></li>
+    <% } %>
+</ul>
+
+</script>
+
+<script>
+// 与tmpl引擎保持一致
+var tmpl = template;
+template.method('tmpl', template.render);
+
+
+var html = '';
+var data = {
+    title: '我的标签',
+	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+};
+
+
+html = tmpl('test', data);
+document.write(html);
+
+</script>
+</body>
+</html>
+
+
+

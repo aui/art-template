@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>test compiled</title>
+<script src="../template.js"></script>
+<script src="js/beautify.js"></script>
+<script>
+var compiled = function (source, compiled) {
+	var tmpl = document.getElementById(source).value;
+	
+	var text = template.compiled(tmpl).toString();
+	
+	if (typeof js_beautify !== 'undefined') {
+		text = js_beautify(text, {
+			indent_size: 4,
+			indent_char: ' ',
+			preserve_newlines: true,
+			braces_on_own_line: false,
+			keep_array_indentation: false,
+			space_after_anon_function: true
+		});
+	}
+
+	
+	document.getElementById(compiled).value = text;
+	document.getElementById(compiled).select();
+}
+</script>
+<style>
+textarea { width:35em; height:36em; font-size:12px; vertical-align:middle; overflow:auto; }
+</style>
+</head>
+
+<body>
+<h1>模板编译</h1>
+<p>
+<textarea id="t-source-0">
+<!-- 原文HTML输出 -->
+<pre>
+    <ul>
+        <% for (i = 0, l = list.length; i < l; i ++) { %>
+            <li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
+        <% } %>
+    </ul>
+</pre>
+
+<% /* 多行注释 */ window.alert = function () {} // 单行注释 %>
+
+<!-- 特殊字符 -->
+\/'"
+</textarea> <button onclick="compiled('t-source-0', 't-compiled-0')">test &raquo;</button>
+        <textarea id="t-compiled-0" onfocus="this.select()"></textarea>
+</p></body>
+</html>
