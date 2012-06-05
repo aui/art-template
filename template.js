@@ -72,7 +72,6 @@ exports.define = function (id, source) {
     var debug = arguments[2];
     
     
-    // 忽略id参数
     if (typeof source !== 'string') {
         debug = source;
         source = id;
@@ -101,7 +100,6 @@ exports.define = function (id, source) {
             
         } catch (e) {
             
-            // 遇错则开启调试模式重新编译并运行
             if (!debug) {
                 return exports.define(id, source, true)(data);
             }
@@ -283,7 +281,7 @@ exports.compiled = function (source, debug) {
         // 分词
         _forEach.call(code.split(/[^\$\w\d]+/), function (name) {
          
-            // 沙箱规范：禁止通过套嵌函数的 this 关键字获取全局权限
+            // 沙箱强制语法规范：禁止通过套嵌函数的 this 关键字获取全局权限
             if (/^(this|\$methods)$/.test(name)) {
                 throw {
                     message: 'Prohibit the use of the "' + name +'"'
@@ -360,7 +358,6 @@ var _isServer = _isNewEngine && !global.document;
 var _getCache = function (id) {
     var cache = _cache[id];
     
-    // 查找页面内嵌模板并编译
     if (cache === undefined && !_isServer) {
         var elem = document.getElementById(id);
         
@@ -379,20 +376,26 @@ var _getCache = function (id) {
 // 模板调试器
 var _debug = function (e) {
 
-    var content = '[template]:\n' + e.id
-    + '\n\n[name]:\n' + e.name;
+    var content = '[template]:\n'
+        + e.id
+        + '\n\n[name]:\n'
+        + e.name;
     
     if (e.message) {
-        content += '\n\n[message]:\n' + e.message;
+        content += '\n\n[message]:\n'
+        + e.message;
     }
     
     if (e.line) {
-        content += '\n\n[line]:\n' + e.line;
-        content += '\n\n[source]:\n' + e.source.split(/\n/)[e.line - 1];
+        content += '\n\n[line]:\n'
+        + e.line;
+        content += '\n\n[source]:\n'
+        + e.source.split(/\n/)[e.line - 1];
     }
     
     if (e.temp) {
-        content += '\n\n[temp]:\n' + e.temp;
+        content += '\n\n[temp]:\n'
+        + e.temp;
     }
     
     if (global.console) {

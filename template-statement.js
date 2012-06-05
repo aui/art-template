@@ -4,6 +4,7 @@
  * Released under the MIT, BSD, and GPL Licenses
  * Email: 1987.tangbin@gmail.com
  */
+ 
 (function (exports) {
 
 exports.openTag = '{';
@@ -18,11 +19,12 @@ exports.statement = function (code) {
     
     if (fuc) {
         args = args.join(' ');
-        return fuc.call(code, args);
+        code = fuc.call(code, args);
     } else {
-        return '=$escape(' + code + ')';
+        code = '=$escape(' + code + ')';
     }
     
+    return code;
 };
 
 
@@ -79,7 +81,7 @@ exports.keywords = {
         return '$each(' + object + ',function(' + args + '){';
     },
     
-    '/each': function () {  
+    '/each': function () {
         return '});';
     },
     
