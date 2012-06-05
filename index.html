@@ -72,6 +72,19 @@ max-width:100%
 h1.title strong:after, #index, #print, .runCode, .button, #skin-menu { display:none; }
 }
 </style>
+<script type="text/javascript">
+//<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-32376609-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+//]]>
+</script>
 </head>
 
 <body>
@@ -155,16 +168,20 @@ template.closeTag = &quot;]--&gt;&quot;;</pre>
   </div>
   <div class="card">
   	<h2>自定义语法</h2>
-  	<p>若想使用更加简洁的模板逻辑语法，把语法库 <a href="template-statement.js">template-statement.js</a> 合并到 <a href="template.js">template.js</a> 即可使用新语法，此时界定符号改为 "{" 与 "}"，新语法示例：</p>
-  	<pre>{if title}<br />    &lt;h3&gt;{echo title}&lt;/h3&gt;<br />    &lt;ul&gt;<br />        {each list as val i}<br />            &lt;li&gt;条目内容 {echo i + 1} ：{echo val}&lt;/li&gt;<br />        {/each}<br />    &lt;/ul&gt;<br />{/if}</pre>
+  	<p>若想使用更加简洁的模板逻辑语法，把语法库 <a href="template-statement.js">template-statement.js</a> 合并到 <a href="template.js">template.js</a> 即可使用新语法。</p>
 <h3>支持的语句：</h3>
     <ul>
       <li><strong>条件</strong>：{if ...} {else if ...} {else} {/if}</li>
       <li><strong>遍历</strong>：{each ...} {/each}</li>
-      <li><strong>输出</strong>：{echo ...}</li>
       <li><strong>包含</strong>：{include ...}</li>
+      <li><strong>输出</strong>：{echo ..}</li>
     </ul>
-  artTemplate 引擎支持自由扩展语法，请参考 <a href="template-statement.js">template-statement.js</a> 举一反三。</div>
+  	<p>此时界定符号改为 "{" 与 "}"，新语法示例：</p>
+  	<pre>{if title}<br />    &lt;h3&gt;{echo title}&lt;/h3&gt;<br />    &lt;ul&gt;<br />        {each list as val i}<br />            &lt;li&gt;条目内容 {echo i + 1} ：{echo val}&lt;/li&gt;<br />        {/each}<br />    &lt;/ul&gt;<br />{/if}</pre>
+  	<p>输出语句 echo 会原文输出内容，若想对HTML进行过滤，可以省略 echo 这个关键字：</p>
+  	<pre>&lt;h3&gt;{title}&lt;/h3&gt;</pre>
+    <p>artTemplate 引擎支持自由扩展语法，请参考 <a href="template-statement.js">template-statement.js</a> 举一反三。</p>
+  </div>
 
   <div class="card">
   	<h2>模板语法规范</h2>
@@ -214,27 +231,5 @@ template.method('tmpl', template.render);</pre>
   <p class="validators"> <a href="http://validator.w3.org/check?uri=referer"><img
       src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a> </p>
 </div>
-
-<script type="text/javascript">
-//<![CDATA[
-
-// google-analytics
-var _gaq = _gaq || [];
-
-_gaq.push(['_setAccount', 'UA-19823759-2']);
-_gaq.push(['_setDomainName', '.planeart.cn']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-
-var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
-
-ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-
-var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-
-})();
-//]]>
-</script>
 </body>
 </html>

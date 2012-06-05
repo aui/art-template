@@ -13,11 +13,11 @@
 <ul>
     {each list as val i}
         {if i === list.length - 1}
-            <li>条目 {echo i + 1} ：{echo val}...</li>
+            <li>条目 {i + 1} ：{val}...</li>
         {else if i >= 98}
             <li>其他</li>
         {else}
-            <li>条目 {echo i + 1} ：{echo val}</li>
+            <li>条目 {i + 1} ：{val}</li>
         {/if}
     {/each}
 </ul>
@@ -29,9 +29,9 @@
 <ol>
     {each list as val i}
         {if i === list.length - 1}
-            <li>条目 {echo i + 1} ：{echo val}...</li>
+            <li>条目 {i + 1} ：{val}...</li>
         {else}
-            <li>条目 {echo i + 1} ：{echo val}</li>
+            <li>条目 {i + 1} ：{echo val}</li>
         {/if}
     {/each}
 </ol>
@@ -43,7 +43,7 @@
 var html = '';
 var data = {
     title: '标签',
-	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+    list: ['<em>文艺</em>', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 };
 
 html = template('test', data);

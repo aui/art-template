@@ -1,3 +1,9 @@
+/*!
+ * artTemplate - Syntax Expansion
+ * https://github.com/aui/artTemplate
+ * Released under the MIT, BSD, and GPL Licenses
+ * Email: 1987.tangbin@gmail.com
+ */
 (function (exports) {
 
 exports.openTag = '{';
@@ -14,9 +20,7 @@ exports.statement = function (code) {
         args = args.join(' ');
         return fuc.call(code, args);
     } else {
-        throw {
-            message: key
-        };
+        return '=$escape(' + code + ')';
     }
     
 };
@@ -106,6 +110,29 @@ exports.method('$each', function (data, callback) {
     }
     
 });
+
+exports.method('$escape', (function () {
+
+    var rHtml = /&(?!\w+;)|[<>"']/g;
+    var map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    };
+    
+    var fn = function (s) {
+        return map[s] || s;
+    };
+    
+    return function (content) {
+        return typeof content === 'string'
+        ? content.replace(rHtml, fn)
+        : content;
+    };
+
+})());
 
 var _forEach = exports.method('$forEach');
 var _toString = Object.prototype.toString;
