@@ -8,15 +8,15 @@
 
 /**
  * 模板引擎路由函数
- * 根据 content 参数类型执行 render 或者 define 方法
+ * 根据 content 参数类型执行 render 或者 compile 方法
  * @name    template
  * @param   {String}            模板ID (可选)
- * @param   {Object, String}    数据或者模板
+ * @param   {Object, String}    数据或者模板字符串
  * @return  {String, Function}  渲染好的HTML字符串或者渲染方法
  */
 var template = function (id, content) {
     return template[
-        typeof content === 'object' ? 'render' : 'define'
+        typeof content === 'object' ? 'render' : 'compile'
     ].apply(template, arguments);
 };
 
@@ -61,13 +61,17 @@ exports.render = function (id, data) {
 
 
 /**
- * 定义模板
- * @name    template.define
+ * 编译模板
+ * 2012-6-6:
+ * define 方法名改为 compile,
+ * 与 Node Express.js 保持一致,
+ * 感谢 TooBug 提供帮助!
+ * @name    template.compile
  * @param   {String}    模板ID (可选)
- * @param   {String}    模板
+ * @param   {String}    模板字符串
  * @return  {Function}  渲染方法
  */
-exports.define = function (id, source) {
+exports.compile = function (id, source) {
     
     var debug = arguments[2];
     
@@ -81,7 +85,7 @@ exports.define = function (id, source) {
     
     try {
         
-        var cache = exports.compiled(source, debug);
+        var cache = _compile(source, debug);
         
     } catch (e) {
     
@@ -101,7 +105,7 @@ exports.define = function (id, source) {
         } catch (e) {
             
             if (!debug) {
-                return exports.define(id, source, true)(data);
+                return exports.compile(id, source, true)(data);
             }
 			
             e.id = id || source;
@@ -118,21 +122,40 @@ exports.define = function (id, source) {
         _cache[id] = render;
     }
     
+    render.cache = cache;
+    
     return render;
 
 };
 
 
 
+
 /**
- * 模板编译器
- * @name    template.compiled
- * @param   {String}    模板
- * @param   {Boolean}   是否开启调试 (默认true)
- * @return  {Function}  编译好的函数 (默认false)
- * @inner
+ * 添加模板公用方法
+ * @name    template.method
+ * @param   {String}    名称
+ * @param   {Function}  方法
  */
-exports.compiled = function (source, debug) {
+exports.method = function (name, method) {
+    if (method === undefined) {
+        return _methods[name];
+    } else {
+        _methods[name] = method;
+    }
+};
+
+
+
+var _cache = {};
+var _methods = {};
+var _isNewEngine = ''.trim;
+var _isServer = _isNewEngine && !global.document;
+
+
+
+// 模板编译器
+var _compile = function (source, debug) {
 
     var openTag = exports.openTag;
     var closeTag = exports.closeTag;
@@ -331,29 +354,6 @@ exports.compiled = function (source, debug) {
 
 
 
-/**
- * 添加模板公用方法
- * @name    template.method
- * @param   {String}    名称
- * @param   {Function}  方法
- */
-exports.method = function (name, method) {
-    if (method === undefined) {
-        return _methods[name];
-    } else {
-        _methods[name] = method;
-    }
-};
-
-
-
-var _cache = {};
-var _methods = {};
-var _isNewEngine = ''.trim;
-var _isServer = _isNewEngine && !global.document;
-
-
-
 // 获取模板缓存
 var _getCache = function (id) {
     var cache = _cache[id];
@@ -362,7 +362,7 @@ var _getCache = function (id) {
         var elem = document.getElementById(id);
         
         if (elem) {
-            exports.define(id, elem.value || elem.innerHTML);
+            exports.compile(id, elem.value || elem.innerHTML);
         }
         
         return _cache[id];

@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>test compiled</title>
+<title>template test</title>
 <script src="../template.js"></script>
 <script src="js/beautify.js"></script>
 <script>
-var compiled = function (source, compiled) {
+var compile = function (source, compile) {
 	var tmpl = document.getElementById(source).value;
 	
-	var text = template.compiled(tmpl).toString();
+	var text = template.compile(tmpl).cache.toString();
 	
 	if (typeof js_beautify !== 'undefined') {
 		text = js_beautify(text, {
@@ -23,8 +23,8 @@ var compiled = function (source, compiled) {
 	}
 
 	
-	document.getElementById(compiled).value = text;
-	document.getElementById(compiled).select();
+	document.getElementById(compile).value = text;
+	document.getElementById(compile).select();
 }
 </script>
 <style>
@@ -49,7 +49,7 @@ textarea { width:35em; height:36em; font-size:12px; vertical-align:middle; overf
 
 <!-- 特殊字符 -->
 \/'"
-</textarea> <button onclick="compiled('t-source-0', 't-compiled-0')">test &raquo;</button>
-        <textarea id="t-compiled-0" onfocus="this.select()"></textarea>
+</textarea> <button onclick="compile('t-source-0', 't-compile-0')">test &raquo;</button>
+        <textarea id="t-compile-0" onfocus="this.select()"></textarea>
 </p></body>
 </html>
