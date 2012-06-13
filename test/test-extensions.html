@@ -27,11 +27,12 @@
 <script id="sub" type="template">
 <h3>我是子模板</h3>
 <ol>
-    {each list as val i}
-        {if i === list.length - 1}
-            <li>条目 {i + 1} ：{val}...</li>
+    {each list}
+        <!-- each 语句默认数据变量名是 $value，索引值为 $index -->
+        {if $index === list.length - 1}
+            <li>条目 {$index + 1} ：{$value}...</li>
         {else}
-            <li>条目 {i + 1} ：{echo val}</li>
+            <li>条目 {$index + 1} ：{$value}</li>
         {/if}
     {/each}
 </ol>

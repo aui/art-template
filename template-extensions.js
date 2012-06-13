@@ -57,21 +57,22 @@ exports.keywords = {
         var object = code[0];
         var as = code[1];
         var value = code[2];
-        var name = code[3];
+        var index = code[3];
         var thisObject = code[4];
         
         var args = '';
         
         if (as !== 'as') {
-            object = '[]';
+            value = '$value';
+            index = '$index';
         }
         
         if (value) {
             args += value;
         }
         
-        if (name) {
-            args += ',' + name;
+        if (index) {
+            args += ',' + index;
         }
         
         if (thisObject) {
