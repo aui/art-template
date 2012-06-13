@@ -30,7 +30,7 @@ var template = function (id, content) {
 exports.version = '1.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
-exports.statement = null;
+exports.parser = null;
 
 
 
@@ -96,11 +96,11 @@ exports.compile = function (id, source) {
     }
     
     
-    var render = function (data) {           
+    function render (data) {           
         
         try {
             
-            return cache.call(data, data, _methods); 
+            return cache.call(_helpers, data); 
             
         } catch (e) {
             
@@ -118,11 +118,16 @@ exports.compile = function (id, source) {
         
     };
     
+    
+    render.toString = function () {
+        return cache.toString();
+    };
+    
+    
     if (id) {
         _cache[id] = render;
     }
-    
-    render.cache = cache;
+
     
     return render;
 
@@ -132,23 +137,23 @@ exports.compile = function (id, source) {
 
 
 /**
- * 添加模板公用方法
- * @name    template.method
+ * 扩展模板辅助方法
+ * @name    template.helper
  * @param   {String}    名称
  * @param   {Function}  方法
  */
-exports.method = function (name, method) {
-    if (method === undefined) {
-        return _methods[name];
+exports.helper = function (name, helper) {
+    if (helper === undefined) {
+        return _helpers[name];
     } else {
-        _methods[name] = method;
+        _helpers[name] = helper;
     }
 };
 
 
 
 var _cache = {};
-var _methods = {};
+var _helpers = {};
 var _isNewEngine = ''.trim;
 var _isServer = _isNewEngine && !global.document;
 
@@ -159,7 +164,7 @@ var _compile = function (source, debug) {
 
     var openTag = exports.openTag;
     var closeTag = exports.closeTag;
-    var statement = exports.statement;
+    var parser = exports.parser;
 
     
     var code = source;
@@ -168,7 +173,7 @@ var _compile = function (source, debug) {
     var outKey = {};
     var uniq = {$out:true,$line:true};
     
-    var variables = debug ? "var $line=0," : "var ";
+    var variables = "var $helpers=this," + (debug ? "$line=0," : "");
     
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
@@ -176,7 +181,7 @@ var _compile = function (source, debug) {
     
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
-    +     "return $methods.$render(id,data)"
+    +     "return $helpers.$render(id,data)"
     + "}";
     
     
@@ -225,10 +230,10 @@ var _compile = function (source, debug) {
     
     try {
 
-        return new Function('$data', '$methods', code);
+        return new Function('$data', code);
         
     } catch (e) {
-        e.temp = 'function anonymous($data,$methods) {' + code + '}';
+        e.temp = 'function anonymous($data) {' + code + '}';
         throw e;
     };
     
@@ -258,10 +263,10 @@ var _compile = function (source, debug) {
 
         var thisLine = line;
        
-        if (statement) {
+        if (parser) {
         
-             // 自定义语法转换器
-            code = statement(code);
+             // 语法转换器
+            code = parser(code);
             
         } else if (debug) {
         
@@ -279,7 +284,7 @@ var _compile = function (source, debug) {
             
             code = replaces[1]
             + (_isNewEngine ? '$getValue(' : '')
-            + code.substring(1).replace(/^\s+|([;]\s*)$/, '')
+            + code.substring(1).replace(/[\s;]*$/, '')
             + (_isNewEngine ? ')' : '')
             + replaces[2];
 
@@ -305,7 +310,7 @@ var _compile = function (source, debug) {
         _forEach.call(code.split(/[^\$\w\d]+/), function (name) {
          
             // 沙箱强制语法规范：禁止通过套嵌函数的 this 关键字获取全局权限
-            if (/^(this|\$methods)$/.test(name)) {
+            if (/^(this|\$helpers)$/.test(name)) {
                 throw {
                     message: 'Prohibit the use of the "' + name +'"'
                 };
@@ -336,9 +341,9 @@ var _compile = function (source, debug) {
         
             value = include;
             
-        } else if (_methods[name]) {
+        } else if (_helpers[name]) {
             
-            value = '$methods.' + name;
+            value = '$helpers.' + name;
             
         } else {
         
@@ -390,7 +395,7 @@ var _debug = function (e) {
         content += '\n\n[line]:\n'
         + e.line;
         content += '\n\n[source]:\n'
-        + e.source.split(/\n/)[e.line - 1];
+        + e.source.split(/\n/)[e.line - 1].replace(/^[\s\t]+/, '');
     }
     
     if (e.temp) {
@@ -443,10 +448,10 @@ _forEach.call((
 
 
 
-// 模板私有方法
-exports.method('$forEach', _forEach);
-exports.method('$render', exports.render);
-exports.method('$getValue', function (value) {
+// 模板私有辅助方法
+exports.helper('$forEach', _forEach);
+exports.helper('$render', exports.render);
+exports.helper('$getValue', function (value) {
     return value === undefined ? '' : value;
 });
 

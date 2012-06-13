@@ -9,7 +9,7 @@
 var compile = function (source, compile) {
 	var tmpl = document.getElementById(source).value;
 	
-	var text = template.compile(tmpl).cache.toString();
+	var text = template.compile(tmpl).toString();
 	
 	if (typeof js_beautify !== 'undefined') {
 		text = js_beautify(text, {

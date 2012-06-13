@@ -7,13 +7,13 @@
 </head>
 
 <body>
-<h1>扩展方法</h1>
+<h1>辅助方法</h1>
 <script id="test" type="text/html">
 <%=escapeHTML(xss)%>
 </script>
 
 <script>
-template.method('escapeHTML', (function () {
+template.helper('escapeHTML', (function () {
 
     var rHtml = /&(?!\w+;)|[<>"']/g;
     var map = {
