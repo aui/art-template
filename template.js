@@ -173,7 +173,8 @@ var _compile = function (source, debug) {
     var outKey = {};
     var uniq = {$out:true,$line:true};
     
-    var variables = "var $helpers=this," + (debug ? "$line=0," : "");
+    var variables = "var $helpers=this,"
+    + (debug ? "$line=0," : "");
     
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
