@@ -89,7 +89,7 @@ exports.compile = function (id, source) {
         
     } catch (e) {
     
-        e.id = id;
+        e.id = id || source;
         e.name = 'Syntax Error';
         return _debug(e);
         
