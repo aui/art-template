@@ -17,7 +17,7 @@ artTemplate 这一切都在 1.7kb(gzip) 中实现！
 * 默认采用原生语法
 * 在沙箱中执行模板代码
 * 可通扩展简洁的自定义语法
-* 可定义公用函数
+* 可定义公用辅助函数
 * 未定义的数据输出空值
 
 
@@ -25,7 +25,7 @@ artTemplate 这一切都在 1.7kb(gzip) 中实现！
 
 帮助文档： http://aui.github.com/artTemplate/
 
-负荷测试： http://aui.github.com/artTemplate/test/test-speed.html
+速度比赛： http://aui.github.com/artTemplate/test/test-speed.html
 
 ## 授权协议
 

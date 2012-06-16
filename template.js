@@ -408,7 +408,15 @@ var _debug = function (e) {
         console.error(content);
     }
     
-    return '{Template Error}';
+    function error () {
+        return error + '';
+    };
+    
+    error.toString = function () {
+        return '{Template Error}';
+    };
+    
+    return error;
 };
 
 
