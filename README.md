@@ -46,7 +46,7 @@ artTemplate 这一切都在 1.7kb(gzip) 中实现。
 
 ----------------------------------------------
 
-## 在线预览
+### 在线预览
 
 帮助文档： http://aui.github.com/artTemplate/
 
@@ -57,7 +57,7 @@ artTemplate 这一切都在 1.7kb(gzip) 中实现。
 
 
 
-## 授权协议
+### 授权协议
 
 Released under the MIT, BSD, and GPL Licenses
 
