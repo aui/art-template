@@ -74,39 +74,49 @@ h1.title strong:after, #index { display:none; }
 <div id="header">
   <h1 class="title"><a href="https://github.com/aui/artTemplate"><strong>artTemplate</strong></a></h1>
   <div class="summary" id="summary">
-<p>artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让性能有了质的飞跃，并且充分利用 javascript 引擎特性，使得其性能无论在前端还是后端都有极其出色的表现。在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。</p>
-<p>除了性能优势外，调试功能也值得一提。模板调试器可以精确定位到引发渲染错误的模板语句，解决了编写模板过程中无法调试的痛苦，让开发变得高效，也避免了因为单个模板出错导致整个应用崩溃的情况发生。</p>
-<p>artTemplate 这一切都在 1.7kb(gzip) 中实现！<a href="https://github.com/aui/artTemplate">View on GitHub</a></p>
+    <p>artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让性能有了质的飞跃，并且充分利用 javascript 引擎特性，使得其性能无论在前端还是后端都有极其出色的表现。在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。</p>
+    <p>除了性能优势外，调试功能也值得一提。模板调试器可以精确定位到引发渲染错误的模板语句，解决了编写模板过程中无法调试的痛苦，让开发变得高效，也避免了因为单个模板出错导致整个应用崩溃的情况发生。</p>
+    <p>artTemplate 这一切都在 1.7kb(gzip) 中实现！<a href="https://github.com/aui/artTemplate">View on GitHub</a></p>
   </div>
 </div>
 <div id="main">
   <div class="card">
     <h2>快速上手</h2>
-    <h3 style="margin-top:60px">书写模板    </h3>
+    <h3>书写模板 </h3>
     <p>模板逻辑语法默认采用原生的 javascript 语法，与微型模板引擎 tmpl 保持一致：模板逻辑语法开始与结束的界定符号为&quot;&lt;%&quot; 与 &quot;%&gt;&quot;，&quot;&lt;%&quot;后面紧跟&quot;=&quot;号则输出变量内容。</p>
-<p>页面中 type=&quot;text/html&quot; 的脚本标签会被浏览器忽略，可以不用考虑转义也能分行书写模板。例如定义一个 ID 为 &quot;t-list&quot; 的模板：</p>
-<pre>&lt;script id=&quot;t-list&quot; type=&quot;text/html&quot;&gt;
+    <p>页面中 type=&quot;text/html&quot; 的脚本标签会被浏览器忽略，可以不用考虑转义也能分行书写模板。例如定义一个 ID 为 &quot;t-list&quot; 的模板：</p>
+    <pre>&lt;script id=&quot;t-list&quot; type=&quot;text/html&quot;&gt;
 &lt;ul&gt;
     &lt;% for (i = 0; i &lt; list.length; i ++) { %&gt;
         &lt;li&gt;条目内容 &lt;%= i + 1 %&gt; ：&lt;%= list[i] %&gt;&lt;/li&gt;
     &lt;% } %&gt;
 &lt;/ul&gt;
 &lt;/script&gt;   </pre>
-    <h3 style="margin-top:60px">渲染模板</h3>
-    <p>如果 template 第二个参数为 Ojbect 类型，则表示渲染模板：</p>
-<pre>var html = template('t-list', {
+    <h3>渲染模板    </h3>
+    <p><em>template.render(id, data)</em>    </p>
+    <p>示例：</p>
+    <pre>var html = template.render('t-list', {
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 });</pre>
-    <p>除了上述在页面中内嵌模板之外，还可以直接在js文件中编译模板语句，例如：</p>
-    <pre>var render = template('&lt;% for (var i in names) { %&gt;&lt;%=name[i]%&gt;&lt;% } %&gt;');
-var html = render(data);//渲染</pre>
+    <p>template.render(id, data) 方法可以被简写成 template(id, data) 。</p>
     <p>以上就是 artTemplate 的基本功能使用，接下来是高级功能介绍。</p>
   </div>
   <div class="card">
+    <h2>编译模板</h2>
+    <p><em>template.compile([id], source)</em></p>
+    <p>页面中内嵌的模板可以直接渲染，如果要在 js 文件中定义模板需要提前编译模板语句。</p>
+    <p>id 参数是可选的，如果定义了 id 编译后的模板将被缓存到引擎内部，以后随时可以由 template.render(id, data) 方法进行渲染。</p>
+<p>示例：</p>
+    <pre>var render = template.compile('&lt;% for (var i in names) { %&gt;&lt;%=name[i]%&gt;&lt;% } %&gt;');
+var html = render(data);//渲染</pre>
+  <p>template.compile([id], source) 方法可以被简写成 template([id], source) 。</p>
+  </div>
+  <div class="card">
     <h2>辅助方法</h2>
-    <p>artTemplate 的模板语句将会在沙箱中执行，此时模板语句无法读写外部对象（甚至使用内联函数 this 访问全局也被禁止），若让模板访问公用数据与方法可以使用 template.helper() 接口进行定义。</p>
+    <p><em>template.helper(name, callback)</em></p>
+    <p>在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。而 artTemplate 的模板语句是在沙箱中执行的，意味着强制断绝与全局对象的依赖，模板编写者无法再像原来一样随意读写外部对象，而需要公用的辅助方法统一由template.helper() 进行注册管理，强制语法规范有助于团队更好的协作。</p>
 <p>辅助方法一般用来进行字符串替换，如XSS过滤、UBB替换、脏话替换等。例如扩展一个XSS过滤方法：</p>
-<pre>template.helper('escapeHTML', (function () {
+    <pre>template.helper('escapeHTML', (function () {
 
     var rHtml = /&amp;(?!\w+;)|[&lt;&gt;&quot;']/g;
     var map = {
@@ -128,37 +138,38 @@ var html = render(data);//渲染</pre>
     };
 
 })());</pre>
-<p>在模板中的使用方式：</p>
+    <p>在模板中的使用方式：</p>
     <pre>&lt;%= escapeHTML(content) %&gt;</pre>
-    <p>模板中已经内置局部模板方法：</p>
+    <p>模板中已经内置包含局部模板方法：</p>
     <p>include(id, [data])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data 参数可选，默认为传入当前模板数据</p>
   </div>
-    <div class="card">
-  	<h2>设置界定符</h2>
-  	<p>若前端模板语法与后端语法产生冲突，可以修改模板引擎界定符，例如：</p>
-        <pre>template.openTag = &quot;&lt;!--[&quot;;
+  <div class="card">
+    <h2>设置界定符</h2>
+    <p>若前端模板语法与后端语法产生冲突，可以修改模板引擎界定符，例如：</p>
+    <pre>template.openTag = &quot;&lt;!--[&quot;;
 template.closeTag = &quot;]--&gt;&quot;;</pre>
   </div>
   <div class="card">
-  	<h2>语法扩展</h2>
-  	<p>若想使用更加简洁的模板逻辑语法，把语法扩展 <a href="template-extensions.js">template-extensions.js</a> 合并到 <a href="template.js">template.js</a> 即可。</p>
-<h3>支持的语句：</h3>
+    <h2>可选语法扩展</h2>
+    <p>原生语法虽然自由强大，但语句难免冗长，若想使用更加简洁的模板逻辑语法，把语法扩展 <a href="template-extensions.js">template-extensions.js</a> 合并到 <a href="template.js">template.js</a> 即可。</p>
+    <p>合并语法扩展后，模板界定符号会设置为 &quot;{&quot; 与 &quot;}&quot;。</p>
+    <p>示例：</p>
+    <pre>{if title}<br />    &lt;h3&gt;{echo title}&lt;/h3&gt;<br />    &lt;ul&gt;<br />        {each list as val i}<br />            &lt;li&gt;条目内容 {echo i + 1} ：{echo val}&lt;/li&gt;<br />        {/each}<br />    &lt;/ul&gt;<br />{/if}</pre>
+    <p>支持的语句：</p>
     <ul>
       <li><strong>条件</strong>：{if ...} {else if ...} {else} {/if}</li>
       <li><strong>遍历</strong>：{each ...} {/each}</li>
       <li><strong>包含</strong>：{include ...}</li>
       <li><strong>输出</strong>：{echo ..}</li>
     </ul>
-  	<p>此时界定符号改为 "{" 与 "}"，新语法示例：</p>
-  	<pre>{if title}<br />    &lt;h3&gt;{echo title}&lt;/h3&gt;<br />    &lt;ul&gt;<br />        {each list as val i}<br />            &lt;li&gt;条目内容 {echo i + 1} ：{echo val}&lt;/li&gt;<br />        {/each}<br />    &lt;/ul&gt;<br />{/if}</pre>
-  	<p>输出语句 echo 会原文输出内容，若想对HTML进行过滤，可以省略 echo 这个关键字：</p>
-  	<pre>&lt;h3&gt;{title}&lt;/h3&gt;</pre>
-    <p>artTemplate 引擎支持自由扩展语法，请参考 <a href="template-extensions.js">template-extensions.js</a> 举一反三。</p>
+    <p>其中 echo 输出语句可以采用简写，直接使用界定符包括变量即可：</p>
+    <pre>&lt;h3&gt;{title}&lt;/h3&gt;</pre>
+    <p>不同的是采用简写的输出语句会进行编码处理，防止 XSS 漏洞。</p>
+    <p>artTemplate 引擎架构非常灵活，可轻松扩展一套新语法，同时结合 template.helper() 方法可让模板更强大，请参考 <a href="template-extensions.js">template-extensions.js</a> 举一反三。</p>
   </div>
-
   <div class="card">
-  	<h2>模板语法规范</h2>
-  	<p>1、不能使用 javascript 关键字作为模板变量，包括 ECMA5 严格模式下新增的关键字:  </p>
+    <h2>模板语法规范</h2>
+    <p>1、不能使用 javascript 关键字作为模板变量，包括 ECMA5 严格模式下新增的关键字: </p>
     <pre>break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if,in
 ,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while,with
    
@@ -167,46 +178,45 @@ template.closeTag = &quot;]--&gt;&quot;;</pre>
 ,static,super,synchronized,throws,transient,volatile
  
 ,arguments,let,yield</pre>
-	<p>2、不能读写全局变量，除非给模板定义辅助方法。</p>
+    <p>2、不能读写全局变量，除非给模板定义辅助方法。</p>
   </div>
   <div class="card">
-  	<h2>自动化打包工具</h2>
-  	<p> 有时候考虑到模板复用或者需要异步加载，可以使用 tools 目录下的自动化合并工具，有 HTML 与批处理两个版本。其中批处理版本可以把页面内嵌的模板抽取出来在同目录生成对应的 js 文件，以便使用 seajs 等脚本加载器异步加载。 </p>
+    <h2>自动化打包工具</h2>
+    <p> 有时候考虑到模板复用或者需要异步加载，可以使用 tools 目录下的自动化合并工具，有 HTML 与批处理两个版本。其中批处理版本可以把页面内嵌的模板抽取出来在同目录生成对应的 js 文件，以便使用 seajs 等脚本加载器异步加载。</p>
+    <p>若更改了默认模板界定符(&lt;%%&gt;)，需要在 merger.html 与 merger.cmd 重新设定下，以便工具能够识别模板逻辑语法。</p>
   </div>
-    <div class="card">
-  	<h2>与 tmpl 兼容</h2>
-  	<p> artTemplate 可以通过简单的设置兼容 john 开发的 tmpl 微型模板引擎： </p>
-  	<pre>var tmpl = template;
+  <div class="card">
+    <h2>与 tmpl 兼容</h2>
+    <p> artTemplate 可以通过简单的设置兼容 john 开发的 tmpl 微型模板引擎： </p>
+    <pre>var tmpl = template;
 template.helper('tmpl', template.render);</pre>
-  	<p>这样可以由 tmpl 平滑迁移到 artTemplate，并原来 tmpl 模板中的套嵌仍然有效，同时也解决了 tmpl 模板不能包含单引号与反斜杠的 BUG。</p>
-  	<p>需要注意的地方：tmpl 模板中原来引用的全局变量会因为 artTemplate 沙箱机制导致无法访问，需要通过 template.helper() 方法进行定义。</p>
-    </div>
+    <p>这样可以由 tmpl 平滑迁移到 artTemplate，并原来 tmpl 模板中的套嵌仍然有效，同时也解决了 tmpl 模板不能包含单引号与反斜杠的 BUG。</p>
+    <p>需要注意的地方：tmpl 模板中原来引用的全局变量会因为 artTemplate 沙箱机制导致无法访问，需要通过 template.helper() 方法进行定义。</p>
+  </div>
   <div class="card">
-  	<h2>演示</h2>
+    <h2>演示</h2>
     <ul>
-        <li><a href="./test/test.html">基本例子</a></li>
-        <li><a href="./test/test-include.html">嵌入子模板</a></li>
-        <li><a href="./test/test-helper.html">辅助方法</a></li>
-        <li><a href="./test/test-extensions.html">自定义语法</a></li>
-        <li><a href="./test/test-debug.html">错误调试</a></li>
-        <li><a href="./test/test-extensions-debug.html">错误调试[自定义语法]</a></li>
-        <li><a href="./test/test-tag.html">自定义界定符</a></li>
-        <li><a href="./test/test-undefined.html">未定义数据输出</a></li>
-        <li><a href="./test/test-tmpl.html">与tmpl兼容</a></li>
-        <li><a href="./test/test-compiled.html">编译原理</a></li>
-        <li><a href="./test/test-speed.html">引擎渲染速度竞赛</a></li>
+      <li><a href="./test/test.html">基本例子</a></li>
+      <li><a href="./test/test-include.html">嵌入子模板</a></li>
+      <li><a href="./test/test-helper.html">辅助方法</a></li>
+      <li><a href="./test/test-extensions.html">自定义语法</a></li>
+      <li><a href="./test/test-debug.html">错误调试</a></li>
+      <li><a href="./test/test-extensions-debug.html">错误调试[自定义语法]</a></li>
+      <li><a href="./test/test-tag.html">自定义界定符</a></li>
+      <li><a href="./test/test-undefined.html">未定义数据输出</a></li>
+      <li><a href="./test/test-tmpl.html">与tmpl兼容</a></li>
+      <li><a href="./test/test-compiled.html">编译原理</a></li>
+      <li><a href="./test/test-speed.html">引擎渲染速度竞赛</a></li>
     </ul>
   </div>
   <div class="card">
-    <p>若有一定javascript基础，推荐阅读 <a href="http://book.douban.com/subject/6397064/">《基于 MVC 的 JavaScript Web 富应用开发》</a>
-      ，你可以更好的采用模板引擎做到视图与数据分离。</p>
+    <p>若有一定javascript基础，推荐阅读 <a href="http://book.douban.com/subject/6397064/">《基于 MVC 的 JavaScript Web 富应用开发》</a> ，你可以更好的采用模板引擎做到视图与数据分离。</p>
     <p>artTemplate 采用中庸之道的设计理念，默认采用 javascript 语法保证编码自由，同时也能通过一定限制保证模板符合规范；亦可采用简单极致的语法，而又不会在基本功能上进行牺牲。</p>
-    <p>作者：<a href="http://www.planeart.cn">糖饼</a>，反馈：<a href="http://t.qq.com/tangbin">腾讯微博</a> <a href="http://weibo.com/planeart">新浪微博</a></p>
-  </div>
-  
+    <p>反馈：<a href="http://t.qq.com/tangbin">腾讯微博</a> <a href="http://weibo.com/planeart">新浪微博</a></p>
+</div>
 </div>
 <div id="footer">
-  <p class="copyright">© 2012 <a href="http://cdc.tencent.com">cdc.tencent.com</a></p>
+  <p class="copyright">© <a href="http://cdc.tencent.com">cdc.tencent.com</a></p>
   <p class="validators"> <a href="http://validator.w3.org/check?uri=referer"><img
       src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a> </p>
 </div>
