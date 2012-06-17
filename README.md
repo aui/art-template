@@ -3,15 +3,6 @@ artTemplate
 
 JavaScript Template Engine
 
-## 在线预览
-
-帮助文档： http://aui.github.com/artTemplate/
-
-速度比赛： http://aui.github.com/artTemplate/test/test-speed.html
-
-引擎原理： http://cdc.tencent.com/?p=5723
-
-
 
 ## 极限速度
 
@@ -21,7 +12,7 @@ artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让�
 
 ## 错误捕获
 
-除了性能优势外，调试功能也值得一提。模板调试器可以精确定位到引发渲染错误的模板语句，解决了编写模板过程中无法调试的痛苦，让开发变得高效，也避免了因为单个模板出错导致整个应用崩溃的情况发生。
+模板调试器可以精确定位到引发渲染错误的模板语句，解决了编写模板过程中无法调试的痛苦，让开发变得高效，也避免了因为单个模板出错导致整个应用崩溃的情况发生。
 
 
 
@@ -50,6 +41,19 @@ artTemplate 引擎架构非常灵活，可以在原生语法的基础上轻松�
 ## 轻盈小巧
 
 artTemplate 这一切都在 1.7kb(gzip) 中实现。
+
+
+
+----------------------------------------------
+
+## 在线预览
+
+帮助文档： http://aui.github.com/artTemplate/
+
+速度比赛： http://aui.github.com/artTemplate/test/test-speed.html
+
+引擎原理： http://cdc.tencent.com/?p=5723
+
 
 
 
