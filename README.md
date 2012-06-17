@@ -9,6 +9,8 @@ JavaScript Template Engine
 
 速度比赛： http://aui.github.com/artTemplate/test/test-speed.html
 
+引擎原理： http://cdc.tencent.com/?p=5723
+
 
 
 ## 极限速度
