@@ -5,7 +5,7 @@ JavaScript Template Engine
 
 ## 在线预览
 
-项目主页： http://aui.github.com/artTemplate/
+帮助文档： http://aui.github.com/artTemplate/
 
 速度比赛： http://aui.github.com/artTemplate/test/test-speed.html
 
