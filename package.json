@@ -1,0 +1,10 @@
+{
+  "name"        : "artTemplate",
+  "description" : "JavaScript Template Engine",
+  "homepage"    : "http://aui.github.com/artTemplate/",
+  "keywords"    : ["util", "functional", "template"],
+  "author"      : "Bin.Tang <1987.tangbin@gmail.com>",
+  "repository"  : {"type": "git", "url": "git://github.com/aui/artTemplate.git"},
+  "main"        : "template.js",
+  "version"     : "1.0.0"
+}
