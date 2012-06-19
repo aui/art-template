@@ -6,7 +6,7 @@ JavaScript Template Engine
 
 ## 极限速度
 
-artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让性能有了质的飞跃，接近javascript极限的渲染速度，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍，若作为后端模板引擎（Node.js）亦能在 CUP 与内存占用上保持优势。 
+artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让性能有了质的飞跃，接近javascript极限的渲染速度，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍，若作为后端模板引擎（Node.js）亦能在 CPU 与内存占用上保持优势。 
 
 
 
@@ -28,27 +28,23 @@ artTemplate 引擎架构非常灵活，可以在原生语法的基础上轻松�
 默认采用原生语法：
 
 
-    <% if (title) { %>
-        <h3><%=title%></h3>
-        <ul>
-            <% for (var i = 0; i < list.length; i ++) { %>
-                <li>索引： <%=i%> - 内容：<%=list[i]%></li>
-            <% } %>
-        </ul>
-    <% } %>
+    <ul>
+        <% for (var i = 0; i < list.length; i ++) { %>
+            <li>索引： <%=i + 1%> - 内容：<%=list[i]%></li>
+        <% } %>
+    </ul>
+    
     
     
 可定义简洁的语法：
 
 
-    {if title}
-        <h3>{title}</h3>
-        <ul>
-            {each list as val i}
-                <li>索引： {i + 1} - 内容：{val}</li>
-            {/each}
-        </ul>
-    {/if}
+    <ul>
+        {each list as val i}
+            <li>索引： {i + 1} - 内容：{val}</li>
+        {/each}
+    </ul>
+    
    
   
   

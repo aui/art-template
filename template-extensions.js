@@ -55,10 +55,11 @@ exports.keywords = {
         code = code.split(' ');
         
         var object = code[0] || '$data';
-        var as = code[1] || 'as';
-        var value = code[2] || '$value';
-        var index = code[3] || '$index';
-        var args = value + ',' + index;
+        var as     = code[1] || 'as';
+        var value  = code[2] || '$value';
+        var index  = code[3] || '$index';
+        
+        var args   = value + ',' + index;
         
         if (as !== 'as') {
             object = '[]';
