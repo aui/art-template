@@ -377,7 +377,20 @@ var _getCache = function (id) {
     return cache;
 };
 
-
+/**
+ * 返回编译后的函数供渲染，For Node Express.js
+ * @author  TooBug
+ * @date  2012-6-6
+ * @name    template.compile
+ * @param   {String}    模板字符串
+ * @return  {Function}    编译后用于渲染的函数
+ */
+exports.compile = function(str) {
+	var fn = this.define(str);
+	return function(locals){
+		return fn.call(this,locals);
+	};
+};
 
 // 模板调试器
 var _debug = function (e) {
