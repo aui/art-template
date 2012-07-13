@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.1';
+exports.version = '1.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
@@ -69,25 +69,23 @@ exports.render = function (id, data) {
  * @name    template.compile
  * @param   {String}    模板ID (可选)
  * @param   {String}    模板字符串
- * @param   {Object}    辅助方法 (可选)
  * @return  {Function}  渲染方法
  */
-exports.compile = function (id, source, helpers) {
+exports.compile = function (id, source) {
     
-    var debug = arguments[3];
+    var debug = arguments[2];
     
     
     if (typeof source !== 'string') {
-        debug = helpers;
-        helpers = source;
+        debug = source;
         source = id;
         id = null;
-    }  
+    }
 
     
     try {
         
-        var cache = _compile(source, helpers, debug);
+        var cache = _compile(source, debug);
         
     } catch (e) {
     
@@ -102,12 +100,12 @@ exports.compile = function (id, source, helpers) {
         
         try {
             
-            return cache.call(cache.helpers, data); 
+            return cache.call(_helpers, data);
             
         } catch (e) {
             
             if (!debug) {
-                return exports.compile(id, source, helpers, true)(data);
+                return exports.compile(id, source, true)(data);
             }
 			
             e.id = id || source;
@@ -163,9 +161,8 @@ var _isServer = _isNewEngine && !global.document;
 
 
 // 模板编译器
-var _compile = function (source, helpers, debug) {
+var _compile = function (source, debug) {
     
-    helpers = new _Helpers(helpers || {});
 
     var openTag = exports.openTag;
     var closeTag = exports.closeTag;
@@ -236,10 +233,7 @@ var _compile = function (source, helpers, debug) {
     
     try {
         
-        var render = new Function('$data', code);
-        render.helpers = helpers;
-        
-        return render;
+        return new Function('$data', code);
         
     } catch (e) {
         e.temp = 'function anonymous($data) {' + code + '}';
@@ -319,9 +313,9 @@ var _compile = function (source, helpers, debug) {
         _forEach.call(code.split(/[^\$\w\d]+/), function (name) {
          
             // 沙箱强制语法规范：禁止通过套嵌函数的 this 关键字获取全局权限
-            if (/^this$/.test(name)) {
+            if (/^(this|\$helpers)$/.test(name)) {
                 throw {
-                    message: 'Prohibit the use of the "' + name +'"'
+                    message: 'Prohibit the use of the "' + name + '"'
                 };
             }
 			
@@ -351,7 +345,7 @@ var _compile = function (source, helpers, debug) {
         
             value = include;
             
-        } else if (_Helpers.has(helpers, name)) {
+        } else if (_helpers.hasOwnProperty(name)) {
             
             value = '$helpers.' + name;
             
@@ -366,21 +360,6 @@ var _compile = function (source, helpers, debug) {
     
 	
 };
-
-
-
-// 创建辅助函数集
-var _Helpers = function (helpers) {
-    for (var name in helpers) {
-        this[name] = helpers[name];
-    } 
-};
-
-_Helpers.prototype = _helpers;
-
-_Helpers.has = function (object, name) {
-    return object.hasOwnProperty(name) || _helpers.hasOwnProperty(name);
-}
 
 
 
