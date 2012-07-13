@@ -15,9 +15,10 @@ exports.parser = function (code) {
     
     var args = code.split(' ');
     var key = args.shift();
-    var fuc = exports.keywords[key];
+    var keywords = exports.keywords;
+    var fuc = keywords[key];
     
-    if (fuc) {
+    if (fuc && keywords.hasOwnProperty(key)) {
         args = args.join(' ');
         code = fuc.call(code, args);
     } else {
