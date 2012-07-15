@@ -1,11 +1,11 @@
 artTemplate 自定义语法扩展
 ===========
 
-## 1.安装扩展 ==
+## 1.安装扩展
 
 只需要把 template-syntax.js 合并到 template.js 即完成自定义语法扩展安装。
 
-## 2.表达式 ==
+## 2.表达式
 
 "{" 与 "}" 符号包裹起来的语句则为模板的逻辑表达式。这两个界定符是可以自定义的，对应的配置属性接口是 template.openTag 与 template.closeTag。例如用 HTML 注释当作逻辑界定符：
 
@@ -14,7 +14,7 @@ artTemplate 自定义语法扩展
     template.colseTag = '}-->';
 
 
-## 2.1 输出表达式 ===
+## 2.1 输出表达式
 
 对内容编码输出：
 
