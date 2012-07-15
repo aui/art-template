@@ -6,7 +6,7 @@ JavaScript Template Engine
 
 ## 极限速度
 
-artTemplate 是新一代 javascript 模板引擎，它采用预编译方式让性能有了质的飞跃，接近javascript极限的渲染速度，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍，若作为后端模板引擎（Node.js）亦能在 CPU 与内存占用上保持优势。 
+artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。若作为后端模板引擎（Node.js）亦能在 CPU 与内存占用上保持优势。 
 
 
 
