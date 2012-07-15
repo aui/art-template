@@ -1,11 +1,11 @@
 artTemplate 自定义语法扩展
 ===========
 
-## 1.安装扩展
+## 安装扩展
 
 只需要把 template-syntax.js 合并到 template.js 即完成自定义语法扩展安装。
 
-## 2.表达式
+## 表达式
 
 "{" 与 "}" 符号包裹起来的语句则为模板的逻辑表达式。这两个界定符是可以自定义的，对应的配置属性接口是 template.openTag 与 template.closeTag。例如用 HTML 注释当作逻辑界定符：
 
@@ -14,7 +14,7 @@ artTemplate 自定义语法扩展
     template.colseTag = '}-->';
 
 
-## 2.1 输出表达式
+## 输出表达式
 
 对内容编码输出：
 
@@ -30,7 +30,7 @@ artTemplate 自定义语法扩展
     {echo content}
 
 
-## 2.2 条件表达式
+## 条件表达式
 
 
     {if admin}
@@ -44,7 +44,7 @@ artTemplate 自定义语法扩展
     {/if}
 
 
-### 2.3 遍历表达式
+### 遍历表达式
 
 无论数组或者对象都可以用 each 进行遍历。
 
@@ -62,7 +62,7 @@ artTemplate 自定义语法扩展
     {/each}
 
 
-### 2.4 模板包含表达式
+### 模板包含表达式
 
 用于嵌入子模板。
 
@@ -76,7 +76,7 @@ artTemplate 自定义语法扩展
     {include 'templateID'}
 
 
-## 3.辅助方法
+## 辅助方法
 
 先使用 template.helper() 注册公用辅助方法，例如一个简单的 UBB 替换方法：
 
