@@ -10,6 +10,16 @@ goto cmd
  
 var errorlevel = 0;
 
+var $config = {
+	openTag: '<%',
+	closeTag: '%>',
+	tag: /<script([^>]*?)>([\w\W]*?)<\/script>/ig,
+	type: /type=("|')text\/html\1/i,
+	id: /id=("|')([^"]+?)\1/i
+};
+
+
+ 
 if (!Array.prototype.forEach) {
 
     Array.prototype.forEach =  function(block, thisObject) {
@@ -42,19 +52,20 @@ if (!String.prototype.trim) {
 /** 模板合并 */
 var merger = function (code) {
     
-    //\sid=("|')([^"]+?)\1
-    var rtmpl = /<script([^>]*?)>([\w\W]*?)<\/script>/ig;
-    var rtype = /type=("|')text\/html\1/i;
-    var rid = /id=("|')([^"]+?)\1/;
+    var rtag = $config.tag;
+    var rtype = $config.type;
+    var rid = $config.id;
     
-    var string = '';
+    var string = [];
     
     // 提取模板片段
-    while ((val = rtmpl.exec(code)) !== null) {
+    while ((val = rtag.exec(code)) !== null) {
         if (rtype.test(val[1])) {
-            string += merger.compress(val[1].match(rid)[2], val[2]) + '\r\n';
+            string.push(merger.compress(val[1].match(rid)[2], val[2]));
         }
     }
+    
+    string = string.join('\r\n');
     
     if (!string) {
         string = merger.compress('id', code);
@@ -65,9 +76,8 @@ var merger = function (code) {
 
 merger.compress = function (id, code) {
     
-    
-    var openTag = '<%';
-    var closeTag = '%>';
+    var openTag = $config.openTag;
+    var closeTag = $config.closeTag;
     
     if (typeof template !== 'undefined') {
         openTag = template.openTag;
@@ -80,9 +90,9 @@ merger.compress = function (id, code) {
     // 去除多余制表符、TAB符、回车符
     .replace(/\n/g, '')
     .replace(/[\r\t]/g, ' ')
-    // “\” 转义
+    // "\" 转义
     .replace(/\\/g, "\\\\")
-    // “'” 转义
+    // "'" 转义
     .replace(/'/g, "\\'");
     
     
@@ -141,6 +151,7 @@ merger.compress = function (id, code) {
     
 	return code;
 };
+
 
 
 
@@ -274,11 +285,12 @@ list.forEach(function (path, i) {
 if (!list.length) {
     errorlevel = 1;
     WScript.Echo('[使用帮助]'
-    + '\r\n\r\n把含有内嵌模板的页面拖放到本程序文件图标上运行'
-    + '\r\n\r\n程序会查找页面中含有 type="text/html" 脚本标签，打包合并为外部 js 文件如：'
-    + '\r\n\r\n<script id="demo" type="text/html">'
-    + '\r\n    [template code..]'
-    + '\r\n</script>');
+    + '\r\n\r\n把HTML文件拖放到本程序文件图标上后松开即可运行'
+    + '\r\n\r\n程序会查找页面中含有 type="text/html" 脚本标签，如：'
+    + '\r\n\r\n    <script id="demo" type="text/html">'
+    + '\r\n        [template code..]'
+    + '\r\n    </script>'
+    + '\r\n\r\n打包合并为外部 js 文件。');
 }
 
 

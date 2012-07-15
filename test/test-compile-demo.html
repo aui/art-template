@@ -6,23 +6,30 @@
 <script src="../template.js"></script>
 <script src="js/beautify.js"></script>
 <script>
-var compile = function (source, compile) {
-	var tmpl = document.getElementById(source).value;
-	
-	var text = template.compile(tmpl).toString();
+var compileTemplate = function (source) {
+    var render = template.compile(source);
+	var text = render.toString();
+    text = 'var template=require("./template.js");var Render=' + text.replace('anonymous', '') + ';';
+    text = text + 'Render.prototype=Object.create(template.prototype);module.exports=function(){return (new Render).template}';
 	
 	if (typeof js_beautify !== 'undefined') {
-		text = js_beautify(text, {
+        var config = {
 			indent_size: 4,
 			indent_char: ' ',
 			preserve_newlines: true,
 			braces_on_own_line: false,
 			keep_array_indentation: false,
 			space_after_anon_function: true
-		});
+		};
+        text = js_beautify(text, config);
 	}
+    
+    return text;
+};
 
-	
+var compile = function (source, compile) {
+	var tmpl = document.getElementById(source).value;
+    var text = compileTemplate(tmpl);
 	document.getElementById(compile).value = text;
 	document.getElementById(compile).select();
 }
@@ -33,7 +40,7 @@ textarea { width:35em; height:36em; font-size:12px; vertical-align:middle; overf
 </head>
 
 <body>
-<h1>模板编译</h1>
+<h1>模板编译原理演示</h1>
 <p>
 <textarea id="t-source-0">
 <!-- 原文HTML输出 -->

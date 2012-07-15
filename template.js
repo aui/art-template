@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.0';
+exports.version = '1.1.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
@@ -64,7 +64,7 @@ exports.render = function (id, data) {
  * 编译模板
  * 2012-6-6:
  * define 方法名改为 compile,
- * 与 Node Express.js 保持一致,
+ * 与 Node Express 保持一致,
  * 感谢 TooBug 提供帮助!
  * @name    template.compile
  * @param   {String}    模板ID (可选)
@@ -85,7 +85,7 @@ exports.compile = function (id, source) {
     
     try {
         
-        var cache = _compile(source, debug);
+        var Render = _compile(source, debug);
         
     } catch (e) {
     
@@ -100,7 +100,7 @@ exports.compile = function (id, source) {
         
         try {
             
-            return cache.call(_helpers, data);
+            return new Render(data).template;
             
         } catch (e) {
             
@@ -118,9 +118,9 @@ exports.compile = function (id, source) {
         
     };
     
-    
+    render.prototype = Render.prototype;
     render.toString = function () {
-        return cache.toString();
+        return Render.toString();
     };
     
     
@@ -143,20 +143,74 @@ exports.compile = function (id, source) {
  * @param   {Function}  方法
  */
 exports.helper = function (name, helper) {
-    if (helper === undefined) {
-        return _helpers[name];
-    } else {
-        _helpers[name] = helper;
-    }
+    _helpers[name] = helper;
 };
 
 
 
 
 var _cache = {};
-var _helpers = {};
 var _isNewEngine = ''.trim;
 var _isServer = _isNewEngine && !global.document;
+var _keyWordsMap = {};
+
+
+
+var _forEach = function () {
+    var forEach =  Array.prototype.forEach || function (block, thisObject) {
+        var len = this.length >>> 0;
+        
+        for (var i = 0; i < len; i++) {
+            if (i in this) {
+                block.call(thisObject, this[i], i, this);
+            }
+        }
+        
+    };
+    
+    return function (array, callback) {
+        forEach.call(array, callback);
+    };
+}();
+
+
+var _create = Object.create || function (object) {
+    function Fn () {};
+    Fn.prototype = object;
+    return new Fn;
+};
+
+
+
+var _helpers = exports.prototype = {
+    $forEach: _forEach,
+    $render: exports.render,
+    $getValue: function (value) {
+        return value === undefined ? '' : value;
+    }
+};
+
+
+
+// javascript 关键字表
+_forEach((
+
+    // 关键字
+    'break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if'
+    + ',in,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while,with'
+    
+    // 保留字
+    + ',abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float,goto'
+    + ',implements,import,int,interface,long,native,package,private,protected,public,short'
+    + ',static,super,synchronized,throws,transient,volatile'
+    
+    // ECMA 5 - use strict
+    + ',arguments,let,yield'
+    
+).split(','), function (key) {
+    _keyWordsMap[key] = true;
+});
+
 
 
 
@@ -190,7 +244,7 @@ var _compile = function (source, debug) {
     
     
     // html与逻辑语法分离
-    _forEach.call(code.split(openTag), function (code, i) {
+    _forEach(code.split(openTag), function (code, i) {
         code = code.split(closeTag);
         
         var $0 = code[0];
@@ -228,12 +282,18 @@ var _compile = function (source, debug) {
     }
     
     
-    code = variables + replaces[0] + code + 'return ' + replaces[3];
+    code = variables + replaces[0] + code + 'this.template=' + replaces[3];
     
     
     try {
         
-        return new Function('$data', code);
+        var render = new Function('$data', code);
+        var proto = render.prototype = _create(_helpers);
+        proto.toString = function () {
+            return this.template;
+        };
+        
+        return render;
         
     } catch (e) {
         e.temp = 'function anonymous($data) {' + code + '}';
@@ -285,6 +345,7 @@ var _compile = function (source, debug) {
         // 输出语句
         if (code.indexOf('=') === 0) {
             
+            // $getValue: undefined 转化为空字符串
             code = replaces[1]
             + (_isNewEngine ? '$getValue(' : '')
             + code.substring(1).replace(/[\s;]*$/, '')
@@ -310,10 +371,10 @@ var _compile = function (source, debug) {
         code = code.replace(/\/\*.*?\*\/|'[^']*'|"[^"]*"|\.[\$\w]+/g, '');
 		
         // 分词
-        _forEach.call(code.split(/[^\$\w\d]+/), function (name) {
+        _forEach(code.split(/[^\$\w\d]+/), function (name) {
          
             // 沙箱强制语法规范：禁止通过套嵌函数的 this 关键字获取全局权限
-            if (/^(this|\$helpers)$/.test(name)) {
+            if (/^this$/.test(name)) {
                 throw {
                     message: 'Prohibit the use of the "' + name + '"'
                 };
@@ -336,8 +397,7 @@ var _compile = function (source, debug) {
     
     
     // 声明模板变量
-    // 赋值优先级: 
-    // 内置特权方法(include) > 私有模板辅助方法 > 公用模板辅助方法 > 数据
+    // 赋值优先级: 内置特权方法(include) > 公用模板辅助方法 > 数据
     function setValue (name) {  
         var value;
 
@@ -424,51 +484,6 @@ var _debug = function (e) {
     
     return error;
 };
-
-
-
-// 数组迭代方法
-var _forEach =  Array.prototype.forEach || function (block, thisObject) {
-    var len = this.length >>> 0;
-    
-    for (var i = 0; i < len; i++) {
-        if (i in this) {
-            block.call(thisObject, this[i], i, this);
-        }
-    }
-    
-};
-
-
-
-// javascript 关键字表
-var _keyWordsMap = {};
-_forEach.call((
-
-    // 关键字
-    'break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if'
-    + ',in,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while,with'
-    
-    // 保留字
-    + ',abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float,goto'
-    + ',implements,import,int,interface,long,native,package,private,protected,public,short'
-    + ',static,super,synchronized,throws,transient,volatile'
-    
-    // ECMA 5 - use strict
-    + ',arguments,let,yield'
-    
-).split(','), function (key) {
-    _keyWordsMap[key] = true;
-});
-
-
-
-// 模板私有辅助方法
-exports.helper('$forEach', _forEach);
-exports.helper('$render', exports.render);
-exports.helper('$getValue', function (value) {
-    return value === undefined ? '' : value;
-});
 
 
 

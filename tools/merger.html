@@ -3,40 +3,54 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>artTemplate tools</title>
-<style>
-
-</style>
 </head>
 
 <body>
-<p><textarea id="tmpl-source" name="source" cols="80" rows="12"><html>
-<head>
-<title></title>
-</head>
-<body>
-<script id="list" type="text/html">
+<p>
+  <textarea title="source" id="tmpl-source" name="source" cols="80" rows="12"><html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+  <script id="list" type="text/html">
     <% for (var i in list) { %>
         <li><%=list[i] === 'tang' ? 'tang' : 'bin'%></li>
     <% } %>
-</script>
-
-<script id="test" type="text/html">
+  </script> 
+  <script id="test" type="text/html">
     <% for (var i in test) { %>
         <li><%=i%>:         -<%=test[i]%></li>
     <% } %>
-</script>
-</body>
-</html></textarea></p>
-<p><button id="submit">merger</button></p>
-<div>
-<textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
-</div>
+  </script>
+  </body>
+</html></textarea>
+</p>
+<p>
+  <button id="submit">merger</button>
+</p>
+<p>
+  <textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
+</p>
+<p>
+  <textarea title="config" cols="80"  style="overflow:hidden;resize:none" id="config" type="text" disabled readonly="true" /></textarea>
+</p>
 <script>
+
 /*!
  * Copyright (C) 2012 Tencent Inc.
  * Author  tangbin
  * Email   1987.tangbin@gmail.com
  */
+
+var $config = {
+	openTag: '<%',
+	closeTag: '%>',
+	tag: /<script([^>]*?)>([\w\W]*?)<\/script>/ig,
+	type: /type=("|')text\/html\1/i,
+	id: /id=("|')([^"]+?)\1/i
+};
+
+
  
 if (!Array.prototype.forEach) {
 
@@ -70,15 +84,14 @@ if (!String.prototype.trim) {
 /** 模板合并 */
 var merger = function (code) {
     
-    //\sid=("|')([^"]+?)\1
-    var rtmpl = /<script([^>]*?)>([\w\W]*?)<\/script>/ig;
-    var rtype = /type=("|')text\/html\1/i;
-    var rid = /id=("|')([^"]+?)\1/;
+    var rtag = $config.tag;
+    var rtype = $config.type;
+    var rid = $config.id;
     
     var string = [];
     
     // 提取模板片段
-    while ((val = rtmpl.exec(code)) !== null) {
+    while ((val = rtag.exec(code)) !== null) {
         if (rtype.test(val[1])) {
             string.push(merger.compress(val[1].match(rid)[2], val[2]));
         }
@@ -95,9 +108,8 @@ var merger = function (code) {
 
 merger.compress = function (id, code) {
     
-    
-    var openTag = '<%';
-    var closeTag = '%>';
+    var openTag = $config.openTag;
+    var closeTag = $config.closeTag;
     
     if (typeof template !== 'undefined') {
         openTag = template.openTag;
@@ -110,9 +122,9 @@ merger.compress = function (id, code) {
     // 去除多余制表符、TAB符、回车符
     .replace(/\n/g, '')
     .replace(/[\r\t]/g, ' ')
-    // “\” 转义
+    // "\" 转义
     .replace(/\\/g, "\\\\")
-    // “'” 转义
+    // "'" 转义
     .replace(/'/g, "\\'");
     
     
@@ -172,9 +184,8 @@ merger.compress = function (id, code) {
 	return code;
 };
 
-
-
-
+</script>
+<script>
 document.getElementById('tmpl-source').onclick = function () {
     this.select();
 };
@@ -186,6 +197,19 @@ document.getElementById('submit').onclick = function () {
 	return false;
 };
 
+
+var configInfo = '----config----\r\n';
+var rows = 1;
+var value;
+
+for (var name in $config) {
+	rows ++;
+	value = $config[name];
+	value = typeof value === 'string' ? '"' + value + '"' : value;
+	configInfo += name + ': ' + value + ';\r\n';
+}
+document.getElementById('config').value = configInfo;
+document.getElementById('config').rows = rows;
 </script>
 </body>
 </html>

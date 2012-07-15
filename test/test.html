@@ -9,11 +9,6 @@
 <body>
 <h1>基本例子</h1>
 <script id="test" type="text/html">
-<% if (title) { %>
-    <h3><%= title %></h3>
-<% } else { %>
-    <h3>无标题</h3>
-<% } %>
 <ul>
     <% for (var i = 0; i < list.length; i ++) { %>
         <li>索引 <%= i + 1 %> ：<%= list[i] %></li>
@@ -23,44 +18,9 @@
 </script>
 
 <script>
-
-
-var html = '';
-
-
-var data = {
-    title: '我的标签',
+var html = template('test', {
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
-};
-
-
-/**
- * 方式一、直接渲染页面 id 为 test 的模板
- */
-html = template('test', data);
-document.write(html);
-
-
-/**
- * 方式二、在 javascript 中声明模板
- */
-var tmpl = 
-'<% if (title) { %>'
-+    '<h3><%= title %></h3>'
-+'<% } else { %>'
-+   '<h3>无标题</h3>'
-+'<% } %>'
-+'<ul>'
-+    '<% for (var i = 0; i < list.length; i ++) { %>'
-+        '<li>索引 <%= i + 1 %> ：<%= list[i] %></li>'
-+    '<% } %>'
-+'</ul>';
-
-var tmplFn = template('test2', tmpl); // 或者省略 id 参数: template(tmpl)
-var html = tmplFn({
-    list: ['设计', '代码', '咖啡', '唱片']
 });
-
 document.write(html);
 </script>
 </body>

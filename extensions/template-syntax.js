@@ -7,6 +7,15 @@
  
 (function (exports) {
 
+
+var _helpers = exports.prototype;
+var _forEach = _helpers['$forEach'];
+var _toString = Object.prototype.toString;
+var _isArray = Array.isArray || function (obj) {
+    return _toString.call(obj) === '[object Array]';
+};
+
+
 exports.openTag = '{';
 exports.closeTag = '}';
 
@@ -19,10 +28,18 @@ exports.parser = function (code) {
     var fuc = keywords[key];
     
     if (fuc && keywords.hasOwnProperty(key)) {
+    
         args = args.join(' ');
         code = fuc.call(code, args);
+        
+    } else if (_helpers.hasOwnProperty(key)) {
+        
+        args = args.join(',');
+        code = '=' + key + '(' + args + ');';
+        
     } else {
-        code = '=$escape(' + code + ')';
+
+        code = '=$escape(' + code + ');';
     }
     
     return code;
@@ -92,7 +109,7 @@ exports.keywords = {
 exports.helper('$each', function (data, callback) {
      
     if (_isArray(data)) {
-        _forEach.call(data, callback);
+        _forEach(data, callback);
     } else {
         for (var i in data) {
             callback.call(data, data[i], i);
@@ -100,6 +117,7 @@ exports.helper('$each', function (data, callback) {
     }
     
 });
+
 
 exports.helper('$escape', (function () {
 
@@ -114,7 +132,7 @@ exports.helper('$escape', (function () {
   
     
     var fn = function (s) {
-        return map[s] || s;
+        return map[s];
     };
     
     return function (content) {
@@ -124,12 +142,6 @@ exports.helper('$escape', (function () {
     };
 
 })());
-
-var _forEach = exports.helper('$forEach');
-var _toString = Object.prototype.toString;
-var _isArray = Array.isArray || function (obj) {
-    return _toString.call(obj) === '[object Array]';
-};
 
 
 })(template);
