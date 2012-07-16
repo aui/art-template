@@ -1,9 +1,9 @@
 /**
- * @package https://raw.github.com/jsw0528/artTemplate/master/package.json
+ * @package https://raw.github.com/aui/artTemplate/master/package.json
  *
  * @filename template-extensions
- * @src https://raw.github.com/aui/artTemplate/master/template-extensions.js
- * @min https://raw.github.com/aui/artTemplate/master/template-extensions.min.js
+ * @src https://raw.github.com/aui/artTemplate/master/extensions/template-syntax.js
+ * @min https://raw.github.com/aui/artTemplate/master/extensions/template-syntax.min.js
  */
 
 define('#{{id}}', ['./template'], function(require, exports, module) {

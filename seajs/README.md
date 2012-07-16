@@ -20,8 +20,8 @@ $ spm transport transport-extensions.js
 ```
 seajs.config({
   alias: {
-    'template': 'artTemplate/1.0.0/template',
-    'template-extensions': 'artTemplate/1.0.0/template-extensions'
+    'template': 'artTemplate/1.1.0/template',
+    'template-extensions': 'artTemplate/1.1.0/template-extensions'
   }
 });
 ```
