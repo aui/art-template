@@ -10,7 +10,7 @@ var compileTemplate = function (source) {
     var render = template.compile(source);
 	var text = render.toString();
     text = 'var template=require("./template.js");var Render=' + text.replace('anonymous', '') + ';';
-    text = text + 'Render.prototype=Object.create(template.prototype);module.exports=function(){return (new Render).template}';
+    text = text + 'Render.prototype=Object.create(template.prototype);module.exports=function(data){var render = new Render(data);return render.toString();}';
 	
 	if (typeof js_beautify !== 'undefined') {
         var config = {
