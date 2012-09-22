@@ -14,11 +14,10 @@
         <li>索引 <%= i + 1 %> ：<%= list[i] %></li>
     <% } %>
 </ul>
-
 </script>
 
 <script>
-var html = template('test', {
+var html = template.render('test', {
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 });
 document.write(html);

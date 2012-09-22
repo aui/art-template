@@ -15,7 +15,7 @@ var tmpl = '<ul>'
 +    '<% } %>'
 +'</ul>';
 
-var render = template(tmpl);
+var render = template.compile(tmpl);
 var html = render({
     list: ['设计', '代码', '咖啡', '唱片']
 });

@@ -142,10 +142,9 @@ template.closeTag = &quot;]--&gt;&quot;;</pre>
     <p>2、不能读写全局变量，除非给模板定义辅助方法。</p>
   </div>
   <div class="card">
-    <h2>自动化打包工具</h2>
-    <p> 有时候考虑到模板复用或者需要异步加载，可以使用 tools 目录下的自动化合并工具，以便使用 seajs 等脚本加载器异步加载模板。</p>
-    <p>自动合并工具分为 HTML 与批处理两个版本。其中批处理版本可以把页面内嵌的模板抽取出来在同目录生成对应的 js 文件(注:  merger.cmd 仅支持 windows)。</p>
-    <p>若更改了默认模板界定符(&lt;%%&gt;)，需要编辑 <a href="tools/merger.html">merger.html</a> 与 <a href="tools/merger.cmd">merger.cmd</a> 更新界定符配置，以便工具能够识别模板逻辑语法(如artTemplate语法扩展会修改默认界定符)。  </p>
+    <h2>合并工具</h2>
+    <p>有时候考虑到模板复用或者需要异步加载，可以使用 tools 目录下的 combine.html，把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。</p>
+    <p>若更改了默认模板界定符(&lt;%%&gt;)，需要编辑 <a href="tools/combine.html">combine.html</a> 更新界定符配置，以便工具能够识别模板逻辑语法(如artTemplate语法扩展会修改默认界定符)。 </p>
   </div>
   <div class="card">
     <h2>与 tmpl 兼容</h2>

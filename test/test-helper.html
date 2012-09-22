@@ -37,7 +37,7 @@ template.helper('$escapeHTML', (function () {
 })());
 
 
-var html = template('test', {
+var html = template.render('test', {
     text: '<img src="javascript:alert(\'xss\')" />'
 });
 document.write(html);

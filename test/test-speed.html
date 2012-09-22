@@ -48,7 +48,7 @@ var testList = [
         name: 'artTemplate',
         tester: function () {
             var source = document.getElementById('template').innerHTML;
-            var fn = template(source);
+            var fn = template.compile(source);
             for (var i = 0; i < number; i ++) {
                 fn(data);
             }

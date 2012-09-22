@@ -226,7 +226,6 @@ var _compile = function (source, debug) {
     var code = source;
     var tempCode = '';
     var line = 1;
-    var outKey = {};
     var uniq = {$out:true,$line:true};
     
     var variables = "var $helpers=this,"
@@ -239,6 +238,14 @@ var _compile = function (source, debug) {
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
     +     "return $helpers.$render(id,data)"
+    + "}";
+
+    var print = _isNewEngine
+    ? "function(content){"
+    +     "$out+=content===undefined?'':content"
+    + "}"
+    : "function(content){"
+    +     "$out.push(content)"
     + "}";
     
     
@@ -397,7 +404,7 @@ var _compile = function (source, debug) {
     
     
     // 声明模板变量
-    // 赋值优先级: 内置特权方法(include) > 公用模板辅助方法 > 数据
+    // 赋值优先级: 内置特权方法(include, print) > 公用模板辅助方法 > 数据
     function setValue (name) {  
         var value;
 
@@ -405,6 +412,10 @@ var _compile = function (source, debug) {
         
             value = include;
             
+        } else if (name === 'print') {
+
+            value = print;
+
         } else if (_helpers.hasOwnProperty(name)) {
             
             value = '$helpers.' + name;

@@ -104,6 +104,6 @@ artTemplate 自定义语法扩展
 
 ----------------------------------------------
 
-本文档针对 artTemplate v1.1 编写
+本文档针对 artTemplate v1.1+ 编写
 
 © cdc.tencent.com
