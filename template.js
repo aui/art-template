@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.1.0';
+exports.version = '1.2.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
