@@ -15,22 +15,23 @@
 <script>
 template.helper('$escapeHTML', (function () {
 
-    var rHtml = /&(?!\w+;)|[<>"']/g;
+    var badChars = /&(?![\w#]+;)|[<>"']/g;
     var map = {
-        "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
-        "'": "&#39;"
+        "'": "&#x27;",
+        "&": "&amp;"
     };
+  
     
     var fn = function (s) {
-        return map[s] || s;
+        return map[s];
     };
     
     return function (content) {
         return typeof content === 'string'
-        ? content.replace(rHtml, fn)
+        ? content.replace(badChars, fn)
         : content;
     };
 

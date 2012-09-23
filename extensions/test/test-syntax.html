@@ -25,7 +25,7 @@
 </script>
 
 <script id="sub" type="template">
-<h3>我是子模板</h3>
+{echo '<h3>我是子模板</h3>'}
 <ol>
     {each list}
         <!-- each 语句默认数据变量名是 $value，索引值为 $index -->
@@ -44,7 +44,7 @@
 var html = '';
 var data = {
     title: '标签',
-    list: ['<em>文艺</em>', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+    list: ['<em>编码输出\'</em>"\\', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 };
 
 html = template('test', data);

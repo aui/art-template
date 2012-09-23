@@ -39,7 +39,7 @@ exports.parser = function (code) {
         
     } else {
 
-        code = '=$escape(' + code + ');';
+        code = '=$escapeHTML(' + code + ')';
     }
     
     return code;
@@ -91,7 +91,7 @@ exports.keywords = {
     },
     
     'echo': function (code) {
-        return '=' + code;
+        return 'print(' + code + ');';
     },
     
     'include': function (code) {
@@ -100,7 +100,7 @@ exports.keywords = {
         var id = code[0];
         var data = code[1];
 
-        return '=include(' + id + ',' + data + ')';
+        return 'include(' + id + ',' + data + ');';
     }
 
 };
@@ -119,14 +119,14 @@ exports.helper('$each', function (data, callback) {
 });
 
 
-exports.helper('$escape', (function () {
+exports.helper('$escapeHTML', (function () {
 
-    var badChars = /&(?!\w+;)|[<>"']/g;
+    var badChars = /&(?![\w#]+;)|[<>"']/g;
     var map = {
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
-        "'": "&#x27;",
+        "'": "&#x27;",//&apos;
         "&": "&amp;"
     };
   
@@ -142,6 +142,7 @@ exports.helper('$escape', (function () {
     };
 
 })());
+
 
 
 })(template);

@@ -351,7 +351,7 @@ var _compile = function (source, debug) {
         // 输出语句
         if (code.indexOf('=') === 0) {
 
-            code = code.substring(1).replace(/[\s;]*$/, ''); 
+            code = code.substring(1).replace(/[\s;]*$/, '');
             
             if (_isNewEngine) {
                 // $getValue: undefined 转化为空字符串

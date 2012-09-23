@@ -70,7 +70,7 @@ artTemplate 自定义语法扩展
     {include 'templateID' data}
 
 
-其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略，则默认传入当前模板的数据。
+其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略则默认传入当前模板的数据。
 
 
     {include 'templateID'}
@@ -78,7 +78,7 @@ artTemplate 自定义语法扩展
 
 ## 辅助方法
 
-先使用 template.helper() 注册公用辅助方法，例如一个简单的 UBB 替换方法：
+先使用 template.helper() 注册公用辅助方法，例如一个基本的 UBB 替换方法：
 
 
     template.helper('$ubb2html', function (content) {
