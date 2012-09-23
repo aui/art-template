@@ -99,7 +99,7 @@ h1.title strong:after, #index { display:none; }
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 });</pre>
     <p>template.render(id, data) 方法可以被简写成 template(id, data) 。</p>
-    <p>以上就是 artTemplate 的基本功能使用，接下来是高级功能介绍。</p>
+    <p>以上就是 artTemplate 的基本功能使用，可见 <a href="./test/test.html">./test/test.html</a> 演示，接下来是高级功能介绍。</p>
   </div>
   <div class="card">
     <h2>编译模板</h2>
@@ -119,8 +119,9 @@ var html = render(data);//渲染</pre>
     <pre>template.helper('$ubb2html', function (content) {<br />    return content<br />    .replace(/\[b\]([^\[]*?)\[\/b\]/igm, '&lt;b&gt;$1&lt;/b&gt;')<br />    .replace(/\[i\]([^\[]*?)\[\/i\]/igm, '&lt;i&gt;$1&lt;/i&gt;')<br />    .replace(/\[u\]([^\[]*?)\[\/u\]/igm, '&lt;u&gt;$1&lt;/u&gt;')<br />    .replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '&lt;a href=&quot;$1&quot;&gt;$2&lt;/a&gt;')<br />    .replace(/\[img\]([^\[]*?)\[\/img\]/igm, '&lt;img src=&quot;$1&quot; /&gt;');<br />});</pre>
     <p>在模板中的使用方式：</p>
     <pre>&lt;%= $ubb2html(content) %&gt;</pre>
-    <p>模板中已经内置包含局部模板方法：</p>
+    <p>模板中内置方法：</p>
     <p>include(id, [data])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data 参数可选，默认为传入当前模板数据</p>
+    <p>print(content)</p>
   </div>
   <div class="card">
     <h2>设置界定符</h2>
@@ -130,13 +131,12 @@ template.closeTag = &quot;]--&gt;&quot;;</pre>
   </div>
   <div class="card">
     <h2>模板语法规范</h2>
-    <p>1、不能使用 javascript 关键字作为模板变量，包括 ECMA5 严格模式下新增的关键字: </p>
-    <pre>break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if,in
-,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while,with
-   
-,abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float,goto
-,implements,import,int,interface,long,native,package,private,protected,public,short
-,static,super,synchronized,throws,transient,volatile
+    <p>1、不能使用 javascript 关键字作为模板变量(包括 ECMA5 严格模式下新增的关键字): </p>
+    <pre>break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function
+,if,in,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while
+,with,abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float
+,goto,implements,import,int,interface,long,native,package,private,protected,public
+,short,static,super,synchronized,throws,transient,volatile
  
 ,arguments,let,yield</pre>
     <p>2、不能读写全局变量，除非给模板定义辅助方法。</p>
@@ -160,6 +160,7 @@ template.helper('tmpl', template.render);</pre>
       <li><a href="./test/test.html">基本例子</a></li>
       <li><a href="./test/test-compile.html">在javascript中存放模板</a></li>
       <li><a href="./test/test-include.html">嵌入子模板</a></li>
+      <li><a href="./test/test-print.html">print</a></li>
       <li><a href="./test/test-helper.html">辅助方法(访问公用数据)</a></li>
       <li><a href="./test/test-debug.html">错误调试</a></li>
       <li><a href="./test/test-tag.html">自定义界定符</a></li>

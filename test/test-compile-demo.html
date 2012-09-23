@@ -9,7 +9,7 @@
 var compileTemplate = function (source) {
     var render = template.compile(source);
 	var text = render.toString();
-    text = 'var template=require("./template.js");var Render=' + text.replace('anonymous', '') + ';';
+    text = 'var template=require("../template.js");var Render=' + text.replace('anonymous', '') + ';';
     text = text + 'Render.prototype=Object.create(template.prototype);Render.prototype.toString = function(){return this.template;};module.exports=function(data){var render=new Render(data);return render.toString();}';
 	
 	if (typeof js_beautify !== 'undefined') {
@@ -54,7 +54,7 @@ textarea { width:35em; height:36em; font-size:12px; vertical-align:middle; overf
 
 <!-- 内置方法 -->
 <% print('<h3>test</h3>') %>
-<%= include('all-2') %>
+<% include('all-2') %>
 
 <!-- 特殊字段 -->
 <%=toString%>

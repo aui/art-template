@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.2.0';
+exports.version = '1.2.1';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
@@ -234,20 +234,19 @@ var _compile = function (source, debug) {
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
-    
+
+    var concat = _isNewEngine
+    ? "if(content!==undefined){$out+=content}"
+    : "$out.push(content)";
+          
+    var print = "function(content){" + concat +"return content}";
+
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
-    +     "return $helpers.$render(id,data)"
+    +     "var content=$helpers.$render(id,data);"
+    +     concat
+    +     ";return content"
     + "}";
-
-    var print = _isNewEngine
-    ? "function(content){"
-    +     "$out+=content===undefined?'':content"
-    + "}"
-    : "function(content){"
-    +     "$out.push(content)"
-    + "}";
-    
     
     
     // html与逻辑语法分离
@@ -351,13 +350,15 @@ var _compile = function (source, debug) {
         
         // 输出语句
         if (code.indexOf('=') === 0) {
+
+            code = code.substring(1).replace(/[\s;]*$/, ''); 
             
-            // $getValue: undefined 转化为空字符串
-            code = replaces[1]
-            + (_isNewEngine ? '$getValue(' : '')
-            + code.substring(1).replace(/[\s;]*$/, '')
-            + (_isNewEngine ? ')' : '')
-            + replaces[2];
+            if (_isNewEngine) {
+                // $getValue: undefined 转化为空字符串
+                code = '$getValue(' + code + ')';
+            }
+
+            code = replaces[1] + code + replaces[2];
 
         }
         
@@ -408,15 +409,17 @@ var _compile = function (source, debug) {
     function setValue (name) {  
         var value;
 
+        if (name === 'print') {
+
+            value = print;
+
+        } else
         if (name === 'include') {
         
             value = include;
             
-        } else if (name === 'print') {
-
-            value = print;
-
-        } else if (_helpers.hasOwnProperty(name)) {
+        } else
+        if (_helpers.hasOwnProperty(name)) {
             
             value = '$helpers.' + name;
             

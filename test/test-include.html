@@ -11,16 +11,16 @@
 <script id="test" type="text/html">
 <% for (var i = 0; i < list.length; i ++) { %>
     <!-- include(id, data) 中的data参数默认传入当前模板数据 -->
-    <%= include(list[i].type, list[i]) %>
+    <% include(list[i].type, list[i]) %>
 <% } %>
 </script>
 
 <script id="art" type="text/html">
-我是模板一<span style="color:red"> <%= content %> </span>
+{我是局部模板一<span style="color:red"> <%= content %> </span>}
 </script>
 
 <script id="music" type="text/html">
-| 我是模板二<span style="color:blue"> <%= content %> </span>
+{我是局部模板二<span style="color:blue"> <%= content %> </span>}
 </script>
 
 <script>

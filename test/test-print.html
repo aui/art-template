@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<h1>print</h1>
+<script id="test" type="text/html">
+<%
+if (list) {
+	print('hello world');
+}
+%>
+</script>
+
+<script>
+var html = '';
+
+
+var data = {
+	list: [{
+        type: 'art',
+        content: '让心灵回归'
+    }, {
+        type: 'music',
+        content: '天籁之音'
+    }]
+};
+
+html = template.render('test', data);
+document.write(html);
+</script>
+</body>
+</html>
