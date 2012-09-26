@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<h1>test</h1>
+<script id="test" type="text/html">
+<% include('art', list[i]) %>
+<%= include('music', list[i]) %>
+<%print('{我是print1}');%>
+<%=print('{我是print2}')%>
+</script>
+
+<script id="art" type="text/html">
+{我是局部模板一}
+</script>
+
+<script id="music" type="text/html">
+{我是局部模板二}
+</script>
+
+<script>
+var html = '';
+
+
+var data = {
+	list: [{
+        type: 'art',
+        content: '让心灵回归'
+    }, {
+        type: 'music',
+        content: '天籁之音'
+    }]
+};
+
+html = template.render('test', data);
+document.write(html);
+</script>
+</body>
+</html>

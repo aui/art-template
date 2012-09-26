@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.2.1';
+exports.version = '1.3.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
@@ -230,22 +230,22 @@ var _compile = function (source, debug) {
     
     var variables = "var $helpers=this,"
     + (debug ? "$line=0," : "");
+
     
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
 
     var concat = _isNewEngine
-    ? "if(content!==undefined){$out+=content}"
-    : "$out.push(content)";
+    ? "if(content!==undefined){$out+=content;return content}"
+    : "$out.push(content);";
           
-    var print = "function(content){" + concat +"return content}";
+    var print = "function(content){" + concat + "}";
 
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
     +     "var content=$helpers.$render(id,data);"
     +     concat
-    +     ";return content"
     + "}";
     
     
@@ -298,7 +298,7 @@ var _compile = function (source, debug) {
         proto.toString = function () {
             return this.template;
         };
-        
+
         return render;
         
     } catch (e) {
