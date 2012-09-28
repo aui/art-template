@@ -231,21 +231,20 @@ var _compile = function (source, debug) {
     var variables = "var $helpers=this,"
     + (debug ? "$line=0," : "");
 
-    
+
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
-
-    var concat = _isNewEngine
-    ? "if(content!==undefined){$out+=content;return content}"
-    : "$out.push(content);";
           
-    var print = "function(content){" + concat + "}";
+    var print = "function(content){"
+    + (_isNewEngine
+        ? "if(content!==undefined){$out+=content;return content}"
+        : "$out.push(content);")
+    + "}";
 
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
-    +     "var content=$helpers.$render(id,data);"
-    +     concat
+    +     "return print($helpers.$render(id,data))"
     + "}";
     
     
