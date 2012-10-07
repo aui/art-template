@@ -27,7 +27,7 @@ var template = function (id, content) {
 
 
 "use strict";
-exports.version = '1.3.0';
+exports.version = '1.4.0';
 exports.openTag = '<%';
 exports.closeTag = '%>';
 exports.parser = null;
@@ -235,16 +235,17 @@ var _compile = function (source, debug) {
     var replaces = _isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
-          
-    var print = "function(content){"
-    + (_isNewEngine
+
+    var concat = _isNewEngine
         ? "if(content!==undefined){$out+=content;return content}"
-        : "$out.push(content);")
-    + "}";
+        : "$out.push(content);";
+          
+    var print = "function(content){" + concat + "}";
 
     var include = "function(id,data){"
     +     "if(data===undefined){data=$data}"
-    +     "return print($helpers.$render(id,data))"
+    +     "var content=$helpers.$render(id,data);"
+    +     concat
     + "}";
     
     
