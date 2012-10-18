@@ -145,6 +145,14 @@ var compress = function (id, code, $config) {
     
     if ($config.compress) {
 
+        function html (text) {
+            return text.replace(/\s+/g, ' ');
+        };
+        
+        function logic (text) {
+            return openTag + text.trim() + closeTag;
+        };
+
         // 语法分析
         var strings = '';
         code.split(openTag).forEach(function (text, i) {
@@ -170,14 +178,6 @@ var compress = function (id, code, $config) {
             
 
         });
-        
-        function html (text) {
-            return text.replace(/\s+/g, ' ');
-        };
-        
-        function logic (text) {
-            return openTag + text.trim() + closeTag;
-        };
 
         code = strings;
 
