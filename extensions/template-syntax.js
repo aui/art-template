@@ -9,7 +9,6 @@
 
 
 var _helpers = exports.prototype;
-var _forEach = _helpers['$forEach'];
 var _toString = Object.prototype.toString;
 var _isArray = Array.isArray || function (obj) {
     return _toString.call(obj) === '[object Array]';
@@ -35,11 +34,12 @@ exports.parser = function (code) {
     } else if (_helpers.hasOwnProperty(key)) {
         
         args = args.join(',');
-        code = '=' + key + '(' + args + ');';
+        code = '==' + key + '(' + args + ');';
         
     } else {
 
-        code = '=$escapeHTML(' + code + ')';
+        code = code.replace(/[\s;]*$/, '');
+        code = '=' + code;
     }
     
     return code;
@@ -99,8 +99,9 @@ exports.keywords = {
     
         var id = code[0];
         var data = code[1];
+        var args = id + (data ? (',' + data) : '');
 
-        return 'include(' + id + ',' + data + ');';
+        return 'include(' + args + ');';
     }
 
 };
@@ -109,7 +110,9 @@ exports.keywords = {
 exports.helper('$each', function (data, callback) {
      
     if (_isArray(data)) {
-        _forEach(data, callback);
+        for (var i = 0, len = data.length; i < len; i++) {
+            callback.call(data, data[i], i, data);
+        }
     } else {
         for (var i in data) {
             callback.call(data, data[i], i);
@@ -117,31 +120,6 @@ exports.helper('$each', function (data, callback) {
     }
     
 });
-
-
-exports.helper('$escapeHTML', (function () {
-
-    var badChars = /&(?![\w#]+;)|[<>"']/g;
-    var map = {
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#x27;",//&apos;
-        "&": "&amp;"
-    };
-  
-    
-    var fn = function (s) {
-        return map[s];
-    };
-    
-    return function (content) {
-        return typeof content === 'string'
-        ? content.replace(badChars, fn)
-        : content;
-    };
-
-})());
 
 
 

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="UTF-8">
 <title>template test</title>
 <script src="../template.js"></script>
 </head>
@@ -23,9 +23,10 @@
 </script>
 
 <script>
-// 与tmpl引擎保持一致
+// 模拟tmpl的api
 var tmpl = template;
 template.helper('tmpl', template.render);
+template.isEscape = false;
 
 
 var html = '';

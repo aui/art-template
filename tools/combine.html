@@ -13,7 +13,8 @@
   </head>
   <body>
   <script id="list" type="text/html">
-    <% for (var i in list) { %>
+    <!--test-->
+    <% for (var i in list) { /*test*/%>
         <li><%=list[i] === 'tang' ? 'tang' : 'bin'%></li>
     <% } %>
   </script> 
@@ -35,6 +36,7 @@
   <textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
 </p>
 <script src="../template.js"></script>
+<!-- <script src="../extensions/template-syntax.js"></script> -->
 <script>
 
 /*!
@@ -126,7 +128,7 @@ var compress = function (id, code, $config) {
     if ($config.compress) {
         code = code
         // 去除 html 与 js 多行注释
-        .replace(/\/\*[^\*\/]*\*\/|<!--.*?-->/g, '')
+        .replace(/\/\*(.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|<!--.*?-->/g, '')
         // 去除多余制表符、TAB符、回车符
         .replace(/\n/g, '')
         .replace(/[\r\t]/g, ' ')
@@ -195,8 +197,7 @@ var compress = function (id, code, $config) {
 
     }
     
-
-	code = "template.compile('" + id + "', '" + code + "');";
+    code = "template.compile('" + id + "', '" + code + "');";
     
 	return code;
 };

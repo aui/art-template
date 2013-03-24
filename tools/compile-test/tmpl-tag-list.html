@@ -1,0 +1,16 @@
+{each DataSummary.RawDataList}
+<div class="weibo_item">
+    <div class="weibo_item_title">
+        <h3 class="user_name">{$value.Nick}</h3>
+        {if $value.IsVip}<i class="icon icon_vip"></i>{/if}
+        <span class="time">{$value.ExtractDate}</span>
+    </div>
+    <div class="weibo_item_con">
+        <p>{echo $value.Text}</p>
+    </div>
+    <div class="weibo_item_ft">
+        <span class="from">来自 {$value.From}</span>
+        <span class="weibo_count"><i class="icon_weibo"></i>{$value.FansCnt}</span>
+    </div>
+</div>
+{/each}

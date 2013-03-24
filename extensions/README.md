@@ -1,4 +1,4 @@
-artTemplate 自定义语法扩展
+# artTemplate 自定义语法扩展
 ===========
 
 ## 安装扩展
@@ -7,12 +7,7 @@ artTemplate 自定义语法扩展
 
 ## 表达式
 
-"{" 与 "}" 符号包裹起来的语句则为模板的逻辑表达式。这两个界定符是可以自定义的，对应的配置属性接口是 template.openTag 与 template.closeTag。例如用 HTML 注释当作逻辑界定符：
-
-
-    template.openTag = '<!--{';
-    template.colseTag = '}-->';
-
+``{`` 与 ``}`` 符号包裹起来的语句则为模板的逻辑表达式。
 
 ## 输出表达式
 
@@ -34,35 +29,35 @@ artTemplate 自定义语法扩展
 
 
     {if admin}
-        {content}
+    	{content}
     {/if}
-
+    
     {if user === 'admin'}
-        {content}
+    	{content}
     {else if user === '007'}
-        <strong>hello world</strong>
+    	<strong>hello world</strong>
     {/if}
 
 
-### 遍历表达式
+## 遍历表达式
 
 无论数组或者对象都可以用 each 进行遍历。
 
 
     {each list}
-        <li>{$index}. {$value.user}</li>
+    	<li>{$index}. {$value.user}</li>
     {/each}
 
 
-其中 list 为要遍历的数据名称, $value 与 $index 是系统变量， $value 表示数据单条内容, $index 表示索引值，这两个变量也可以自定义：
+其中 list 为要遍历的数据名称, ``$value`` 与 ``$index`` 是系统变量， ``$value`` 表示数据单条内容, ``$index`` 表示索引值，这两个变量也可以自定义：
 
 
     {each list as value index}
-        <li>{index}. {value.user}</li>
+    	<li>{index}. {value.user}</li>
     {/each}
 
 
-### 模板包含表达式
+## 模板包含表达式
 
 用于嵌入子模板。
 
@@ -78,7 +73,7 @@ artTemplate 自定义语法扩展
 
 ## 辅助方法
 
-先使用 template.helper() 注册公用辅助方法，例如一个基本的 UBB 替换方法：
+使用``template.helper(name, callback)``注册公用辅助方法，例如一个基本的 UBB 替换方法：
 
 
     template.helper('$ubb2html', function (content) {

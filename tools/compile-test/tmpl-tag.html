@@ -1,0 +1,18 @@
+<div id="page-tag" class="wrap">
+    
+    <div class="main">
+        <div class="keyword_tab_wrap">
+            <div id="tag-tab" class="keyword_tab tab_1">
+                <a href="javascript:;" data-trigger="sort" data-type="1"><i class="icon_gray_clock"></i>按时间</a>
+                <a href="javascript:;" data-trigger="sort" data-type="2"><i class="icon_hot"></i>按热度</a>
+                <a href="javascript:;" data-trigger="sort" data-type="3"><i class="icon_audience"></i>按听众数</a>
+                <i class="tab_bg"></i>
+            </div>
+        </div>
+        <div id="weibo-list" class="weibo_list">
+            {include 'tmpl-tag-list'}
+        </div>
+        <a id="weibo-more" data-trigger="more" href="javascript:;" class="click_more" {if HasNext}disabled{/if}>点击更多</a>
+    </div>
+    
+</div>

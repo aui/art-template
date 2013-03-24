@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>template test</title>
+<script src="../template.js"></script>
+</head>
+
+<body>
+<div id="content"></div>
+<script id="test" type="text/html">
+<h1><%=title%></h1>
+<%include('list')%>
+</script>
+<script id="list" type="text/html">
+<ul>
+    <% for (var i = 0; i < list.length; i ++) { %>
+        <li>索引 <%= i + 1 %> ：<%= list[i] %></li>
+    <% } %>
+</ul>
+</script>
+
+<script>
+var data = {
+	title: '嵌入子模板',
+	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+};
+var html = template.render('test', data);
+document.getElementById('content').innerHTML = html;
+</script>
+</body>
+</html>

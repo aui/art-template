@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>artTemplate tools</title>
+<script src="../template.js"></script>
+<!-- <script src="../extensions/template-syntax.js"></script> -->
+<script src="../test/js/beautify.js"></script>
+<script>
+
+/*!
+ * Copyright (C) 2013 Tencent Inc.
+ * Author  tangbin
+ * Email   1987.tangbin@gmail.com
+ */
+var compileTemplate = (function () {
+
+
+// 包装成SeaJS模块
+var toAMD = function (code) {
+
+    template.onerror = function (e) {
+        throw e;
+    };
+
+    var render = template.compile(code);
+    var prototype = render.prototype;
+
+    render = render.toString().replace(/^function\s+(anonymous)/, 'function');
+
+    // 提取include模板
+    // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
+    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
+    var SLASH_RE = /\\\\/g
+
+    function parseDependencies(code) {
+      var ret = []
+
+      code.replace(SLASH_RE, "")
+          .replace(REQUIRE_RE, function(m, m1, m2) {
+            if (m2) {
+              ret.push(m2)
+            }
+          })
+
+      return ret
+    };
+
+    var dependencies = [];
+    parseDependencies(render).forEach(function (id) {
+        dependencies.push('"' + id + '": ' + 'require("' + id + '")');
+    });
+    var isDependencies = dependencies.length;
+    dependencies = '{' + dependencies.join(',') + '}';
+
+
+    var helpers = [];
+    for (var name in prototype) {
+        if (name !== '$render') {
+            helpers.push('"' + name + '": ' + prototype[name].toString());
+        }
+    }
+    helpers = '{' + helpers.join(',') + '}';
+
+
+    code = 'define(function (require, exports, module) {\n'
+         +      (isDependencies ? 'var dependencies = ' + dependencies + ';' : '')
+         +      'var helpers = ' + helpers + ';\n'
+         +      (isDependencies ? 'helpers.$render = function (id, data) {'
+         +          'return dependencies[id](data);'
+         +      '};' : '')
+         +      'var Render = ' + render  + ';\n'
+         +      'Render.prototype = helpers;'
+         +      'return function (data) {\n'
+         +          'return (new Render(data)).template;'
+         +      '};\n'
+         + '});';
+    
+    
+    return code;
+};
+
+
+// 格式化js
+var beautify = function (code) {
+    
+    if (typeof js_beautify !== 'undefined') {
+        var config = {
+            indent_size: 4,
+            indent_char: ' ',
+            preserve_newlines: true,
+            braces_on_own_line: false,
+            keep_array_indentation: false,
+            space_after_anon_function: true
+        };
+        code = js_beautify(code, config);
+    }
+    return code;
+};
+
+
+// 压缩模板
+var compress = function (code) {
+    
+    var openTag = template.openTag;
+    var closeTag = template.closeTag;
+    
+    if (typeof template !== 'undefined') {
+        openTag = template.openTag;
+        closeTag = template.closeTag
+    }
+    
+    code = code
+    // 去除 html 与 js 多行注释
+    .replace(/\/\*(.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|<!--.*?-->/g, '')
+    // 去除多余制表符、TAB符、回车符
+    .replace(/\n/g, '')
+    .replace(/[\r\t]/g, ' ')
+    // "\" 转义
+    .replace(/\\/g, "\\\\");
+
+    function html (text) {
+        return text.replace(/\s+/g, ' ');
+    };
+    
+    function logic (text) {
+        return openTag + text.trim() + closeTag;
+    };
+
+    // 语法分析
+    var strings = '';
+    code.split(openTag).forEach(function (text, i) {
+        text = text.split(closeTag);
+        
+        var $0 = text[0];
+        var $1 = text[1];
+        
+        // text: [html]
+        if (text.length === 1) {
+            
+            strings += html($0);
+         
+        // text: [logic, html]
+        } else {
+                   
+            strings += logic($0);    
+            
+            if ($1) {
+                strings += html($1);
+            }
+        }
+        
+
+    });
+
+    code = strings;
+
+    // ANSI 转义
+    /*var unicode = [], ansi;
+    for (var i = 0 ; i < code.length; i ++) {
+        ansi = code.charCodeAt(i);
+        if (ansi > 255) {
+            unicode.push('\\u' + ansi.toString(16));
+        } else {
+            unicode.push(code.charAt(i));
+        } 
+    }
+    code = unicode.join('').trim();*/
+    
+    return code;
+};
+
+return function (source) {
+    return beautify(toAMD(compress(source)));
+}
+
+})();
+</script>
+
+
+<script>
+window.onload = function () {
+    var $ = function (id) {
+        return document.getElementById(id);
+    };
+    $('tmpl-source').onclick = function () {
+        this.select();
+    };
+
+    $('submit').onclick = function () {
+        var source = $('tmpl-source').value;
+        $('tmpl-code').value = compileTemplate(source);
+        $('tmpl-code').select();
+        return false;
+    };  
+};
+</script>
+</head>
+<body>
+<p>
+  <textarea title="source" id="tmpl-source" name="source" cols="80" rows="12"><%include('header')%>
+
+<div id="main">
+<form id="ur-form" class="ur-form ur-page" action="javascript:;" method="post">
+
+    <div class="ur-page-title"><h1><%= title %></h1></div>
+    
+    <div id="ur-card-1" class="ur-home ur-card" style="display:none">
+        <div class="ur-banner"></div>
+        <div class="ur-prefix">
+            <div class="ur-prefix-content">
+                <%=prefix%>
+            </div>
+        </div>
+        <div class="ur-buttons">
+          <button class="ur-start" data-button="start"><%=langConvert('start')%></button>
+        </div>
+    </div>
+    
+    <% var _index = 0, _lastIndex = pages.length - 1; %>
+
+    <% pages.forEach(function (page, pageIndex) { %>
+
+        <div id="ur-card<%= pageIndex %>" data-page="<%= pageIndex %>" class="ur-card" style="display:none">
+            <ol class="ur-questions">
+
+                <% page.forEach(function (question, questionIndex) { %>
+
+                    <li id="ur-question<%=question.id%>" data-question="<%= _index ++ %>" data-index="<%= questionIndex %>" data-type="<%= question.type %>" data-id="<%= question.id %>" class="ur-questions-item" style="<%= _hidden[question.id] ? 'display:none' : '' %>">
+                        <div class="ur-title">
+                            <% if (titleIndex + '' === '1') { %>
+                                <%=_index%>.
+                            <% } %>
+                            <%= question.title %>
+                            <% if (question.required) { %><span class="ur-required" title="必答">*</span><% } %>
+                             <span class="ur-tips"><span class="init-tips"><%= question.options && question.maxlength ? langConvert('tip_maxlength', [question.maxlength]) : ''  %></span></span>
+                        </div>
+                        <% if (question.description) { %>
+                        <div class="ur-description"><%= question.description %></div>
+                        <% } %>
+                        
+                    </li>
+
+                <% }); %>
+
+            </ol>
+
+            <div class="ur-buttons">
+
+                <% if (prev === '1' && pageIndex > 0) { %>
+
+                    <a class="ur-prev" data-button="prev" href="javascript:;"><%=langConvert('prev')%></a>
+
+                <% } %>
+
+                <% if (pageIndex < _lastIndex) { %>
+
+                    <a class="ur-button ur-next" data-button="next" href="javascript:;"><%=langConvert('next')%></a>
+
+                <% } %>
+                
+                <% if (pageIndex === _lastIndex) { %>
+                    
+                    <button id="ur-submit" class="ur-next" data-button="submit" type="submit"><%=langConvert('submit')%></button>
+                    
+                <% } %>
+
+            </div>
+
+            <div class="ur-progress">
+                <div class="ur-progress-bar"><div class="ur-progress-highlight"></div></div>
+                <div class="ur-progress-text"><%=langConvert('finish')%> <strong class="ur-progress-number">0/0</strong> </div>
+            </div>
+
+        </div>
+
+    <% }); %>
+    
+    <div id="ur-card-end" class="ur-card" style="display:none">
+        <div class="ur-end-pic"></div>
+        <div class="ur-suffix"><div class="ur-suffix-content"><%= suffix %></div></div>
+        <div class="ur-buttons">
+          <button class="ur-close" data-button="close"><%=langConvert('close')%></button>
+        </div>
+    </div>
+</form>
+</div>
+
+<%include('footer')%></textarea>
+</p>
+<p style="font-size:12px">
+    <button id="submit">submit</button>
+</p>
+<p>
+  <textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
+</p>
+
+</body>
+</html>

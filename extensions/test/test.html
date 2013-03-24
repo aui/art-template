@@ -2,28 +2,22 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>模板引擎单元测试</title>
-<link rel="stylesheet" href="./js/qunit/qunit.css">
-<script src="./js/qunit/qunit.js"></script>
-<script src="../template.js"></script>
+<title>语法插件单元测试</title>
+<link rel="stylesheet" href="../../test/js/qunit/qunit.css">
+<script src="../../test/js/qunit/qunit.js"></script>
+<script src="../../template.js"></script>
+<script src="../template-syntax.js"></script>
 
-<script id="default" type="text/html"><%=value%></script>
-<script id="noEscape" type="text/html"><%==value%></script>
-<script id="include" type="text/html"><%include('include-content')%></script>
-<script id="include2" type="text/html"><%=include('include-content')%></script>
-<script id="include3" type="text/html"><%==include('include-content')%></script>
-<script id="include-content" type="text/html"><%==value%></script>
-<script id="print" type="text/html"><%print(value)%></script>
-<script id="print2" type="text/html"><%=print(value)%></script>
-<script id="print3" type="text/html"><%==print(value)%></script>
-<script id="sandbox" type="text/html"><%=typeof document%></script>
-<script id="sandbox2" type="text/html"><%if (window) window.$sandbox = true;%></script>
-<script id="prototype" type="text/html"><%=toString%></script>
-<script id="debug-render" type="text/html"><%=a.b.c.d.e.f%></script>
-<script id="debug-syntax" type="text/html"><%=a b c d e f%></script>
-<script id="helper" type="text/html"><%=test (value)%></script>
-<script id="helper2" type="text/html"><%==test (value)%></script>
-<script id="helper3" type="text/html"><%==test (value)%></script>
+<script id="default" type="text/html">{value}</script>
+<script id="noEscape" type="text/html">{echo value}</script>
+<script id="include" type="text/html">{include 'include-content'}</script>
+<script id="include-content" type="text/html">{echo value}</script>
+<script id="sandbox" type="text/html">{typeof document}</script>
+<script id="sandbox2" type="text/html">{window.$sandbox = true}</script>
+<script id="prototype" type="text/html">{toString}</script>
+<script id="debug-render" type="text/html">{a.b.c.d.e.f}</script>
+<script id="debug-syntax" type="text/html">{a b c d e f}</script>
+<script id="helper" type="text/html">{test value}</script>
 
 <script>
 if (!window.console) {
@@ -33,7 +27,7 @@ if (!window.console) {
 }
 test('基本', function () {
 	var data = {value: 'hello <em>world</em>'};
-	equal(typeof template.compile('<%=value%>'), 'function', '编译成函数');
+	equal(typeof template.compile('{value}'), 'function', '编译成函数');
 	equal(template('default', data), 'hello &#60;em&#62;world&#60;/em&#62;', '编码输出');
 	equal(template('noEscape', data), 'hello <em>world</em>', '原文输出');
 });
@@ -69,11 +63,6 @@ test('空值处理', function () {
 test('内置方法', function () {
 	var data = {value: 'hello <em>world</em>'};
 	equal(template('include', data), 'hello <em>world</em>', 'include');
-	equal(template('include2', data), 'hello <em>world</em>', '=include');
-	equal(template('include3', data), 'hello <em>world</em>', '==include');
-	equal(template('print', data), 'hello <em>world</em>', 'print');
-	equal(template('print2', data), 'hello <em>world</em>', '=print');
-	equal(template('print3', data), 'hello <em>world</em>', '==print');
 });
 
 test('辅助方法', function () {
@@ -82,8 +71,6 @@ test('辅助方法', function () {
 		return '<em>' + content + '</em>';
 	});
 	equal(template('helper', data), '<em>hello world</em>', 'helper');
-	equal(template('helper2', data), '<em>hello world</em>', '=helper');
-	equal(template('helper2', data), '<em>hello world</em>', '==helper');
 });
 
 test('沙箱', function () {
@@ -148,12 +135,12 @@ test('配置功能', function () {
 	template.openTag = '{{';
 	template.closeTag = '}}';
 	var data = {value: 'hello <em>world</em>'};
-	equal(template.compile('{{=value}}')(data), 'hello <em>world</em>', '自定义界定符');
-	equal(template.compile('{{=value}}')(data), 'hello <em>world</em>', '关闭默认编码输出');
+	equal(template.compile('{{value}}')(data), 'hello <em>world</em>', '自定义界定符');
+	equal(template.compile('{{echo value}}')(data), 'hello <em>world</em>', '关闭默认编码输出');
 
 	template.isEscape = true;
-	template.openTag = '<%';
-	template.closeTag = '%>';
+	template.openTag = '{';
+	template.closeTag = '}';
 });
 </script>
 </head>

@@ -1,0 +1,39 @@
+<div class="project_main">
+    <div class="project_logo">
+        <img src="img/products/{ProductUniqueId}.png" onerror="this.onerror=null;this.src='./img/products/default.png'" alt="{ProductUniqueName}" />
+        {if RepuIndexDiffrence < -30 && TotalCount > 30 || ReputationIndex < iCompRepuIndex || iComRepuIndexDiffrence > 30 || ReputationIndex < 28}
+            <i class="flag_warning">!</i>
+        {/if}
+        <i class="flag_success">√</i>
+    </div>
+    <div class="project_name">
+        <h3>{ProductUniqueName}</h3>
+    </div>
+
+    {if RepuIndexDiffrence > 0}
+    <span class="project_updown"><i>↑</i></span>
+    {else}
+    <span class="project_updown compare_down"><i>↓</i></span>
+    {/if}
+    
+    <div class="project_value" data-trigger="switchValue">
+        <div class="project_value_a {_warnClass}">
+            {if _length < 4}
+                {_thisValue}
+            {else if _length < 7}
+                {Math.round(_thisValue / 1000) + 'k'}
+            {else}
+                {Math.round(_thisValue / 10000) + 'w'}
+            {/if}
+        </div>
+        <div class="project_value_b {_warnClass2}">
+            {if _length2 < 4}
+                {_thisValue2}
+            {else if _length2 < 7}
+                {Math.round(_thisValue2 / 1000) + 'k'}
+            {else}
+                {Math.round(_thisValue2 / 10000) + 'w'}
+            {/if}
+        </div>
+    </div>
+</div>

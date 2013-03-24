@@ -1,26 +1,27 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="UTF-8">
 <title>template test</title>
 <script src="../template.js"></script>
 </head>
 
 <body>
 <h1>在javascript中存放模板</h1>
+<div id="content"></div>
 <script>
-var tmpl = '<ul>'
+var source = '<ul>'
 +    '<% for (var i = 0; i < list.length; i ++) { %>'
 +        '<li>索引 <%= i + 1 %> ：<%= list[i] %></li>'
 +    '<% } %>'
-+'</ul>';
++ '</ul>';
 
-var render = template.compile(tmpl);
+var render = template.compile(source);
 var html = render({
-    list: ['设计', '代码', '咖啡', '唱片']
+    list: ['摄影', '电影', '民谣', '旅行', '吉他']
 });
 
-document.write(html);
+document.getElementById('content').innerHTML = html;
 </script>
 </body>
 </html>
