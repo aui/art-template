@@ -7,14 +7,6 @@
  
 (function (exports) {
 
-
-var _helpers = exports.prototype;
-var _toString = Object.prototype.toString;
-var _isArray = Array.isArray || function (obj) {
-    return _toString.call(obj) === '[object Array]';
-};
-
-
 exports.openTag = '{';
 exports.closeTag = '}';
 
@@ -31,7 +23,7 @@ exports.parser = function (code) {
         args = args.join(' ');
         code = fuc.call(code, args);
         
-    } else if (_helpers.hasOwnProperty(key)) {
+    } else if (exports.prototype.hasOwnProperty(key)) {
         
         args = args.join(',');
         code = '==' + key + '(' + args + ');';
@@ -108,8 +100,12 @@ exports.keywords = {
 
 
 exports.helper('$each', function (data, callback) {
+
+    var isArray = Array.isArray || function (obj) {
+        return Object.prototype.toString.call(obj) === '[object Array]';
+    };
      
-    if (_isArray(data)) {
+    if (isArray(data)) {
         for (var i = 0, len = data.length; i < len; i++) {
             callback.call(data, data[i], i, data);
         }
