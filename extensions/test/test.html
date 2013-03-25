@@ -15,6 +15,7 @@
 <script id="sandbox" type="text/html">{typeof document}</script>
 <script id="sandbox2" type="text/html">{window.$sandbox = true}</script>
 <script id="prototype" type="text/html">{toString}</script>
+<script id="html" type="text/html">""''\\</script>
 <script id="debug-render" type="text/html">{a.b.c.d.e.f}</script>
 <script id="debug-syntax" type="text/html">{a b c d e f}</script>
 <script id="helper" type="text/html">{test value}</script>
@@ -41,13 +42,12 @@ test('特殊类型变量输出', function () {
 	equal(template('default', {value:{}}), '', 'Object类型输出空值');
 });
 
-test('特殊字段名输出', function () {
-	equal(template('prototype', {toString: 'hello world'}), 'hello world', '避免输出出错的值');
+test('特殊字符输出', function () {
+	equal(template('html', {}), '""\'\'\\\\', '编码输出js特殊字符');
 });
 
-test('特殊字符输出', function () {
-	equal(template('default', {value:'\'"\t\s\r\n'}), '&#39;&#34;\t\s\r\n', '编码输出js特殊字符');
-	equal(template('noEscape', {value:'\'"\t\s\r\n'}), '\'"\t\s\r\n', '原文输出js特殊字符');
+test('特殊字段名输出', function () {
+	equal(template('prototype', {toString: 'hello world'}), 'hello world', '避免输出出错的值');
 });
 
 test('XSS防范测试', function () {

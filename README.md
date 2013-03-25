@@ -1,14 +1,13 @@
 # artTemplate
 =================
 
-> [artTemplate](https://github.com/aui/artTemplate) 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下[渲染效率测试](http://aui.github.com/artTemplate/test/test-speed.html)中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
+artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
 
-> 引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
+引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
 
-> 提供模板编译工具，可以把模板编译成不依赖引擎的js文件，并且支持``include``语句，这样前端模板可以像后端模板一样按文件存放、按需加载，编译后的js文件支持RequireJS、SeaJS的合并工具。
+提供模板编译工具，可以把模板编译成不依赖引擎的 js 文件，并且支持``include``语句，这样前端模板可以像后端模板一样按文件存放、按需加载，编译后的 js 文件支持 RequireJS、SeaJS 的合并工具。
 
-> 这一切都在 2kb(gzip) 中实现！
-
+这一切都在 2kb(gzip) 中实现！
 
 ## 快速上手
 
@@ -60,7 +59,7 @@
 
 ## 不转义HTML
 
-模板引擎默认数据包含的HTML字符进行转义以避免XSS漏洞，若不需要转义的地方可使用两个``=``号。
+模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用两个``=``号。
 
 	<script id="test" type="text/html">
 	<%==value%>
@@ -72,7 +71,7 @@
 
 ## 在js中存放模板
 
-``template.compile([id], source)``将返回一个渲染函数。其中id参数是可选的，如果使用了id参数，可以使用``template.render(id, data)``渲染模板。
+``template.compile([id], source)``将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用``template.render(id, data)``渲染模板。
 
 	var source =
 	  '<ul>'
@@ -93,7 +92,7 @@
 
 ## 添加辅助方法
 
-``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如XSS过滤、UBB替换、脏话替换等。
+``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 XSS 过滤、UBB 替换、脏话替换等。
 
 例如扩展一个UBB替换方法：
 
@@ -110,7 +109,7 @@
 
 	<%=$ubb2html(content) %>
 	
-注意：引擎不会对辅助方法输出的HTML字符进行转义。
+注意：引擎不会对辅助方法输出的 HTML 字符进行转义。
 	
 [演示](http://aui.github.com/artTemplate/demo/helper.html)
 
@@ -167,7 +166,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 1.	对非String、Number类型的数据不输出，而Function类型求值后输出。
 2.	默认对html进行转义输出，原文输出可使用``<%==value%>``，也可以关闭默认的转义功能``template.isEscape = false``。
-3.	增加批处理工具支持把模板编译成不依赖模板引擎的js文件，可通过RequireJS、SeaJS等模块加载器进行异步加载。
+3.	增加批处理工具支持把模板编译成不依赖模板引擎的 js 文件，可通过 RequireJS、SeaJS 等模块加载器进行异步加载。
 
 ## 授权协议
 
@@ -175,6 +174,6 @@ Released under the MIT, BSD, and GPL Licenses
 
 ============
 
-[速度比赛](http://aui.github.com/artTemplate/test/test-speed.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
+[演示例子](http://aui.github.com/artTemplate/demo/index.html) | [性能测试](http://aui.github.com/artTemplate/test/test-speed.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
 
 © cdc.tencent.com

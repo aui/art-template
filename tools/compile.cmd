@@ -22,6 +22,9 @@ var $charset = 'UTF-8';
 // 设置模板存放目录
 var $path = './compile-test/';
 
+// 设置克隆辅助方法编译方式：为true则克隆到每个编译后的文件中，为false则单独输出到文件。
+var $cloneHelpers = false;
+
 
 var OS = {
 	
@@ -232,11 +235,18 @@ String.prototype.trim = (function() {
 
 
 
+/*!
+ * 模板编译器
+ * @see     https://github.com/aui/artTemplate
+ * @param   {String}    模板
+ * @param   {String}    是否引入外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
+ * @return  {String}    编译好的模板
+ */
 var compileTemplate = (function () {
 
 
-// 包装成SeaJS模块
-var toAMD = function (code) {
+// 包装成RequireJS、SeaJS模块
+var toModule = function (code, includeHelpers) {
 
     template.onerror = function (e) {
         throw e;
@@ -245,13 +255,15 @@ var toAMD = function (code) {
     var render = template.compile(code);
     var prototype = render.prototype;
 
-    render = render.toString().replace(/^function\s+(anonymous)/, 'function');
+    render = render.toString()
+    .replace(/^function\s+(anonymous)/, 'function');
+
+
 
     // 提取include模板
     // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
-    //var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*\)/g; //"
     var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
-	var SLASH_RE = /\\\\/g
+    var SLASH_RE = /\\\\/g
 
     function parseDependencies(code) {
       var ret = []
@@ -274,13 +286,21 @@ var toAMD = function (code) {
     dependencies = '{' + dependencies.join(',') + '}';
 
 
-    var helpers = [];
-    for (var name in prototype) {
-        if (name !== '$render') {
-            helpers.push('"' + name + '": ' + prototype[name].toString());
+    // 输出辅助方法
+    var helpers;
+
+    if (includeHelpers) {
+    	includeHelpers = includeHelpers.replace(/\.js$/, '');
+        helpers = 'require("' + includeHelpers + '")';
+    } else {
+        helpers = [];
+        for (var name in prototype) {
+            if (name !== '$render') {
+                helpers.push('"' + name + '": ' + prototype[name].toString());
+            }
         }
+        helpers = '{' + helpers.join(',') + '}';
     }
-    helpers = '{' + helpers.join(',') + '}';
 
 
     code = 'define(function (require, exports, module) {\n'
@@ -292,7 +312,7 @@ var toAMD = function (code) {
          +      'var Render = ' + render  + ';\n'
          +      'Render.prototype = helpers;'
          +      'return function (data) {\n'
-         +          'return (new Render(data)).template;'
+         +          'return new Render(data) + "";'
          +      '};\n'
          + '});';
     
@@ -390,19 +410,64 @@ var compress = function (code) {
     return code;
 };
 
-return function (source) {
-    return beautify(toAMD(compress(source)));
+return function (source, includeHelpers) {
+    var render = compress(source);
+    var amd = toModule(render, includeHelpers);
+    return beautify(amd);
 }
 
 })();
 
-var args = OS.app.getArguments();
-var list = args.length ? args : OS.file.get($path);
+
+
+
+var args = OS.app.getArguments(); // 本程序命令行参数（拖拽目录、文件到图标执行的方式）注意：尚未完善
+var list = args.length ? args : OS.file.get($path); // 待处理的文件列表
+
+if (args.length) {
+	$cloneHelpers = true;
+}
 
 log('$charset = ' + $charset);
 log('$path = ' + $path);
+log('$cloneHelpers = ' + $cloneHelpers);
 log('-----------------------');
 
+
+// 把辅助方法单独输出文件
+if (!$cloneHelpers) {
+    var helpers = [];
+    var helpersName = '$helpers.js';
+    var path = $path + helpersName;
+    for (var name in template.prototype) {
+        if (name !== '$render') {
+            helpers.push('"' + name + '": ' + template.prototype[name].toString());
+        }
+    }
+    helpers = '{\r\n' + helpers.join(',\r\n') + '}';
+
+    var module = 'define(function () {'
+    +	'return ' + helpers
+	+ '});'
+
+    if (typeof js_beautify !== 'undefined') {
+        var config = {
+            indent_size: 4,
+            indent_char: ' ',
+            preserve_newlines: true,
+            braces_on_own_line: false,
+            keep_array_indentation: false,
+            space_after_anon_function: true
+        };
+        module = js_beautify(module, config);
+    }
+
+	
+	OS.file.write(path, module, $charset);
+}
+
+
+// 编译所有模板
 list.forEach(function (path) {
 	var rname = /\.(html|htm)$/i;
 	if (!rname.test(path)) {
@@ -410,11 +475,14 @@ list.forEach(function (path) {
 	}
 	log('编译: ' + path);
 	var source = OS.file.read(path, $charset);
-	var code = compileTemplate(source);
+	var code = compileTemplate(source, helpersName);
 	var target = path.replace(rname, '.js');
 	OS.file.write(target, code, $charset);
 	log('输出: ' + target);
 });
+
+log('-----------------------');
+log('编译结束');
 
 OS.app.quit();
 

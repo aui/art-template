@@ -76,12 +76,12 @@ exports.compile = function (id, source) {
     
     var params = arguments;
     var isDebug = params[2];
-    
+    var anonymous = 'anonymous';
     
     if (typeof source !== 'string') {
         isDebug = params[1];
         source = params[0];
-        id = null;
+        id = anonymous;
     }
 
     
@@ -103,7 +103,7 @@ exports.compile = function (id, source) {
         
         try {
             
-            return new Render(data).template;
+            return new Render(data) + '';
             
         } catch (e) {
             
@@ -128,7 +128,7 @@ exports.compile = function (id, source) {
     };
     
     
-    if (id) {
+    if (id !== anonymous) {
         _cache[id] = render;
     }
 
@@ -204,7 +204,8 @@ var _getCache = function (id) {
         var elem = document.getElementById(id);
         
         if (elem) {
-            return exports.compile((id, elem.value || elem.innerHTML).replace(/^\s*|\s*$/, ''));
+            var source = elem.value || elem.innerHTML;
+            return exports.compile(id, source.replace(/^\s*|\s*$/g, ''));
         }
         
     } else if (_cache.hasOwnProperty(id)) {
@@ -414,7 +415,7 @@ var _compile = (function () {
         
         
         code = "'use strict';"
-        + variables + replaces[0] + code + 'this.template=' + replaces[3];
+        + variables + replaces[0] + code + 'return new String(' + replaces[3] + ')';
         
         
         try {
@@ -477,11 +478,11 @@ var _compile = (function () {
 
                 var isEscape = code.indexOf('==') !== 0;
 
-                code = code.substring(isEscape ? 1 : 2).replace(/[\s;]*$/, '');
+                code = code.replace(/^=*|[\s;]*$/g, '');
 
                 if (isEscape && exports.isEscape) {
 
-                    // 不对辅助方法进行转义
+                    // 转义处理，但排除辅助方法
                     var name = code.replace(/\s*\([^\)]+\)/, '');
                     if (!helpers.hasOwnProperty(name) && !/^(include|print)$/.test(name)) {
                         code = '$escapeHTML($getValue(' + code + '))';

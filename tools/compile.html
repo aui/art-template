@@ -9,15 +9,17 @@
 <script>
 
 /*!
- * Copyright (C) 2013 Tencent Inc.
- * Author  tangbin
- * Email   1987.tangbin@gmail.com
+ * 模板编译器
+ * @see     https://github.com/aui/artTemplate
+ * @param   {String}    模板
+ * @param   {String}    是否引入外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
+ * @return  {String}    编译好的模板
  */
 var compileTemplate = (function () {
 
 
-// 包装成SeaJS模块
-var toAMD = function (code) {
+// 包装成RequireJS、SeaJS模块
+var toModule = function (code, includeHelpers) {
 
     template.onerror = function (e) {
         throw e;
@@ -26,7 +28,10 @@ var toAMD = function (code) {
     var render = template.compile(code);
     var prototype = render.prototype;
 
-    render = render.toString().replace(/^function\s+(anonymous)/, 'function');
+    render = render.toString()
+    .replace(/^function\s+(anonymous)/, 'function');
+
+
 
     // 提取include模板
     // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
@@ -54,13 +59,21 @@ var toAMD = function (code) {
     dependencies = '{' + dependencies.join(',') + '}';
 
 
-    var helpers = [];
-    for (var name in prototype) {
-        if (name !== '$render') {
-            helpers.push('"' + name + '": ' + prototype[name].toString());
+    // 输出辅助方法
+    var helpers;
+
+    if (includeHelpers) {
+        includeHelpers = includeHelpers.replace(/\.js$/, '');
+        helpers = 'require("' + includeHelpers + '")';
+    } else {
+        helpers = [];
+        for (var name in prototype) {
+            if (name !== '$render') {
+                helpers.push('"' + name + '": ' + prototype[name].toString());
+            }
         }
+        helpers = '{' + helpers.join(',') + '}';
     }
-    helpers = '{' + helpers.join(',') + '}';
 
 
     code = 'define(function (require, exports, module) {\n'
@@ -72,7 +85,7 @@ var toAMD = function (code) {
          +      'var Render = ' + render  + ';\n'
          +      'Render.prototype = helpers;'
          +      'return function (data) {\n'
-         +          'return (new Render(data)).template;'
+         +          'return new Render(data) + "";'
          +      '};\n'
          + '});';
     
@@ -170,8 +183,10 @@ var compress = function (code) {
     return code;
 };
 
-return function (source) {
-    return beautify(toAMD(compress(source)));
+return function (source, includeHelpers) {
+    var render = compress(source);
+    var amd = toModule(render, includeHelpers);
+    return beautify(amd);
 }
 
 })();
