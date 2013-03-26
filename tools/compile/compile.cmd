@@ -8,24 +8,34 @@
 
 @echo off
 call CScript.EXE "%~dpnx0" //Nologo //e:jscript %*
-title artTemplate模版编译工具
+title 模版编译工具
 goto cmd
 */
 
-include('../template.js', 'UTF-8');
-include('../extensions/template-syntax.js', 'UTF-8');
-include('../test/js/beautify.js', 'UTF-8');
+// 模板引擎
+include('../../template.js', 'UTF-8');
+
+// 模板引擎自定义语法支持。如果不使用语法插件请注释此行
+//include('../../extensions/template-syntax.js', 'UTF-8');
+
+// js格式化工具
+include('./lib/beautify.js', 'UTF-8');
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
 
 // 设置模板存放目录
-var $path = './compile-test/';
+var $path = './demo/templates/';
 
-// 设置克隆辅助方法编译方式：为true则克隆到每个编译后的文件中，为false则单独输出到文件。
+// 设置克隆辅助方法编译方式：
+// 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
 
 
+
+
+
+// 操作系统相关API封装
 var OS = {
 	
 	file: {

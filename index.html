@@ -293,106 +293,209 @@ pre {
 	}
 }
 </style>
-<title>artTemplate 自定义语法扩展</title>
+<title>artTemplate</title>
 
 </head>
 <body>
-<h1>artTemplate 自定义语法扩展</h1>
+<h1>artTemplate</h1>
 
 <hr />
 
-<h2>安装扩展</h2>
+<p>artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。</p>
 
-<p>只需要把 template-syntax.js 合并到 template.js 即完成自定义语法扩展安装。</p>
+<p>引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。</p>
 
-<h2>表达式</h2>
+<p>提供模板编译工具，可以把模板编译成不依赖引擎的 js 文件，并且支持<code>include</code>语句，这样前端模板可以像后端模板一样按文件存放、按需加载，编译后的 js 文件支持 RequireJS、SeaJS 的合并工具。</p>
 
-<p><code>{</code> 与 <code>}</code> 符号包裹起来的语句则为模板的逻辑表达式。</p>
+<p>这一切都在 2kb(gzip) 中实现！</p>
 
-<h2>输出表达式</h2>
+<h2>快速上手</h2>
 
-<p>对内容编码输出：</p>
+<h3>编写模板</h3>
 
-<pre><code>{content}
+<p>使用一个<code>type="text/html"</code>的<code>script</code>标签存放模板：</p>
+
+<pre><code>&lt;script id="test" type="text/html"&gt;
+&lt;h1&gt;&lt;%=title%&gt;&lt;/h1&gt;
+&lt;ul&gt;
+    &lt;%for(i = 0; i &lt; list.length; i ++) {%&gt;
+        &lt;li&gt;条目内容 &lt;%=i + 1%&gt; ：&lt;%=list[i]%&gt;&lt;/li&gt;
+    &lt;%}%&gt;
+&lt;/ul&gt;
+&lt;/script&gt;
 </code></pre>
 
-<p>编码可以防止数据中含有 HTML 字符串，避免引起 XSS 攻击。</p>
+<p>模板逻辑语法开始与结束的界定符号为<code>&lt;%</code> 与<code>%&gt;</code>，若<code>&lt;%</code>后面紧跟<code>=</code>号则输出变量内容。</p>
 
-<p>不编码输出：</p>
+<h3>渲染模板</h3>
 
-<pre><code>{echo content}
+<pre><code>var data = {
+    title: '标签',
+    list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+};
+var html = template.render('test', data);
+document.getElementById('content').innerHTML = html;
 </code></pre>
 
-<h2>条件表达式</h2>
+<p><a href="http://aui.github.com/artTemplate/demo/basic.html">演示</a></p>
 
-<pre><code>{if admin}
-    {content}
-{/if}
+<h2>嵌入子模板</h2>
 
-{if user === 'admin'}
-    {content}
-{else if user === '007'}
-    &lt;strong&gt;hello world&lt;/strong&gt;
-{/if}
+<p>使用<code>&lt;%include(id, [data])%&gt;</code>可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。</p>
+
+<pre><code>&lt;script id="test" type="text/html"&gt;
+&lt;h1&gt;&lt;%=title%&gt;&lt;/h1&gt;
+&lt;%include('list')%&gt;
+&lt;/script&gt;
+
+&lt;script id="list" type="text/html"&gt;
+&lt;ul&gt;
+    &lt;%for(i = 0; i &lt; list.length; i ++) {%&gt;
+        &lt;li&gt;条目内容 &lt;%=i + 1%&gt; ：&lt;%=list[i]%&gt;&lt;/li&gt;
+    &lt;%}%&gt;
+&lt;/ul&gt;
+&lt;/script&gt;
 </code></pre>
 
-<h2>遍历表达式</h2>
+<p><a href="http://aui.github.com/artTemplate/demo/include.html">演示</a></p>
 
-<p>无论数组或者对象都可以用 each 进行遍历。</p>
+<h2>不转义HTML</h2>
 
-<pre><code>{each list}
-    &lt;li&gt;{$index}. {$value.user}&lt;/li&gt;
-{/each}
+<p>模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用两个<code>=</code>号。</p>
+
+<pre><code>&lt;script id="test" type="text/html"&gt;
+&lt;%==value%&gt;
+&lt;/script&gt;
 </code></pre>
 
-<p>其中 list 为要遍历的数据名称, <code>$value</code> 与 <code>$index</code> 是系统变量， <code>$value</code> 表示数据单条内容, <code>$index</code> 表示索引值，这两个变量也可以自定义：</p>
+<p>若需要关闭默认转义，可以设置<code>template.isEscape = false</code>。</p>
 
-<pre><code>{each list as value index}
-    &lt;li&gt;{index}. {value.user}&lt;/li&gt;
-{/each}
+<p><a href="http://aui.github.com/artTemplate/demo/no-escape.html">演示</a></p>
+
+<h2>在js中存放模板</h2>
+
+<p><code>template.compile([id], source)</code>将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用<code>template.render(id, data)</code>渲染模板。</p>
+
+<pre><code>var source =
+  '&lt;ul&gt;'
++    '&lt;% for (var i = 0; i &lt; list.length; i ++) { %&gt;'
++        '&lt;li&gt;索引 &lt;%= i + 1 %&gt; ：&lt;%= list[i] %&gt;&lt;/li&gt;'
++    '&lt;% } %&gt;'
++ '&lt;/ul&gt;';
+
+var data = {
+    list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+};
+
+var render = template.compile(source);
+var html = render(data);
+document.getElementById('content').innerHTML = html;
 </code></pre>
 
-<h2>模板包含表达式</h2>
+<p><a href="http://aui.github.com/artTemplate/demo/compile.html">演示</a></p>
 
-<p>用于嵌入子模板。</p>
+<h2>添加辅助方法</h2>
 
-<pre><code>{include 'templateID' data}
-</code></pre>
+<p><code>template.helper(name, callback)</code>辅助方法一般用来进行字符串替换，如 XSS 过滤、UBB 替换、脏话替换等。</p>
 
-<p>其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略则默认传入当前模板的数据。</p>
-
-<pre><code>{include 'templateID'}
-</code></pre>
-
-<h2>辅助方法</h2>
-
-<p>使用<code>template.helper(name, callback)</code>注册公用辅助方法，例如一个基本的 UBB 替换方法：</p>
+<p>例如扩展一个UBB替换方法：</p>
 
 <pre><code>template.helper('$ubb2html', function (content) {
-
     return content
     .replace(/\[b\]([^\[]*?)\[\/b\]/igm, '&lt;b&gt;$1&lt;/b&gt;')
     .replace(/\[i\]([^\[]*?)\[\/i\]/igm, '&lt;i&gt;$1&lt;/i&gt;')
     .replace(/\[u\]([^\[]*?)\[\/u\]/igm, '&lt;u&gt;$1&lt;/u&gt;')
     .replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '&lt;a href="$1"&gt;$2&lt;/a&gt;')
     .replace(/\[img\]([^\[]*?)\[\/img\]/igm, '&lt;img src="$1" /&gt;');
-
 });
 </code></pre>
 
-<p>模板中使用的方式：</p>
+<p>在模板中的使用方式：</p>
 
-<pre><code>{$ubb2html content}
+<pre><code>&lt;%=$ubb2html(content) %&gt;
 </code></pre>
 
-<p>若辅助方法有多个参数使用一个空格分隔即可：</p>
+<p>注意：引擎不会对辅助方法输出的 HTML 字符进行转义。</p>
 
-<pre><code>{helperName args1 args2 args3}
+<p><a href="http://aui.github.com/artTemplate/demo/helper.html">演示</a></p>
+
+<h2>设置界定符</h2>
+
+<p>若前端模板语法与后端语法产生冲突，可以修改模板引擎界定符，例如：</p>
+
+<pre><code>template.openTag = "&lt;!--[";
+template.closeTag = "]--&gt;";
 </code></pre>
+
+<p><a href="http://aui.github.com/artTemplate/demo/tag.html">演示</a></p>
+
+<h2>自定义语法</h2>
+
+<p>artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示例：</p>
+
+<pre><code>{if admin}
+    &lt;h3&gt;{title}&lt;/h3&gt;
+    &lt;ul&gt;
+        {each list}
+            &lt;li&gt;{$index + 1}: {$value}&lt;/li&gt;
+        {/each}
+    &lt;/ul&gt;
+{/if}
+</code></pre>
+
+<p><a href="http://aui.github.com/artTemplate/extensions/index.html">详情</a></p>
+
+<h2>自动化工具</h2>
+
+<h3>编译工具</h3>
+
+<p><code>./tools/compile</code></p>
+
+<p>可把模版编译成不依赖模版引擎的js文件，这样前端模版也可以向后端模版一样按文件放置，并且支持include等语句。</p>
+
+<p>编译后的模板可以通过RequireJS、SeaJS等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前优化。</p>
+
+<h3>抽取工具</h3>
+
+<p><code>./tools/combine/</code></p>
+
+<p>可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。</p>
+
+<p>与编译工具不同的是，抽取后的模板仍然依赖引擎运行。</p>
+
+<h2>模板编码规范</h2>
+
+<p>1、不能使用 javascript 关键字作为模板变量(包括 ECMA5 严格模式下新增的关键字):</p>
+
+<blockquote><p>break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, abstract, boolean, byte, char, class, const, double, enum, export, extends, final, float, goto, implements, import, int, interface, long, native, package, private, protected, public, short, static, super, synchronized, throws, transient, volatile, arguments, let, yield</p></blockquote>
+
+<p>2、模板禁止读写全局变量，除非给模板定义辅助方法。例如：</p>
+
+<pre><code>template.helper('Math', Math)
+</code></pre>
+
+<blockquote><p>artTemplate编译后的模板将运行在沙箱内，模板语句无法读写外部对象。</p>
+
+<p>在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。</p></blockquote>
+
+<h2>更新记录</h2>
+
+<h3>v2.0</h3>
+
+<ol>
+<li>对非String、Number类型的数据不输出，而Function类型求值后输出。</li>
+<li>默认对html进行转义输出，原文输出可使用<code>&lt;%==value%&gt;</code>，也可以关闭默认的转义功能<code>template.isEscape = false</code>。</li>
+<li>增加批处理工具支持把模板编译成不依赖模板引擎的 js 文件，可通过 RequireJS、SeaJS 等模块加载器进行异步加载。</li>
+</ol>
+
+
+<h2>授权协议</h2>
+
+<p>Released under the MIT, BSD, and GPL Licenses</p>
 
 <hr />
 
-<p>本文档针对 artTemplate v1.1+ 编写</p>
+<p><a href="http://aui.github.com/artTemplate/demo/index.html">演示例子</a> | <a href="http://aui.github.com/artTemplate/test/test-speed.html">性能测试</a> | <a href="http://cdc.tencent.com/?p=5723">引擎原理</a></p>
 
 <p>© cdc.tencent.com</p>
 </body>
