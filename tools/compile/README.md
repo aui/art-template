@@ -32,9 +32,8 @@
 	// 设置模板存放目录
 	var $path = './demo/templates/';
 	
-	// 设置克隆辅助方法编译方式：
-	// 为true则克隆到每个编译后的文件中，为false则单独输出到文件
-	var $cloneHelpers = false;
+	// 设置辅助方法编译方式：
+	// 为true则克隆到每个编译后的文件中，为false则单独输出到文件	var $cloneHelpers = false;
 	
 
 ## include规范

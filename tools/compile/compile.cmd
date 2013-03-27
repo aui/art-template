@@ -27,7 +27,7 @@ var $charset = 'UTF-8';
 // 设置前端模板目录路径
 var $path = './demo/templates/';
 
-// 设置克隆辅助方法编译方式：
+// 设置辅助方法编译方式：
 // 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
 
