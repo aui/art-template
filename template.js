@@ -188,10 +188,8 @@ exports.onerror = function (e) {
 
 
 
-
+// 编译好的函数缓存
 var _cache = {};
-var _isNewEngine = '__proto__' in {};
-var _isBrowser = 'document' in global;
 
 
 
@@ -200,7 +198,7 @@ var _getCache = function (id) {
 
     var cache = _cache[id];
     
-    if (cache === undefined && _isBrowser) {
+    if (cache === undefined && 'document' in global) {
         var elem = document.getElementById(id);
         
         if (elem) {
@@ -357,12 +355,12 @@ var _compile = (function () {
         var variables = "var $helpers=this,"
         + (isDebug ? "$line=0," : "");
 
-
-        var replaces = _isNewEngine
+        var isNewEngine = ''.trim;// '__proto__' in {}
+        var replaces = isNewEngine
         ? ["$out='';", "$out+=", ";", "$out"]
         : ["$out=[];", "$out.push(", ");", "$out.join('')"];
 
-        var concat = _isNewEngine
+        var concat = isNewEngine
             ? "if(content!==undefined){$out+=content;return content}"
             : "$out.push(content);";
               

@@ -301,19 +301,19 @@ pre {
 
 <hr />
 
-<p>可把模版编译成不依赖模版引擎的js文件，这样前端模版也可以向后端模版一样按文件放置，并且支持include等语句，真正前端模板模块化开发！</p>
+<p>可把模版编译成不依赖模版引擎的js文件，这样前端模版也可以向后端模版一样按文件放置，并且支持include等语句，真正实现前端模板模块化开发！</p>
 
 <p>编译后的模板可以通过RequireJS、SeaJS等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化。</p>
 
-<h2>运行演示例子</h2>
-
-<p>示例模板文件夹：<code>./demo/templates/</code></p>
+<h2>演示例子</h2>
 
 <ol>
-<li>双击打开 <code>compile.cmd</code> ，它将会编译模板</li>
-<li>打开 <code>./demo/index.html</code> 查看js动态渲染后的页面</li>
+<li>双击打开 <code>compile.cmd</code> ，它将会自动编译模板</li>
+<li>打开 <code>./demo/index.html</code> 查看编译结果</li>
 </ol>
 
+
+<p>示例模板文件夹：<code>./demo/templates/</code></p>
 
 <h2>默认配置</h2>
 
@@ -339,23 +339,34 @@ var $path = './demo/templates/';
 var $cloneHelpers = false;
 </code></pre>
 
-<h2>规范</h2>
+<h2>include规范</h2>
 
-<p>编译工具是静态扫描，因此对模板 <code>include(id)</code> 语句的 <code>id</code> 参数不能够进行动态拼装。</p>
+<p><code>&lt;%include(path)%&gt;</code> 支持动态引入子模板，为了让编译工具能够进行静态分析，需要如下约定：</p>
+
+<p>一、include 的子模板无需后缀名。</p>
+
+<p>二、相对路径必须是<code>.</code>开头，例如：</p>
+
+<pre><code>&lt;%include('./inc/header')%&gt;
+&lt;%include('../../login')%&gt;
+</code></pre>
+
+<p>三、<code>path</code> 参数不能够进行动态拼装。</p>
 
 <p>错误的写法：</p>
 
-<pre><code>&lt;%include('tmpl-' + id)%&gt;
+<pre><code>&lt;%include('./tmpl-' + 'name')%&gt;
+&lt;%include(path)%&gt;
 </code></pre>
 
 <p>正确的写法：</p>
 
-<pre><code>&lt;%include('tmpl-home')%&gt;
+<pre><code>&lt;%include('./tmpl-id')%&gt;
 </code></pre>
 
 <hr />
 
-<p>注意：编译工具一个Beta版本，不建议在正是项目中使用。在这个完善的过程中期待 NodeJS 爱好者加入打造跨平台版本。</p>
+<blockquote><p>注意：编译工具一个Beta版本，还在不断的完善中，因此不建议在商业项目中使用。在这个完善的过程中期待 NodeJS 爱好者加入打造跨平台版本。</p></blockquote>
 
 <p>© cdc.tencent.com</p>
 </body>

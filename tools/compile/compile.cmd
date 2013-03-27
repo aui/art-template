@@ -1,6 +1,6 @@
 @if (0===0) @end/*
 :: ----------------------------------------------------------
-:: artTemplate - Tools
+:: artTemplate - Compile Tools v1.0 beta4
 :: https://github.com/aui/artTemplate
 :: Released under the MIT, BSD, and GPL Licenses
 :: Email: 1987.tangbin@gmail.com
@@ -8,23 +8,23 @@
 
 @echo off
 call CScript.EXE "%~dpnx0" //Nologo //e:jscript %*
-title 模版编译工具
+title Compile Tools
 goto cmd
 */
 
-// 模板引擎
+// 模板引擎路径
 include('../../template.js', 'UTF-8');
 
 // 模板引擎自定义语法支持。如果不使用语法插件请注释此行
-//include('../../extensions/template-syntax.js', 'UTF-8');
+// include('../../extensions/template-syntax.js', 'UTF-8');
 
-// js格式化工具
+// js格式化工具路径
 include('./lib/beautify.js', 'UTF-8');
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
 
-// 设置模板存放目录
+// 设置前端模板目录路径
 var $path = './demo/templates/';
 
 // 设置克隆辅助方法编译方式：
@@ -68,6 +68,7 @@ var OS = {
 			return fileContent.toString();
 		},
 
+
 		/**
 		 * 文件写入
 		 * @param 	{String} 		文件路径
@@ -105,6 +106,7 @@ var OS = {
 
 			return true;
 		},
+
 		
 		/**
 		 * 枚举目录中所有文件名(包括子目录文件)
@@ -144,6 +146,15 @@ var OS = {
 	},
 	
 	app: {
+
+
+    /**
+     * 获取完整路径名
+     * @return  {String}
+     */
+    getFullName: function () {
+      return WScript.ScriptFullName
+    },
 	
 		/**
 		 * 获取运行参数
@@ -359,18 +370,9 @@ var compress = function (code) {
         openTag = template.openTag;
         closeTag = template.closeTag
     }
-    
-    code = code
-    // 去除 html 与 js 多行注释
-    .replace(/\/\*(.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|<!--.*?-->/g, '')
-    // 去除多余制表符、TAB符、回车符
-    .replace(/\n/g, '')
-    .replace(/[\r\t]/g, ' ')
-    // "\" 转义
-    .replace(/\\/g, "\\\\");
 
     function html (text) {
-        return text.replace(/\s+/g, ' ');
+        return text.replace(/[\n\r\t\s]+/g, ' ');
     };
     
     function logic (text) {
@@ -438,6 +440,35 @@ if (args.length) {
 	$cloneHelpers = true;
 }
 
+// Canonicalize a path
+// realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
+function realpath (path) {
+  var DOT_RE = /\/\.\//g
+  var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+  var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
+
+  // /a/b/./c/./d ==> /a/b/c/d
+  path = path.replace(DOT_RE, "/")
+
+  // "file:///a//b/c"  ==> "file:///a/b/c"
+  // "http://a//b/c"   ==> "http://a/b/c"
+  // "https://a//b/c"  ==> "https://a/b/c"
+  // "/a/b//"          ==> "/a/b/"
+  path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+
+  // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
+  while (path.match(DOUBLE_DOT_RE)) {
+    path = path.replace(DOUBLE_DOT_RE, "/")
+  }
+
+  return path
+}
+
+if (/^\./.test($path)) {
+  $path = realpath((OS.app.getFullName().replace(/[^\\]*?$/, '') + $path).replace(/\\/g, '/'));
+  $path = $path.replace(/\//g, '\\');
+}
+
 log('$charset = ' + $charset);
 log('$path = ' + $path);
 log('$cloneHelpers = ' + $cloneHelpers);
@@ -477,17 +508,38 @@ if (!$cloneHelpers) {
 }
 
 
+
+
 // 编译所有模板
 list.forEach(function (path) {
 	var rname = /\.(html|htm)$/i;
 	if (!rname.test(path)) {
 		return;
 	}
+
+  var name = helpersName;
+  if (name) {
+
+    // 计算路径深度
+
+    var prefix = './';
+    var length = path.replace($path, '').replace(/[^\\]/g, '').length;
+
+    if (length) {
+      prefix = (new Array(length + 1)).join('../');
+    }
+
+    name = prefix + name;
+  }
+
 	log('编译: ' + path);
+
 	var source = OS.file.read(path, $charset);
-	var code = compileTemplate(source, helpersName);
+	var code = compileTemplate(source, name);
 	var target = path.replace(rname, '.js');
+
 	OS.file.write(target, code, $charset);
+
 	log('输出: ' + target);
 });
 

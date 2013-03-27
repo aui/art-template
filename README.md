@@ -27,6 +27,8 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 模板逻辑语法开始与结束的界定符号为``<%`` 与``%>``，若``<%``后面紧跟``=``号则输出变量内容。
 
 ### 渲染模板
+
+``template.render(id, data)``
 	
 	var data = {
 		title: '标签',
@@ -38,9 +40,10 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 [演示](http://aui.github.com/artTemplate/demo/basic.html)
 
+
 ## 嵌入子模板
 
-使用``<%include(id, [data])%>``可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
+``<%include(id, [data])%>``语句可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
 
 	<script id="test" type="text/html">
 	<h1><%=title%></h1>
@@ -172,7 +175,15 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 ## 更新记录
 
-### v2.0
+### v2.0 beta4
+
+模板编译工具最新进展：
+
+1. 修复编译工具在压缩模板可能导致HTML意外截断的问题。感谢 @warmhug
+2. 完善编译工具对 include 支持支持，可以支持不同目录之间模板嵌套
+3. 修复编译工具没能正确处理自定义语法插件的辅助方法
+
+### v2.0 beta1
 
 1.	对非String、Number类型的数据不输出，而Function类型求值后输出。
 2.	默认对html进行转义输出，原文输出可使用``<%==value%>``，也可以关闭默认的转义功能``template.isEscape = false``。

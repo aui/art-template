@@ -1,20 +1,20 @@
 ﻿define(function (require, exports, module) {
-    var helpers = require("$helpers");
+    var helpers = require("../$helpers");
     var Render = function ($data) {
             'use strict';
             var $helpers = this,
                 time = $data.time,
                 $escapeHTML = $helpers.$escapeHTML,
                 $getValue = $helpers.$getValue,
-                $out = [];
-            $out.push('<div id=\"footer\">');
+                $out = '';
+            $out += '<div id=\"footer\"> ';
             if (time) {
-                $out.push(' <p>当前时间：');
-                $out.push($escapeHTML($getValue(time)));
-                $out.push('</p>');
+                $out += ' <p class=\'time\'>';
+                $out += $escapeHTML($getValue(time));
+                $out += '</p> ';
             }
-            $out.push('</div>');
-            return new String($out.join(''))
+            $out += ' </div>';
+            return new String($out)
         };
     Render.prototype = helpers;
     return function (data) {

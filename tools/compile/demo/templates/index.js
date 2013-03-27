@@ -1,9 +1,9 @@
 ﻿define(function (require, exports, module) {
     var dependencies = {
-        "header": require("header"),
-        "footer": require("footer")
+        "./include/header": require("./include/header"),
+        "./include/footer": require("./include/footer")
     };
-    var helpers = require("$helpers");
+    var helpers = require("./$helpers");
     helpers.$render = function (id, data) {
         return dependencies[id](data);
     };
@@ -15,29 +15,32 @@
                         data = $data
                     }
                     var content = $helpers.$render(id, data);
-                    $out.push(content);
+                    if (content !== undefined) {
+                        $out += content;
+                        return content
+                    }
                 },
                 $escapeHTML = $helpers.$escapeHTML,
                 $getValue = $helpers.$getValue,
                 title = $data.title,
                 i = $data.i,
                 list = $data.list,
-                $out = [];
-            $out.push('');
-            include('header')
-            $out.push('<div id=\"main\"> <h3>');
-            $out.push($escapeHTML($getValue(title)));
-            $out.push('</h3> <ul> ');
+                $out = '';
+            $out += '';
+            include('./include/header')
+            $out += ' <div id=\"main\"> <h3>';
+            $out += $escapeHTML($getValue(title));
+            $out += '</h3> <ul> ';
             for (var i = 0; i < list.length; i++) {
-                $out.push(' <li><a href=\"');
-                $out.push($escapeHTML($getValue(list[i].url)));
-                $out.push('\">');
-                $out.push($escapeHTML($getValue(list[i].title)));
-                $out.push('</a></li> ');
+                $out += ' <li><a href=\"';
+                $out += $escapeHTML($getValue(list[i].url));
+                $out += '\">';
+                $out += $escapeHTML($getValue(list[i].title));
+                $out += '</a></li> ';
             }
-            $out.push(' </ul></div>');
-            include('footer')
-            return new String($out.join(''))
+            $out += ' </ul> </div> ';
+            include('./include/footer')
+            return new String($out)
         };
     Render.prototype = helpers;
     return function (data) {

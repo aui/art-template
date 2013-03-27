@@ -11,14 +11,6 @@
 <div id="doc">loading..</div>
 
 <script>
-seajs.config({
-  // 调试模式
-  debug: true,
-
-  // SeaJS 的基础路径
-  base: './templates/'
-});
-
 // 调用首页
 seajs.use('./templates/index', function (index) {
 
@@ -26,7 +18,7 @@ seajs.use('./templates/index', function (index) {
 		title: '国内要闻',
 		time: (new Date).toString(),
 		list: [{
-			title: '油价调整周期缩至10个工作日 无4%幅度限制',
+			title: '<油价>调整周期缩至10个工作日 无4%幅度限制',
 			url: 'http://finance.qq.com/zt2013/2013yj/index.htm'
 		}, {
 			title: '明起汽油价格每吨下调310元 单价回归7元时代',
@@ -46,7 +38,6 @@ seajs.use('./templates/index', function (index) {
 	var html = index(data);
 
 	document.getElementById('doc').innerHTML = html;
-	
 });
 </script>
 </body>
