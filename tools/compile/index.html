@@ -319,22 +319,22 @@ pre {
 
 <p>右键可直接编辑 <code>compile.cmd</code> 的源码修改配置</p>
 
-<pre><code>// 模板引擎
-include('../../template.js', 'UTF-8');
+<pre><code>// 模板引擎路径
+var template = require('../../template.js');
 
 // 模板引擎自定义语法支持。如果不使用语法插件请注释此行
-//include('../../extensions/template-syntax.js', 'UTF-8');
+// require('../../extensions/template-syntax.js');
 
-// js格式化工具
-include('./lib/beautify.js', 'UTF-8');
+// js格式化工具路径
+var js_beautify = require('./lib/beautify.js');
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
 
-// 设置模板存放目录
+// 设置前端模板目录路径
 var $path = './demo/templates/';
 
-// 设置克隆辅助方法编译方式：
+// 设置辅助方法编译方式：
 // 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
 </code></pre>

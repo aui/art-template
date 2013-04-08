@@ -1,4 +1,4 @@
-﻿define(function (require, exports, module) {
+﻿define(function (require) {
     var helpers = require("../$helpers");
     var Render = function ($data) {
             'use strict';

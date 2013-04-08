@@ -7,19 +7,21 @@
 :: ----------------------------------------------------------
 
 @echo off
+title loading..
+cd %~dp0
 call CScript.EXE "%~dpnx0" //Nologo //e:jscript %*
 title Compile Tools
 goto cmd
 */
 
 // 模板引擎路径
-include('../../template.js', 'UTF-8');
+var template = require('../../template.js');
 
 // 模板引擎自定义语法支持。如果不使用语法插件请注释此行
-// include('../../extensions/template-syntax.js', 'UTF-8');
+// require('../../extensions/template-syntax.js');
 
 // js格式化工具路径
-include('./lib/beautify.js', 'UTF-8');
+var js_beautify = require('./lib/beautify.js');
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
@@ -148,13 +150,13 @@ var OS = {
 	app: {
 
 
-    /**
-     * 获取完整路径名
-     * @return  {String}
-     */
-    getFullName: function () {
-      return WScript.ScriptFullName
-    },
+        /**
+         * 获取完整路径名
+         * @return  {String}
+         */
+        getFullName: function () {
+          return WScript.ScriptFullName
+        },
 	
 		/**
 		 * 获取运行参数
@@ -198,14 +200,14 @@ var console = OS.console;
 var log = console.log;
 var error = console.error;
 
-function include (path, charset) {
+function require (path) {
 	this.$dependencies = this.$dependencies || [];
-	this.$dependencies.push(arguments);
+	this.$dependencies.push(path);
 }
 
 this.$dependencies = this.$dependencies || [];
 for (var i = 0; i < this.$dependencies.length; i ++) {
-	Global.eval(OS.file.read(this.$dependencies[i][0], this.$dependencies[i][1]));
+	Global.eval(OS.file.read(this.$dependencies[i], 'UTF-8'));
 }
 
 
@@ -260,11 +262,12 @@ String.prototype.trim = (function() {
  * 模板编译器
  * @see     https://github.com/aui/artTemplate
  * @param   {String}    模板
- * @param   {String}    是否引入外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
+ * @param   {String}    外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
  * @return  {String}    编译好的模板
  */
 var compileTemplate = (function () {
 
+template.isCompress = true;
 
 // 包装成RequireJS、SeaJS模块
 var toModule = function (code, includeHelpers) {
@@ -287,12 +290,14 @@ var toModule = function (code, includeHelpers) {
     var SLASH_RE = /\\\\/g
 
     function parseDependencies(code) {
-      var ret = []
+      var ret = [];
+	  var uniq = {};
 
       code.replace(SLASH_RE, "")
           .replace(REQUIRE_RE, function(m, m1, m2) {
-            if (m2) {
-              ret.push(m2)
+            if (m2 && !uniq.hasOwnProperty(m2)) {
+              ret.push(m2);
+			  uniq[m2] = true;
             }
           })
 
@@ -324,15 +329,16 @@ var toModule = function (code, includeHelpers) {
     }
 
 
-    code = 'define(function (require, exports, module) {\n'
+    code = 'define(function (require) {\n'
          +      (isDependencies ? 'var dependencies = ' + dependencies + ';' : '')
          +      'var helpers = ' + helpers + ';\n'
-         +      (isDependencies ? 'helpers.$render = function (id, data) {'
+         +      (isDependencies ? 'var $render = function (id, data) {'
          +          'return dependencies[id](data);'
          +      '};' : '')
          +      'var Render = ' + render  + ';\n'
          +      'Render.prototype = helpers;'
          +      'return function (data) {\n'
+         +          (isDependencies ? 'helpers.$render = $render;' : '')
          +          'return new Render(data) + "";'
          +      '};\n'
          + '});';
@@ -360,85 +366,13 @@ var beautify = function (code) {
 };
 
 
-// 压缩模板
-var compress = function (code) {
-    
-    var openTag = template.openTag;
-    var closeTag = template.closeTag;
-    
-    if (typeof template !== 'undefined') {
-        openTag = template.openTag;
-        closeTag = template.closeTag
-    }
-
-    function html (text) {
-        return text.replace(/[\n\r\t\s]+/g, ' ');
-    };
-    
-    function logic (text) {
-        return openTag + text.trim() + closeTag;
-    };
-
-    // 语法分析
-    var strings = '';
-    code.split(openTag).forEach(function (text, i) {
-        text = text.split(closeTag);
-        
-        var $0 = text[0];
-        var $1 = text[1];
-        
-        // text: [html]
-        if (text.length === 1) {
-            
-            strings += html($0);
-         
-        // text: [logic, html]
-        } else {
-                   
-            strings += logic($0);    
-            
-            if ($1) {
-                strings += html($1);
-            }
-        }
-        
-
-    });
-
-    code = strings;
-
-    // ANSI 转义
-    /*var unicode = [], ansi;
-    for (var i = 0 ; i < code.length; i ++) {
-        ansi = code.charCodeAt(i);
-        if (ansi > 255) {
-            unicode.push('\\u' + ansi.toString(16));
-        } else {
-            unicode.push(code.charAt(i));
-        } 
-    }
-    code = unicode.join('').trim();*/
-    
-    return code;
-};
-
 return function (source, includeHelpers) {
-    var render = compress(source);
-    var amd = toModule(render, includeHelpers);
+    var amd = toModule(source, includeHelpers);
     return beautify(amd);
 }
 
 })();
 
-
-
-
-var args = OS.app.getArguments(); // 本程序命令行参数（拖拽目录、文件到图标执行的方式）注意：尚未完善
-var list = args.length ? args : OS.file.get($path); // 待处理的文件列表
-
-if (args.length) {
-	$cloneHelpers = true;
-}
 
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
@@ -464,18 +398,36 @@ function realpath (path) {
   return path
 }
 
+// 相对路径转换为绝对路径
 if (/^\./.test($path)) {
-  $path = realpath((OS.app.getFullName().replace(/[^\\]*?$/, '') + $path).replace(/\\/g, '/'));
-  $path = $path.replace(/\//g, '\\');
+  $path = realpath((OS.app.getFullName().replace(/[^\/\\]*?$/, '') + $path).replace(/\\/g, '/'));
 }
 
 log('$charset = ' + $charset);
-log('$path = ' + $path);
 log('$cloneHelpers = ' + $cloneHelpers);
+log('$path = ' + $path);
 log('-----------------------');
 
 
-// 把辅助方法单独输出文件
+var args = OS.app.getArguments(); // 获取使用拖拽方式打开的文件列表
+var list = args.length ? args : OS.file.get($path); // 待处理的文件列表
+
+
+
+list.forEach(function (path, index) {
+    // 把路径 "\" 转换成 "/"
+    path = list[index] = path.replace(/\\/g, '/');
+    
+    // 合法性校验
+    if (path.indexOf($path) !== 0) {
+        error('警告：' + path + '不在模板目录中，可能导致路径错误');
+    }
+});
+
+
+
+
+// 把辅助方法输出为独立的文件
 if (!$cloneHelpers) {
     var helpers = [];
     var helpersName = '$helpers.js';
@@ -517,20 +469,19 @@ list.forEach(function (path) {
 		return;
 	}
 
-  var name = helpersName;
-  if (name) {
+    var name = helpersName;
+    
+    // 计算辅助方法模块的相对路径
+    if (name) {
+        var prefix = './';
+        var length = path.replace($path, '').replace(/[^\/]/g, '').length;
 
-    // 计算路径深度
+        if (length) {
+          prefix = (new Array(length + 1)).join('../');
+        }
 
-    var prefix = './';
-    var length = path.replace($path, '').replace(/[^\\]/g, '').length;
-
-    if (length) {
-      prefix = (new Array(length + 1)).join('../');
+        name = prefix + name;
     }
-
-    name = prefix + name;
-  }
 
 	log('编译: ' + path);
 

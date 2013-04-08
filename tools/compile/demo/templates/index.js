@@ -1,12 +1,12 @@
-﻿define(function (require, exports, module) {
+﻿define(function (require) {
     var dependencies = {
         "./include/header": require("./include/header"),
         "./include/footer": require("./include/footer")
     };
     var helpers = require("./$helpers");
-    helpers.$render = function (id, data) {
-        return dependencies[id](data);
-    };
+    var $render = function (id, data) {
+            return dependencies[id](data);
+        };
     var Render = function ($data) {
             'use strict';
             var $helpers = this,
@@ -44,6 +44,7 @@
         };
     Render.prototype = helpers;
     return function (data) {
+        helpers.$render = $render;
         return new Render(data) + "";
     };
 });

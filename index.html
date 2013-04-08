@@ -482,13 +482,20 @@ template.closeTag = "]--&gt;";
 
 <h2>更新记录</h2>
 
-<h3>v2.0 beta4</h3>
-
-<p>模板编译工具最新进展：</p>
+<h3>v2.0 beta5</h3>
 
 <ol>
-<li>修复编译工具在压缩模板可能导致HTML意外截断的问题。感谢 @warmhug</li>
-<li>完善编译工具对 include 支持支持，可以支持不同目录之间模板嵌套</li>
+<li>修复编译工具可能存在重复依赖的问题。感谢 @warmhug</li>
+<li>修复<code>include</code>内部实现可能产生上下文不一致的问题。感谢 @warmhug</li>
+<li>支持使用拖拽文件到<code>compile.cmd</code>图标上进行单独编译</li>
+</ol>
+
+
+<h3>v2.0 beta4</h3>
+
+<ol>
+<li>修复编译工具在压缩模板可能导致 HTML 意外截断的问题。感谢 @warmhug</li>
+<li>完善编译工具对<code>include</code>支持支持，可以支持不同目录之间模板嵌套</li>
 <li>修复编译工具没能正确处理自定义语法插件的辅助方法</li>
 </ol>
 
