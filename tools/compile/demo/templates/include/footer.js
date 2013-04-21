@@ -1,5 +1,5 @@
 ﻿define(function (require) {
-    var helpers = require("../$helpers");
+    var helpers = require('../$helpers');
     var Render = function ($data) {
             'use strict';
             var $helpers = this,
@@ -7,7 +7,7 @@
                 $escapeHTML = $helpers.$escapeHTML,
                 $getValue = $helpers.$getValue,
                 $out = '';
-            $out += '<div id=\"footer\"> ';
+            $out += '<div id="footer"> ';
             if (time) {
                 $out += ' <p class=\'time\'>';
                 $out += $escapeHTML($getValue(time));
@@ -18,6 +18,6 @@
         };
     Render.prototype = helpers;
     return function (data) {
-        return new Render(data) + "";
+        return new Render(data) + '';
     };
 });

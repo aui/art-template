@@ -1,9 +1,9 @@
 ﻿define(function (require) {
     var dependencies = {
-        "./include/header": require("./include/header"),
-        "./include/footer": require("./include/footer")
+        './include/header': require('./include/header'),
+        './include/footer': require('./include/footer')
     };
-    var helpers = require("./$helpers");
+    var helpers = require('./$helpers');
     var $render = function (id, data) {
             return dependencies[id](data);
         };
@@ -28,13 +28,13 @@
                 $out = '';
             $out += '';
             include('./include/header')
-            $out += ' <div id=\"main\"> <h3>';
+            $out += ' <div id="main"> <h3>';
             $out += $escapeHTML($getValue(title));
             $out += '</h3> <ul> ';
-            for (var i = 0; i < list.length; i++) {
-                $out += ' <li><a href=\"';
+            for (i = 0; i < list.length; i++) {
+                $out += ' <li><a href="';
                 $out += $escapeHTML($getValue(list[i].url));
-                $out += '\">';
+                $out += '">';
                 $out += $escapeHTML($getValue(list[i].title));
                 $out += '</a></li> ';
             }
@@ -45,6 +45,6 @@
     Render.prototype = helpers;
     return function (data) {
         helpers.$render = $render;
-        return new Render(data) + "";
+        return new Render(data) + '';
     };
 });

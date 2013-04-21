@@ -1,6 +1,6 @@
 ﻿define(function () {
     return {
-        "$escapeHTML": function (content) {
+        '$escapeHTML': function (content) {
 
             return typeof content === 'string' ? content.replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
                 return {
@@ -12,7 +12,7 @@
                 }[s];
             }) : content;
         },
-        "$getValue": function (value) {
+        '$getValue': function (value) {
 
             if (typeof value === 'string' || typeof value === 'number') {
 

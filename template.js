@@ -327,7 +327,7 @@ var _compile = (function () {
 
 
     // 提取js源码中所有变量
-    var _getVariable = function (code) {
+    var getVariable = function (code) {
 
         code = code
         .replace(filter, ',')
@@ -443,8 +443,8 @@ var _compile = (function () {
 			}
             
             code = code
-            // 单双引号与反斜杠转义
-            .replace(/('|"|\\)/g, '\\$1')
+            // 单引号与反斜杠转义(因为编译后的函数默认使用单引号，因此双引号无需转义)
+            .replace(/('|\\)/g, '\\$1')
             // 换行符转义(windows + linux)
             .replace(/\r/g, '\\r')
             .replace(/\n/g, '\\n');
@@ -513,7 +513,7 @@ var _compile = (function () {
         // 提取模板中的变量名
         function getKey (code) {
             
-            code = _getVariable(code);
+            code = getVariable(code);
             
             // 分词
             forEach(code, function (name) {

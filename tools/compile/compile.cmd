@@ -34,9 +34,6 @@ var $path = './demo/templates/';
 var $cloneHelpers = false;
 
 
-
-
-
 // 操作系统相关API封装
 var OS = {
 	
@@ -259,7 +256,7 @@ String.prototype.trim = (function() {
 
 
 /*!
- * 模板编译器
+ * 模板编译器核心程序
  * @see     https://github.com/aui/artTemplate
  * @param   {String}    模板
  * @param   {String}    外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
@@ -306,7 +303,7 @@ var toModule = function (code, includeHelpers) {
 
     var dependencies = [];
     parseDependencies(render).forEach(function (id) {
-        dependencies.push('"' + id + '": ' + 'require("' + id + '")');
+        dependencies.push('\'' + id + '\': ' + 'require(\'' + id + '\')');
     });
     var isDependencies = dependencies.length;
     dependencies = '{' + dependencies.join(',') + '}';
@@ -317,12 +314,12 @@ var toModule = function (code, includeHelpers) {
 
     if (includeHelpers) {
     	includeHelpers = includeHelpers.replace(/\.js$/, '');
-        helpers = 'require("' + includeHelpers + '")';
+        helpers = 'require(\'' + includeHelpers + '\')';
     } else {
         helpers = [];
         for (var name in prototype) {
             if (name !== '$render') {
-                helpers.push('"' + name + '": ' + prototype[name].toString());
+                helpers.push('\'' + name + '\': ' + prototype[name].toString());
             }
         }
         helpers = '{' + helpers.join(',') + '}';
@@ -339,7 +336,7 @@ var toModule = function (code, includeHelpers) {
          +      'Render.prototype = helpers;'
          +      'return function (data) {\n'
          +          (isDependencies ? 'helpers.$render = $render;' : '')
-         +          'return new Render(data) + "";'
+         +          'return new Render(data) + \'\';'
          +      '};\n'
          + '});';
     
@@ -381,16 +378,10 @@ function realpath (path) {
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 
-  // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
-  // "file:///a//b/c"  ==> "file:///a/b/c"
-  // "http://a//b/c"   ==> "http://a/b/c"
-  // "https://a//b/c"  ==> "https://a/b/c"
-  // "/a/b//"          ==> "/a/b/"
   path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
 
-  // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
   while (path.match(DOUBLE_DOT_RE)) {
     path = path.replace(DOUBLE_DOT_RE, "/")
   }
@@ -403,6 +394,7 @@ if (/^\./.test($path)) {
   $path = realpath((OS.app.getFullName().replace(/[^\/\\]*?$/, '') + $path).replace(/\\/g, '/'));
 }
 
+log('配置信息：');
 log('$charset = ' + $charset);
 log('$cloneHelpers = ' + $cloneHelpers);
 log('$path = ' + $path);
@@ -434,7 +426,7 @@ if (!$cloneHelpers) {
     var path = $path + helpersName;
     for (var name in template.prototype) {
         if (name !== '$render') {
-            helpers.push('"' + name + '": ' + template.prototype[name].toString());
+            helpers.push('\'' + name + '\': ' + template.prototype[name].toString());
         }
     }
     helpers = '{\r\n' + helpers.join(',\r\n') + '}';
