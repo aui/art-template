@@ -14,6 +14,9 @@ title Compile Tools
 goto cmd
 */
 
+/*----------------------配置开始----------------------*/
+
+
 // 模板引擎路径
 var template = require('../../template.js');
 
@@ -32,6 +35,9 @@ var $path = './demo/templates/';
 // 设置辅助方法编译方式：
 // 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
+
+
+/*----------------------配置结束----------------------*/
 
 
 // 操作系统相关API封装

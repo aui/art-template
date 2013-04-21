@@ -274,7 +274,7 @@ var _compile = (function () {
     };
 
 
-    var arrayforEach =  Array.prototype.forEach || function (block, thisObject) {
+    var arrayforEach = Array.prototype.forEach || function (block, thisObject) {
         var len = this.length >>> 0;
         
         for (var i = 0; i < len; i++) {
@@ -294,13 +294,15 @@ var _compile = (function () {
 
     var keyWords =
         // 关键字
-        'break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if'
-        + ',in,instanceof,new,null,return,switch,this,throw,true,try,typeof,var,void,while,with'
+        'break,case,catch,continue,debugger,default,delete,do,else,false'
+        + ',finally,for,function,if,in,instanceof,new,null,return,switch,this'
+        + ',throw,true,try,typeof,var,void,while,with'
         
         // 保留字
-        + ',abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float,goto'
-        + ',implements,import,int,interface,long,native,package,private,protected,public,short'
-        + ',static,super,synchronized,throws,transient,volatile'
+        + ',abstract,boolean,byte,char,class,const,double,enum,export,extends'
+        + ',final,float,goto,implements,import,int,interface,long,native'
+        + ',package,private,protected,public,short,static,super,synchronized'
+        + ',throws,transient,volatile'
         
         // ECMA 5 - use strict
         + ',arguments,let,yield'
@@ -414,7 +416,8 @@ var _compile = (function () {
         
         
         code = "'use strict';"
-        + variables + replaces[0] + code + 'return new String(' + replaces[3] + ')';
+        + variables + replaces[0] + code
+        + 'return new String(' + replaces[3] + ')';
         
         
         try {
@@ -487,7 +490,10 @@ var _compile = (function () {
 
                     // 转义处理，但排除辅助方法
                     var name = code.replace(/\s*\([^\)]+\)/, '');
-                    if (!helpers.hasOwnProperty(name) && !/^(include|print)$/.test(name)) {
+                    if (
+                        !helpers.hasOwnProperty(name)
+                        && !/^(include|print)$/.test(name)
+                    ) {
                         code = '$escapeHTML($getValue(' + code + '))';
                     }
 
@@ -556,7 +562,8 @@ var _compile = (function () {
                     if (name.indexOf('$') === 0) {
                         value = '$helpers.' + name;
                     } else {
-                        value = value + '===undefined?$helpers.' + name + ':' + value;
+                        value = value
+                        + '===undefined?$helpers.' + name + ':' + value;
                     }
                 }
                 
