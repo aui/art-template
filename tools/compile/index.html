@@ -315,29 +315,49 @@ pre {
 
 <p>示例模板文件夹：<code>./demo/templates/</code></p>
 
-<h2>默认配置</h2>
+<h2>安装与使用</h2>
 
-<p>右键可直接编辑 <code>compile.cmd</code> 的源码修改配置</p>
+<h3>1. 版本选择：</h3>
 
-<pre><code>// 模板引擎路径
-var template = require('../../template.js');
+<p>windows批处理版本：<code>./compile.cmd</code></p>
 
-// 模板引擎自定义语法支持。如果不使用语法插件请注释此行
-// require('../../extensions/template-syntax.js');
+<blockquote><p>  在windows下，双击即可运行</p></blockquote>
 
-// js格式化工具路径
-var js_beautify = require('./lib/beautify.js');
+<p>NodeJS版本：<code>./compile.js</code></p>
+
+<blockquote><p>  基于NodeJS实现，支持跨平台运行</p></blockquote>
+
+<h3>2. 设置配置：</h3>
+
+<p>右键可直接编辑编译工具的源码修改配置</p>
+
+<pre><code>// 设置前端模板目录路径
+var $path = './demo/templates/';
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
 
-// 设置前端模板目录路径
-var $path = './demo/templates/';
-
 // 设置辅助方法编译方式：
 // 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
+
+// 模板引擎路径
+var template = require('../../template.js');
+
+// 模板简单语法支持。不使用无请注释此行
+// require('../../extensions/template-syntax.js');
+
+// js格式化工具路径
+var js_beautify = require('./lib/beautify.js');
 </code></pre>
+
+<h3>3. 运行</h3>
+
+<ol>
+<li>windows批处理版本可以双击直接运行。拖拽模板到 <code>compile.cmd</code> 文件上可单独编译当前模板</li>
+<li>NodeJS版本直接调用<code>node compile.js</code>即可运行。若附加参数可指定编译单个模板，如<code>node compile.js demo/templates/index.html</code></li>
+</ol>
+
 
 <h2>模板include语句规范</h2>
 

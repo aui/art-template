@@ -1,6 +1,6 @@
 @if (0===0) @end/*
 :: ----------------------------------------------------------
-:: artTemplate - Compile Tools v1.0 beta4
+:: artTemplate - Compile Tools v1.0 beta5
 :: https://github.com/aui/artTemplate
 :: Released under the MIT, BSD, and GPL Licenses
 :: Email: 1987.tangbin@gmail.com
@@ -14,30 +14,27 @@ title Compile Tools
 goto cmd
 */
 
-/*----------------------配置开始----------------------*/
-
-
-// 模板引擎路径
-var template = require('../../template.js');
-
-// 模板引擎自定义语法支持。如果不使用语法插件请注释此行
-// require('../../extensions/template-syntax.js');
-
-// js格式化工具路径
-var js_beautify = require('./lib/beautify.js');
+// 设置前端模板目录路径
+var $path = './demo/templates/';
 
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
-
-// 设置前端模板目录路径
-var $path = './demo/templates/';
 
 // 设置辅助方法编译方式：
 // 为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
 
+// 模板引擎路径
+var template = require('../../template.js');
 
-/*----------------------配置结束----------------------*/
+// 模板简单语法支持。不使用无请注释此行
+// require('../../extensions/template-syntax.js');
+
+// js格式化工具路径
+var js_beautify = require('./lib/beautify.js');
+
+
+
 
 
 // 操作系统相关API封装
@@ -118,7 +115,7 @@ var OS = {
 		 * @param	{String}	目录
 		 * @return	{Array}		文件列表
 		 */
-		get: (function (path) {
+		get: (function () {
 			var fso = new ActiveXObject('Scripting.FileSystemObject');
 			var listall = function (infd) {
 			
@@ -270,109 +267,111 @@ String.prototype.trim = (function() {
  */
 var compileTemplate = (function () {
 
-template.isCompress = true;
+	template.isCompress = true;
 
-// 包装成RequireJS、SeaJS模块
-var toModule = function (code, includeHelpers) {
+	// 包装成RequireJS、SeaJS模块
+	var toModule = function (code, includeHelpers) {
 
-    template.onerror = function (e) {
-        throw e;
-    };
+	    template.onerror = function (e) {
+	        throw e;
+	    };
 
-    var render = template.compile(code);
-    var prototype = render.prototype;
+	    var render = template.compile(code);
+	    var prototype = render.prototype;
 
-    render = render.toString()
-    .replace(/^function\s+(anonymous)/, 'function');
-
-
-
-    // 提取include模板
-    // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
-    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
-    var SLASH_RE = /\\\\/g
-
-    function parseDependencies(code) {
-      var ret = [];
-	  var uniq = {};
-
-      code.replace(SLASH_RE, "")
-          .replace(REQUIRE_RE, function(m, m1, m2) {
-            if (m2 && !uniq.hasOwnProperty(m2)) {
-              ret.push(m2);
-			  uniq[m2] = true;
-            }
-          })
-
-      return ret
-    };
-
-    var dependencies = [];
-    parseDependencies(render).forEach(function (id) {
-        dependencies.push('\'' + id + '\': ' + 'require(\'' + id + '\')');
-    });
-    var isDependencies = dependencies.length;
-    dependencies = '{' + dependencies.join(',') + '}';
+	    render = render.toString()
+	    .replace(/^function\s+(anonymous)/, 'function');
 
 
-    // 输出辅助方法
-    var helpers;
 
-    if (includeHelpers) {
-    	includeHelpers = includeHelpers.replace(/\.js$/, '');
-        helpers = 'require(\'' + includeHelpers + '\')';
-    } else {
-        helpers = [];
-        for (var name in prototype) {
-            if (name !== '$render') {
-                helpers.push('\'' + name + '\': ' + prototype[name].toString());
-            }
-        }
-        helpers = '{' + helpers.join(',') + '}';
-    }
+	    // 提取include模板
+	    // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
+	    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
+	    var SLASH_RE = /\\\\/g
 
+	    function parseDependencies(code) {
+	      var ret = [];
+		  var uniq = {};
 
-    code = 'define(function (require) {\n'
-         +      (isDependencies ? 'var dependencies = ' + dependencies + ';' : '')
-         +      'var helpers = ' + helpers + ';\n'
-         +      (isDependencies ? 'var $render = function (id, data) {'
-         +          'return dependencies[id](data);'
-         +      '};' : '')
-         +      'var Render = ' + render  + ';\n'
-         +      'Render.prototype = helpers;'
-         +      'return function (data) {\n'
-         +          (isDependencies ? 'helpers.$render = $render;' : '')
-         +          'return new Render(data) + \'\';'
-         +      '};\n'
-         + '});';
-    
-    
-    return code;
-};
+	      code.replace(SLASH_RE, "")
+	          .replace(REQUIRE_RE, function(m, m1, m2) {
+	            if (m2 && !uniq.hasOwnProperty(m2)) {
+	              ret.push(m2);
+				  uniq[m2] = true;
+	            }
+	          })
+
+	      return ret
+	    };
+
+	    var dependencies = [];
+	    parseDependencies(render).forEach(function (id) {
+	        dependencies.push('\'' + id + '\': ' + 'require(\'' + id + '\')');
+	    });
+	    var isDependencies = dependencies.length;
+	    dependencies = '{' + dependencies.join(',') + '}';
 
 
-// 格式化js
-var beautify = function (code) {
-    
-    if (typeof js_beautify !== 'undefined') {
-        var config = {
-            indent_size: 4,
-            indent_char: ' ',
-            preserve_newlines: true,
-            braces_on_own_line: false,
-            keep_array_indentation: false,
-            space_after_anon_function: true
-        };
-        code = js_beautify(code, config);
-    }
-    return code;
-};
+	    // 输出辅助方法
+	    var helpers;
+
+	    if (includeHelpers) {
+	    	includeHelpers = includeHelpers.replace(/\\/g, '/').replace(/\.js$/, '');
+	        helpers = 'require(\'' + includeHelpers + '\')';
+	    } else {
+	        helpers = [];
+	        for (var name in prototype) {
+	            if (name !== '$render') {
+	                helpers.push('\'' + name + '\': ' + prototype[name].toString());
+	            }
+	        }
+	        helpers = '{' + helpers.join(',') + '}';
+	    }
 
 
-return function (source, includeHelpers) {
-    var amd = toModule(source, includeHelpers);
-    return beautify(amd);
-}
+	    code = 'define(function (require) {\n'
+	         +      (isDependencies ? 'var dependencies = ' + dependencies + ';' : '')
+	         +      'var helpers = ' + helpers + ';\n'
+	         +      (isDependencies ? 'var $render = function (id, data) {'
+	         +          'return dependencies[id](data);'
+	         +      '};' : '')
+	         +      'var Render = ' + render  + ';\n'
+	         +      'Render.prototype = helpers;'
+	         +      'return function (data) {\n'
+	         +          (isDependencies ? 'helpers.$render = $render;' : '')
+	         +          'return new Render(data) + \'\';'
+	         +      '};\n'
+	         + '});';
+	    
+	    
+	    return code;
+	};
+
+
+	// 格式化js
+	var beautify = function (code) {
+			
+		if (typeof js_beautify !== 'undefined') {
+			var config = {
+				indent_size: 4,
+				indent_char: ' ',
+				preserve_newlines: true,
+				braces_on_own_line: false,
+				keep_array_indentation: false,
+				space_after_anon_function: true
+			};
+			code = typeof js_beautify === 'function'
+			? js_beautify(code, config)
+			: js_beautify.js_beautify(code, config);
+		}
+		return code;
+	};
+
+
+	return function (source, includeHelpers) {
+	    var amd = toModule(source, includeHelpers);
+	    return beautify(amd);
+	}
 
 })();
 
@@ -401,9 +400,9 @@ if (/^\./.test($path)) {
 }
 
 log('配置信息：');
+log('$path = ' + $path);
 log('$charset = ' + $charset);
 log('$cloneHelpers = ' + $cloneHelpers);
-log('$path = ' + $path);
 log('-----------------------');
 
 
@@ -425,10 +424,14 @@ list.forEach(function (path, index) {
 
 
 
+var helpersName;
+
 // 把辅助方法输出为独立的文件
-if (!$cloneHelpers) {
+!$cloneHelpers && (function(){
+	
+	helpersName = '$helpers.js';
+
     var helpers = [];
-    var helpersName = '$helpers.js';
     var path = $path + helpersName;
     for (var name in template.prototype) {
         if (name !== '$render') {
@@ -450,12 +453,15 @@ if (!$cloneHelpers) {
             keep_array_indentation: false,
             space_after_anon_function: true
         };
-        module = js_beautify(module, config);
+		module = typeof js_beautify === 'function'
+		? js_beautify(module, config)
+		: js_beautify.js_beautify(module, config);
     }
 
-	
+
 	OS.file.write(path, module, $charset);
-}
+
+})();
 
 
 
