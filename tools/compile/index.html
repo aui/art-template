@@ -344,7 +344,7 @@ var $cloneHelpers = false;
 // 模板引擎路径
 var template = require('../../template.js');
 
-// 模板简单语法支持。不使用无请注释此行
+// 模板简单语法支持。不使用请注释此行
 // require('../../extensions/template-syntax.js');
 
 // js格式化工具路径
@@ -363,15 +363,9 @@ var js_beautify = require('./lib/beautify.js');
 
 <p><code>&lt;%include(path)%&gt;</code> 支持动态引入子模板，为了让编译工具能够进行静态分析，需要如下约定：</p>
 
-<p>一、include 的子模板无需后缀名。</p>
+<p>一、include 的子模板无需后缀名</p>
 
-<p>二、相对路径必须是<code>.</code>开头，例如：</p>
-
-<pre><code>&lt;%include('./inc/header')%&gt;
-&lt;%include('../../login')%&gt;
-</code></pre>
-
-<p>三、<code>path</code> 参数不能够进行动态拼装。</p>
+<p>二、<code>path</code> 参数不能够进行动态拼装</p>
 
 <p>错误的写法：</p>
 

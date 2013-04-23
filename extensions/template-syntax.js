@@ -2,7 +2,6 @@
  * artTemplate - Syntax Extensions
  * https://github.com/aui/artTemplate
  * Released under the MIT, BSD, and GPL Licenses
- * Email: 1987.tangbin@gmail.com
  */
  
 (function (exports) {

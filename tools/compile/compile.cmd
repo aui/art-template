@@ -1,9 +1,8 @@
 @if (0===0) @end/*
 :: ----------------------------------------------------------
-:: artTemplate - Compile Tools v1.0 beta5
+:: artTemplate - Compile Tools[CMD] v1.0
 :: https://github.com/aui/artTemplate
 :: Released under the MIT, BSD, and GPL Licenses
-:: Email: 1987.tangbin@gmail.com
 :: ----------------------------------------------------------
 
 @echo off
@@ -27,7 +26,7 @@ var $cloneHelpers = false;
 // 模板引擎路径
 var template = require('../../template.js');
 
-// 模板简单语法支持。不使用无请注释此行
+// 模板简单语法支持。不使用请注释此行
 // require('../../extensions/template-syntax.js');
 
 // js格式化工具路径
@@ -259,54 +258,69 @@ String.prototype.trim = (function() {
 
 
 /*!
- * 模板编译器核心程序
- * @see     https://github.com/aui/artTemplate
+ * 模板编译器
  * @param   {String}    模板
- * @param   {String}    外部辅助方法（可选参数，可在此指定外部辅助方法模块名称）
+ * @param   {String}    外部辅助方法路径（若不定义则会把辅助方法复制后编译到函数内）
  * @return  {String}    编译好的模板
  */
-var compileTemplate = (function () {
+var compiler = (function () {
 
 	template.isCompress = true;
 
+
+    // 提取include模板
+    // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
+    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
+    var SLASH_RE = /\\\\/g
+
+    var parseDependencies = function (code) {
+      var ret = [];
+	  var uniq = {};
+
+      code.replace(SLASH_RE, "")
+          .replace(REQUIRE_RE, function(m, m1, m2) {
+            if (m2 && !uniq.hasOwnProperty(m2)) {
+              ret.push(m2);
+			  uniq[m2] = true;
+            }
+          })
+
+      return ret
+    };
+
+
 	// 包装成RequireJS、SeaJS模块
-	var toModule = function (code, includeHelpers) {
+	var toModule = function (code, helpersPath) {
 
 	    template.onerror = function (e) {
 	        throw e;
 	    };
 
-	    var render = template.compile(code);
-	    var prototype = render.prototype;
+	    var render = template.compile(code); // 使用artTemplate编译模板
+	    
 
 	    render = render.toString()
 	    .replace(/^function\s+(anonymous)/, 'function');
 
 
+	    // SeaJS与RequireJS规范，相对路径前面需要带“.”
+	    var fixPath = function (path) {
+	    	path = path
+	    	.replace(/\\/g, '/')
+	    	.replace(/\.js$/, '');
 
-	    // 提取include模板
-	    // @see https://github.com/seajs/seajs/blob/master/src/util-deps.js
-	    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*include|(?:^|[^$])\binclude\s*\(\s*(["'])(.+?)\1\s*(,\s*(.+?)\s*)?\)/g; //"
-	    var SLASH_RE = /\\\\/g
-
-	    function parseDependencies(code) {
-	      var ret = [];
-		  var uniq = {};
-
-	      code.replace(SLASH_RE, "")
-	          .replace(REQUIRE_RE, function(m, m1, m2) {
-	            if (m2 && !uniq.hasOwnProperty(m2)) {
-	              ret.push(m2);
-				  uniq[m2] = true;
-	            }
-	          })
-
-	      return ret
+			if (!/^(\.)*?\//.test(path)) {
+				path = './' + path;
+			}
+			return path;
 	    };
 
+
 	    var dependencies = [];
-	    parseDependencies(render).forEach(function (id) {
-	        dependencies.push('\'' + id + '\': ' + 'require(\'' + id + '\')');
+	    parseDependencies(render).forEach(function (path) {
+	        dependencies.push(
+	        	'\'' + path + '\': ' + 'require(\'' + fixPath(path) + '\')'
+	        );
 	    });
 	    var isDependencies = dependencies.length;
 	    dependencies = '{' + dependencies.join(',') + '}';
@@ -315,41 +329,50 @@ var compileTemplate = (function () {
 	    // 输出辅助方法
 	    var helpers;
 
-	    if (includeHelpers) {
-	    	includeHelpers = includeHelpers.replace(/\\/g, '/').replace(/\.js$/, '');
-	        helpers = 'require(\'' + includeHelpers + '\')';
+	    if (helpersPath) {
+
+	    	helpersPath = fixPath(helpersPath);
+
+	        helpers = 'require(\'' + helpersPath + '\')';
+
 	    } else {
+
 	        helpers = [];
+	        var prototype = render.prototype;
+
 	        for (var name in prototype) {
 	            if (name !== '$render') {
-	                helpers.push('\'' + name + '\': ' + prototype[name].toString());
+	                helpers.push(
+	                	'\'' + name + '\': ' + prototype[name].toString()
+	                );
 	            }
 	        }
 	        helpers = '{' + helpers.join(',') + '}';
 	    }
 
 
-	    code = 'define(function (require) {\n'
-	         +      (isDependencies ? 'var dependencies = ' + dependencies + ';' : '')
-	         +      'var helpers = ' + helpers + ';\n'
-	         +      (isDependencies ? 'var $render = function (id, data) {'
-	         +          'return dependencies[id](data);'
-	         +      '};' : '')
-	         +      'var Render = ' + render  + ';\n'
-	         +      'Render.prototype = helpers;'
-	         +      'return function (data) {\n'
-	         +          (isDependencies ? 'helpers.$render = $render;' : '')
-	         +          'return new Render(data) + \'\';'
-	         +      '};\n'
-	         + '});';
+	    code =
+	    'define(function(require) {'
+        +      (isDependencies ? 'var dependencies=' + dependencies + ';' : '')
+        +      'var helpers = ' + helpers + ';'
+        +      (isDependencies ? 'var $render=function(id,data){'
+        +          'return dependencies[id](data);'
+        +      '};' : '')
+        +      'var Render=' + render  + ';'
+        +      'Render.prototype=helpers;'
+        +      'return function(data){'
+        +          (isDependencies ? 'helpers.$render=$render;' : '')
+        +          'return new Render(data) + \'\';'
+        +      '}'
+        + '});';
 	    
 	    
 	    return code;
 	};
 
 
-	// 格式化js
-	var beautify = function (code) {
+	// 外部JS格式化工具
+	var format = function (code) {
 			
 		if (typeof js_beautify !== 'undefined') {
 			var config = {
@@ -368,9 +391,9 @@ var compileTemplate = (function () {
 	};
 
 
-	return function (source, includeHelpers) {
-	    var amd = toModule(source, includeHelpers);
-	    return beautify(amd);
+	return function (source, helpersPath) {
+	    var code = toModule(source, helpersPath);
+	    return format(code);
 	}
 
 })();
@@ -399,43 +422,29 @@ if (/^\./.test($path)) {
   $path = realpath((OS.app.getFullName().replace(/[^\/\\]*?$/, '') + $path).replace(/\\/g, '/'));
 }
 
-log('配置信息：');
+
 log('$path = ' + $path);
-log('$charset = ' + $charset);
-log('$cloneHelpers = ' + $cloneHelpers);
 log('-----------------------');
 
 
-var args = OS.app.getArguments(); // 获取使用拖拽方式打开的文件列表
-var list = args.length ? args : OS.file.get($path); // 待处理的文件列表
 
-
-
-list.forEach(function (path, index) {
-    // 把路径 "\" 转换成 "/"
-    path = list[index] = path.replace(/\\/g, '/');
-    
-    // 合法性校验
-    if (path.indexOf($path) !== 0) {
-        error('警告：' + path + '不在模板目录中，可能导致路径错误');
-    }
-});
-
-
-
-
-var helpersName;
 
 // 把辅助方法输出为独立的文件
-!$cloneHelpers && (function(){
-	
-	helpersName = '$helpers.js';
+var writeHelpers = function () {
+
+	if ($cloneHelpers) {
+		return;
+	}
+
+	var helpersName = '$helpers.js';
 
     var helpers = [];
     var path = $path + helpersName;
-    for (var name in template.prototype) {
+    var prototype = template.prototype;
+
+    for (var name in prototype) {
         if (name !== '$render') {
-            helpers.push('\'' + name + '\': ' + template.prototype[name].toString());
+            helpers.push('\'' + name + '\': ' + prototype[name].toString());
         }
     }
     helpers = '{\r\n' + helpers.join(',\r\n') + '}';
@@ -461,12 +470,28 @@ var helpersName;
 
 	OS.file.write(path, module, $charset);
 
-})();
+	return helpersName;
+};
 
 
 
+var helpersName = writeHelpers();
+var args = OS.app.getArguments(); // 获取使用拖拽方式打开的文件列表
+var list = args.length ? args : OS.file.get($path); // 待处理的文件列表
 
-// 编译所有模板
+
+list.forEach(function (path, index) {
+    // 把路径 "\" 转换成 "/"
+    path = list[index] = path.replace(/\\/g, '/');
+    
+    // 合法性校验
+    if (path.indexOf($path) !== 0) {
+        error('警告：' + path + '不在模板目录中，可能导致路径错误');
+    }
+});
+
+
+// 编译队列中的模板
 list.forEach(function (path) {
 	var rname = /\.(html|htm)$/i;
 	if (!rname.test(path)) {
@@ -490,7 +515,7 @@ list.forEach(function (path) {
 	log('编译: ' + path);
 
 	var source = OS.file.read(path, $charset);
-	var code = compileTemplate(source, name);
+	var code = compiler(source, name);
 	var target = path.replace(rname, '.js');
 
 	OS.file.write(target, code, $charset);
@@ -499,7 +524,7 @@ list.forEach(function (path) {
 });
 
 log('-----------------------');
-log('编译结束');
+log('结束');
 
 OS.app.quit();
 

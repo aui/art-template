@@ -42,7 +42,7 @@ NodeJS版本：``./compile.js``
 	// 模板引擎路径
 	var template = require('../../template.js');
 
-	// 模板简单语法支持。不使用无请注释此行
+	// 模板简单语法支持。不使用请注释此行
 	// require('../../extensions/template-syntax.js');
 
 	// js格式化工具路径
@@ -58,14 +58,10 @@ NodeJS版本：``./compile.js``
 
 ``<%include(path)%>`` 支持动态引入子模板，为了让编译工具能够进行静态分析，需要如下约定：
 
-一、include 的子模板无需后缀名。
+一、include 的子模板无需后缀名
 
-二、相对路径必须是``.``开头，例如：
 	
-	<%include('./inc/header')%>
-	<%include('../../login')%>
-	
-三、``path`` 参数不能够进行动态拼装。
+二、``path`` 参数不能够进行动态拼装
 
 错误的写法：
 
