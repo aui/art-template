@@ -26,9 +26,6 @@ var $cloneHelpers = false;
 // 模板引擎路径
 var template = require('../../template.js');
 
-// 模板简单语法支持。不使用请注释此行
-// require('../../extensions/template-syntax.js');
-
 // js格式化工具路径
 var js_beautify = require('./lib/beautify.js');
 

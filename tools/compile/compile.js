@@ -12,15 +12,11 @@ var $path = './demo/templates/';
 // 设置待处理的模版编码
 var $charset = 'UTF-8';
 
-// 设置辅助方法编译方式：
-// 为true则克隆到每个编译后的文件中，为false则单独输出到文件
+// 设置辅助方法编译方式：为true则克隆到每个编译后的文件中，为false则单独输出到文件
 var $cloneHelpers = false;
 
 // 模板引擎路径
 var template = require('../../template.js');
-
-// 模板简单语法支持。不使用请注释此行
-// require('../../extensions/template-syntax.js');
 
 // js格式化工具路径
 var js_beautify = require('./lib/beautify.js');
@@ -270,9 +266,15 @@ var compiler = (function () {
 
 
 	// 外部JS格式化工具
-	var format = function (code) {
-			
+	var format = function(code) {
+
 		if (typeof js_beautify !== 'undefined') {
+
+			var js_beautify =
+			typeof js_beautify === 'function'
+			? js_beautify
+			: js_beautify.js_beautify;
+
 			var config = {
 				indent_size: 4,
 				indent_char: ' ',
@@ -281,13 +283,11 @@ var compiler = (function () {
 				keep_array_indentation: false,
 				space_after_anon_function: true
 			};
-			code = typeof js_beautify === 'function'
-			? js_beautify(code, config)
-			: js_beautify.js_beautify(code, config);
+
+			code = js_beautify(code, config);
 		}
 		return code;
 	};
-
 
 	return function (source, helpersPath) {
 	    var code = toModule(source, helpersPath);
@@ -337,35 +337,46 @@ var writeHelpers = function () {
 
 	var helpersName = '$helpers.js';
 
-    var helpers = [];
-    var path = $path + helpersName;
-    var prototype = template.prototype;
+	var helpers = [];
+	var path = $path + helpersName;
+	var prototype = template.prototype;
 
-    for (var name in prototype) {
-        if (name !== '$render') {
-            helpers.push('\'' + name + '\': ' + prototype[name].toString());
-        }
-    }
-    helpers = '{\r\n' + helpers.join(',\r\n') + '}';
+	for (var name in prototype) {
+		if (name !== '$render') {
+			helpers.push('\'' + name + '\': ' + prototype[name].toString());
+		}
+	}
+	helpers = '{\r\n' + helpers.join(',\r\n') + '}';
 
     var module = 'define(function () {'
     +	'return ' + helpers
 	+ '});'
 
-    if (typeof js_beautify !== 'undefined') {
-        var config = {
-            indent_size: 4,
-            indent_char: ' ',
-            preserve_newlines: true,
-            braces_on_own_line: false,
-            keep_array_indentation: false,
-            space_after_anon_function: true
-        };
-		module = typeof js_beautify === 'function'
-		? js_beautify(module, config)
-		: js_beautify.js_beautify(module, config);
-    }
+	// 外部JS格式化工具
+	var format = function(code) {
 
+		if (typeof js_beautify !== 'undefined') {
+
+			var js_beautify =
+			typeof js_beautify === 'function'
+			? js_beautify
+			: js_beautify.js_beautify;
+
+			var config = {
+				indent_size: 4,
+				indent_char: ' ',
+				preserve_newlines: true,
+				braces_on_own_line: false,
+				keep_array_indentation: false,
+				space_after_anon_function: true
+			};
+
+			code = js_beautify(code, config);
+		}
+		return code;
+	};
+
+	module = format(module);
 
 	OS.file.write(path, module, $charset);
 

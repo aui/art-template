@@ -35,24 +35,19 @@ NodeJS版本：``./compile.js``
 	// 设置待处理的模版编码
 	var $charset = 'UTF-8';
 
-	// 设置辅助方法编译方式：
-	// 为true则克隆到每个编译后的文件中，为false则单独输出到文件
+	// 设置辅助方法编译方式：为true则克隆到每个编译后的文件中，为false则单独输出到文件
 	var $cloneHelpers = false;
 
 	// 模板引擎路径
 	var template = require('../../template.js');
 
-	// 模板简单语法支持。不使用请注释此行
-	// require('../../extensions/template-syntax.js');
-
 	// js格式化工具路径
 	var js_beautify = require('./lib/beautify.js');
 	
-### 3. 运行
+###	3. 运行
 
 1.	windows批处理版本可以双击直接运行。拖拽模板到 ``compile.cmd`` 文件上可单独编译当前模板
 2.	NodeJS版本直接调用``node compile.js``即可运行。若附加参数可指定编译单个模板，如``node compile.js demo/templates/index.html``
-	
 
 ## 模板include语句规范
 
