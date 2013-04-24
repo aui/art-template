@@ -147,7 +147,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 编译后的模板不再依赖模板引擎，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化
 
-<https://github.com/aui/atc>
+项目主页：<https://github.com/aui/atc>
 
 ### 抽取工具
 
