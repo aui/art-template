@@ -99,7 +99,7 @@ exports.keywords = {
 
 
 exports.helper('$each', function (data, callback) {
-
+    
     var isArray = Array.isArray || function (obj) {
         return Object.prototype.toString.call(obj) === '[object Array]';
     };
@@ -109,7 +109,7 @@ exports.helper('$each', function (data, callback) {
             callback.call(data, data[i], i, data);
         }
     } else {
-        for (var i in data) {
+        for (i in data) {
             callback.call(data, data[i], i);
         }
     }

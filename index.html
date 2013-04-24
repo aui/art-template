@@ -299,13 +299,15 @@ pre {
 <body>
 <h1>artTemplate</h1>
 
+<h6>新一代 javascript 模板引擎</h6>
+
 <hr />
 
 <p>artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。</p>
 
 <p>引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。</p>
 
-<p>提供模板编译工具，可以把模板编译成不依赖引擎的 js 文件，并且支持<code>include</code>语句，这样前端模板可以像后端模板一样按文件存放、按需加载，编译后的 js 文件支持 RequireJS、SeaJS 的合并工具。</p>
+<p>独有<a href="http://aui.github.com/artTemplate/tools/compile/">模板编译工具</a>，它能把前端模板编译成不依赖模板引擎运行的JS文件，让前端模板可以突破浏览器的限制，实现像后端模板一样按文件与目录的方式组织、按需加载、<code>include</code>嵌套等。</p>
 
 <p>这一切都在 2kb(gzip) 中实现！</p>
 
@@ -481,6 +483,14 @@ template.closeTag = "]--&gt;";
 <p>在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。</p></blockquote>
 
 <h2>更新记录</h2>
+
+<h3>v2.0 release</h3>
+
+<ol>
+<li>编译工具增加NodeJS跨平台版本。感谢 @toobug</li>
+<li>增加<code>RequireJS</code>加载编译后的模板的示例</li>
+</ol>
+
 
 <h3>v2.0 beta5</h3>
 

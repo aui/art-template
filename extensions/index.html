@@ -293,23 +293,25 @@ pre {
 	}
 }
 </style>
-<title>artTemplate 自定义语法扩展</title>
+<title>artTemplate 简单语法扩展</title>
 
 </head>
 <body>
-<h1>artTemplate 自定义语法扩展</h1>
+<h1>artTemplate 简单语法扩展</h1>
+
+<h6>让模板语法简单优雅</h6>
 
 <hr />
 
 <h2>安装扩展</h2>
 
-<p>只需要把 template-syntax.js 合并到 template.js 即完成自定义语法扩展安装。</p>
+<p>只需要把 extensions/template-syntax.js <strong>合并</strong>到 template.js 即完成自定义语法扩展安装。</p>
 
 <h2>表达式</h2>
 
 <p><code>{</code> 与 <code>}</code> 符号包裹起来的语句则为模板的逻辑表达式。</p>
 
-<h2>输出表达式</h2>
+<h3>输出表达式</h3>
 
 <p>对内容编码输出：</p>
 
@@ -323,7 +325,7 @@ pre {
 <pre><code>{echo content}
 </code></pre>
 
-<h2>条件表达式</h2>
+<h3>条件表达式</h3>
 
 <pre><code>{if admin}
     {content}
@@ -336,7 +338,7 @@ pre {
 {/if}
 </code></pre>
 
-<h2>遍历表达式</h2>
+<h3>遍历表达式</h3>
 
 <p>无论数组或者对象都可以用 each 进行遍历。</p>
 
@@ -352,7 +354,7 @@ pre {
 {/each}
 </code></pre>
 
-<h2>模板包含表达式</h2>
+<h3>模板包含表达式</h3>
 
 <p>用于嵌入子模板。</p>
 

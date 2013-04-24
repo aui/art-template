@@ -1,11 +1,10 @@
 # artTemplate
+###### 新一代 javascript 模板引擎
 =================
 
 artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
 
 引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
-
-独有[模板编译工具](http://aui.github.com/artTemplate/tools/compile/)，它能把前端模板编译成不依赖模板引擎运行的JS文件，让前端模板可以突破浏览器的限制，实现像后端模板一样按文件与目录的方式组织、按需加载、``include``嵌套等。
 
 这一切都在 2kb(gzip) 中实现！
 
@@ -142,17 +141,17 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 ## 自动化工具
 
-### 编译工具
+### 预编译工具
 
-``./tools/compile``
+使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include语句等优秀的特性。
 
-可把模版编译成不依赖模版引擎的js文件，这样前端模版也可以向后端模版一样按文件放置，并且支持include等语句。
+编译后的模板不再依赖模板引擎，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化
 
-编译后的模板可以通过RequireJS、SeaJS等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前优化。
+<https://github.com/aui/atc>
 
 ### 抽取工具
 
-``./tools/combine/``
+``./tools/combine.html(http://aui.github.com/artTemplate/tools/combine.html)``
 
 可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。
 
@@ -177,8 +176,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 ### v2.0 release
 
-1.	编译工具增加NodeJS跨平台版本。感谢 @toobug
-2.	增加``RequireJS``加载编译后的模板的示例
+1.	编译工具更名为 atc，成为 artTemplate 的子项目单独维护：<https://github.com/aui/atc>
 
 ### v2.0 beta5
 
