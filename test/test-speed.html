@@ -15,9 +15,10 @@
 <script src="js/template.js"></script>
 <script src="js/mustache.js"></script>
 <script src="js/handlebars.js"></script>
-<script src="js/baidu.template.js"></script>
+<script src="js/baiduTemplate.js"></script>
 <script src="js/jquery.tmpl.js"></script>
 <script src="js/easytemplate.js"></script>
+<script src="js/underscore.js"></script>
 
 
 <script>
@@ -47,6 +48,7 @@ var testList = [
     {
         name: 'artTemplate',
         tester: function () {
+            template.isEscape = false;
             var source = document.getElementById('template').innerHTML;
             var fn = template.compile(source);
             for (var i = 0; i < number; i ++) {
@@ -111,11 +113,23 @@ var testList = [
             }
         }
     },
+
+    {
+        name: 'underscoreTemplate',
+        tester: function () {
+            var source = document.getElementById('underscoreTemplate').innerHTML;
+            var fn = _.template(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
     
     {
         name: 'baiduTemplate',
         tester: function () {
             var bt=baidu.template;
+            bt.ESCAPE = false;
             for (var i = 0; i < number; i ++) {
                 bt('baidu-template', data);
             }
@@ -184,7 +198,7 @@ var startTest = function () {
         },
 
         title: {
-            text: 'JavaScript 模板引擎负荷测试 [No Escape]'
+            text: 'JavaScript 模板引擎负荷测试'
         },
 
         subtitle: {
@@ -258,7 +272,7 @@ var startTest = function () {
         
         
         if (!testList.length) {
-            log('测试已完成');
+            log('测试已完成，请不要迷恋速度');
             return;
         }
 
@@ -287,7 +301,7 @@ var startTest = function () {
 <script id="template" type="text/tmpl">
 <ul>
 	<% for (i = 0, l = list.length; i < l; i ++) { %>
-		<li><%==list[i].index%>. 用户: <%==list[i].user%>/ 网站：<%==list[i].site%></li>
+		<li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
 	<% } %>
 </ul>
 </script>
@@ -386,11 +400,20 @@ var startTest = function () {
   <& } &>
 </ul>
 </script>
+
+<!-- underscore 的模板 -->
+<script id="underscoreTemplate" type="text/tmpl">
+<ul>
+    <% for (var i = 0, l = list.length; i < l; i ++) { %>
+        <li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
+    <% } %>
+</ul>
+</script>
 </head>
 
 <body>
 <h1>引擎渲染速度竞赛</h1>
-<p><strong><script>document.write(length)</script></strong> 条数据 × <strong><script>document.write(number)</script></strong> 次渲染测试 [No Escape]</p>
+<p><strong><script>document.write(length)</script></strong> 条数据 × <strong><script>document.write(number)</script></strong> 次渲染测试 [isEscape:false, isCache:true]</p>
 <p><em>建议在拥有 v8 javascript 引擎的 chrome 浏览器上进行测试，避免浏览器停止响应</em></p>
 <p><button id="button-test" onclick="this.disabled=true;startTest()" style="padding: 5px;">开始测试&raquo;</button> <span id="log" style="font-size:12px"><script>for (var i = 0; i < testList.length; i ++) {document.write(testList[i].name + '; ')}</script></span></p>
 <div id="container" style="min-width: 400px; margin: 0 auto"></div>
