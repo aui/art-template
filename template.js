@@ -333,7 +333,8 @@ var _compile = (function () {
         code = code
         .replace(filter, ',')
         .replace(/[^\w\$]+/g, ',')
-        .replace(/^,|^\d+|,\d+|,$/g, '');
+        .replace(/^\d+|,\d+|^,|,$/g, '')
+        .replace(/^,*|,*$/, '');
 
         return code ? code.split(',') : []; 
     };
