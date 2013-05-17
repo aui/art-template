@@ -25,6 +25,9 @@
 <script id="helper" type="text/html"><%=test (value)%></script>
 <script id="helper2" type="text/html"><%==test (value)%></script>
 <script id="helper3" type="text/html"><%==test (value)%></script>
+<script id="parser" type="text/html">
+<%if(0===a) {}%><%1===5?2:3%><%%>
+</script>
 
 <script>
 if (!window.console) {
@@ -154,6 +157,11 @@ test('配置功能', function () {
 	template.isEscape = true;
 	template.openTag = '<%';
 	template.closeTag = '%>';
+});
+
+test('语法', function () {
+	var value = template('parser', {});
+	equal(value, '');
 });
 </script>
 </head>

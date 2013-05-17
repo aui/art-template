@@ -26,7 +26,7 @@ var template = function (id, content) {
 
 
 'use strict';
-exports.version = '2.0.0'; 
+exports.version = '2.0.1'; 
 exports.openTag = '<%';     // 设置逻辑语法开始标签
 exports.closeTag = '%>';    // 设置逻辑语法结束标签
 exports.isEscape = true;    // HTML字符编码输出开关
@@ -291,7 +291,8 @@ var _compile = (function () {
     };
 
 
-    var keyWords =
+    // 静态分析模板变量
+    var KEYWORDS =
         // 关键字
         'break,case,catch,continue,debugger,default,delete,do,else,false'
         + ',finally,for,function,if,in,instanceof,new,null,return,switch,this'
@@ -307,35 +308,23 @@ var _compile = (function () {
         + ',arguments,let,yield'
 
         + ',undefined';
-
-    var filter = new RegExp([
-
-        // 注释
-        "/\\*(.|\n)*?\\*/|//[^\n]*\n|//[^\n]*$",
-
-        // 字符串
-        "'[^']*'|\"[^\"]*\"",
-
-        // 方法
-        "\\.[\s\t\n]*[\\$\\w]+",
-
-        // 关键字
-        "\\b" + keyWords.replace(/,/g, '\\b|\\b') + "\\b"
-
-
-    ].join('|'), 'g');
-
-
-
-    // 提取js源码中所有变量
+    var REMOVE_RE = /\/\*(?:.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|'[^']*'|"[^"]*"|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
+    var SPLIT_RE = /[^\w$]+/g;
+    var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
+    var NUMBER_RE = /\b\d[^,]*/g;
+    var BOUNDARY_RE = /^,+|,+$/g;
     var getVariable = function (code) {
 
         code = code
-        .replace(filter, ',')
-        .replace(/[^\w\$]+/g, ',')
-        .replace(/^,|^\d+|,\d+|,$/g, '');
+        .replace(REMOVE_RE, '')
+        .replace(SPLIT_RE, ',')
+        .replace(KEYWORDS_RE, '')
+        .replace(NUMBER_RE, '')
+        .replace(BOUNDARY_RE, '');
 
-        return code ? code.split(',') : []; 
+        code = code ? code.split(/,+/) : [];
+
+        return code;
     };
 
 
