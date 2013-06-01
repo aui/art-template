@@ -26,7 +26,7 @@ var template = function (id, content) {
 
 
 'use strict';
-exports.version = '2.0.1'; 
+exports.version = '2.0.2'; 
 exports.openTag = '<%';     // 设置逻辑语法开始标签
 exports.closeTag = '%>';    // 设置逻辑语法结束标签
 exports.isEscape = true;    // HTML字符编码输出开关
@@ -63,12 +63,9 @@ exports.render = function (id, data) {
 
 /**
  * 编译模板
- * 2012-6-6:
- * define 方法名改为 compile,
- * 与 Node Express 保持一致,
- * 感谢 TooBug 提供帮助!
+ * 2012-6-6 @TooBug: define 方法名改为 compile，与 Node Express 保持一致
  * @name    template.compile
- * @param   {String}    模板ID (可选)
+ * @param   {String}    模板ID (可选，用作缓存索引)
  * @param   {String}    模板字符串
  * @return  {Function}  渲染方法
  */
@@ -269,26 +266,27 @@ var _compile = (function () {
 
             }
 
-        }
-    };
-
-
-    var arrayforEach = Array.prototype.forEach || function (block, thisObject) {
-        var len = this.length >>> 0;
-        
-        for (var i = 0; i < len; i++) {
-            if (i in this) {
-                block.call(thisObject, this[i], i, this);
+        },
+        $each: function (data, callback) {
+            var isArray = Array.isArray || function (obj) {
+                return Object.prototype.toString.call(obj) === '[object Array]';
+            };
+             
+            if (isArray(data)) {
+                for (var i = 0, len = data.length; i < len; i++) {
+                    callback.call(data, data[i], i, data);
+                }
+            } else {
+                for (i in data) {
+                    callback.call(data, data[i], i);
+                }
             }
         }
-        
     };
 
 
     // 数组迭代
-    var forEach = function (array, callback) {
-        arrayforEach.call(array, callback);
-    };
+    var forEach = exports.prototype.$each;
 
 
     // 静态分析模板变量
@@ -352,13 +350,13 @@ var _compile = (function () {
         : ["$out=[];", "$out.push(", ");", "$out.join('')"];
 
         var concat = isNewEngine
-            ? "if(content!==undefined){$out+=content;return content}"
+            ? "if(content!==undefined){$out+=content;return content;}"
             : "$out.push(content);";
               
         var print = "function(content){" + concat + "}";
 
         var include = "function(id,data){"
-        +     "if(data===undefined){data=$data}"
+        +     "data=data||$data;"
         +     "var content=$helpers.$render(id,data);"
         +     concat
         + "}";
@@ -405,7 +403,7 @@ var _compile = (function () {
         
         code = "'use strict';"
         + variables + replaces[0] + code
-        + 'return new String(' + replaces[3] + ')';
+        + 'return new String(' + replaces[3] + ');';
         
         
         try {
@@ -573,8 +571,8 @@ var _compile = (function () {
 
 // RequireJS || SeaJS
 if (typeof define === 'function') {
-    define(function(require, exports, module) {
-        module.exports = template; 
+    define(function() {
+        return template; 
     });
 // NodeJS
 } else if (typeof exports !== 'undefined') {

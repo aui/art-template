@@ -8,14 +8,14 @@
 
 ## 表达式
 
-``{`` 与 ``}`` 符号包裹起来的语句则为模板的逻辑表达式。
+``{{`` 与 ``}}`` 符号包裹起来的语句则为模板的逻辑表达式。
 
 ### 输出表达式
 
 对内容编码输出：
 
 
-    {content}
+    {{content}}
 
 
 编码可以防止数据中含有 HTML 字符串，避免引起 XSS 攻击。
@@ -23,21 +23,21 @@
 不编码输出：
 
 
-    {echo content}
+    {{echo content}}
 
 
 ### 条件表达式
 
 
-    {if admin}
-    	{content}
-    {/if}
+    {{if admin}}
+    	{{content}}
+    {{/if}}
     
-    {if user === 'admin'}
-    	{content}
-    {else if user === '007'}
+    {{if user === 'admin'}}
+    	{{content}}
+    {{else if user === '007'}}
     	<strong>hello world</strong>
-    {/if}
+    {{/if}}
 
 
 ### 遍历表达式
@@ -45,17 +45,17 @@
 无论数组或者对象都可以用 each 进行遍历。
 
 
-    {each list}
-    	<li>{$index}. {$value.user}</li>
-    {/each}
+    {{each list}}
+    	<li>{{$index}}. {{$value.user}}</li>
+    {{/each}}
 
 
 其中 list 为要遍历的数据名称, ``$value`` 与 ``$index`` 是系统变量， ``$value`` 表示数据单条内容, ``$index`` 表示索引值，这两个变量也可以自定义：
 
 
-    {each list as value index}
-    	<li>{index}. {value.user}</li>
-    {/each}
+    {{each list as value index}}
+    	<li>{{index}}. {{value.user}}</li>
+    {{/each}}
 
 
 ### 模板包含表达式
@@ -63,13 +63,13 @@
 用于嵌入子模板。
 
 
-    {include 'templateID' data}
+    {{include 'templateID' data}}
 
 
 其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略则默认传入当前模板的数据。
 
 
-    {include 'templateID'}
+    {{include 'templateID'}}
 
 
 ## 辅助方法
@@ -90,16 +90,16 @@
 模板中使用的方式：
 
 
-    {$ubb2html content}
+    {{$ubb2html content}}
 
 
 若辅助方法有多个参数使用一个空格分隔即可：
 
 
-    {helperName args1 args2 args3}
+    {{helperName args1 args2 args3}}
 
 ----------------------------------------------
 
-本文档针对 artTemplate v1.1+ 编写
+本文档针对 artTemplate v2.0.2+ 编写
 
 © cdc.tencent.com

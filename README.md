@@ -2,9 +2,9 @@
 ###### 新一代 javascript 模板引擎
 =================
 
-artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
+artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）。
 
-引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
+引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题（[详情](http://aui.github.io/artTemplate/demo/debug.html)）。
 
 这一切都在 2kb(gzip) 中实现！
 
@@ -61,7 +61,7 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 不转义HTML
 
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用两个``=``号。
+模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``==``。
 
 	<script id="test" type="text/html">
 	<%==value%>
@@ -128,14 +128,14 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示例：
 
-	{if admin}
-    	<h3>{title}</h3>
+	{{if admin}}
+    	<h3>{{title}}</h3>
     	<ul>
-    	    {each list}
-            	<li>{$index + 1}: {$value}</li>
-       		{/each}
+    	    {{each list}}
+            	<li>{{$index + 1}}: {{$value}}</li>
+       		{{/each}}
     	</ul>
-	{/if}
+	{{/if}}
 	
 [详情](http://aui.github.com/artTemplate/extensions/index.html)
 
@@ -151,7 +151,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 ### 抽取工具
 
-``./tools/combine.html(http://aui.github.com/artTemplate/tools/combine.html)``
+[./tools/combine.html](http://aui.github.com/artTemplate/tools/combine.html)
 
 可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。
 
@@ -173,6 +173,11 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 
 ## 更新记录
+
+### v2.0.2
+
+1.	优化自定义语法扩展
+2.	为了最大化兼容，自定义语法扩展默认界定符修改为``{{``与``}}``
 
 ### v2.0.1
 
@@ -206,6 +211,6 @@ Released under the MIT, BSD, and GPL Licenses
 
 ============
 
-[演示例子](http://aui.github.com/artTemplate/demo/index.html) | [性能测试](http://aui.github.com/artTemplate/test/test-speed.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
+[所有演示例子](http://aui.github.com/artTemplate/demo/index.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
 
 © cdc.tencent.com

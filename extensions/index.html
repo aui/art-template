@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <style>
 body {
   font-family: Helvetica, arial, sans-serif;
@@ -309,61 +309,61 @@ pre {
 
 <h2>表达式</h2>
 
-<p><code>{</code> 与 <code>}</code> 符号包裹起来的语句则为模板的逻辑表达式。</p>
+<p><code>{{</code> 与 <code>}}</code> 符号包裹起来的语句则为模板的逻辑表达式。</p>
 
 <h3>输出表达式</h3>
 
 <p>对内容编码输出：</p>
 
-<pre><code>{content}
+<pre><code>{{content}}
 </code></pre>
 
 <p>编码可以防止数据中含有 HTML 字符串，避免引起 XSS 攻击。</p>
 
 <p>不编码输出：</p>
 
-<pre><code>{echo content}
+<pre><code>{{echo content}}
 </code></pre>
 
 <h3>条件表达式</h3>
 
-<pre><code>{if admin}
-    {content}
-{/if}
+<pre><code>{{if admin}}
+    {{content}}
+{{/if}}
 
-{if user === 'admin'}
-    {content}
-{else if user === '007'}
+{{if user === 'admin'}}
+    {{content}}
+{{else if user === '007'}}
     &lt;strong&gt;hello world&lt;/strong&gt;
-{/if}
+{{/if}}
 </code></pre>
 
 <h3>遍历表达式</h3>
 
 <p>无论数组或者对象都可以用 each 进行遍历。</p>
 
-<pre><code>{each list}
-    &lt;li&gt;{$index}. {$value.user}&lt;/li&gt;
-{/each}
+<pre><code>{{each list}}
+    &lt;li&gt;{{$index}}. {{$value.user}}&lt;/li&gt;
+{{/each}}
 </code></pre>
 
 <p>其中 list 为要遍历的数据名称, <code>$value</code> 与 <code>$index</code> 是系统变量， <code>$value</code> 表示数据单条内容, <code>$index</code> 表示索引值，这两个变量也可以自定义：</p>
 
-<pre><code>{each list as value index}
-    &lt;li&gt;{index}. {value.user}&lt;/li&gt;
-{/each}
+<pre><code>{{each list as value index}}
+    &lt;li&gt;{{index}}. {{value.user}}&lt;/li&gt;
+{{/each}}
 </code></pre>
 
 <h3>模板包含表达式</h3>
 
 <p>用于嵌入子模板。</p>
 
-<pre><code>{include 'templateID' data}
+<pre><code>{{include 'templateID' data}}
 </code></pre>
 
 <p>其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略则默认传入当前模板的数据。</p>
 
-<pre><code>{include 'templateID'}
+<pre><code>{{include 'templateID'}}
 </code></pre>
 
 <h2>辅助方法</h2>
@@ -384,17 +384,17 @@ pre {
 
 <p>模板中使用的方式：</p>
 
-<pre><code>{$ubb2html content}
+<pre><code>{{$ubb2html content}}
 </code></pre>
 
 <p>若辅助方法有多个参数使用一个空格分隔即可：</p>
 
-<pre><code>{helperName args1 args2 args3}
+<pre><code>{{helperName args1 args2 args3}}
 </code></pre>
 
 <hr />
 
-<p>本文档针对 artTemplate v1.1+ 编写</p>
+<p>本文档针对 artTemplate v2.0.2+ 编写</p>
 
 <p>© cdc.tencent.com</p>
 </body>
