@@ -137,7 +137,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
     	</ul>
 	{{/if}}
 	
-[详情](http://aui.github.com/artTemplate/extensions/index.html)
+[使用帮助](https://github.com/aui/artTemplate/wiki/自定义语法扩展说明)
 
 ## 自动化工具
 
