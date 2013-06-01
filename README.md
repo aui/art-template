@@ -143,9 +143,9 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 ### 预编译工具
 
-使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include语句等优秀的特性。
+使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include 语句等特性：模板使用者无需关心模板内部的依赖顺序，依赖会自动处理。
 
-编译后的模板不再依赖模板引擎，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化
+编译后的模板不再依赖前端模板引擎与后端，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化，如合并与压缩。
 
 项目主页：<https://github.com/cdc-im/atc>
 
@@ -163,21 +163,20 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 > break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, abstract, boolean, byte, char, class, const, double, enum, export, extends, final, float, goto, implements, import, int, interface, long, native, package, private, protected, public, short, static, super, synchronized, throws, transient, volatile, arguments, let, yield
 
-2、模板禁止读写全局变量，除非给模板定义辅助方法。例如：
+2、模板运行在沙箱中，内部无法访问外部变量，除非给模板定义辅助方法。例如：
 
 	template.helper('Math', Math)
 
-> artTemplate编译后的模板将运行在沙箱内，模板语句无法读写外部对象。
-> 
-> 在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。
+> 模板中若任意引用外部对象，复杂的依赖管理将会让项目难以维护。
 
 
 ## 更新记录
 
 ### v2.0.2
 
-1.	优化自定义语法扩展
+1.	优化自定义语法扩展，减少体积
 2.	为了最大化兼容，自定义语法扩展默认界定符修改为``{{``与``}}``
+3.	修复合并工具的BUG [#25](https://github.com/aui/artTemplate/issues/25)
 
 ### v2.0.1
 
