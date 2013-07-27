@@ -295,22 +295,24 @@ var _compile = (function () {
         'break,case,catch,continue,debugger,default,delete,do,else,false'
         + ',finally,for,function,if,in,instanceof,new,null,return,switch,this'
         + ',throw,true,try,typeof,var,void,while,with'
-        
+
         // 保留字
         + ',abstract,boolean,byte,char,class,const,double,enum,export,extends'
         + ',final,float,goto,implements,import,int,interface,long,native'
         + ',package,private,protected,public,short,static,super,synchronized'
         + ',throws,transient,volatile'
-        
+
         // ECMA 5 - use strict
         + ',arguments,let,yield'
 
         + ',undefined';
-    var REMOVE_RE = /\/\*(?:.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|'[^']*'|"[^"]*"|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
+
+    var REMOVE_RE = /\/\*(?:.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
     var SPLIT_RE = /[^\w$]+/g;
     var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
-    var NUMBER_RE = /\b\d[^,]*/g;
+    var NUMBER_RE = /^\d[^,]*?|,\d[^,]*?/g;
     var BOUNDARY_RE = /^,+|,+$/g;
+
     var getVariable = function (code) {
 
         code = code
