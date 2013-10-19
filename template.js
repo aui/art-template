@@ -4,34 +4,31 @@
  * Released under the MIT, BSD, and GPL Licenses
  */
  
+(function (global) {
+
+'use strict';
 
 /**
- * 模板引擎路由函数
- * 若第二个参数类型为 Object 则执行 render 方法, 否则 compile 方法
+ * 模板引擎
+ * 若第二个参数类型为 String 则执行 compile 方法, 否则执行 render 方法
  * @name    template
- * @param   {String}            模板ID (可选)
+ * @param   {String}            模板ID
  * @param   {Object, String}    数据或者模板字符串
  * @return  {String, Function}  渲染好的HTML字符串或者渲染方法
  */
 var template = function (id, content) {
     return template[
-        typeof content === 'object' ? 'render' : 'compile'
+        typeof content === 'string' ? 'compile' : 'render'
     ].apply(template, arguments);
 };
 
 
-
-
-(function (exports, global) {
-
-
-'use strict';
-exports.version = '2.0.2'; 
-exports.openTag = '<%';     // 设置逻辑语法开始标签
-exports.closeTag = '%>';    // 设置逻辑语法结束标签
-exports.isEscape = true;    // HTML字符编码输出开关
-exports.isCompress = false; // 剔除渲染后HTML多余的空白开关
-exports.parser = null;      // 自定义语法插件接口
+template.version = '2.0.2'; 
+template.openTag = '<%';     // 设置逻辑语法开始标签
+template.closeTag = '%>';    // 设置逻辑语法结束标签
+template.isEscape = true;    // HTML字符编码输出开关
+template.isCompress = false; // 剔除渲染后HTML多余的空白开关
+template.parser = null;      // 自定义语法插件接口
 
 
 
@@ -42,19 +39,13 @@ exports.parser = null;      // 自定义语法插件接口
  * @param   {Object}    数据
  * @return  {String}    渲染好的HTML字符串
  */
-exports.render = function (id, data) {
+template.render = function (id, data) {
 
-    var cache = _getCache(id);
-    
-    if (cache === undefined) {
-
-        return _debug({
-            id: id,
-            name: 'Render Error',
-            message: 'No Template'
-        });
-        
-    }
+    var cache = template.get(id) || _debug({
+        id: id,
+        name: 'Render Error',
+        message: 'No Template'
+    });
     
     return cache(data); 
 };
@@ -69,7 +60,7 @@ exports.render = function (id, data) {
  * @param   {String}    模板字符串
  * @return  {Function}  渲染方法
  */
-exports.compile = function (id, source) {
+template.compile = function (id, source) {
     
     var params = arguments;
     var isDebug = params[2];
@@ -84,7 +75,7 @@ exports.compile = function (id, source) {
     
     try {
         
-        var Render = _compile(source, isDebug);
+        var Render = _compile(id, source, isDebug);
         
     } catch (e) {
     
@@ -100,19 +91,15 @@ exports.compile = function (id, source) {
         
         try {
             
-            return new Render(data) + '';
+            return new Render(data, id) + '';
             
         } catch (e) {
             
             if (!isDebug) {
-                return exports.compile(id, source, true)(data);
+                return template.compile(id, source, true)(data);
             }
-
-            e.id = id || source;
-            e.name = 'Render Error';
-            e.source = source;
             
-            return _debug(e);
+            return _debug(e)();
             
         }
         
@@ -136,6 +123,67 @@ exports.compile = function (id, source) {
 
 
 
+var _cache = template.cache = {};
+
+
+
+
+// 辅助方法集合
+var _helpers = template.helpers = {
+
+    $include: template.render,
+
+    $string: function (value, type) {
+
+        if (typeof value !== 'string') {
+
+            type = typeof value;
+            if (type === 'number') {
+                value += '';
+            } else if (type === 'function') {
+                value = _helpers.$string(value());
+            } else {
+                value = '';
+            }
+        }
+
+        return value;
+
+    },
+
+    $escape: function (content) {
+        var m = {
+            "<": "&#60;",
+            ">": "&#62;",
+            '"': "&#34;",
+            "'": "&#39;",
+            "&": "&#38;"
+        };
+        return _helpers.$string(content)
+        .replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
+            return m[s];
+        });
+    },
+
+    $each: function (data, callback) {
+        var isArray = Array.isArray || function (obj) {
+            return ({}).toString.call(obj) === '[object Array]';
+        };
+         
+        if (isArray(data)) {
+            for (var i = 0, len = data.length; i < len; i++) {
+                callback.call(data, data[i], i, data);
+            }
+        } else {
+            for (i in data) {
+                callback.call(data, data[i], i);
+            }
+        }
+    }
+};
+
+
+
 
 /**
  * 添加模板辅助方法
@@ -143,8 +191,8 @@ exports.compile = function (id, source) {
  * @param   {String}    名称
  * @param   {Function}  方法
  */
-exports.helper = function (name, helper) {
-    exports.prototype[name] = helper;
+template.helper = function (name, helper) {
+    _helpers[name] = helper;
 };
 
 
@@ -155,58 +203,40 @@ exports.helper = function (name, helper) {
  * @name    template.onerror
  * @event
  */
-exports.onerror = function (e) {
-    var content = '[template]:\n'
-        + e.id
-        + '\n\n[name]:\n'
-        + e.name;
-
-    if (e.message) {
-        content += '\n\n[message]:\n'
-        + e.message;
-    }
-    
-    if (e.line) {
-        content += '\n\n[line]:\n'
-        + e.line;
-        content += '\n\n[source]:\n'
-        + e.source.split(/\n/)[e.line - 1].replace(/^[\s\t]+/, '');
-    }
-    
-    if (e.temp) {
-        content += '\n\n[temp]:\n'
-        + e.temp;
+template.onerror = function (e) {
+    var message = 'Template Error\n\n';
+    for (var name in e) {
+        message += '<' + name + '>\n' + e[name] + '\n\n';
     }
     
     if (global.console) {
-        console.error(content);
+        console.error(message);
     }
 };
 
 
 
-// 编译好的函数缓存
-var _cache = {};
+
 
 
 
 // 获取模板缓存
-var _getCache = function (id) {
+template.get = function (id) {
 
-    var cache = _cache[id];
+    var cache;
     
-    if (cache === undefined && 'document' in global) {
+    if (_cache.hasOwnProperty(id)) {
+        cache = _cache[id];
+    } else if ('document' in global) {
         var elem = document.getElementById(id);
         
         if (elem) {
             var source = elem.value || elem.innerHTML;
-            return exports.compile(id, source.replace(/^\s*|\s*$/g, ''));
+            cache = template.compile(id, source.replace(/^\s*|\s*$/g, ''));
         }
-        
-    } else if (_cache.hasOwnProperty(id)) {
-    
-        return cache;
     }
+
+    return cache;
 };
 
 
@@ -214,17 +244,11 @@ var _getCache = function (id) {
 // 模板调试器
 var _debug = function (e) {
 
-    exports.onerror(e);
+    template.onerror(e);
     
-    function error () {
-        return error + '';
-    }
-    
-    error.toString = function () {
+    return function () {
         return '{Template Error}';
     };
-    
-    return error;
 };
 
 
@@ -233,60 +257,8 @@ var _debug = function (e) {
 var _compile = (function () {
 
 
-    // 辅助方法集合
-    exports.prototype = {
-        $render: exports.render,
-        $escape: function (content) {
-
-            return typeof content === 'string'
-            ? content.replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
-                return {
-                    "<": "&#60;",
-                    ">": "&#62;",
-                    '"': "&#34;",
-                    "'": "&#39;",
-                    "&": "&#38;"
-                }[s];
-            })
-            : content;
-        },
-        $string: function (value) {
-
-            if (typeof value === 'string' || typeof value === 'number') {
-
-                return value;
-
-            } else if (typeof value === 'function') {
-
-                return value();
-
-            } else {
-
-                return '';
-
-            }
-
-        },
-        $each: function (data, callback) {
-            var isArray = Array.isArray || function (obj) {
-                return Object.prototype.toString.call(obj) === '[object Array]';
-            };
-             
-            if (isArray(data)) {
-                for (var i = 0, len = data.length; i < len; i++) {
-                    callback.call(data, data[i], i, data);
-                }
-            } else {
-                for (i in data) {
-                    callback.call(data, data[i], i);
-                }
-            }
-        }
-    };
-
-
     // 数组迭代
-    var forEach = exports.prototype.$each;
+    var forEach = _helpers.$each;
 
 
     // 静态分析模板变量
@@ -307,39 +279,34 @@ var _compile = (function () {
 
         + ',undefined';
 
-    var REMOVE_RE = /\/\*(?:.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
+    var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
     var SPLIT_RE = /[^\w$]+/g;
     var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
-    var NUMBER_RE = /^\d[^,]*?|,\d[^,]*?/g;
+    var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
     var BOUNDARY_RE = /^,+|,+$/g;
 
     var getVariable = function (code) {
-
-        code = code
+        return code
         .replace(REMOVE_RE, '')
         .replace(SPLIT_RE, ',')
         .replace(KEYWORDS_RE, '')
         .replace(NUMBER_RE, '')
-        .replace(BOUNDARY_RE, '');
-
-        code = code ? code.split(/,+/) : [];
-
-        return code;
+        .replace(BOUNDARY_RE, '')
+        .split(/^$|,+/);
     };
 
 
-    return function (source, isDebug) {
+    return function (id, source, isDebug) {
         
-        var openTag = exports.openTag;
-        var closeTag = exports.closeTag;
-        var parser = exports.parser;
+        var openTag = template.openTag;
+        var closeTag = template.closeTag;
+        var parser = template.parser;
 
         
         var code = source;
         var tempCode = '';
         var line = 1;
-        var uniq = {$data:true,$helpers:true,$out:true,$line:true};
-        var helpers = exports.prototype;
+        var uniq = {$data:1,$id:1,$helpers:1,$out:1,$line:1};
         var prototype = {};
 
         
@@ -359,7 +326,7 @@ var _compile = (function () {
 
         var include = "function(id,data){"
         +     "data=data||$data;"
-        +     "var content=$helpers.$render(id,data);"
+        +     "var content=$helpers.$include(id,data,$id);"
         +     concat
         + "}";
         
@@ -396,27 +363,32 @@ var _compile = (function () {
         
         // 调试语句
         if (isDebug) {
-            code = 'try{' + code + '}catch(e){'
-            +       'e.line=$line;'
-            +       'throw e'
-            + '}';
+            code = "try{" + code + "}catch(e){"
+            +       "throw {"
+            +           "id:$id,"
+            +           "name:'Render Error',"
+            +           "message:e.message,"
+            +           "line:$line,"
+            +           "source:" + stringify(source)
+            +           ".split(/\\n/)[$line-1].replace(/^[\\s\\t]+/,'')"
+            +       "};"
+            + "}";
         }
         
         
-        code = "'use strict';"
-        + variables + replaces[0] + code
-        + 'return new String(' + replaces[3] + ');';
+        code = variables + replaces[0] + code
+        + "return new String(" + replaces[3] + ");";
         
         
         try {
             
-            var Render = new Function('$data', code);
+            var Render = new Function("$data", "$id", code);
             Render.prototype = prototype;
 
             return Render;
             
         } catch (e) {
-            e.temp = 'function anonymous($data) {' + code + '}';
+            e.temp = "function anonymous($data,$id) {" + code + "}";
             throw e;
         }
 
@@ -429,20 +401,18 @@ var _compile = (function () {
             // 记录行号
             line += code.split(/\n/).length - 1;
 
-            if (exports.isCompress) {
-                code = code.replace(/[\n\r\t\s]+/g, ' ');
+            // 压缩多余空白与注释
+            if (template.isCompress) {
+                code = code
+                .replace(/[\n\r\t\s]+/g, ' ')
+                .replace(/<!--.*?-->/g, '');
             }
             
-            code = code
-            // 单引号与反斜杠转义(因为编译后的函数默认使用单引号，因此双引号无需转义)
-            .replace(/('|\\)/g, '\\$1')
-            // 换行符转义(windows + linux)
-            .replace(/\r/g, '\\r')
-            .replace(/\n/g, '\\n');
-            
-            code = replaces[1] + "'" + code + "'" + replaces[2];
-            
-            return code + '\n';
+            if (code) {
+                code = replaces[1] + stringify(code) + replaces[2] + "\n";
+            }
+
+            return code;
         }
         
         
@@ -461,7 +431,7 @@ var _compile = (function () {
                 // 记录行号
                 code = code.replace(/\n/g, function () {
                     line ++;
-                    return '$line=' + line +  ';';
+                    return "$line=" + line +  ";";
                 });
                 
             }
@@ -474,19 +444,19 @@ var _compile = (function () {
 
                 code = code.replace(/^=*|[\s;]*$/g, '');
 
-                if (isEscape && exports.isEscape) {
+                if (isEscape && template.isEscape) {
 
                     // 转义处理，但排除辅助方法
                     var name = code.replace(/\s*\([^\)]+\)/, '');
                     if (
-                        !helpers.hasOwnProperty(name)
+                        !_helpers.hasOwnProperty(name)
                         && !/^(include|print)$/.test(name)
                     ) {
-                        code = '$escape($string(' + code + '))';
+                        code = "$escape(" + code + ")";
                     }
 
                 } else {
-                    code = '$string(' + code + ')';
+                    code = "$string(" + code + ")";
                 }
                 
 
@@ -495,12 +465,12 @@ var _compile = (function () {
             }
             
             if (isDebug) {
-                code = '$line=' + thisLine + ';' + code;
+                code = "$line=" + thisLine + ";" + code;
             }
             
             getKey(code);
             
-            return code + '\n';
+            return code + "\n";
         }
         
         
@@ -536,47 +506,61 @@ var _compile = (function () {
 
             } else if (name === 'include') {
                 
-                prototype['$render'] = helpers['$render'];
+                prototype["$include"] = _helpers['$include'];
                 value = include;
                 
             } else {
 
-                value = '$data.' + name;
+                value = "$data." + name;
 
-                if (helpers.hasOwnProperty(name)) {
+                if (_helpers.hasOwnProperty(name)) {
 
-                    prototype[name] = helpers[name];
+                    prototype[name] = _helpers[name];
 
                     if (name.indexOf('$') === 0) {
-                        value = '$helpers.' + name;
+                        value = "$helpers." + name;
                     } else {
                         value = value
-                        + '===undefined?$helpers.' + name + ':' + value;
+                        + "===undefined?$helpers." + name + ":" + value;
                     }
                 }
                 
                 
             }
             
-            variables += name + '=' + value + ',';
-        }
+            variables += name + "=" + value + ",";
+        };
+
+
+        // 字符串转义
+        function stringify (code) {
+            return "'" + code
+            // 单引号与反斜杠转义
+            .replace(/('|\\)/g, '\\$1')
+            // 换行符转义(windows + linux)
+            .replace(/\r/g, '\\r')
+            .replace(/\n/g, '\\n') + "'";
+        };
         
         
     };
 })();
 
 
-
-
-})(template, this);
-
-
-// RequireJS || SeaJS
+// RequireJS && SeaJS
 if (typeof define === 'function') {
     define(function() {
-        return template; 
+        return template;
     });
+
 // NodeJS
 } else if (typeof exports !== 'undefined') {
     module.exports = template;
 }
+
+global.template = template;
+
+
+})(this);
+
+

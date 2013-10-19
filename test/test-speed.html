@@ -37,8 +37,8 @@ for (var i = 0; i < length; i ++) {
         user: '<strong style="color:red">糖饼</strong>',
         site: 'http://www.planeart.cn',
         weibo: 'http://weibo.com/planeart',
-        QQweibo: 'http://t.qq.com/tangbin'	
-    });	
+        QQweibo: 'http://t.qq.com/tangbin'  
+    }); 
 };
 
 
@@ -102,7 +102,7 @@ var testList = [
         }
     },
     
-	{
+    {
         name: 'easyTemplate',
         tester: function () {
             var source = document.getElementById('easyTemplate').innerHTML;
@@ -238,16 +238,16 @@ var startTest = function () {
         credits: {
             enabled: false
         },
-		plotOptions: {
-			bar: {
-				dataLabels: {
-					enabled: true,
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true,
                     formatter: function () {
                         return this.y + 'ms';
                     }
-				}
-			}
-		},
+                }
+            }
+        },
         series: [{
             data : []
         }]
@@ -300,93 +300,93 @@ var startTest = function () {
 <!-- artTemplate 的模板 -->
 <script id="template" type="text/tmpl">
 <ul>
-	<% for (i = 0, l = list.length; i < l; i ++) { %>
-		<li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
-	<% } %>
+    <% for (i = 0, l = list.length; i < l; i ++) { %>
+        <li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
+    <% } %>
 </ul>
 </script>
 
 <!-- baidu-template 的模板 -->
 <script id="baidu-template" type="text/tmpl">
 <ul>
-	<% for (var val, i = 0, l = list.length; i < l; i ++) { %>
+    <% for (var val, i = 0, l = list.length; i < l; i ++) { %>
         <% val = list[i]; %>
-		<li><%:=val.index%>. 用户: <%:=val.user%>/ 网站：<%:=val.site%></li>
-	<% } %>
+        <li><%:=val.index%>. 用户: <%:=val.user%>/ 网站：<%:=val.site%></li>
+    <% } %>
 </ul>
 </script>
 
 <!-- easyTemplate 的模板 -->
 <script id="easyTemplate" type="text/tmpl">
 <ul>
-	<#list data.list as item>
-		<li>${item.index}. 用户: ${item.user}/ 网站：${item.site}</li>
-	</#list>
+    <#list data.list as item>
+        <li>${item.index}. 用户: ${item.user}/ 网站：${item.site}</li>
+    </#list>
 </ul>
 </script>
 
 <!-- tmpl 的模板 -->
 <script id="tmpl" type="text/tmpl">
 <ul>
-	<% for (var val, i = 0, l = list.length; i < l; i ++) { %>
+    <% for (var val, i = 0, l = list.length; i < l; i ++) { %>
         <% val = list[i]; %>
-		<li><%=val.index%>. 用户: <%=val.user%>/ 网站：<%=val.site%></li>
-	<% } %>
+        <li><%=val.index%>. 用户: <%=val.user%>/ 网站：<%=val.site%></li>
+    <% } %>
 </ul>
 </script>
 
 <!-- jqueryTmpl 的模板 -->
 <script id="jqueryTmpl" type="text/tmpl">
 <ul>
-	{{each list}}
-		<li>${$value.index}. 用户: ${$value.user}/ 网站：${$value.site}</li>
-	{{/each}}
+    {{each list}}
+        <li>${$value.index}. 用户: ${$value.user}/ 网站：${$value.site}</li>
+    {{/each}}
 </ul>
 </script>
 
 <!--juicer 的模板 -->
 <script id="juicer" type="text/tmpl">
 <ul>
-	{@each list as val}
-		<li>$${val.index}. 用户: $${val.user}/ 网站：$${val.site}</li>
-	{@/each}
+    {@each list as val}
+        <li>$${val.index}. 用户: $${val.user}/ 网站：$${val.site}</li>
+    {@/each}
 </ul>
 </script>
 
 <!-- doT 的模板 -->
 <script id="doT" type="text/tmpl">
 <ul>
-	{{ for (var val, i = 0, l = it.list.length; i < l; i ++) { }}
+    {{ for (var val, i = 0, l = it.list.length; i < l; i ++) { }}
         {{ val = it.list; }}
-		<li>{{=val[i].index}}. 用户: {{=val[i].user}}/ 网站：{{=val[i].site}}</li>
-	{{ } }}
+        <li>{{=val[i].index}}. 用户: {{=val[i].user}}/ 网站：{{=val[i].site}}</li>
+    {{ } }}
 </ul>
 </script>
 
 <!--Mustache 的模板 -->
 <script id="Mustache" type="text/tmpl">
 <ul>
-	{{#list}}
-		<li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
-	{{/list}}
+    {{#list}}
+        <li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
+    {{/list}}
 </ul>
 </script>
 
 <!--Handlebars  的模板 -->
 <script id="Handlebars" type="text/tmpl">
 <ul>
-	{{#list}}
-		<li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
-	{{/list}}
+    {{#list}}
+        <li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
+    {{/list}}
 </ul>
 </script>
 
 <!--kissy 的模板 -->
 <script id="kissy" type="text/tmpl">
 <ul>
-	{{#each list as val}}
-		<li>{{val.index}}. 用户: {{val.user}}/ 网站：{{val.site}}</li>
-	{{/each}}
+    {{#each list as val}}
+        <li>{{val.index}}. 用户: {{val.user}}/ 网站：{{val.site}}</li>
+    {{/each}}
 </ul>
 </script>
 

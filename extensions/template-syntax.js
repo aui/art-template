@@ -5,91 +5,88 @@
  */
  
 (function (exports) {
-
-exports.openTag = '{{';
-exports.closeTag = '}}';
-
-
-exports.parser = function (code) {
-    code = code.replace(/^\s/, '');
     
-    var split = code.split(' ');
-    var key = split.shift();
-    var args = split.join(' ');
+    exports.openTag = '{{';
+    exports.closeTag = '}}';
 
-    switch (key) {
 
-        case 'if':
+    exports.parser = function (code) {
+        code = code.replace(/^\s/, '');
+        
+        var split = code.split(' ');
+        var key = split.shift();
+        var args = split.join(' ');
 
-            code = 'if(' + args + '){';
-            break;
+        switch (key) {
 
-        case 'else':
-            
-            if (split.shift() === 'if') {
-                split = ' if(' + split.join(' ') + ')';
-            } else {
-                split = '';
-            }
+            case 'if':
 
-            code = '}else' + split + '{';
-            break;
+                code = 'if(' + args + '){';
+                break;
 
-        case '/if':
-
-            code = '}';
-            break;
-
-        case 'each':
-            
-            var object = split[0] || '$data';
-            var as     = split[1] || 'as';
-            var value  = split[2] || '$value';
-            var index  = split[3] || '$index';
-            
-            var param   = value + ',' + index;
-            
-            if (as !== 'as') {
-                object = '[]';
-            }
-            
-            code =  '$each(' + object + ',function(' + param + '){';
-            break;
-
-        case '/each':
-
-            code = '});';
-            break;
-
-        case 'echo':
-
-            code = 'print(' + args + ');'
-            break;
-
-        case 'include':
-
-            code = 'include(' + split.join(',') + ');';
-            break;
-
-        default:
-
-            if (exports.prototype.hasOwnProperty(key)) {
+            case 'else':
                 
-                code = '==' + key + '(' + split.join(',') + ');';
+                if (split.shift() === 'if') {
+                    split = ' if(' + split.join(' ') + ')';
+                } else {
+                    split = '';
+                }
+
+                code = '}else' + split + '{';
+                break;
+
+            case '/if':
+
+                code = '}';
+                break;
+
+            case 'each':
                 
-            } else {
+                var object = split[0] || '$data';
+                var as     = split[1] || 'as';
+                var value  = split[2] || '$value';
+                var index  = split[3] || '$index';
+                
+                var param   = value + ',' + index;
+                
+                if (as !== 'as') {
+                    object = '[]';
+                }
+                
+                code =  '$each(' + object + ',function(' + param + '){';
+                break;
 
-                code = code.replace(/[\s;]*$/, '');
-                code = '=' + code;
-            }
+            case '/each':
 
-            break;
-    }
-    
-    
-    return code;
-};
+                code = '});';
+                break;
 
+            case 'echo':
 
+                code = 'print(' + args + ');'
+                break;
 
+            case 'include':
+
+                code = 'include(' + split.join(',') + ');';
+                break;
+
+            default:
+
+                if (exports.helpers.hasOwnProperty(key)) {
+                    
+                    code = '==' + key + '(' + split.join(',') + ');';
+                    
+                } else {
+
+                    code = code.replace(/[\s;]*$/, '');
+                    code = '=' + code;
+                }
+
+                break;
+        }
+        
+        
+        return code;
+    };
 })(template);
