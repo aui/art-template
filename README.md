@@ -6,7 +6,7 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题（[详情](http://aui.github.io/artTemplate/demo/debug.html)）。
 
-这一切都在 2kb(gzip) 中实现！
+另外，artTemplate 的模板还支持使用自动化工具预编译，这一切都在 2KB(Gzip) 中实现！
 
 ## 快速上手
 
@@ -94,7 +94,7 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 添加辅助方法
 
-``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 XSS 过滤、UBB 替换、脏话替换等。
+``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 UBB 替换、脏话替换等。
 
 例如扩展一个UBB替换方法：
 
@@ -179,6 +179,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 3.	修复合并工具的BUG [#25](https://github.com/aui/artTemplate/issues/25)
 4.	公开了内部缓存，可以通过``template.cache``访问到编译后的函数
 5.	公开了辅助方法缓存，可以通过``template.helpers``访问到
+6.	优化了调试信息
 
 ### v2.0.1
 
