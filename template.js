@@ -129,11 +129,9 @@ var _cache = template.cache = {};
 
 
 // 辅助方法集合
-var _helpers = template.helpers = {
+var _helpers = template.helpers = (function () {
 
-    $include: template.render,
-
-    $string: function (value, type) {
+    var toString = function (value, type) {
 
         if (typeof value !== 'string') {
 
@@ -141,7 +139,7 @@ var _helpers = template.helpers = {
             if (type === 'number') {
                 value += '';
             } else if (type === 'function') {
-                value = _helpers.$string(value());
+                value = toString(value.call(value));
             } else {
                 value = '';
             }
@@ -149,27 +147,32 @@ var _helpers = template.helpers = {
 
         return value;
 
-    },
+    };
 
-    $escape: function (content) {
-        var m = {
-            "<": "&#60;",
-            ">": "&#62;",
-            '"': "&#34;",
-            "'": "&#39;",
-            "&": "&#38;"
-        };
-        return _helpers.$string(content)
+
+    var escapeMap = {
+        "<": "&#60;",
+        ">": "&#62;",
+        '"': "&#34;",
+        "'": "&#39;",
+        "&": "&#38;"
+    };
+
+
+    var escapeHTML = function (content) {
+        return toString(content)
         .replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
-            return m[s];
+            return escapeMap[s];
         });
-    },
+    };
 
-    $each: function (data, callback) {
-        var isArray = Array.isArray || function (obj) {
-            return ({}).toString.call(obj) === '[object Array]';
-        };
-         
+
+    var isArray = Array.isArray || function (obj) {
+        return ({}).toString.call(obj) === '[object Array]';
+    };
+
+
+    var each = function (data, callback) {             
         if (isArray(data)) {
             for (var i = 0, len = data.length; i < len; i++) {
                 callback.call(data, data[i], i, data);
@@ -179,8 +182,21 @@ var _helpers = template.helpers = {
                 callback.call(data, data[i], i);
             }
         }
-    }
-};
+    };
+
+
+    return {
+
+        $include: template.render,
+
+        $string: toString,
+
+        $escape: escapeHTML,
+
+        $each: each
+        
+    };
+})();
 
 
 
@@ -529,7 +545,7 @@ var _compile = (function () {
             }
             
             variables += name + "=" + value + ",";
-        };
+        }
 
 
         // 字符串转义
@@ -540,7 +556,7 @@ var _compile = (function () {
             // 换行符转义(windows + linux)
             .replace(/\r/g, '\\r')
             .replace(/\n/g, '\\n') + "'";
-        };
+        }
         
         
     };
