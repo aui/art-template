@@ -1,5 +1,5 @@
 {
-  "name"        : "artTemplate",
+  "name"        : "art-template",
   "description" : "JavaScript Template Engine",
   "homepage"    : "http://aui.github.com/artTemplate/",
   "keywords"    : ["util", "functional", "template"],
@@ -9,4 +9,5 @@
   "version"     : "2.0.2",
   "license"		: "BSD"
 }
+        
         
