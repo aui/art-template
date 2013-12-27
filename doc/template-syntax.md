@@ -79,11 +79,11 @@
     
 ##	演示例子
 
-*	[基本例子](http://aui.github.com/artTemplate/demo/simple-syntax/baisc.html)
-*	[不转义HTML](http://aui.github.com/artTemplate/demo/simple-syntax/no-escape.html)
-*	[在javascript中存放模板](http://aui.github.com/artTemplate/demo/simple-syntax/compile.html)
-*	[嵌入子模板(include)](http://aui.github.com/artTemplate/demo/simple-syntax/include.html)
-*	[访问外部公用函数(辅助方法)](http://aui.github.com/artTemplate/demo/simple-syntax/helper.html)
+*	[基本例子](http://aui.github.io/artTemplate/demo/simple-syntax/basic.html)
+*	[不转义HTML](http://aui.github.io/artTemplate/demo/simple-syntax/no-escape.html)
+*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/simple-syntax/compile.html)
+*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/simple-syntax/include.html)
+*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/simple-syntax/helper.html)
 
 ----------------------------------------------
 
