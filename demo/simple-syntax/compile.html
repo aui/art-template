@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>compile-demo</title>
-<script src="../src/template.js"></script>
+<script src="../../dist/template-simple.js"></script>
 </head>
 
 <body>
@@ -11,9 +11,9 @@
 <div id="content"></div>
 <script>
 var source = '<ul>'
-+    '<% for (var i = 0; i < list.length; i ++) { %>'
-+        '<li>索引 <%= i + 1 %> ：<%= list[i] %></li>'
-+    '<% } %>'
++    '{{each list as value i}}'
++        '<li>索引 {{i + 1}} ：{{value}}</li>'
++    '{{/each}}'
 + '</ul>';
 
 var render = template.compile(source);

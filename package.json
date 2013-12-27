@@ -5,9 +5,7 @@
   "keywords"    : ["util", "functional", "template"],
   "author"      : "tangbin <sugarpie.tang@gmail.com>",
   "repository"  : {"type": "git", "url": "git://github.com/aui/artTemplate.git"},
-  "main"        : "template.js",
-  "version"     : "2.0.2",
+  "main"        : "./dist/template.js",
+  "version"     : "2.0.3-rc2",
   "license"		: "BSD"
 }
-        
-        

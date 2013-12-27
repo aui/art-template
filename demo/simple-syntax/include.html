@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <title>include-demo</title>
-<script src="../src/template.js"></script>
+<script src="../../dist/template-simple.js"></script>
 </head>
 
 <body>
 <div id="content"></div>
 <script id="test" type="text/html">
-<h1><%=title%></h1>
-<%include('list')%>
+<h1>{{title}}</h1>
+{{include 'list'}}
 </script>
 <script id="list" type="text/html">
 <ul>
-    <% for (var i = 0; i < list.length; i ++) { %>
-        <li>索引 <%= i + 1 %> ：<%= list[i] %></li>
-    <% } %>
+    {{each list as value i}}
+        <li>索引 {{i + 1}} ：{{value}}</li>
+    {{/each}}
 </ul>
 </script>
 

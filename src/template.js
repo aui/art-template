@@ -23,7 +23,7 @@ var template = function (id, content) {
 };
 
 
-template.version = '2.0.2'; 
+template.version = '2.0.3'; 
 template.openTag = '<%';     // 设置逻辑语法开始标签
 template.closeTag = '%>';    // 设置逻辑语法结束标签
 template.isEscape = true;    // HTML字符编码输出开关
@@ -348,7 +348,7 @@ var _compile = (function () {
         
         
         // html与逻辑语法分离
-        forEach(code.split(openTag), function (code, i) {
+        forEach(code.split(openTag), function (code) {
             code = code.split(closeTag);
             
             var $0 = code[0];
