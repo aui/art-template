@@ -1,13 +1,11 @@
 {
-  "name"        : "artTemplate",
+  "name"        : "art-template",
   "description" : "JavaScript Template Engine",
   "homepage"    : "http://aui.github.com/artTemplate/",
   "keywords"    : ["util", "functional", "template"],
-  "author"      : "tangbin <1987.tangbin@gmail.com>",
+  "author"      : "tangbin <sugarpie.tang@gmail.com>",
   "repository"  : {"type": "git", "url": "git://github.com/aui/artTemplate.git"},
-  "main"        : "template.js",
-  "version"     : "2.0.1"
+  "main"        : "./dist/template.js",
+  "version"     : "2.0.3-rc2",
+  "license"		: "BSD"
 }
-
-        
-        

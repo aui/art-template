@@ -23,33 +23,26 @@
         <li><%=i%>:         -<%=test[i]%></li>
     <% } %>
   </script>
+  <script id="test2" type="text/html"><%=include('test')%>
+<!--hello wrold--><%/*hello world*/%><%//hello world%>//\\""''</script>
   </body>
 </html></textarea>
 </p>
 <p style="font-size:12px">
     <button id="submit">combine</button> 
-    <label> compress:<input id="compress" type="checkbox" checked="true" /> </label>
     <label> openTag:<input id="openTag" type="text" value="<%" style="width:4em" /> </label>
     <label> closeTag:<input id="closeTag" type="text" value="%>" style="width:4em" /> </label>
 </p>
 <p>
   <textarea id="tmpl-code" name="code" cols="80" rows="12"></textarea>
 </p>
-<script src="../template.js"></script>
-<!-- <script src="../extensions/template-syntax.js"></script> -->
+<script src="../src/template.js"></script>
+<!-- <script src="../src/extensions/template-syntax.js"></script> -->
 <script>
-
-/*!
- * Copyright (C) 2012 Tencent Inc.
- * Author  tangbin
- * Email   1987.tangbin@gmail.com
- */
-
 var getConfig = function () {
     return {
         openTag: document.getElementById('openTag').value,
         closeTag: document.getElementById('closeTag').value,
-        compress: document.getElementById('compress').checked,
         tag: /<script([^>]*?)>([\w\W]*?)<\/script>/ig,
         type: /type=("|')text\/html\1/i,
         id: /id=("|')([^"]+?)\1/i
@@ -124,78 +117,74 @@ var compress = function (id, code, $config) {
         openTag = template.openTag;
         closeTag = template.closeTag
     }
-    
-    if ($config.compress) {
-        code = code
-        // 去除 html 与 js 多行注释
-        .replace(/\/\*(.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|<!--.*?-->/g, '')
+
+    function html (text) {
+        return text
+        // 多个空格合并
+        .replace(/\s+/g, ' ')
+        // 反斜杠转义
+        .replace(/\\/g, "\\\\")
+        // "'" 转义
+        .replace(/'/g, "\\'")
+        // 去除 HTML 注释
+        .replace(/<!--(.|\n)*?-->/g, '')
         // 去除多余制表符、TAB符、回车符
         .replace(/\n/g, '')
-        .replace(/[\r\t]/g, ' ')
-        // "\" 转义
-        .replace(/\\/g, "\\\\");
-    } else {
-        code = code
-        .replace(/(\r\n|\n)/g, '\\$1');
-        
-    }
-
-    code = code
-    // "'" 转义
-    .replace(/'/g, "\\'");
-
+        .replace(/[\r\t]/g, ' ');
+    };
     
-    if ($config.compress) {
+    function logic (text) {
+        text = text
+        // 去除 js 注释
+        .replace(/\/\*(?:.|\n)*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$/g, '')
+        // "'" 转义
+        .replace(/'/g, "\\'")
+        // 去除多余制表符、TAB符、回车符
+        .replace(/\n/g, '')
+        .replace(/[\r\t]/g, ' ');
+        return openTag + text.trim() + closeTag;
+    };
 
-        function html (text) {
-            return text.replace(/\s+/g, ' ');
-        };
+    // 语法分析
+    var strings = '';
+    code.split(openTag).forEach(function (text, i) {
+        text = text.split(closeTag);
         
-        function logic (text) {
-            return openTag + text.trim() + closeTag;
-        };
-
-        // 语法分析
-        var strings = '';
-        code.split(openTag).forEach(function (text, i) {
-            text = text.split(closeTag);
+        var $0 = text[0];
+        var $1 = text[1];
+        
+        // text: [html]
+        if (text.length === 1) {
             
-            var $0 = text[0];
-            var $1 = text[1];
+            strings += html($0);
+         
+        // text: [logic, html]
+        } else {
+                   
+            strings += logic($0);    
             
-            // text: [html]
-            if (text.length === 1) {
-                
-                strings += html($0);
-             
-            // text: [logic, html]
-            } else {
-                       
-                strings += logic($0);    
-                
-                if ($1) {
-                    strings += html($1);
-                }
+            if ($1) {
+                strings += html($1);
             }
-            
-
-        });
-
-        code = strings;
-
-        // ANSI 转义
-        var unicode = [], ansi;
-        for (var i = 0 ; i < code.length; i ++) {
-            ansi = code.charCodeAt(i);
-            if (ansi > 255) {
-                unicode.push('\\u' + ansi.toString(16));
-            } else {
-                unicode.push(code.charAt(i));
-            } 
         }
-        code = unicode.join('').trim();
+        
 
+    });
+
+    code = strings;
+
+    // ANSI 转义
+    var unicode = [], ansi;
+    for (var i = 0 ; i < code.length; i ++) {
+        ansi = code.charCodeAt(i);
+        if (ansi > 255) {
+            unicode.push('\\u' + ansi.toString(16));
+        } else {
+            unicode.push(code.charAt(i));
+        } 
     }
+    code = unicode.join('').trim();
+
     
     code = "template.compile('" + id + "', '" + code + "');";
     

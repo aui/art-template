@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>no escape-demo</title>
-<script src="../src/template.js"></script>
+<script src="../../dist/template-simple.js"></script>
 </head>
 
 <body>
     <h1>不转义HTML</h1>
     <div id="content"></div>
     <script id="test" type="text/html">
-    <p>不转义：<%==value%></p>
-    <p>默认转义： <%=value%></p>
+    <p>不转义：{{echo value}}</p>
+    <p>默认转义： {{value}}</p>
     </script>
 
     <script>

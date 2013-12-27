@@ -2,13 +2,19 @@
 ###### 新一代 javascript 模板引擎
 =================
 
-artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
+artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）。
 
-引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
+引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题（[详情](http://aui.github.io/artTemplate/demo/debug.html)）。
 
-这一切都在 2kb(gzip) 中实现！
+另外，artTemplate 的模板还支持使用自动化工具预编译，支持将模板转换为 js 文件。
 
 ## 快速上手
+
+###	引用引擎
+
+	<script src="dist/template.js"></script>
+	
+直接下载 [template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js)
 
 ### 编写模板
 
@@ -61,7 +67,7 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 不转义HTML
 
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用两个``=``号。
+模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``==``。
 
 	<script id="test" type="text/html">
 	<%==value%>
@@ -94,7 +100,7 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 添加辅助方法
 
-``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 XSS 过滤、UBB 替换、脏话替换等。
+``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 UBB 替换、脏话替换等。
 
 例如扩展一个UBB替换方法：
 
@@ -126,32 +132,44 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 自定义语法
 
-artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示例：
+artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语法示例：
 
-	{if admin}
-    	<h3>{title}</h3>
+	{{if admin}}
+    	<h3>{{title}}</h3>
     	<ul>
-    	    {each list}
-            	<li>{$index + 1}: {$value}</li>
-       		{/each}
+    	    {{each list}}
+            	<li>{{$index + 1}}: {{$value}}</li>
+       		{{/each}}
     	</ul>
-	{/if}
+	{{/if}}
+
+请引用 dist/[template-simple.js](https://raw.github.com/aui/artTemplate/master/dist/template-simple.js) 即可使用简洁语法。
 	
-[详情](http://aui.github.com/artTemplate/extensions/index.html)
+[完整简洁语法说明](https://github.com/aui/artTemplate/wiki/自定义语法扩展说明)
+
+##	NodeJS
+
+###	安装
+
+	$ npm install art-template -g
+	
+###	使用
+
+	var template = require('art-template');
+	
+（简洁语法版请 ``require('art-template/dist/template-simple')``）
 
 ## 自动化工具
 
 ### 预编译工具
 
-使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include语句等优秀的特性。
+使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include 语句等特性，可以像后端一样书写前端模板！
 
-编译后的模板不再依赖模板引擎，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化
-
-项目主页：<https://github.com/cdc-im/atc>
+项目主页：<https://github.com/aui/tmodjs>
 
 ### 抽取工具
 
-``./tools/combine.html(http://aui.github.com/artTemplate/tools/combine.html)``
+[./tools/combine.html](http://aui.github.com/artTemplate/tools/combine.html)
 
 可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。
 
@@ -163,16 +181,28 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示�
 
 > break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, abstract, boolean, byte, char, class, const, double, enum, export, extends, final, float, goto, implements, import, int, interface, long, native, package, private, protected, public, short, static, super, synchronized, throws, transient, volatile, arguments, let, yield
 
-2、模板禁止读写全局变量，除非给模板定义辅助方法。例如：
+2、模板运行在沙箱中，内部无法访问外部变量，除非给模板定义辅助方法。例如：
 
 	template.helper('Math', Math)
 
-> artTemplate编译后的模板将运行在沙箱内，模板语句无法读写外部对象。
-> 
-> 在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。
+> 模板中若任意引用外部对象，复杂的依赖管理将会让项目难以维护，这种方式将利于后续模板迁移（包括通过工具预编译）。
 
 
 ## 更新记录
+
+###	v2.0.3
+
+1.	优化辅助方法性能
+2.	NodeJS 版本使用 npm 管理
+
+### v2.0.2
+
+1.	优化自定义语法扩展，减少体积
+2.	[重要]为了最大化兼容第三方库，自定义语法扩展默认界定符修改为``{{``与``}}``。
+3.	修复合并工具的BUG [#25](https://github.com/aui/artTemplate/issues/25)
+4.	公开了内部缓存，可以通过``template.cache``访问到编译后的函数
+5.	公开了辅助方法缓存，可以通过``template.helpers``访问到
+6.	优化了调试信息
 
 ### v2.0.1
 
@@ -206,6 +236,6 @@ Released under the MIT, BSD, and GPL Licenses
 
 ============
 
-[演示例子](http://aui.github.com/artTemplate/demo/index.html) | [性能测试](http://aui.github.com/artTemplate/test/test-speed.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
+[所有演示例子](http://aui.github.com/artTemplate/demo/index.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
 
 © cdc.tencent.com
