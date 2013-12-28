@@ -75,7 +75,7 @@
 
                 if (exports.helpers.hasOwnProperty(key)) {
                     
-                    code = '==' + key + '(' + split.join(',') + ');';
+                    code = '=#' + key + '(' + split.join(',') + ');';
                     
                 } else {
 

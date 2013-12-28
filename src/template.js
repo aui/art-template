@@ -453,12 +453,13 @@ var _compile = (function () {
             }
             
             
-            // 输出语句. 转义: <%=value%> 不转义:<%==value%>
+            // 输出语句. 转义: <%=value%> 不转义:<%=#value%>
+            // <%=#value%> 等同 v2.0.3 之前的 <%==value%>
             if (code.indexOf('=') === 0) {
 
-                var isEscape = code.indexOf('==') !== 0;
+                var isEscape = !/^=[=#]/.test(code);
 
-                code = code.replace(/^=*|[\s;]*$/g, '');
+                code = code.replace(/^=[=#]?|[\s;]*$/g, '');
 
                 if (isEscape && template.isEscape) {
 

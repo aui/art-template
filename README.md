@@ -67,10 +67,10 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 不转义HTML
 
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``==``。
+模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``<%=#value%>``（兼容v2.0.3 版本之前使用的``<%==value%>``）。
 
 	<script id="test" type="text/html">
-	<%==value%>
+	<%=#value%>
 	</script>
 	
 若需要关闭默认转义，可以设置``template.isEscape = false``。
@@ -193,7 +193,9 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 ###	v2.0.3
 
 1.	优化辅助方法性能
-2.	NodeJS 版本使用 npm 管理
+2.	NodeJS 用户可以通过 npm 获取 artTemplate：``$ npm install art-template -g``
+3.	不转义输出语句推荐使用``<%=#value%>``（兼容 v2.0.3 版本之前使用的``<%==value%>``）
+4.	提供简版语法的合并版本 dist/[template-simple.js](https://raw.github.com/aui/artTemplate/master/dist/template-simple.js)
 
 ### v2.0.2
 
@@ -227,7 +229,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 ### v2.0 beta1
 
 1.	对非String、Number类型的数据不输出，而Function类型求值后输出。
-2.	默认对html进行转义输出，原文输出可使用``<%==value%>``，也可以关闭默认的转义功能``template.isEscape = false``。
+2.	默认对html进行转义输出，原文输出可使用``<%==value%>``（备注：v2.0.3推荐使用``<%=#value%>``），也可以关闭默认的转义功能``template.isEscape = false``。
 3.	增加批处理工具支持把模板编译成不依赖模板引擎的 js 文件，可通过 RequireJS、SeaJS 等模块加载器进行异步加载。
 
 ## 授权协议
