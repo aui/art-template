@@ -335,14 +335,14 @@ var _compile = (function () {
         : ["$out=[];", "$out.push(", ");", "$out.join('')"];
 
         var concat = isNewEngine
-            ? "if(content!==undefined){$out+=content;return content;}"
-            : "$out.push(content);";
+            ? "$out+=$text;return $text;"
+            : "$out.push($text);";
               
-        var print = "function(content){" + concat + "}";
+        var print = "function($text){" + concat + "}";
 
         var include = "function(id,data){"
         +     "data=data||$data;"
-        +     "var content=$helpers.$include(id,data,$id);"
+        +     "var $text=$helpers.$include(id,data,$id);"
         +     concat
         + "}";
         
