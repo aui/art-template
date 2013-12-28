@@ -9,9 +9,9 @@
 <script src="../src/template-syntax.js"></script>
 
 <script id="default" type="text/html">{{value}}</script>
-<script id="noEscape" type="text/html">{{echo value}}</script>
+<script id="noEscape" type="text/html">{{#value}}</script>
 <script id="include" type="text/html">{{include 'include-content'}}</script>
-<script id="include-content" type="text/html">{{echo value}}</script>
+<script id="include-content" type="text/html">{{#value}}</script>
 <script id="sandbox" type="text/html">{{typeof document}}</script>
 <script id="sandbox2" type="text/html">{{window.$sandbox = true}}</script>
 <script id="prototype" type="text/html">{{toString}}</script>
@@ -136,7 +136,7 @@ test('配置功能', function () {
 	template.closeTag = '>>';
 	var data = {value: 'hello <em>world</em>'};
 	equal(template.compile('<<value>>')(data), 'hello <em>world</em>', '自定义界定符');
-	equal(template.compile('<<echo value>>')(data), 'hello <em>world</em>', '关闭默认编码输出');
+	equal(template.compile('<<#value>>')(data), 'hello <em>world</em>', '关闭默认编码输出');
 
 	template.isEscape = true;
 	template.openTag = '{{';
