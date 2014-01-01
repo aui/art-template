@@ -64,7 +64,8 @@
 使用``template.helper(name, callback)``注册公用辅助方法，例如一个基本的 UBB 替换方法：
 
     template.helper('$ubb2html', function (content) {
-        ...
+        // 处理字符串...
+        return content;
     });
 
 模板中使用的方式：
