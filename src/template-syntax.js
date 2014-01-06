@@ -63,7 +63,7 @@
 
             case 'echo':
 
-                code = 'print(' + args + ');'
+                code = 'print(' + args + ');';
                 break;
 
             case 'include':
@@ -89,4 +89,4 @@
         
         return code;
     };
-})(template);
+})(this.template);

@@ -172,7 +172,7 @@ var _helpers = template.helpers = (function () {
     };
 
 
-    var each = function (data, callback) {             
+    var each = function (data, callback) {           
         if (isArray(data)) {
             for (var i = 0, len = data.length; i < len; i++) {
                 callback.call(data, data[i], i, data);

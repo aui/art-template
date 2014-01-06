@@ -6,7 +6,8 @@
   "author"      : "tangbin <sugarpie.tang@gmail.com>",
   "repository"  : {"type": "git", "url": "git://github.com/aui/artTemplate.git"},
   "main"        : "./src/template.js",
-  "version"     : "2.0.3-rc4",
+  "version"     : "2.0.3-rc5",
   "license"		: "BSD"
 }
+        
         
