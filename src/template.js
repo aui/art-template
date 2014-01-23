@@ -23,7 +23,7 @@ var template = function (id, content) {
 };
 
 
-template.version = '2.0.3'; 
+template.version = '2.0.4'; 
 template.openTag = '<%';     // 设置逻辑语法开始标签
 template.closeTag = '%>';    // 设置逻辑语法结束标签
 template.isEscape = true;    // HTML字符编码输出开关
@@ -500,7 +500,9 @@ var _compile = (function () {
             forEach(code, function (name) {
              
                 // 除重
-                if (!uniq.hasOwnProperty(name)) {
+                // TODO: name 可能在低版本的安卓浏览器中为空值，这里后续需要改进 getVariable 方法
+                // @see https://github.com/aui/artTemplate/issues/41#issuecomment-29985469
+                if (name && !uniq.hasOwnProperty(name)) {
                     setValue(name);
                     uniq[name] = true;
                 }
