@@ -6,7 +6,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var template = require('../src/template.js');
+var template = require('./template.js');
 
 
 // 提供新的配置字段
