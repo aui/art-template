@@ -195,7 +195,13 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 1.	提供 NodeJS 专属版本，支持传入文件路径直接加载模板，同时模板支持``include``语句
 2.	内部暴露``template.loadTemplate``方法，开发者可以覆写它让 artTemplate 支持文件级模板，如使用 nodejs 或 ajax 载入模板（参考 src/node-template.js）
 
-**注意**：这是一个测试版本，Npm 尚无更新，使用请引入源码``require('../src/node-template.js')``
+**注意**
+
+这是一个测试版本，**Npm 尚无更新**，使用请引入源码``require('../src/node-template.js')``。
+
+使用 ndoe 运行当前版本的演示例子：
+
+	node demo/node-template.js
 
 ###	v2.0.4
 
