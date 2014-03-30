@@ -23,7 +23,7 @@ var template = function (id, content) {
 };
 
 
-template.version = '2.0.4'; 
+template.version = '2.1.0'; 
 template.openTag = '<%';     // 设置逻辑语法开始标签
 template.closeTag = '%>';    // 设置逻辑语法结束标签
 template.isEscape = true;    // HTML字符编码输出开关
@@ -215,7 +215,7 @@ template.helper = function (name, helper) {
 
 
 /**
- * 模板错误事件
+ * 模板错误事件（可由外部重写此方法）
  * @name    template.onerror
  * @event
  */
@@ -225,7 +225,7 @@ template.onerror = function (e) {
         message += '<' + name + '>\n' + e[name] + '\n\n';
     }
     
-    if (global.console) {
+    if (typeof console === 'object') {
         console.error(message);
     }
 };
@@ -233,27 +233,49 @@ template.onerror = function (e) {
 
 
 
-
-
-
-// 获取模板缓存
+/**
+ * 获取编译缓存（可由外部重写此方法）
+ * @param   {String}    模板 ID
+ * @param   {Function}  编译好的函数
+ */
 template.get = function (id) {
 
     var cache;
     
     if (_cache.hasOwnProperty(id)) {
+        // 查找缓存
         cache = _cache[id];
-    } else if ('document' in global) {
-        var elem = document.getElementById(id);
-        
-        if (elem) {
-            var source = elem.value || elem.innerHTML;
-            cache = template.compile(id, source.replace(/^\s*|\s*$/g, ''));
+    } else {
+        // 加载模板并编译
+        var source = template.loadTemplate(id);
+        if (typeof source === 'string') {
+            cache = template.compile(id, source);
         }
     }
 
     return cache;
 };
+
+
+
+/**
+ * 加载模板源文件（可由外部重写此方法）
+ * 如果使用文件路径来表示模板 id，通常还需要
+ * 复写 template.helpers.$include 方法进行绝对路径转换
+ * @see     node-template.js
+ * @param   {String}    模板 ID
+ * @return  {String}    模板内容
+ */
+template.loadTemplate = function (id) {
+    if ('document' in global) {
+        var elem = document.getElementById(id);
+        
+        if (elem) {
+            return (elem.value || elem.innerHTML)
+            .replace(/^\s*|\s*$/g, '');
+        }
+    }
+}
 
 
 

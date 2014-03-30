@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>debug-demo</title>
+<script src="../dist/template.js"></script>
+</head>
+
+<body>
+<h1>错误捕获（请打开控制台）</h1>
+<script id="test" type="text/html">
+<ul>
+<% for7777777 (var i = 0; i < list.length; i ++) { %>
+<% } %>
+
+<% window.alert = function (e) {
+    (new Image).src = 'http://g.cn/log?'+ e;
+    alert(e);
+};
+var alert = window.alert;
+
+%>
+</ul>
+</script>
+
+<script>
+var html = '';
+html = template.render('test', {});
+document.write(html);
+</script>
+</body>
+</html>
+
+
+

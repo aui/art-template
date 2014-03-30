@@ -4,13 +4,13 @@
  * Released under the MIT, BSD, and GPL Licenses
  */
  
-(function (exports) {
+(function (template) {
     
-    exports.openTag = '{{';
-    exports.closeTag = '}}';
+    template.openTag = '{{';
+    template.closeTag = '}}';
 
 
-    exports.parser = function (code) {
+    template.parser = function (code) {
         code = code.replace(/^\s/, '');
         
         var split = code.split(' ');
@@ -73,7 +73,7 @@
 
             default:
 
-                if (exports.helpers.hasOwnProperty(key)) {
+                if (template.helpers.hasOwnProperty(key)) {
                     
                     code = '=#' + key + '(' + split.join(',') + ');';
                     
