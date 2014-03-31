@@ -1,3 +1,12 @@
-<h1>{{title}}</h1>
-<h2>以下是内容嵌入的外部模板：</h2>
-{{include './list'}}
+{{include './public/header'}}
+
+<div id="main">
+	<h3>{{title}}</h3>
+	<ul>
+		{{each list}}
+	    <li><a href="{{$value.url}}">{{$value.title}}</a></li>
+	    {{/each}}
+	</ul>
+</div>
+
+{{include './public/footer'}} 

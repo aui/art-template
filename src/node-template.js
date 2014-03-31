@@ -19,10 +19,14 @@ template.encoding = 'utf-8';
 template.loadTemplate = function (id) {
     id = path.join(template.path, id + template.extname);
 
-    try {
-        return fs.readFileSync(id, template.encoding);
-    } catch (e) {
-    	
+    
+    if (id.indexOf(template.path) !== 0) {
+    	// 安全限制：禁止超出模板目录之外调用文件
+    	throw '"' + id + '" is not in the template directory';
+    } else {
+	    try {
+	        return fs.readFileSync(id, template.encoding);
+	    } catch (e) {}
     }
 }
 

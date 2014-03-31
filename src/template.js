@@ -94,7 +94,7 @@ template.compile = function (id, source) {
             return new Render(data, id) + '';
             
         } catch (e) {
-            
+    
             if (!isDebug) {
                 return template.compile(id, source, true)(data);
             }
@@ -601,6 +601,7 @@ if (typeof define === 'function') {
 
 global.template = template;
 
+/*#include:template-syntax.js#*/
 
 })(this);
 
