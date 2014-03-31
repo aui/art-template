@@ -601,7 +601,6 @@ if (typeof define === 'function') {
 
 global.template = template;
 
-/*#include:template-syntax.js#*/
 
 })(this.window || global);
 

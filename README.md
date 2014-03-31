@@ -156,8 +156,17 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 ###	使用
 
 	var template = require('art-template');
+	template.path = __dirname;	// 指定模板目录
+	template.extname = '.html';	// 指定模板后缀名
+	template.encoding = 'utf-8';// 指定模板编码
+
+	// 加载模板目录下 index/main.html
+	var html = template.render('index/main', {
+		list: ["aui", "test"]
+	});
 	
-（简洁语法版请使用 ``require('art-template/src/node-template-simple')``）
+> 如果采用简洁模板语法，可以引用``art-template/src/node-template-simple``
+
 
 ## 自动化工具
 
