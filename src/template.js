@@ -603,6 +603,5 @@ global.template = template;
 
 /*#include:template-syntax.js#*/
 
-})(this);
-
+})(this.window || global);
 

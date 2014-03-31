@@ -157,7 +157,7 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 
 	var template = require('art-template');
 	
-（简洁语法版请 ``require('art-template/dist/template-simple')``）
+（简洁语法版请使用 ``require('art-template/src/node-template-simple')``）
 
 ## 自动化工具
 
