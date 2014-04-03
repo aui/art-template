@@ -28,7 +28,7 @@ template.helper('$ubb2html', function (content) {
 var data = {
     text: '我是辅助方法[b]加粗[/b]的'
 };
-var html = template.render('test', data);
+var html = template('test', data);
 document.getElementById('content').innerHTML = html;
 </script>
 </body>

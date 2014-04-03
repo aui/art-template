@@ -23,8 +23,8 @@
 </script>
 
 <script>
-template.openTag = '<!--[';
-template.closeTag = ']-->';
+template.defaults.openTag = '<!--[';
+template.defaults.closeTag = ']-->';
 
 
 var html = '';
@@ -34,7 +34,7 @@ var data = {
 };
 
 
-html = template.render('test', data);
+html = template('test', data);
 document.write(html);
 
 </script>

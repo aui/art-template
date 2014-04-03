@@ -6,11 +6,11 @@
  
 (function (template) {
     
-    template.openTag = '{{';
-    template.closeTag = '}}';
+    template.defaults.openTag = '{{';
+    template.defaults.closeTag = '}}';
 
 
-    template.parser = function (code) {
+    template.defaults.parser = function (code) {
         code = code.replace(/^\s/, '');
         
         var split = code.split(' ');

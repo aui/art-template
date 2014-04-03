@@ -49,8 +49,8 @@ var getConfig = function () {
     };
 }
 
-document.getElementById('openTag').value = template.openTag;
-document.getElementById('closeTag').value = template.closeTag;
+document.getElementById('openTag').value = template.defaults.openTag;
+document.getElementById('closeTag').value = template.defaults.closeTag;
 
  
 if (!Array.prototype.forEach) {
@@ -114,8 +114,8 @@ var compress = function (id, code, $config) {
     var closeTag = $config.closeTag;
     
     if (typeof template !== 'undefined') {
-        openTag = template.openTag;
-        closeTag = template.closeTag
+        openTag = template.defaults.openTag;
+        closeTag = template.defaults.closeTag
     }
 
     function html (text) {
@@ -186,7 +186,7 @@ var compress = function (id, code, $config) {
     code = unicode.join('').trim();
 
     
-    code = "template.compile('" + id + "', '" + code + "');";
+    code = "template('" + id + "', '" + code + "');";
     
 	return code;
 };

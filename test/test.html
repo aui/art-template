@@ -110,7 +110,7 @@ test('调试', function () {
 		message: error.message
 	}, {
 		name: 'Render Error',
-		message: 'No Template'
+		message: 'Template not found'
 	}, '没有找到模板');
 
 
@@ -147,16 +147,16 @@ test('调试', function () {
 });
 
 test('配置功能', function () {
-	template.isEscape = false;
-	template.openTag = '{{';
-	template.closeTag = '}}';
+	template.defaults.escape = false;
+	template.defaults.openTag = '{{';
+	template.defaults.closeTag = '}}';
 	var data = {value: 'hello <em>world</em>'};
 	equal(template.compile('{{=value}}')(data), 'hello <em>world</em>', '自定义界定符');
 	equal(template.compile('{{=value}}')(data), 'hello <em>world</em>', '关闭默认编码输出');
 
-	template.isEscape = true;
-	template.openTag = '<%';
-	template.closeTag = '%>';
+	template.defaults.escape = true;
+	template.defaults.openTag = '<%';
+	template.defaults.closeTag = '%>';
 });
 
 test('语法', function () {

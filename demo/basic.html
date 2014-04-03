@@ -27,7 +27,7 @@ var data = {
 	isAdmin: true,
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 };
-var html = template.render('test', data);
+var html = template('test', data);
 document.getElementById('content').innerHTML = html;
 </script>
 </body>
