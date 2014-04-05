@@ -66,9 +66,10 @@
                 code = 'print(' + args + ');';
                 break;
 
+            case 'print':
             case 'include':
 
-                code = 'include(' + split.join(',') + ');';
+                code = key + '(' + split.join(',') + ');';
                 break;
 
             default:

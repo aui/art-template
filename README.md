@@ -1,4 +1,4 @@
-# artTemplate
+# artTemplate-3.0
 ###### 新一代 javascript 模板引擎
 =================
 
@@ -10,11 +10,6 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 快速上手
 
-###	引用引擎
-
-	<script src="dist/template.js"></script>
-	
-直接下载 [template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js)
 
 ### 编写模板
 
@@ -33,22 +28,21 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ### 渲染模板
 
-``template.render(id, data)``
+``template(id, data)``
 	
 	var data = {
 		title: '标签',
 		list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 	};
-	var html = template.render('test', data);
+	var html = template('test', data);
 	document.getElementById('content').innerHTML = html;
 
 
 [演示](http://aui.github.com/artTemplate/demo/basic.html)
 
-
 ## 嵌入子模板
 
-``<%include(id, [data])%>``语句可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
+``<%include(id, data)%>``语句可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
 
 	<script id="test" type="text/html">
 	<h1><%=title%></h1>
@@ -67,19 +61,19 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 ## 不转义HTML
 
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``<%=#value%>``（兼容v2.0.3 版本之前使用的``<%==value%>``）。
+模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``<%=#value%>``。
 
 	<script id="test" type="text/html">
 	<%=#value%>
 	</script>
-	
-若需要关闭默认转义，可以设置``template.defaults.escape = false``。
 
 [演示](http://aui.github.com/artTemplate/demo/no-escape.html)
 
+> 关闭默认转义：``template.config('escape', false)``
+
 ## 在js中存放模板
 
-``template.compile([id], source)``将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用``template.render(id, data)``渲染模板。
+``template.compile([id], source)``将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用``template(id, data)``渲染模板。
 
 	var source =
 	  '<ul>'
@@ -121,14 +115,18 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 	
 [演示](http://aui.github.com/artTemplate/demo/helper.html)
 
-## 设置界定符
+## 配置
 
-若前端模板语法与后端语法产生冲突，可以修改模板引擎界定符，例如：
+``template.config(name, value)``
 
-	template.defaults.openTag = "<!--[";
-	template.defaults.closeTag = "]-->";
-	
-[演示](http://aui.github.com/artTemplate/demo/tag.html)
+###	默认配置：
+
+    openTag: '<%'     // 逻辑语法开始标签
+    closeTag: '%>'    // 逻辑语法结束标签
+    escape: true      // 是否编码输出变量的 HTML 字符
+    cache: true       // 是否开启缓存（依赖 options 的 filename 字段）
+    compress: false   // 是否压缩输出
+    parser: null      // 自定义语法格式器 @see: template-syntax.js
 
 ## 自定义语法
 
@@ -156,17 +154,29 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 ###	使用
 
 	var template = require('art-template');
-	template.path = __dirname;	// 指定模板目录
-	template.extname = '.html';	// 指定模板后缀名
-	template.encoding = 'utf-8';// 指定模板编码
-
-	// 加载模板目录下 index/main.html
-	var html = template.render('index/main', {
-		list: ["aui", "test"]
-	});
+	var data = {list: ["aui", "test"]};
 	
-> 如果采用简洁模板语法，可以引用``art-template/src/node-template-simple``
+	var html = template(__dirname + '/index/main', );
+	
+> 如果采用原生 js 作为模板语法，可以引用``require('art-template/src/template-native.js')``
+> 
+###	配置
 
+NodeJS 版本新增了如下默认配置：
+
+	// 指定模板目录
+	template.config('path', '');
+	
+	// 指定模板后缀名
+	template.config('extname', '.html');
+	
+	// 指定模板编码
+	template.config('encoding', 'utf-8');
+	
+配置``path``指定模板目录可以使用短名称加载模板，例如：
+	
+	template.config('path', __dirname);
+	var html = template('index/main', data)
 
 ## 自动化工具
 
@@ -196,21 +206,35 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 
 > 模板中若任意引用外部对象，复杂的依赖管理将会让项目难以维护，这种方式将利于后续模板迁移（包括通过工具预编译）。
 
+##	v3.0.0 升级参考
+
+为了适配 NodeJS express，v3.0.0 接口有调整。
+
+###	接口变更
+
+1.	模板语法默认使用简洁语法
+2. ``template.render(id, data)``变更为``template.render(source, options)``
+3. 全局配置方式有修改
+
+###	升级方法
+
+1. 继续使用 js 原生语法作为模板语言请使用 template-native.js
+2. 查找项目```template.render```替换为```template```
+3. 使用``template.config(name, value)``来设置配置
+
 
 ## 更新记录
 
-### v2.1.0(Beta)
+### v3.0.0
 
-1.	提供 NodeJS 专属版本，支持传入文件路径直接加载模板，同时模板支持``include``语句
-2.	内部暴露``template.loadTemplate``方法，开发者可以覆写它让 artTemplate 支持文件级模板，如使用 nodejs 或 ajax 载入模板（开发请参考内置的 src/node-template.js 实现）
+1. 提供 NodeJS 专属版本，支持使用路径加载模板，并且模板的``include``语句也支持相对路径
+2. 适配 [express](http://expressjs.com) 框架
+3. 内置``print``语句支持传入多个参数
+4. 支持全局缓存配置
 
-**注意**
+当前版本接口有调整，请阅读 [v3.0.0 升级参考](#v3.0.0 升级参考)
 
-这是一个测试版本，**Npm 尚无更新**，使用请引入源码``require('../src/node-template.js')``。
-
-使用 ndoe 运行当前版本的演示例子：
-
-	node demo/node-template.js
+> artTemplate 预编译工具 [TmodJS](https://github.com/aui/tmodjs) 已更新
 
 ###	v2.0.4
 
@@ -254,8 +278,8 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 
 ### v2.0 beta1
 
-1.	对非String、Number类型的数据不输出，而Function类型求值后输出。
-2.	默认对html进行转义输出，原文输出可使用``<%==value%>``（备注：v2.0.3推荐使用``<%=#value%>``），也可以关闭默认的转义功能``template.defaults.escape = false``。
+1.	对非 String、Number 类型的数据不输出，而 Function 类型求值后输出。
+2.	默认对 html 进行转义输出，原文输出可使用``<%==value%>``（备注：v2.0.3 推荐使用``<%=#value%>``），也可以关闭默认的转义功能``template.defaults.escape = false``。
 3.	增加批处理工具支持把模板编译成不依赖模板引擎的 js 文件，可通过 RequireJS、SeaJS 等模块加载器进行异步加载。
 
 ## 授权协议

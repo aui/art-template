@@ -6,7 +6,7 @@
  
 (function (global) {
 
-'use strict';
+
 
 
 /**
@@ -17,35 +17,16 @@
  * @return  {String, Function}  渲染好的HTML字符串或者渲染方法
  */
 var template = function (filename, content) {
-
-    if (typeof content === 'string') {
-        return cacheStore[filename] = template.compile(content, {
+    return typeof content === 'string'
+    ?   compile(content, {
+            cache: true,
             filename: filename
-        });
-    } else {
-        
-        return template.renderByFilename(filename, content);
-    }
+        })
+    :   renderFile(filename, content);
 };
 
 
 template.version = '3.0.0';
-
-
-
-/*template.defaults.openTag = '<%';    // 设置逻辑语法开始标签
-template.defaults.closeTag = '%>';   // 设置逻辑语法结束标签
-template.defaults.escape = true;     // HTML字符编码输出开关
-template.defaults.compress = false;  // 剔除渲染后HTML多余的空白开关
-template.defaults.parser = null;     // 语法格式器*/
-template.defaults = {
-    openTag: '<%',    // 逻辑语法开始标签
-    closeTag: '%>',   // 逻辑语法结束标签
-    escape: true,     // HTML字符编码输出开关
-    compress: false,  // 剔除渲染后HTML多余的空白开关
-    parser: null      // 语法格式器
-}
-
 
 
 /**
@@ -56,22 +37,7 @@ template.defaults = {
  * @return  {String}    渲染好的字符串
  */
 template.render = function (source, options) {
-    options = options || {};
-    var fn;
-
-    if (options.cache) {
-        var filename = options.filename;
-        if (filename) {
-            fn = cacheStore[filename]
-            || (cacheStore[filename] = template.compile(source, options));
-        } else {
-            throw new Error('"cache" option requires "filename".');
-        }
-    } else {
-        fn = template.compile(source, options);
-    }
-
-    return fn(options);
+    return compile(source, options);
 };
 
 
@@ -83,14 +49,14 @@ template.render = function (source, options) {
  * @param   {Object}    数据
  * @return  {String}    渲染好的字符串
  */
-template.renderByFilename = function (filename, data) {
+var renderFile = template.renderFile = function (filename, data) {
     var fn = template.get(filename) || showDebugInfo({
         filename: filename,
         name: 'Render Error',
         message: 'Template not found'
     });
     return fn(data); 
-}
+};
 
 
 /**
@@ -111,11 +77,20 @@ template.renderByFilename = function (filename, data) {
  *
  * @return  {Function}  渲染方法
  */
-template.compile = function (source, options) {
+var compile = template.compile = function (source, options) {
     
+    // 合并默认配置
+    var defaults = template.defaults;
     options = options || {};
+    for (var name in defaults) {
+        if (options[name] === undefined) {
+            options[name] = defaults[name];
+        }
+    }
 
-    var filename = options.filename || '';
+
+    var filename = options.filename;
+
 
     try {
         
@@ -123,7 +98,7 @@ template.compile = function (source, options) {
         
     } catch (e) {
     
-        e.filename = filename;
+        e.filename = filename || 'anonymous';
         e.name = 'Syntax Error';
 
         return showDebugInfo(e);
@@ -144,7 +119,7 @@ template.compile = function (source, options) {
             // 运行时出错后自动开启调试模式重新编译
             if (!options.debug) {
                 options.debug = true;
-                return template.compile(source, options)(data);
+                return compile(source, options)(data);
             }
             
             return showDebugInfo(e)();
@@ -159,6 +134,11 @@ template.compile = function (source, options) {
         return Render.toString();
     };
 
+
+    if (filename && options.cache) {
+        cacheStore[filename] = render;
+    }
+
     
     return render;
 
@@ -168,6 +148,28 @@ template.compile = function (source, options) {
 
 var cacheStore = template.cache = {};
 
+
+
+template.defaults = {
+    openTag: '<%',    // 逻辑语法开始标签
+    closeTag: '%>',   // 逻辑语法结束标签
+    escape: true,     // 是否编码输出变量的 HTML 字符
+    cache: true,      // 是否开启缓存（依赖 options 的 filename 字段）
+    compress: false,  // 是否压缩输出
+    parser: null      // 自定义语法格式器 @see: template-syntax.js
+};
+
+
+
+/**
+ * 设置全局配置
+ * @name    template.config
+ * @param   {String}    名称
+ * @param   {Any}       值
+ */
+template.config = function (name, value) {
+    template.defaults[name] = value;
+};
 
 
 
@@ -216,9 +218,10 @@ var isArray = Array.isArray || function (obj) {
 };
 
 
-var each = function (data, callback) {           
+var each = function (data, callback) {
+    var i, len;        
     if (isArray(data)) {
-        for (var i = 0, len = data.length; i < len; i++) {
+        for (i = 0, len = data.length; i < len; i++) {
             callback.call(data, data[i], i, data);
         }
     } else {
@@ -230,7 +233,7 @@ var each = function (data, callback) {
 
 var helpers = template.helpers = {
 
-    $include: template.renderByFilename,
+    $include: renderFile,
 
     $string: toString,
 
@@ -289,9 +292,9 @@ template.get = function (filename) {
         cache = cacheStore[filename];
     } else {
         // 加载模板并编译
-        var source = template.loadTemplate(filename);
+        var source = template.readTemplate(filename);
         if (typeof source === 'string') {
-            cache = cacheStore[filename] = template.compile(source, {
+            cache = compile(source, {
                 filename: filename
             });
         }
@@ -310,7 +313,7 @@ template.get = function (filename) {
  * @param   {String}    模板名
  * @return  {String}    模板内容
  */
-template.loadTemplate = function (filename) {
+template.readTemplate = function (filename) {
     if ('document' in global) {
         var elem = document.getElementById(filename);
         
@@ -382,17 +385,7 @@ var getVariable = function (code) {
 
 
 var compiler = function (source, options) {
-
-    // 合并默认配置
-    var defaults = template.defaults;
-    for (var name in defaults) {
-        if (options[name] === undefined) {
-            options[name] = defaults[name];
-        }
-    }
-
     
-    var filename = options.filename;
     var debug = options.debug;
     var openTag = options.openTag;
     var closeTag = options.closeTag;
@@ -408,7 +401,7 @@ var compiler = function (source, options) {
     var prototype = {};
 
     
-    var variables = "var $helpers=this,"
+    var variables = "'use strict';var $helpers=this,"
     + (debug ? "$line=0," : "");
 
     var isNewEngine = ''.trim;// '__proto__' in {}
@@ -420,16 +413,16 @@ var compiler = function (source, options) {
         ? "$out+=text;return $out;"
         : "$out.push(text);";
           
-    var print = "function(text){" + concat + "}";
-
-    //print = "function(){$out.push.apply($out,arguments)}";
-    //print = "function(){$out=$out.concat.apply($out,arguments);return $out}"
+    var print = "function(){"
+    +      "var text=''.concat.apply('',arguments);"
+    +       concat
+    +  "}";
 
     var include = "function(filename,data){"
-    +     "data=data||$data;"
-    +     "var text=$helpers.$include(filename,data,$filename);"
-    +     concat
-    + "}";
+    +      "data=data||$data;"
+    +      "var text=$helpers.$include(filename,data,$filename);"
+    +       concat
+    +   "}";
     
     
     // html与逻辑语法分离
@@ -570,69 +563,54 @@ var compiler = function (source, options) {
             code = "$line=" + thisLine + ";" + code;
         }
         
-        getKey(code);
-        
-        return code + "\n";
-    }
-    
-    
-    // 提取模板中的变量名
-    function getKey (code) {
-        
-        code = getVariable(code);
-        
-        // 分词
-        forEach(code, function (name) {
-         
-            // 除重
-            // TODO: name 可能在低版本的安卓浏览器中为空值，这里后续需要改进 getVariable 方法
-            // @see https://github.com/aui/artTemplate/issues/41#issuecomment-29985469
-            if (name && !uniq.hasOwnProperty(name)) {
-                setValue(name);
-                uniq[name] = true;
+        // 提取模板中的变量名
+        forEach(getVariable(code), function (name) {
+            
+            // name 值可能为空，在安卓低版本浏览器下
+            if (!name || uniq.hasOwnProperty(name)) {
+                return;
             }
+
+            var value;
+
+            // 声明模板变量
+            // 赋值优先级:
+            // 内置特权方法(include, print) > 私有模板辅助方法 > 数据 > 公用模板辅助方法
+            if (name === 'print') {
+
+                value = print;
+
+            } else if (name === 'include') {
+                
+                prototype.$include = helpers.$include;
+                value = include;
+                
+            } else {
+
+                value = "$data." + name;
+
+                if (helpers.hasOwnProperty(name)) {
+
+                    prototype[name] = helpers[name];
+
+                    if (name.indexOf('$') === 0) {
+                        value = "$helpers." + name;
+                    } else {
+                        value = value
+                        + "===undefined?$helpers." + name + ":" + value;
+                    }
+                }
+                
+                
+            }
+            
+            variables += name + "=" + value + ",";
+            uniq[name] = true;
+            
             
         });
         
-    }
-    
-    
-    // 声明模板变量
-    // 赋值优先级:
-    // 内置特权方法(include, print) > 私有模板辅助方法 > 数据 > 公用模板辅助方法
-    function setValue (name) {
-
-        var value;
-
-        if (name === 'print') {
-
-            value = print;
-
-        } else if (name === 'include') {
-            
-            prototype["$include"] = helpers['$include'];
-            value = include;
-            
-        } else {
-
-            value = "$data." + name;
-
-            if (helpers.hasOwnProperty(name)) {
-
-                prototype[name] = helpers[name];
-
-                if (name.indexOf('$') === 0) {
-                    value = "$helpers." + name;
-                } else {
-                    value = value
-                    + "===undefined?$helpers." + name + ":" + value;
-                }
-            }
-            
-            
-        }
-        
-        variables += name + "=" + value + ",";
+        return code + "\n";
     }
 
 
@@ -674,7 +652,11 @@ if (typeof define === 'function') {
 接口变更：template.render(id, data) 修改为 template.render(source, data)
 兼容解决方案：使用 template(id, data) 代替 template.render(id, data)
 
+增加配置方法：
+template.config(name, value)
 template.defaults.*
 template.isEscape 变更为 template.defaults.escape
 template.isCompress 变更为 template.defaults.compress
+
+内置 print 方法支持传入多个参数
 */

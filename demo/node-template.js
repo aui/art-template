@@ -1,7 +1,6 @@
 var template = require('../src/node-template-simple.js');
-template.path = __dirname;// 设置模板目录，默认为引擎所在目录
+template.config('path', __dirname);// 设置模板目录，默认为引擎所在目录
 
-//template.defaults.compress = true; // 设置压缩空白字符串
 
 var html = template('node-template/index', {
 	title: '国内要闻',
@@ -32,4 +31,4 @@ var html = template('node-template/index', {
 
 
 console.log(html);
-//console.log(template.cache)
+console.log(template.cache)

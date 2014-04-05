@@ -10,21 +10,21 @@ var template = require('./template.js');
 
 
 // 提供新的配置字段
-template.path = '';
-template.extname = '.html';
-template.encoding = 'utf-8';
+template.defaults.path = '';
+template.defaults.extname = '.html';
+template.defaults.encoding = 'utf-8';
 
 
 // 重写加载模板源文件方法
-template.loadTemplate = function (id) {
-    id = path.join(template.path, id + template.extname);
+template.readTemplate = function (id) {
+    id = path.join(template.defaults.path, id + template.defaults.extname);
     
-    if (id.indexOf(template.path) !== 0) {
+    if (id.indexOf(template.defaults.path) !== 0) {
         // 安全限制：禁止超出模板目录之外调用文件
         throw new Error('"' + id + '" is not in the template directory');
     } else {
         try {
-            return fs.readFileSync(id, template.encoding);
+            return fs.readFileSync(id, template.defaults.encoding);
         } catch (e) {}
     }
 }
@@ -36,40 +36,20 @@ template.helpers.$include = function (id, data, from) {
     from = path.dirname(from);
     id = path.join(from, id);
     
-    return template.renderByFilename(id, data);
+    return template.renderFile(id, data);
 }
 
 
 // express support
 template.__express = function (path, options, fn) {
 
-    var source;
-    var compiled;
-
     if (typeof options === 'function') {
         fn = options;
         options = {};
     }
 
-
     options.filename = path;
-
-
-    if (options.cache && template.cache.hasOwnProperty(path)) {
-        compiled = template.cache[path];
-    } else {
-
-        try {
-            source = fs.readFileSync(path, template.encoding);
-        } catch (e) {
-            fn(e);
-            return;
-        }
-
-        compiled = template.compile(source, options);
-    }
-
-    fn(null, compiled(options));
+    fn(null, template.renderFile(path, options));
 };
 
 
