@@ -1,6 +1,7 @@
-var template = require('../src/node-template-simple.js');
+var template = require('../lib/template.js');
+//console.log(template);
 template.config('path', __dirname);// 设置模板目录，默认为引擎所在目录
-
+template.config('compress', true);// 压缩输出
 
 var html = template('node-template/index', {
 	title: '国内要闻',
@@ -31,4 +32,4 @@ var html = template('node-template/index', {
 
 
 console.log(html);
-console.log(template.cache)
+//console.log(template.cache)

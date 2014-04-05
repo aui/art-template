@@ -394,15 +394,13 @@ var compiler = function (source, options) {
     var escape = options.escape;
     
 
-    var code = source;
-    var tempCode = '';
+    
     var line = 1;
     var uniq = {$data:1,$filename:1,$helpers:1,$out:1,$line:1};
     var prototype = {};
 
     
-    var variables = "'use strict';var $helpers=this,"
-    + (debug ? "$line=0," : "");
+
 
     var isNewEngine = ''.trim;// '__proto__' in {}
     var replaces = isNewEngine
@@ -423,10 +421,16 @@ var compiler = function (source, options) {
     +      "var text=$helpers.$include(filename,data,$filename);"
     +       concat
     +   "}";
+
+    var headerCode = "'use strict';var $helpers=this,"
+    + (debug ? "$line=0," : "");
     
+    var mainCode = replaces[0];
+
+    var footerCode = "return new String(" + replaces[3] + ");"
     
     // html与逻辑语法分离
-    forEach(code.split(openTag), function (code) {
+    forEach(source.split(openTag), function (code) {
         code = code.split(closeTag);
         
         var $0 = code[0];
@@ -435,25 +439,22 @@ var compiler = function (source, options) {
         // code: [html]
         if (code.length === 1) {
             
-            tempCode += html($0);
+            mainCode += html($0);
          
         // code: [logic, html]
         } else {
             
-            tempCode += logic($0);
+            mainCode += logic($0);
             
             if ($1) {
-                tempCode += html($1);
+                mainCode += html($1);
             }
         }
         
 
     });
     
-    
-    
-    code = tempCode;
-    
+    var code = headerCode + mainCode + footerCode;
     
     // 调试语句
     if (debug) {
@@ -470,11 +471,9 @@ var compiler = function (source, options) {
     }
     
     
-    code = variables + replaces[0] + code
-    + "return new String(" + replaces[3] + ");";
-    
     
     try {
+        
         
         var Render = new Function("$data", "$filename", code);
         Render.prototype = prototype;
@@ -604,7 +603,7 @@ var compiler = function (source, options) {
                 
             }
             
-            variables += name + "=" + value + ",";
+            headerCode += name + "=" + value + ",";
             uniq[name] = true;
             
             
@@ -646,17 +645,4 @@ if (typeof define === 'function') {
 
 })(this.window || global);
 
-/*
-修改历史：
 
-接口变更：template.render(id, data) 修改为 template.render(source, data)
-兼容解决方案：使用 template(id, data) 代替 template.render(id, data)
-
-增加配置方法：
-template.config(name, value)
-template.defaults.*
-template.isEscape 变更为 template.defaults.escape
-template.isCompress 变更为 template.defaults.compress
-
-内置 print 方法支持传入多个参数
-*/
