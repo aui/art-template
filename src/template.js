@@ -226,7 +226,9 @@ template.onerror = function (e) {
     }
     
     if (global.console) {
-        console.error(message);
+        global.console.error(message);
+    } else if (window.console) {
+        window.console.error(message);
     }
 };
 
@@ -243,7 +245,7 @@ template.get = function (id) {
     
     if (_cache.hasOwnProperty(id)) {
         cache = _cache[id];
-    } else if ('document' in global) {
+    } else {
         var elem = document.getElementById(id);
         
         if (elem) {
