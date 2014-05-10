@@ -12,7 +12,6 @@
 *	[下载](#下载)
 *	[方法](#方法)
 *	[NodeJS](#NodeJS)
-*	[Express](#Express)
 *	[使用预编译](#使用预编译)
 *	[授权协议](#授权协议)
 
@@ -101,38 +100,47 @@
 
 ## 方法
 
-###	.``compile``(source, options)
+###	template(id, data)
+
+根据 id 渲染模板。内部会根据``document.getElementById(id)``查找模板。
+
+###	template.``compile``(source, options)
 
 将返回一个渲染函数。[演示](http://aui.github.com/artTemplate/demo/compile.html)
 
-###	.``render``(source, options)
+###	template.``render``(source, options)
 
 将返回渲染结果。
 
-###	.``helper``(name, callback)
+###	template.``helper``(name, callback)
 
 添加辅助方法。
 
 模板无法读写外部对象，只能通过定义辅助方法的方式声明公用方法。例如扩展一个UBB替换方法：
 
-	template.helper('ubb2html', function (content) {
-    	return content
-    	.replace(/\[b\]([^\[]*?)\[\/b\]/igm, '<b>$1</b>')
-    	.replace(/\[i\]([^\[]*?)\[\/i\]/igm, '<i>$1</i>')
-    	.replace(/\[u\]([^\[]*?)\[\/u\]/igm, '<u>$1</u>')
-    	.replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '<a href="$1">$2</a>')
-    	.replace(/\[img\]([^\[]*?)\[\/img\]/igm, '<img src="$1" />');
-	});
+```
+template.helper('$ubb2html', function (content) {
+	// 转义 HTML 字符
+	content = template.helpers.$escape(content);
+	// 解析 UBB 字符
+    return content
+    .replace(/\[b\]([^\[]*?)\[\/b\]/igm, '<b>$1</b>')
+    .replace(/\[i\]([^\[]*?)\[\/i\]/igm, '<i>$1</i>')
+    .replace(/\[u\]([^\[]*?)\[\/u\]/igm, '<u>$1</u>')
+    .replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '<a href="$1">$2</a>')
+    .replace(/\[img\]([^\[]*?)\[\/img\]/igm, '<img src="$1" />');
+});
+```
 	
 在模板中的使用方式：
 
-	{{ubb2html(content)}}
+	{{$ubb2html content}}
 	
 注意：引擎不会对辅助方法输出的 HTML 字符进行转义。
 	
 [演示](http://aui.github.com/artTemplate/demo/helper.html)
 
-### .``config``(name, value)
+###	template.``config``(name, value)
 
 更改引擎的默认配置。
 
@@ -145,7 +153,7 @@
 	
 ##	使用预编译
 
-可突破浏览器限制，让前端模板拥有后端模板一样的能力：
+可突破浏览器限制，让前端模板拥有后端模板一样的同步加载能力：
 
 一、**按文件与目录组织模板**
 
@@ -154,7 +162,7 @@ template('tpl/home/main', data)
 
 ```
 
-二、**模板之间支持引入外部模板**
+二、**模板支持引入子模板**
 
 ```
 {{include '../public/header'}}
@@ -268,8 +276,8 @@ NodeJS 版本新增了如下默认配置：
 ### v2.0 beta5
 
 1. 修复编译工具可能存在重复依赖的问题。感谢 @warmhug
-2. 修复``include``内部实现可能产生上下文不一致的问题。感谢 @warmhug
-3. 支持使用拖拽文件到``compile.cmd``图标上进行单独编译
+2. 修复预编译``include``内部实现可能产生上下文不一致的问题。感谢 @warmhug
+3. 编译工具支持使用拖拽文件进行单独编译
 
 ### v2.0 beta4
 
