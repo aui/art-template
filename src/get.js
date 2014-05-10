@@ -10,7 +10,7 @@ template.get = function (filename) {
     if (cacheStore.hasOwnProperty(filename)) {
         // 使用内存缓存
         cache = cacheStore[filename];
-    } else if ('document' in global) {
+    } else if (typeof document === 'object') {
         // 加载模板并编译
         var elem = document.getElementById(filename);
         
@@ -25,3 +25,5 @@ template.get = function (filename) {
 
     return cache;
 };
+
+

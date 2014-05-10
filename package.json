@@ -5,18 +5,18 @@
   "keywords"    : ["util", "functional", "template"],
   "author"      : "tangbin <sugarpie.tang@gmail.com>",
   "repository"  : {"type": "git", "url": "git://github.com/aui/artTemplate.git"},
-  "main"        : "./lib/template.js",
+  "main"        : "./node/template.js",
   "version"     : "3.0.0",
   "devDependencies": {
   	"grunt-cli": "*",
     "grunt": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-contrib-qunit": "*"
+    "grunt-contrib-uglify": "*"
   },
   "license"		: "BSD"
 }
+        
         
         
         

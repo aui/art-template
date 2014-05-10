@@ -1,9 +1,33 @@
 module.exports = function (grunt) {
 
+    var sources_native = [
+        'src/intro.js',
+        'src/template.js',
+        'src/config.js',
+        'src/cache.js',
+        'src/render.js',
+        'src/renderFile.js',
+        'src/get.js',
+        'src/helper.js',
+        'src/onerror.js',
+        'src/compile.js',
+                    //<<<< 'src/syntax.js',
+        'src/outro.js'
+    ];
+
+    var sources_simple = Array.apply(null, sources_native);
+    sources_simple.splice(sources_native.length - 1, 0, 'src/syntax.js');
+
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         meta: {
-            banner: '/*! <%= pkg.name %> | <%= pkg.homepage %> */\n'
+            banner: 
+            ['/*!',
+             ' * <%= pkg.name %> - Template Engine',
+             ' * <%= pkg.homepage %>',
+             ' * Released under the MIT, BSD, and GPL Licenses',
+             ' */\n'].join('\n')
         },
         concat: {
             options: {
@@ -11,37 +35,12 @@ module.exports = function (grunt) {
             },
 
             'native': {
-                src: [
-                    'src/intro.js',
-                    'src/template.js',
-                    'src/config.js',
-                    'src/cache.js',
-                    'src/render.js',
-                    'src/renderFile.js',
-                    'src/get.js',
-                    'src/helper.js',
-                    'src/onerror.js',
-                    'src/compile.js',
-                    'src/outro.js'
-                ],
+                src: sources_native,
                 dest: 'dist/template-native-debug.js'
             },
 
             simple: {
-                src: [
-                    'src/intro.js',
-                    'src/template.js',
-                    'src/config.js',
-                    'src/cache.js',
-                    'src/render.js',
-                    'src/renderFile.js',
-                    'src/get.js',
-                    'src/helper.js',
-                    'src/onerror.js',
-                    'src/compile.js',
-                    'src/syntax.js',// 语法
-                    'src/outro.js'
-                ],
+                src: sources_simple,
                 dest: 'dist/template-debug.js'
             }
         },

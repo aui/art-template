@@ -11,5 +11,7 @@ var renderFile = template.renderFile = function (filename, data) {
         name: 'Render Error',
         message: 'Template not found'
     });
-    return fn(data); 
+    return data ? fn(data) : fn;
 };
+
+

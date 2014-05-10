@@ -1,12 +1,30 @@
 # artTemplate-3.0
-###### 新一代 javascript 模板引擎
 =================
 
-artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）。
+新一代 javascript 模板引擎
 
-引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题（[详情](http://aui.github.io/artTemplate/demo/debug.html)）。
+##	目录
 
-另外，artTemplate 的模板还支持使用自动化工具预编译，支持将模板转换为 js 文件。
+*	[特性](#特性)
+*	[快速上手](#快速上手)
+*	[模板语法](#模板语法)
+*	[演示](#演示)
+*	[下载](#下载)
+*	[方法](#方法)
+*	[NodeJS](#NodeJS)
+*	[Express](#Express)
+*	[使用预编译](#使用预编译)
+*	[授权协议](#授权协议)
+
+##	特性
+
+*	性能卓越，执行速度通常是 Mustache 与 tmpl 的 20 多倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）
+*	支持运行时调试，可精确定位异常模板所在语句（[演示](http://aui.github.io/artTemplate/demo/debug.html)）
+*	对 NodeJS Express 友好支持
+*	安全，默认对输出进行转义、在沙箱中运行编译后的代码（Node版本可以安全执行用户上传的模板）
+*	支持``include``语句，可在浏览器端实现按路径加载模板
+*	支持预编译，可将模板转换成为非常精简的 js 文件
+*	支持所有流行的浏览器
 
 ## 快速上手
 
@@ -16,15 +34,13 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 使用一个``type="text/html"``的``script``标签存放模板：
 	
 	<script id="test" type="text/html">
-	<h1><%=title%></h1>
+	<h1>{{title}}</h1>
 	<ul>
-    	<%for(i = 0; i < list.length; i ++) {%>
-        	<li>条目内容 <%=i + 1%> ：<%=list[i]%></li>
-    	<%}%>
+	    {{each list as value i}}
+	        <li>索引 {{i + 1}} ：{{value}}</li>
+	    {{/each}}
 	</ul>
 	</script>
-	
-模板逻辑语法开始与结束的界定符号为``<%`` 与``%>``，若``<%``后面紧跟``=``号则输出变量内容。
 
 ### 渲染模板
 
@@ -40,65 +56,66 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 
 [演示](http://aui.github.com/artTemplate/demo/basic.html)
 
-## 嵌入子模板
+##	模板语法
 
-``<%include(id, data)%>``语句可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
+有两个版本的模板语法可以选择。
 
-	<script id="test" type="text/html">
-	<h1><%=title%></h1>
-	<%include('list')%>
-	</script>
+###	一、简洁语法 ``推荐``
+
+	{{if admin}}
+		{{include 'admin_content'}}
+		
+		{{each list}}
+			<div>{{$index}}. {{$value.user}}</div>
+		{{/each}}
+	{{/if}}
 	
-	<script id="list" type="text/html">
-	<ul>
-    	<%for(i = 0; i < list.length; i ++) {%>
-        	<li>条目内容 <%=i + 1%> ：<%=list[i]%></li>
-    	<%}%>
-	</ul>
-	</script>
+[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:simple)
+
+###	二、js 原生语法
 	
-[演示](http://aui.github.com/artTemplate/demo/include.html)
-
-## 不转义HTML
-
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用``<%=#value%>``。
-
-	<script id="test" type="text/html">
-	<%=#value%>
-	</script>
-
-[演示](http://aui.github.com/artTemplate/demo/no-escape.html)
-
-> 关闭默认转义：``template.config('escape', false)``
-
-## 在js中存放模板
-
-``template.compile([id], source)``将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用``template(id, data)``渲染模板。
-
-	var source =
-	  '<ul>'
-	+    '<% for (var i = 0; i < list.length; i ++) { %>'
-	+        '<li>索引 <%= i + 1 %> ：<%= list[i] %></li>'
-	+    '<% } %>'
-	+ '</ul>';
+	<%if (admin){%>
+		<%include('admin_content')%>
 	
-	var data = {
-	    list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
-	};
-	
-	var render = template.compile(source);
-	var html = render(data);
-	document.getElementById('content').innerHTML = html;
-	
-[演示](http://aui.github.com/artTemplate/demo/compile.html)
+		<%for (var i=0;i<list.length;i++) {%>
+			<div><%=i%>. <%=list[i].user%></div>
+		<%}%>
+	<%}%>
 
-## 添加辅助方法
+[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:native)
 
-``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 UBB 替换、脏话替换等。
+##	演示
 
-例如扩展一个UBB替换方法：
+*	[基本例子](http://aui.github.io/artTemplate/demo/basic.html)
+*	[不转义HTML](http://aui.github.io/artTemplate/demo/no-escape.html)
+*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/compile.html)
+*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/include.html)
+*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/helper.html)
+*	[错误调试](http://aui.github.io/artTemplate/demo/debug.html)
+*	[print方法](http://aui.github.io/artTemplate/demo/print.html)
 
-	template.helper('$ubb2html', function (content) {
+##	下载
+
+* 下载简洁语法版：[template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js) ``推荐``
+* 下载原生语法版：[template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
+
+## 方法
+
+###	.``compile``(source, options)
+
+将返回一个渲染函数。[演示](http://aui.github.com/artTemplate/demo/compile.html)
+
+###	.``render``(source, options)
+
+将返回渲染结果。
+
+###	.``helper``(name, callback)
+
+添加辅助方法。
+
+模板无法读写外部对象，只能通过定义辅助方法的方式声明公用方法。例如扩展一个UBB替换方法：
+
+	template.helper('ubb2html', function (content) {
     	return content
     	.replace(/\[b\]([^\[]*?)\[\/b\]/igm, '<b>$1</b>')
     	.replace(/\[i\]([^\[]*?)\[\/i\]/igm, '<i>$1</i>')
@@ -109,41 +126,50 @@ artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率�
 	
 在模板中的使用方式：
 
-	<%=$ubb2html(content) %>
+	{{ubb2html(content)}}
 	
 注意：引擎不会对辅助方法输出的 HTML 字符进行转义。
 	
 [演示](http://aui.github.com/artTemplate/demo/helper.html)
 
-## 配置
+### .``config``(name, value)
 
-``template.config(name, value)``
-
-###	默认配置：
+更改引擎的默认配置。
 
     openTag: '<%'     // 逻辑语法开始标签
     closeTag: '%>'    // 逻辑语法结束标签
     escape: true      // 是否编码输出变量的 HTML 字符
     cache: true       // 是否开启缓存（依赖 options 的 filename 字段）
     compress: false   // 是否压缩输出
-    parser: null      // 自定义语法格式器 @see: template-syntax.js
-
-## 自定义语法
-
-artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语法示例：
-
-	{{if admin}}
-    	<h3>{{title}}</h3>
-    	<ul>
-    	    {{each list}}
-            	<li>{{$index + 1}}: {{$value}}</li>
-       		{{/each}}
-    	</ul>
-	{{/if}}
-
-请引用 dist/[template-simple.js](https://raw.github.com/aui/artTemplate/master/dist/template-simple.js) 即可使用简洁语法。
+    parser: null      // 自定义语法格式器
 	
-[完整简洁语法说明](https://github.com/aui/artTemplate/wiki/自定义语法扩展说明)
+##	使用预编译
+
+可突破浏览器限制，让前端模板拥有后端模板一样的能力：
+
+一、**按文件与目录组织模板**
+
+```
+template('tpl/home/main', data)
+
+```
+
+二、**模板之间支持引入外部模板**
+
+```
+{{include '../public/header'}}
+```
+
+###	基于预编译：
+
+*	在开发阶段将编译模板为高性能的 js 文件
+*	使用同步模板加载接口
+*	支持多种 js 模块输出：AMD、CMD、CommonJS
+*	支持作为 GruntJS 插件构建
+*	前端模板可共享给 NodeJS 执行
+*	自动压缩打包模板
+
+artTemplate 的预编译工具是一个子项目，请前往：[TmodJS](http://github.com/aui/tmodjs/)
 
 ##	NodeJS
 
@@ -156,10 +182,8 @@ artTemplate 提供一个语法扩展用来简化模板逻辑语法。简洁语�
 	var template = require('art-template');
 	var data = {list: ["aui", "test"]};
 	
-	var html = template(__dirname + '/index/main', );
-	
-> 如果采用原生 js 作为模板语法，可以引用``require('art-template/src/template-native.js')``
-> 
+	var html = template(__dirname + '/index/main', data);
+
 ###	配置
 
 NodeJS 版本新增了如下默认配置：
@@ -173,55 +197,32 @@ NodeJS 版本新增了如下默认配置：
 	// 指定模板编码
 	template.config('encoding', 'utf-8');
 	
-配置``path``指定模板目录可以使用短名称加载模板，例如：
+配置``path``指定模板目录可以缩短模板的路径，并且能够避免``include``语句越级访问任意路径引发安全隐患，例如：
 	
 	template.config('path', __dirname);
 	var html = template('index/main', data)
+	
+###	NodeJS + Express
 
-## 自动化工具
+	app.register('.html', require('art-template'));
+	
+> 若使用 js 原生语法作为模板语法，请改用 ``require('art-template/node/template-native.js')``
 
-### 预编译工具
+##	升级参考
 
-使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include 语句等特性，可以像后端一样书写前端模板！
-
-项目主页：<https://github.com/aui/tmodjs>
-
-### 抽取工具
-
-[./tools/combine.html](http://aui.github.com/artTemplate/tools/combine.html)
-
-可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。
-
-与编译工具不同的是，抽取后的模板仍然依赖引擎运行。
-
-## 模板编码规范
-
-1、不能使用 javascript 关键字作为模板变量(包括 ECMA5 严格模式下新增的关键字):
-
-> break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, abstract, boolean, byte, char, class, const, double, enum, export, extends, final, float, goto, implements, import, int, interface, long, native, package, private, protected, public, short, static, super, synchronized, throws, transient, volatile, arguments, let, yield
-
-2、模板运行在沙箱中，内部无法访问外部变量，除非给模板定义辅助方法。例如：
-
-	template.helper('Math', Math)
-
-> 模板中若任意引用外部对象，复杂的依赖管理将会让项目难以维护，这种方式将利于后续模板迁移（包括通过工具预编译）。
-
-##	v3.0.0 升级参考
-
-为了适配 NodeJS express，v3.0.0 接口有调整。
+为了适配 NodeJS express，artTemplate v3.0.0 接口有调整。
 
 ###	接口变更
 
-1.	模板语法默认使用简洁语法
-2. ``template.render(id, data)``变更为``template.render(source, options)``
-3. 全局配置方式有修改
+1.	默认使用简洁语法
+2. ``template.render``方法的第一个参数不再是 id，而是模板字符串
+3. 使用新的配置接口
 
 ###	升级方法
 
-1. 继续使用 js 原生语法作为模板语言请使用 template-native.js
+1. 如果想继续使用 js 原生语法作为模板语言，请使用 template-native.js
 2. 查找项目```template.render```替换为```template```
-3. 使用``template.config(name, value)``来设置配置
-
+3. 使用``template.config(name, value)``来替换以前的配置
 
 ## 更新记录
 
@@ -262,7 +263,7 @@ NodeJS 版本新增了如下默认配置：
 
 ### v2.0 release
 
-1.	编译工具更名为 atc，成为 artTemplate 的子项目单独维护：<https://github.com/cdc-im/atc>
+1.	~~编译工具更名为 atc，成为 artTemplate 的子项目单独维护：<https://github.com/cdc-im/atc>~~
 
 ### v2.0 beta5
 
@@ -290,4 +291,4 @@ Released under the MIT, BSD, and GPL Licenses
 
 [所有演示例子](http://aui.github.com/artTemplate/demo/index.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
 
-© cdc.tencent.com
+© tencent.com

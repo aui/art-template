@@ -18,3 +18,5 @@ var defaults = template.defaults = {
     compress: false,  // 是否压缩输出
     parser: null      // 自定义语法格式器 @see: template-syntax.js
 };
+
+

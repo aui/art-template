@@ -7,7 +7,7 @@
 <script src="js/highcharts.js"></script>
 
 
-<script src="../src/template.js"></script>
+<script src="../dist/template-native.js"></script>
 <script src="js/tmpl.js"></script>
 <script src="js/doT.js"></script>
 <script src="js/juicer.js"></script>
@@ -48,7 +48,7 @@ var testList = [
     {
         name: 'artTemplate',
         tester: function () {
-            template.defaults.escape = false;
+            template.config('escape', false);
             var source = document.getElementById('template').innerHTML;
             var fn = template.compile(source);
             for (var i = 0; i < number; i ++) {

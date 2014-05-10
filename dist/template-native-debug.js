@@ -4,7 +4,9 @@
  * Released under the MIT, BSD, and GPL Licenses
  */
  
-(function (global) {
+(function () {
+
+
 /**
  * 模板引擎
  * @name    template
@@ -21,7 +23,10 @@ var template = function (filename, content) {
 };
 
 
-template.version = '3.0.0';/**
+template.version = '3.0.0';
+
+
+/**
  * 设置全局配置
  * @name    template.config
  * @param   {String}    名称
@@ -40,7 +45,13 @@ var defaults = template.defaults = {
     cache: true,      // 是否开启缓存（依赖 options 的 filename 字段）
     compress: false,  // 是否压缩输出
     parser: null      // 自定义语法格式器 @see: template-syntax.js
-};var cacheStore = template.cache = {};/**
+};
+
+
+var cacheStore = template.cache = {};
+
+
+/**
  * 渲染模板
  * @name    template.render
  * @param   {String}    模板
@@ -49,7 +60,10 @@ var defaults = template.defaults = {
  */
 template.render = function (source, options) {
     return compile(source, options);
-};/**
+};
+
+
+/**
  * 渲染模板(根据模板名)
  * @name    template.render
  * @param   {String}    模板名
@@ -62,8 +76,11 @@ var renderFile = template.renderFile = function (filename, data) {
         name: 'Render Error',
         message: 'Template not found'
     });
-    return fn(data); 
-};/**
+    return data ? fn(data) : fn;
+};
+
+
+/**
  * 获取编译缓存（可由外部重写此方法）
  * @param   {String}    模板名
  * @param   {Function}  编译好的函数
@@ -75,7 +92,7 @@ template.get = function (filename) {
     if (cacheStore.hasOwnProperty(filename)) {
         // 使用内存缓存
         cache = cacheStore[filename];
-    } else if ('document' in global) {
+    } else if (typeof document === 'object') {
         // 加载模板并编译
         var elem = document.getElementById(filename);
         
@@ -90,6 +107,8 @@ template.get = function (filename) {
 
     return cache;
 };
+
+
 /**
  * 添加模板辅助方法
  * @name    template.helper
@@ -170,6 +189,9 @@ var helpers = template.helpers = {
     
 };
 
+
+
+
 /**
  * 模板错误事件（可由外部重写此方法）
  * @name    template.onerror
@@ -181,7 +203,7 @@ template.onerror = function (e) {
         message += '<' + name + '>\n' + e[name] + '\n\n';
     }
     
-    if (global.console) {
+    if (typeof console === 'object') {
         console.error(message);
     }
 };
@@ -195,7 +217,10 @@ var showDebugInfo = function (e) {
     return function () {
         return '{Template Error}';
     };
-};/**
+};
+
+
+/**
  * 编译模板
  * 2012-6-6 @TooBug: define 方法名改为 compile，与 Node Express 保持一致
  * @name    template.compile
@@ -565,6 +590,9 @@ function compiler (source, options) {
     
 };
 
+
+
+
 // RequireJS && SeaJS
 if (typeof define === 'function') {
     define(function() {
@@ -575,7 +603,7 @@ if (typeof define === 'function') {
 } else if (typeof exports !== 'undefined') {
     module.exports = template;
 } else {
-    global.template = template;
+    this.template = template;
 }
 
-})(this.window || global);
+})();

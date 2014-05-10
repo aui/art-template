@@ -2,11 +2,11 @@
 
 ## 使用
 
-引用简洁语法的引擎版本 —— dist/template-simple.js，例如：
+引用简洁语法的引擎版本，例如：
 
-    <script src="dist/template-simple.js"></script>
+    <script src="dist/template.js"></script>
     
-直接下载 [template-simple.js](https://raw.github.com/aui/artTemplate/master/dist/template-simple.js)
+ [下载](https://raw.github.com/aui/artTemplate/master/dist/template.js)
 
 ## 表达式
 
@@ -43,7 +43,7 @@
         <li>{{$index}}. {{$value.user}}</li>
     {{/each}}
 
-其中 list 为要遍历的数据名称, ``$value`` 与 ``$index`` 是系统变量， ``$value`` 表示数据单条内容, ``$index`` 表示索引值，这两个变量也可以自定义：
+其中 list 为要遍历的数据字段名, ``$value`` 与 ``$index`` 是系统变量， ``$value`` 表示数据单条内容, ``$index`` 表示索引值，这两个变量也可以自定义：
 
     {{each list as value index}}
         <li>{{index}}. {{value.user}}</li>
@@ -53,11 +53,11 @@
 
 用于嵌入子模板。
 
-    {{include 'templateID' data}}
+    {{include 'template_name'}}
 
-其中 'templateID' 是外部模板的 ID, data 为传递给 'templateID' 模板的数据。 data 参数若省略则默认传入当前模板的数据。
+子模板默认共享当前数据，亦可以指定数据：
 
-    {{include 'templateID'}}
+    {{include 'template_name' news_list}}
 
 ## 辅助方法
 
@@ -78,12 +78,12 @@
     
 ##	演示例子
 
-*	[基本例子](http://aui.github.io/artTemplate/demo/simple-syntax/basic.html)
-*	[不转义HTML](http://aui.github.io/artTemplate/demo/simple-syntax/no-escape.html)
-*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/simple-syntax/compile.html)
-*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/simple-syntax/include.html)
-*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/simple-syntax/helper.html)
+*	[基本例子](http://aui.github.io/artTemplate/demo/basic.html)
+*	[不转义HTML](http://aui.github.io/artTemplate/demo/no-escape.html)
+*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/compile.html)
+*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/include.html)
+*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/helper.html)
 
 ----------------------------------------------
 
-本文档针对 artTemplate v2.0.3+ 编写
+本文档针对 artTemplate v3.0.0+ 编写

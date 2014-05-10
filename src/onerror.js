@@ -9,7 +9,7 @@ template.onerror = function (e) {
         message += '<' + name + '>\n' + e[name] + '\n\n';
     }
     
-    if (global.console) {
+    if (typeof console === 'object') {
         console.error(message);
     }
 };
@@ -24,3 +24,5 @@ var showDebugInfo = function (e) {
         return '{Template Error}';
     };
 };
+
+

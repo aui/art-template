@@ -6,7 +6,4 @@
 
 var node = require('./_node.js');
 var template = require('../dist/template-debug.js');
-
-node(template);
-
-module.exports = template
+module.exports = node(template);

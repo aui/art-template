@@ -9,7 +9,7 @@ if (typeof define === 'function') {
 } else if (typeof exports !== 'undefined') {
     module.exports = template;
 } else {
-    global.template = template;
+    this.template = template;
 }
 
-})(this.window || global);
+})();

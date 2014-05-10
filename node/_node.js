@@ -7,7 +7,7 @@ module.exports = function (template) {
 
 
 	// 提供新的配置字段
-	template.defaults.path = '';
+	template.defaults.base = '';
 	template.defaults.extname = '.html';
 	template.defaults.encoding = 'utf-8';
 
@@ -35,9 +35,9 @@ module.exports = function (template) {
 
 	
 	function readTemplate (id) {
-	    id = path.join(template.defaults.path, id + template.defaults.extname);
+	    id = path.join(template.defaults.base, id + template.defaults.extname);
 	    
-	    if (id.indexOf(template.defaults.path) !== 0) {
+	    if (id.indexOf(template.defaults.base) !== 0) {
 	        // 安全限制：禁止超出模板目录之外调用文件
 	        throw new Error('"' + id + '" is not in the template directory');
 	    } else {

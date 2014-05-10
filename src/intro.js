@@ -4,4 +4,6 @@
  * Released under the MIT, BSD, and GPL Licenses
  */
  
-(function (global) {
+(function () {
+
+

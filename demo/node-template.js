@@ -1,6 +1,6 @@
-var template = require('../lib/template.js');
+var template = require('../node/template.js');
 //console.log(template);
-template.config('path', __dirname);// 设置模板目录，默认为引擎所在目录
+template.config('base', __dirname);// 设置模板根目录，默认为引擎所在目录
 template.config('compress', true);// 压缩输出
 
 var html = template('node-template/index', {
