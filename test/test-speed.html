@@ -48,7 +48,7 @@ var testList = [
     {
         name: 'artTemplate',
         tester: function () {
-            template.config('escape', false);
+            //template.config('escape', false);
             var source = document.getElementById('template').innerHTML;
             var fn = template.compile(source);
             for (var i = 0; i < number; i ++) {
@@ -301,7 +301,7 @@ var startTest = function () {
 <script id="template" type="text/tmpl">
 <ul>
     <% for (i = 0, l = list.length; i < l; i ++) { %>
-        <li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
+        <li>用户: <%=#list[i].user%>/ 网站：<%=#list[i].site%></li>
     <% } %>
 </ul>
 </script>
@@ -311,7 +311,7 @@ var startTest = function () {
 <ul>
     <% for (var val, i = 0, l = list.length; i < l; i ++) { %>
         <% val = list[i]; %>
-        <li><%:=val.index%>. 用户: <%:=val.user%>/ 网站：<%:=val.site%></li>
+        <li>用户: <%:=val.user%>/ 网站：<%:=val.site%></li>
     <% } %>
 </ul>
 </script>
@@ -320,7 +320,7 @@ var startTest = function () {
 <script id="easyTemplate" type="text/tmpl">
 <ul>
     <#list data.list as item>
-        <li>${item.index}. 用户: ${item.user}/ 网站：${item.site}</li>
+        <li>用户: ${item.user}/ 网站：${item.site}</li>
     </#list>
 </ul>
 </script>
@@ -330,7 +330,7 @@ var startTest = function () {
 <ul>
     <% for (var val, i = 0, l = list.length; i < l; i ++) { %>
         <% val = list[i]; %>
-        <li><%=val.index%>. 用户: <%=val.user%>/ 网站：<%=val.site%></li>
+        <li>用户: <%=val.user%>/ 网站：<%=val.site%></li>
     <% } %>
 </ul>
 </script>
@@ -339,7 +339,7 @@ var startTest = function () {
 <script id="jqueryTmpl" type="text/tmpl">
 <ul>
     {{each list}}
-        <li>${$value.index}. 用户: ${$value.user}/ 网站：${$value.site}</li>
+        <li>用户: ${$value.user}/ 网站：${$value.site}</li>
     {{/each}}
 </ul>
 </script>
@@ -348,7 +348,7 @@ var startTest = function () {
 <script id="juicer" type="text/tmpl">
 <ul>
     {@each list as val}
-        <li>$${val.index}. 用户: $${val.user}/ 网站：$${val.site}</li>
+        <li>用户: $${val.user}/ 网站：$${val.site}</li>
     {@/each}
 </ul>
 </script>
@@ -358,7 +358,7 @@ var startTest = function () {
 <ul>
     {{ for (var val, i = 0, l = it.list.length; i < l; i ++) { }}
         {{ val = it.list; }}
-        <li>{{=val[i].index}}. 用户: {{=val[i].user}}/ 网站：{{=val[i].site}}</li>
+        <li>用户: {{=val[i].user}}/ 网站：{{=val[i].site}}</li>
     {{ } }}
 </ul>
 </script>
@@ -367,7 +367,7 @@ var startTest = function () {
 <script id="Mustache" type="text/tmpl">
 <ul>
     {{#list}}
-        <li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
+        <li>用户: {{{user}}}/ 网站：{{{site}}}</li>
     {{/list}}
 </ul>
 </script>
@@ -376,7 +376,7 @@ var startTest = function () {
 <script id="Handlebars" type="text/tmpl">
 <ul>
     {{#list}}
-        <li>{{{index}}}. 用户: {{{user}}}/ 网站：{{{site}}}</li>
+        <li>用户: {{{user}}}/ 网站：{{{site}}}</li>
     {{/list}}
 </ul>
 </script>
@@ -385,7 +385,7 @@ var startTest = function () {
 <script id="kissy" type="text/tmpl">
 <ul>
     {{#each list as val}}
-        <li>{{val.index}}. 用户: {{val.user}}/ 网站：{{val.site}}</li>
+        <li>用户: {{val.user}}/ 网站：{{val.site}}</li>
     {{/each}}
 </ul>
 </script>
@@ -396,7 +396,7 @@ var startTest = function () {
 <ul>
   <& for (var val, i = 0, l = @list.length; i < l; i ++) { &>
         <& val = @list[i]; &>
-        <li> <&= val.index &>. 用户: <&= val.user &>； 网站：<&= val.site &></li> 
+        <li>用户: <&= val.user &>； 网站：<&= val.site &></li> 
   <& } &>
 </ul>
 </script>
@@ -405,14 +405,14 @@ var startTest = function () {
 <script id="underscoreTemplate" type="text/tmpl">
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
-        <li><%=list[i].index%>. 用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
+        <li>用户: <%=list[i].user%>/ 网站：<%=list[i].site%></li>
     <% } %>
 </ul>
 </script>
 </head>
 
 <body>
-<h1>引擎渲染速度竞赛</h1>
+<h1>引擎渲染速度测试</h1>
 <p><strong><script>document.write(length)</script></strong> 条数据 × <strong><script>document.write(number)</script></strong> 次渲染测试 [escape:false, cache:true]</p>
 <p><em>建议在拥有 v8 javascript 引擎的 chrome 浏览器上进行测试，避免浏览器停止响应</em></p>
 <p><button id="button-test" onclick="this.disabled=true;startTest()" style="padding: 5px;">开始测试&raquo;</button> <span id="log" style="font-size:12px"><script>for (var i = 0; i < testList.length; i ++) {document.write(testList[i].name + '; ')}</script></span></p>

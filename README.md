@@ -42,8 +42,6 @@
 	</script>
 
 ### 渲染模板
-
-``template(id, data)``
 	
 	var data = {
 		title: '标签',
@@ -59,7 +57,9 @@
 
 有两个版本的模板语法可以选择。
 
-###	一、简洁语法 ``推荐``
+###	简洁语法
+
+推荐使用，语法简单实用，利于读写。
 
 	{{if admin}}
 		{{include 'admin_content'}}
@@ -71,7 +71,7 @@
 	
 [查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:simple)
 
-###	二、js 原生语法
+###	原生语法
 	
 	<%if (admin){%>
 		<%include('admin_content')%>
@@ -95,8 +95,8 @@
 
 ##	下载
 
-* 下载简洁语法版：[template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js) ``推荐``
-* 下载原生语法版：[template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
+* 下载[简洁语法](#简洁语法)版：[template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js) ``推荐``
+* 下载[原生语法](#原生语法)版：[template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
 
 ## 方法
 
@@ -159,14 +159,12 @@ template.helper('$ubb2html', function (content) {
 
 ```
 template('tpl/home/main', data)
-
 ```
 
 二、**模板支持引入子模板**
 
-```
-{{include '../public/header'}}
-```
+
+	{{include '../public/header'}}
 
 ###	基于预编译：
 
@@ -223,12 +221,13 @@ NodeJS 版本新增了如下默认配置：
 ###	接口变更
 
 1.	默认使用简洁语法
-2. ``template.render``方法的第一个参数不再是 id，而是模板字符串
-3. 使用新的配置接口
+2. ``template.render()``方法的第一个参数不再是 id，而是模板字符串
+3. 使用新的配置接口``template.config()``并且字段名有修改
+4. ``template.compile()``方法不支持 id 参数
 
 ###	升级方法
 
-1. 如果想继续使用 js 原生语法作为模板语言，请使用 template-native.js
+1. 如果想继续使用 js 原生语法作为模板语言，请使用 [template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
 2. 查找项目```template.render```替换为```template```
 3. 使用``template.config(name, value)``来替换以前的配置
 
