@@ -8,6 +8,7 @@ module.exports = function (grunt) {
         'src/render.js',
         'src/renderFile.js',
         'src/get.js',
+        'src/utils.js',
         'src/helper.js',
         'src/onerror.js',
         'src/compile.js',
@@ -22,12 +23,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         meta: {
-            banner: 
-            ['/*!',
-             ' * <%= pkg.name %> - Template Engine',
-             ' * <%= pkg.homepage %>',
-             ' * Released under the MIT, BSD, and GPL Licenses',
-             ' */\n'].join('\n')
+            banner: '/*!<%= pkg.name %> - Template Engine | <%= pkg.homepage %>*/\n'
         },
         concat: {
             options: {

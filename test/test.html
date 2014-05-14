@@ -5,7 +5,7 @@
 <title>语法插件单元测试</title>
 <link rel="stylesheet" href="./js/qunit/qunit.css">
 <script src="./js/qunit/qunit.js"></script>
-<script src="../dist/template.js"></script>
+<script src="../dist/template-debug.js"></script>
 
 <script id="default" type="text/html">{{value}}</script>
 <script id="noEscape" type="text/html">{{#value}}</script>
@@ -14,11 +14,12 @@
 <script id="print" type="text/html">{{print value value2}}</script>
 <script id="sandbox" type="text/html">{{typeof document}}</script>
 <script id="sandbox2" type="text/html">{{window.$sandbox = true}}</script>
-<script id="prototype" type="text/html">{{toString}}</script>
 <script id="html" type="text/html">""''\\</script>
 <script id="debug-render" type="text/html">{{a.b.c.d.e.f}}</script>
 <script id="debug-syntax" type="text/html">{{a b c d e f}}</script>
 <script id="helper" type="text/html">{{test value}}</script>
+<script id="helper2" type="text/html">{{#value | test}}</script>
+<script id="helper3" type="text/html">{{value | test | link: 'abcd'}}</script>
 
 <script>
 if (!window.console) {
@@ -46,10 +47,6 @@ test('特殊字符输出', function () {
 	equal(template('html', {}), '""\'\'\\\\', '编码输出js特殊字符');
 });
 
-test('特殊字段名输出', function () {
-	equal(template('prototype', {toString: 'hello world'}), 'hello world', '避免输出出错的值');
-});
-
 test('XSS防范测试', function () {
 	equal(template('default', {value:'<>"\'&'}), '&#60;&#62;&#34;&#39;&#38;', 'HTML字符转义');
 });
@@ -71,7 +68,14 @@ test('辅助方法', function () {
 	template.helper('test', function (content) {
 		return '<em>' + content + '</em>';
 	});
-	equal(template('helper', data), '<em>hello world</em>', 'helper');
+
+	template.helper('link', function (content, url) {
+		return '<i' + content + 'i>[' + url + ']';
+	});
+
+	equal(template('helper', data), '<em>hello world</em>', '兼容以前的语法');
+	equal(template('helper2', data), '<em>hello world</em>', '使用新的管道风格');
+	equal(template('helper3', {value: '<--->'}), '<i<em>&#60;---&#62;</em>i>[abcd]', '嵌套使用');
 });
 
 test('沙箱', function () {

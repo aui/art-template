@@ -86,7 +86,7 @@ var compile = template.compile = function (source, options) {
 
 
 // 数组迭代
-var forEach = helpers.$each;
+var forEach = utils.$each;
 
 
 // 静态分析模板变量
@@ -149,9 +149,7 @@ function compiler (source, options) {
 
     
     var line = 1;
-    var uniq = {$data:1,$filename:1,$helpers:1,$out:1,$line:1};
-    var prototype = {};
-
+    var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1};
     
 
 
@@ -171,11 +169,12 @@ function compiler (source, options) {
 
     var include = "function(filename,data){"
     +      "data=data||$data;"
-    +      "var text=$helpers.$include(filename,data,$filename);"
+    +      "var text=$utils.$include(filename,data,$filename);"
     +       concat
     +   "}";
 
-    var headerCode = "'use strict';var $helpers=this,"
+    var headerCode = "'use strict';"
+    + "var $utils=this,$helpers=$utils.$helpers,"
     + (debug ? "$line=0," : "");
     
     var mainCode = replaces[0];
@@ -229,7 +228,7 @@ function compiler (source, options) {
         
         
         var Render = new Function("$data", "$filename", code);
-        Render.prototype = prototype;
+        Render.prototype = utils;
 
         return Render;
         
@@ -270,7 +269,7 @@ function compiler (source, options) {
         if (parser) {
         
              // 语法转换插件钩子
-            code = parser(code);
+            code = parser(code, options);
             
         } else if (debug) {
         
@@ -283,25 +282,26 @@ function compiler (source, options) {
         }
         
         
-        // 输出语句. 转义: <%=value%> 不转义:<%=#value%>
+        // 输出语句. 编码: <%=value%> 不编码:<%=#value%>
         // <%=#value%> 等同 v2.0.3 之前的 <%==value%>
         if (code.indexOf('=') === 0) {
 
-            var isEscape = !/^=[=#]/.test(code);
+            var escapeSyntax = escape && !/^=[=#]/.test(code);
 
             code = code.replace(/^=[=#]?|[\s;]*$/g, '');
 
-            if (isEscape && escape) {
+            // 对内容编码
+            if (escapeSyntax) {
 
-                // 转义处理，但排除辅助方法
                 var name = code.replace(/\s*\([^\)]+\)/, '');
-                if (
-                    !helpers.hasOwnProperty(name)
-                    && !/^(include|print)$/.test(name)
-                ) {
+
+                // 排除 utils.* | include | print
+                
+                if (!utils[name] && !/^(include|print)$/.test(name)) {
                     code = "$escape(" + code + ")";
                 }
 
+            // 不编码
             } else {
                 code = "$string(" + code + ")";
             }
@@ -319,7 +319,7 @@ function compiler (source, options) {
         forEach(getVariable(code), function (name) {
             
             // name 值可能为空，在安卓低版本浏览器下
-            if (!name || uniq.hasOwnProperty(name)) {
+            if (!name || uniq[name]) {
                 return;
             }
 
@@ -327,33 +327,26 @@ function compiler (source, options) {
 
             // 声明模板变量
             // 赋值优先级:
-            // 内置特权方法(include, print) > 私有模板辅助方法 > 数据 > 公用模板辅助方法
+            // [include, print] > utils > helpers > data
             if (name === 'print') {
 
                 value = print;
 
             } else if (name === 'include') {
                 
-                prototype.$include = helpers.$include;
                 value = include;
                 
+            } else if (utils[name]) {
+
+                value = "$utils." + name;
+
+            } else if (helpers[name]) {
+
+                value = "$helpers." + name;
+
             } else {
 
                 value = "$data." + name;
-
-                if (helpers.hasOwnProperty(name)) {
-
-                    prototype[name] = helpers[name];
-
-                    if (name.indexOf('$') === 0) {
-                        value = "$helpers." + name;
-                    } else {
-                        value = value
-                        + "===undefined?$helpers." + name + ":" + value;
-                    }
-                }
-                
-                
             }
             
             headerCode += name + "=" + value + ",";

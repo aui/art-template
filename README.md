@@ -10,7 +10,7 @@
 *	[演示](#演示)
 *	[下载](#下载)
 *	[方法](#方法)
-*	[NodeJS](#nodeJS)
+*	[NodeJS](#nodejs)
 *	[使用预编译](#使用预编译)
 *	[更新日志](#更新日志)
 *	[授权协议](#授权协议)
@@ -95,14 +95,16 @@
 
 ##	下载
 
-* 下载[简洁语法](#简洁语法)版：[template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js) ``推荐``
-* 下载[原生语法](#原生语法)版：[template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
+* [template.js](https://raw.github.com/aui/artTemplate/master/dist/template.js) *(简洁语法版, 2.7kb)* 
+* [template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js) *(原生语法版, 2.3kb)*
 
 ## 方法
 
 ###	template(id, data)
 
 根据 id 渲染模板。内部会根据``document.getElementById(id)``查找模板。
+
+如果没有 data 参数，那么将返回一渲染函数。
 
 ###	template.``compile``(source, options)
 
@@ -168,7 +170,7 @@ template('tpl/home/main', data)
 
 ###	基于预编译：
 
-*	在开发阶段将编译模板为高性能的 js 文件
+*	可将模板转换成为非常精简的 js 文件
 *	使用同步模板加载接口
 *	支持多种 js 模块输出：AMD、CMD、CommonJS
 *	支持作为 GruntJS 插件构建
@@ -224,6 +226,8 @@ NodeJS 版本新增了如下默认配置：
 2. ``template.render()``方法的第一个参数不再是 id，而是模板字符串
 3. 使用新的配置接口``template.config()``并且字段名有修改
 4. ``template.compile()``方法不支持 id 参数
+5. helper 方法不再强制原文输出，是否编码取决于模板语句
+6. ``template.helpers`` 中的``$string``、``$escape``、``$each``已迁移到``template.utils``中
 
 ###	升级方法
 
@@ -239,8 +243,9 @@ NodeJS 版本新增了如下默认配置：
 2. 适配 [express](http://expressjs.com) 框架
 3. 内置``print``语句支持传入多个参数
 4. 支持全局缓存配置
+5. 简洁语法版支持管道风格的 helper 调用，例如：``{{time | dateFormat:'yyyy年 MM月 dd日 hh:mm:ss'}}``
 
-当前版本接口有调整，请阅读 [v3.0.0 升级参考](#v3.0.0 升级参考)
+当前版本接口有调整，请阅读 [升级参考](#升级参考)
 
 > artTemplate 预编译工具 [TmodJS](https://github.com/aui/tmodjs) 已更新
 

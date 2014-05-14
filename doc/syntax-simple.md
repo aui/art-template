@@ -27,26 +27,25 @@
 ### 条件表达式
 
     {{if admin}}
-        {{content}}
-    {{/if}}
-    {{if user === 'admin'}}
-        {{content}}
-    {{else if user === '007'}}
-        <strong>hello world</strong>
+		<p>admin</p>
+    {{else if code > 0}}
+    	<p>master</p>
+    {{else}}
+        <p>error!</p>
     {{/if}}
 
 ### 遍历表达式
 
 无论数组或者对象都可以用 each 进行遍历。
 
-    {{each list}}
-        <li>{{$index}}. {{$value.user}}</li>
+    {{each list as value index}}
+        <li>{{index}} - {{value.user}}</li>
     {{/each}}
 
-其中 list 为要遍历的数据字段名, ``$value`` 与 ``$index`` 是系统变量， ``$value`` 表示数据单条内容, ``$index`` 表示索引值，这两个变量也可以自定义：
+亦可以被简写：
 
-    {{each list as value index}}
-        <li>{{index}}. {{value.user}}</li>
+    {{each list}}
+        <li>{{$index}} - {{$value.user}}</li>
     {{/each}}
 
 ### 模板包含表达式
@@ -61,20 +60,22 @@
 
 ## 辅助方法
 
-使用``template.helper(name, callback)``注册公用辅助方法，例如一个基本的 UBB 替换方法：
+使用``template.helper(name, callback)``注册公用辅助方法：
 
-    template.helper('$ubb2html', function (content) {
-        // 处理字符串...
-        return content;
-    });
+```
+template.helper('dateFormat', function (date, format) {
+    // ..
+    return value;
+});
+```
 
 模板中使用的方式：
 
-    {{$ubb2html content}}
+    {{time | dateFormat:'yyyy-MM-dd hh:mm:ss'}}
 
-若辅助方法有多个参数使用一个空格分隔即可：
+支持传入参数与嵌套使用：
 
-    {{helperName args1 args2 args3}}
+    {{time | say:'cd' | ubb | link}}
     
 ##	演示例子
 

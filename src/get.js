@@ -7,7 +7,7 @@ template.get = function (filename) {
 
     var cache;
     
-    if (cacheStore.hasOwnProperty(filename)) {
+    if (cacheStore[filename]) {
         // 使用内存缓存
         cache = cacheStore[filename];
     } else if (typeof document === 'object') {
