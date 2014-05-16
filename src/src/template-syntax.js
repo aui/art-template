@@ -4,13 +4,13 @@
  * Released under the MIT, BSD, and GPL Licenses
  */
  
-(function (exports) {
+(function (template) {
     
-    exports.openTag = '{{';
-    exports.closeTag = '}}';
+    template.defaults.openTag = '{{';
+    template.defaults.closeTag = '}}';
 
 
-    exports.parser = function (code) {
+    template.defaults.parser = function (code) {
         code = code.replace(/^\s/, '');
         
         var split = code.split(' ');
@@ -66,14 +66,15 @@
                 code = 'print(' + args + ');';
                 break;
 
+            case 'print':
             case 'include':
 
-                code = 'include(' + split.join(',') + ');';
+                code = key + '(' + split.join(',') + ');';
                 break;
 
             default:
 
-                if (exports.helpers.hasOwnProperty(key)) {
+                if (template.helpers.hasOwnProperty(key)) {
                     
                     code = '=#' + key + '(' + split.join(',') + ');';
                     
