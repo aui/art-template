@@ -7,7 +7,6 @@
 *	[特性](#特性)
 *	[快速上手](#快速上手)
 *	[模板语法](#模板语法)
-*	[演示](#演示)
 *	[下载](#下载)
 *	[方法](#方法)
 *	[NodeJS](#nodejs)
@@ -70,7 +69,7 @@
 		{{/each}}
 	{{/if}}
 	
-[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:simple)
+[查看语法与演示](https://github.com/aui/artTemplate/wiki/syntax:simple)
 
 ###	原生语法
 	
@@ -82,17 +81,7 @@
 		<%}%>
 	<%}%>
 
-[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:native)
-
-##	演示
-
-*	[基本例子](http://aui.github.io/artTemplate/demo/basic.html)
-*	[不转义HTML](http://aui.github.io/artTemplate/demo/no-escape.html)
-*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/compile.html)
-*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/include.html)
-*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/helper.html)
-*	[错误调试](http://aui.github.io/artTemplate/demo/debug.html)
-*	[print方法](http://aui.github.io/artTemplate/demo/print.html)
+[查看语法与演示](https://github.com/aui/artTemplate/wiki/syntax:native)
 
 ##	下载
 
@@ -150,7 +139,7 @@ template('tpl/home/main', data)
 
 ###	基于预编译：
 
-*	可将模板转换成为非常精简的 js 文件
+*	可将模板转换成为非常精简的 js 文件（不依赖引擎）
 *	使用同步模板加载接口
 *	支持多种 js 模块输出：AMD、CMD、CommonJS
 *	支持作为 GruntJS 插件构建
