@@ -178,7 +178,11 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 	
 ###	NodeJS + Express
 
-	app.register('.html', require('art-template'));
+	var template = require('art-template');
+	template.config('extname', '.html');
+	app.engine('.html', template.__express);
+	app.set('view engine', 'html');
+	//app.set('views', __dirname + '/views');
 	
 > 若使用 js 原生语法作为模板语法，请改用 ``require('art-template/node/template-native.js')``
 
@@ -202,6 +206,10 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 3. 使用``template.config(name, value)``来替换以前的配置
 
 ## 更新日志
+
+### v3.0.1
+
+1.	适配 express3.x 与 4.x，修复路径 BUG
 
 ### v3.0.0
 

@@ -4,12 +4,13 @@ var path = require('path');
 module.exports = function (template) {
 
 	var cacheStore = template.cache;
-
+	var defaults = template.defaults;
+	var rExtname;
 
 	// 提供新的配置字段
-	template.defaults.base = '';
-	template.defaults.extname = '.html';
-	template.defaults.encoding = 'utf-8';
+	defaults.base = '';
+	defaults.extname = '.html';
+	defaults.encoding = 'utf-8';
 
 
 	// 重写引擎编译结果获取方法
@@ -35,21 +36,21 @@ module.exports = function (template) {
 
 	
 	function readTemplate (id) {
-	    id = path.join(template.defaults.base, id + template.defaults.extname);
+	    id = path.join(defaults.base, id + defaults.extname);
 	    
-	    if (id.indexOf(template.defaults.base) !== 0) {
+	    if (id.indexOf(defaults.base) !== 0) {
 	        // 安全限制：禁止超出模板目录之外调用文件
 	        throw new Error('"' + id + '" is not in the template directory');
 	    } else {
 	        try {
-	            return fs.readFileSync(id, template.defaults.encoding);
+	            return fs.readFileSync(id, defaults.encoding);
 	        } catch (e) {}
 	    }
 	}
 
 
 	// 重写模板`include``语句实现方法，转换模板为绝对路径
-	template.helpers.$include = function (filename, data, from) {
+	template.utils.$include = function (filename, data, from) {
 	    
 	    from = path.dirname(from);
 	    filename = path.join(from, filename);
@@ -59,15 +60,24 @@ module.exports = function (template) {
 
 
 	// express support
-	template.__express = function (path, options, fn) {
+	template.__express = function (file, options, fn) {
 
 	    if (typeof options === 'function') {
 	        fn = options;
 	        options = {};
 	    }
 
-	    options.filename = path;
-	    fn(null, template.renderFile(path, options));
+
+		if (!rExtname) {
+			// 去掉 express 传入的路径
+			rExtname = new RegExp((defaults.extname + '$').replace(/\./g, '\\.'));
+		}
+
+
+	    file = file.replace(rExtname, '');
+
+	    options.filename = file;
+	    fn(null, template.renderFile(file, options));
 	};
 
 
