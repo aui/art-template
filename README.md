@@ -152,7 +152,7 @@ template('tpl/home/main', data)
 
 ###	安装
 
-	npm install art-template -g
+	npm install art-template
 	
 ###	使用
 
