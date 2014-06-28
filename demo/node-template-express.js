@@ -38,7 +38,7 @@ var demoData = {
 };
 
 app.get('/', function(req, res){
-  res.render('index', demoData);
+  res.render('./index', demoData);
 });
 
 /* istanbul ignore next */

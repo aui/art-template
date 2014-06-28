@@ -179,10 +179,15 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 ###	NodeJS + Express
 
 	var template = require('art-template');
+	template.config('base', '');
 	template.config('extname', '.html');
 	app.engine('.html', template.__express);
 	app.set('view engine', 'html');
 	//app.set('views', __dirname + '/views');
+	
+运行 demo:
+
+	node demo/node-template-express.js
 	
 > 若使用 js 原生语法作为模板语法，请改用 ``require('art-template/node/template-native.js')``
 
