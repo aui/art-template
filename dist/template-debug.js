@@ -330,7 +330,7 @@ var KEYWORDS =
 
     + ',undefined';
 
-var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
+var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|\s*\.\s*[$\w\.]+/g;
 var SPLIT_RE = /[^\w$]+/g;
 var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
 var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
@@ -440,7 +440,7 @@ function compiler (source, options) {
         +           "message:e.message,"
         +           "line:$line,"
         +           "source:" + stringify(source)
-        +           ".split(/\\n/)[$line-1].replace(/^[\\s\\t]+/,'')"
+        +           ".split(/\\n/)[$line-1].replace(/^\\s+/,'')"
         +       "};"
         + "}";
     }
@@ -472,7 +472,7 @@ function compiler (source, options) {
         // 压缩多余空白与注释
         if (compress) {
             code = code
-            .replace(/[\n\r\t\s]+/g, ' ')
+            .replace(/\s+/g, ' ')
             .replace(/<!--.*?-->/g, '');
         }
         

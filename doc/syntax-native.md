@@ -20,7 +20,7 @@
 
 不编码输出：
 
-    <%#content%>
+    <%=#content%>
     
 编码可以防止数据中含有 HTML 字符串，避免引起 XSS 攻击。
 
@@ -35,7 +35,7 @@
     	<%}%>
 	</ul>
 	
-> 模板不能访问全局对象，公用的方法请参见文档 **辅助方法** 章节
+> 模板不能访问全局对象，公用的方法请参见文档[辅助方法](#辅助方法)章节
 
 ### 模板包含表达式
 
@@ -49,16 +49,16 @@
 
 ## 辅助方法
 
-使用``template.helper(name, callback)``注册公用辅助方法，例如一个基本的 UBB 替换方法：
+使用``template.helper(name, callback)``注册公用辅助方法：
 
-    template.helper('$ubb2html', function (content) {
-        // 处理字符串...
-        return content;
-    });
+	template.helper('dateFormat', function (date, format) {
+    	// ..
+    	return value;
+	});
 
 模板中使用的方式：
 
-    <% $ubb2html(content) %>
+    <%=dateFormat(content) %>
     
 ##	演示例子
 

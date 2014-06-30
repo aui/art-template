@@ -7,7 +7,6 @@
 *	[特性](#特性)
 *	[快速上手](#快速上手)
 *	[模板语法](#模板语法)
-*	[演示](#演示)
 *	[下载](#下载)
 *	[方法](#方法)
 *	[NodeJS](#nodejs)
@@ -17,16 +16,17 @@
 
 ##	特性
 
-*	性能卓越，执行速度通常是 Mustache 与 tmpl 的 20 多倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）
-*	支持运行时调试，可精确定位异常模板所在语句（[演示](http://aui.github.io/artTemplate/demo/debug.html)）
-*	对 NodeJS Express 友好支持
-*	安全，默认对输出进行转义、在沙箱中运行编译后的代码（Node版本可以安全执行用户上传的模板）
-*	支持``include``语句，可在浏览器端实现按路径加载模板
-*	支持预编译，可将模板转换成为非常精简的 js 文件
-*	支持所有流行的浏览器
+1.	性能卓越，执行速度通常是 Mustache 与 tmpl 的 20 多倍（[性能测试](http://aui.github.com/artTemplate/test/test-speed.html)）
+2.	支持运行时调试，可精确定位异常模板所在语句（[演示](http://aui.github.io/artTemplate/demo/debug.html)）
+3.	对 NodeJS Express 友好支持
+4.	安全，默认对输出进行转义、在沙箱中运行编译后的代码（Node版本可以安全执行用户上传的模板）
+5.	支持``include``语句
+6.	可在浏览器端实现按路径加载模板（[详情](#使用预编译)）
+7.	支持预编译，可将模板转换成为非常精简的 js 文件
+8.	模板语句简洁，无需前缀引用数据，有简洁版本与原生语法版本可选
+9.	支持所有流行的浏览器
 
 ## 快速上手
-
 
 ### 编写模板
 
@@ -69,7 +69,7 @@
 		{{/each}}
 	{{/if}}
 	
-[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:simple)
+[查看语法与演示](https://github.com/aui/artTemplate/wiki/syntax:simple)
 
 ###	原生语法
 	
@@ -81,17 +81,7 @@
 		<%}%>
 	<%}%>
 
-[查看语法文档](https://github.com/aui/artTemplate/wiki/syntax:native)
-
-##	演示
-
-*	[基本例子](http://aui.github.io/artTemplate/demo/basic.html)
-*	[不转义HTML](http://aui.github.io/artTemplate/demo/no-escape.html)
-*	[在javascript中存放模板](http://aui.github.io/artTemplate/demo/compile.html)
-*	[嵌入子模板(include)](http://aui.github.io/artTemplate/demo/include.html)
-*	[访问外部公用函数(辅助方法)](http://aui.github.io/artTemplate/demo/helper.html)
-*	[错误调试](http://aui.github.io/artTemplate/demo/debug.html)
-*	[print方法](http://aui.github.io/artTemplate/demo/print.html)
+[查看语法与演示](https://github.com/aui/artTemplate/wiki/syntax:native)
 
 ##	下载
 
@@ -118,40 +108,19 @@
 
 添加辅助方法。
 
-模板无法读写外部对象，只能通过定义辅助方法的方式声明公用方法。例如扩展一个UBB替换方法：
-
-```
-template.helper('$ubb2html', function (content) {
-	// 转义 HTML 字符
-	content = template.helpers.$escape(content);
-	// 解析 UBB 字符
-    return content
-    .replace(/\[b\]([^\[]*?)\[\/b\]/igm, '<b>$1</b>')
-    .replace(/\[i\]([^\[]*?)\[\/i\]/igm, '<i>$1</i>')
-    .replace(/\[u\]([^\[]*?)\[\/u\]/igm, '<u>$1</u>')
-    .replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '<a href="$1">$2</a>')
-    .replace(/\[img\]([^\[]*?)\[\/img\]/igm, '<img src="$1" />');
-});
-```
-	
-在模板中的使用方式：
-
-	{{$ubb2html content}}
-	
-注意：引擎不会对辅助方法输出的 HTML 字符进行转义。
-	
-[演示](http://aui.github.com/artTemplate/demo/helper.html)
+例如时间格式器：[演示](http://aui.github.com/artTemplate/demo/helper.html)
 
 ###	template.``config``(name, value)
 
 更改引擎的默认配置。
 
-    openTag: '<%'     // 逻辑语法开始标签
-    closeTag: '%>'    // 逻辑语法结束标签
-    escape: true      // 是否编码输出变量的 HTML 字符
-    cache: true       // 是否开启缓存（依赖 options 的 filename 字段）
-    compress: false   // 是否压缩输出
-    parser: null      // 自定义语法格式器
+字段 | 类型 | 默认值| 说明
+------------ | ------------- | ------------ | ------------
+openTag | String | ``'{{'`` | 逻辑语法开始标签
+closeTag | String | ``"}}"`` | 逻辑语法结束标签
+escape | Boolean | ``true`` | 是否编码输出 HTML 字符
+cache | Boolean | ``true`` | 是否开启缓存（依赖 options 的 filename 字段）
+compress | Boolean | ``false`` | 是否压缩 HTML 多余空白字符
 	
 ##	使用预编译
 
@@ -170,20 +139,20 @@ template('tpl/home/main', data)
 
 ###	基于预编译：
 
-*	可将模板转换成为非常精简的 js 文件
+*	可将模板转换成为非常精简的 js 文件（不依赖引擎）
 *	使用同步模板加载接口
 *	支持多种 js 模块输出：AMD、CMD、CommonJS
 *	支持作为 GruntJS 插件构建
 *	前端模板可共享给 NodeJS 执行
 *	自动压缩打包模板
 
-artTemplate 的预编译工具是一个子项目，请前往：[TmodJS](http://github.com/aui/tmodjs/)
+预编译工具：[TmodJS](http://github.com/aui/tmodjs/)
 
 ##	NodeJS
 
 ###	安装
 
-	$ npm install art-template -g
+	npm install art-template
 	
 ###	使用
 
@@ -195,24 +164,30 @@ artTemplate 的预编译工具是一个子项目，请前往：[TmodJS](http://g
 ###	配置
 
 NodeJS 版本新增了如下默认配置：
-
-	// 指定模板目录
-	template.config('path', '');
 	
-	// 指定模板后缀名
-	template.config('extname', '.html');
+字段 | 类型 | 默认值| 说明
+------------ | ------------- | ------------ | ------------
+base | String | ``''`` | 指定模板目录
+extname | String | ``'.html'`` | 指定模板后缀名
+encoding | String | ``'utf-8'`` | 指定模板编码
 	
-	// 指定模板编码
-	template.config('encoding', 'utf-8');
+配置``base``指定模板目录可以缩短模板的路径，并且能够避免``include``语句越级访问任意路径引发安全隐患，例如：
 	
-配置``path``指定模板目录可以缩短模板的路径，并且能够避免``include``语句越级访问任意路径引发安全隐患，例如：
-	
-	template.config('path', __dirname);
+	template.config('base', __dirname);
 	var html = template('index/main', data)
 	
 ###	NodeJS + Express
 
-	app.register('.html', require('art-template'));
+	var template = require('art-template');
+	template.config('base', '');
+	template.config('extname', '.html');
+	app.engine('.html', template.__express);
+	app.set('view engine', 'html');
+	//app.set('views', __dirname + '/views');
+	
+运行 demo:
+
+	node demo/node-template-express.js
 	
 > 若使用 js 原生语法作为模板语法，请改用 ``require('art-template/node/template-native.js')``
 
@@ -236,6 +211,10 @@ NodeJS 版本新增了如下默认配置：
 3. 使用``template.config(name, value)``来替换以前的配置
 
 ## 更新日志
+
+### v3.0.1
+
+1.	适配 express3.x 与 4.x，修复路径 BUG
 
 ### v3.0.0
 
