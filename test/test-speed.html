@@ -19,6 +19,7 @@
 <script src="js/jquery.tmpl.js"></script>
 <script src="js/easytemplate.js"></script>
 <script src="js/underscore.js"></script>
+<script src="js/etpl.js"></script>
 
 
 <script>
@@ -85,6 +86,21 @@ var testList = [
         tester: function () {
             var source = document.getElementById('Handlebars').innerHTML;
             var fn = Handlebars.compile(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
+
+    {
+        name: 'etpl',
+        tester: function () {
+            // dont escape html
+            etpl.config({
+                defaultFilter: ''
+            });
+            var source = document.getElementById('etpl').innerHTML;
+            var fn = etpl.compile(source);
             for (var i = 0; i < number; i ++) {
                 fn(data);
             }
@@ -350,6 +366,15 @@ var startTest = function () {
     {@each list as val}
         <li>用户: $${val.user}/ 网站：$${val.site}</li>
     {@/each}
+</ul>
+</script>
+
+<!--etpl 的模板 -->
+<script id="etpl" type="text/tmpl">
+<ul>
+    <!--for: ${list} as ${val} -->
+        <li>用户: ${val.user}/ 网站：${val.site}</li>
+    <!--/for-->
 </ul>
 </script>
 
