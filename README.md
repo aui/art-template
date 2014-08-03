@@ -203,14 +203,20 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 4. ``template.compile()``方法不支持 id 参数
 5. helper 方法不再强制原文输出，是否编码取决于模板语句
 6. ``template.helpers`` 中的``$string``、``$escape``、``$each``已迁移到``template.utils``中
+7. ``template()``方法不支持传入模板直接编译
 
 ###	升级方法
 
 1. 如果想继续使用 js 原生语法作为模板语言，请使用 [template-native.js](https://raw.github.com/aui/artTemplate/master/dist/template-native.js)
 2. 查找项目```template.render```替换为```template```
 3. 使用``template.config(name, value)``来替换以前的配置
+4. ``template()``方法直接传入的模板改用``template.compile()``（v2初期版本）
 
 ## 更新日志
+
+###	v3.0.2
+
+1.	解决管道语法必须使用空格分隔的问题 #94
 
 ### v3.0.1
 

@@ -21,6 +21,10 @@
 <script id="helper" type="text/html">{{test value}}</script>
 <script id="helper2" type="text/html">{{#value | test}}</script>
 <script id="helper3" type="text/html">{{value | test | link: 'abcd'}}</script>
+<script id="helper4" type="text/html">{{   value| test | link: 'abcd'  }}</script>
+<script id="helper5" type="text/html">{{value|test|link:'abcd'}}</script>
+<script id="helper6" type="text/html">{{  value|test|link:'abcd'  }}</script>
+<script id="helper7" type="text/html">{{#  value | test  }}</script>
 
 <script>
 if (!window.console) {
@@ -77,7 +81,10 @@ test('辅助方法', function () {
 
 	equal(template('helper', data), '<em>hello world</em>', '兼容以前的语法');
 	equal(template('helper2', data), '<em>hello world</em>', '使用新的管道风格');
-	equal(template('helper3', {value: '<--->'}), '<i<em>&#60;---&#62;</em>i>[abcd]', '嵌套使用');
+	equal(template('helper7', data), '<em>hello world</em>', '使用新的管道风格2');
+	equal(template('helper3', {value: '<--->'}), '<i<em>&#60;---&#62;</em>i>[abcd]', '嵌套使用1');
+	equal(template('helper4', {value: '<--->'}), '<i<em>&#60;---&#62;</em>i>[abcd]', '嵌套使用2');
+	equal(template('helper5', {value: '<--->'}), '<i<em>&#60;---&#62;</em>i>[abcd]', '嵌套使用3');
 });
 
 test('沙箱', function () {

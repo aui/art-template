@@ -19,11 +19,13 @@ var filtered = function (js, filter) {
 
 
 defaults.parser = function (code, options) {
-    code = code.replace(/^\s/, '');
-    
-    var split = code.split(' ');
-    var key = split.shift();
-    var args = split.join(' ');
+
+    var match = code.match(/([\w\$]*)(\b.*)/);
+    var key = match[1];
+    var args = match[2];
+    var split = args.split(' ');
+
+    split.shift();
 
     switch (key) {
 
