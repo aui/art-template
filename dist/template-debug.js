@@ -330,7 +330,7 @@ var KEYWORDS =
 
     + ',undefined';
 
-var REMOVE_RE = /\/\*[\w\W]*\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|\s*\.\s*[$\w\.]+/g;
+var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|\s*\.\s*[$\w\.]+/g;
 var SPLIT_RE = /[^\w$]+/g;
 var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
 var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
@@ -474,7 +474,7 @@ function compiler (source, options) {
         if (compress) {
             code = code
             .replace(/\s+/g, ' ')
-            .replace(/<!--[\w\W]*-->/g, '');
+            .replace(/<!--[\w\W]*?-->/g, '');
         }
         
         if (code) {
