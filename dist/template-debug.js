@@ -683,9 +683,10 @@ defaults.parser = function (code, options) {
             // 过滤器（辅助方法）
             // {{value | filterA:'abcd' | filterB}}
             // >>> $helpers.filterB($helpers.filterA(value, 'abcd'))
-            if (args.indexOf('|') !== -1) {
+            // TODO: {{ddd||aaa}} 不包含空格
+            if (/^\s*\|\s*[\w\$]/.test(args)) {
 
-                var escape = options.escape;
+                var escape = true;
 
                 // {{#value | link}}
                 if (code.indexOf('#') === 0) {
@@ -696,14 +697,13 @@ defaults.parser = function (code, options) {
                 var i = 0;
                 var array = code.split('|');
                 var len = array.length;
-                var pre = escape ? '$escape' : '$string';
-                var val = pre + '(' + array[i++] + ')';
+                var val = array[i++];
 
                 for (; i < len; i ++) {
                     val = filtered(val, array[i]);
                 }
 
-                code = '=#' + val;
+                code = (escape ? '=' : '=#') + val;
 
             // 即将弃用 {{helperName value}}
             } else if (template.helpers[key]) {

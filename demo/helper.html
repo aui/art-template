@@ -34,7 +34,6 @@
 template.helper('dateFormat', function (date, format) {
 
     date = new Date(date);
-
     var map = {
         "M": date.getMonth() + 1, //月份 
         "d": date.getDate(), //日 
@@ -44,6 +43,8 @@ template.helper('dateFormat', function (date, format) {
         "q": Math.floor((date.getMonth() + 3) / 3), //季度 
         "S": date.getMilliseconds() //毫秒 
     };
+    
+
     format = format.replace(/([yMdhmsqS])+/g, function(all, t){
         var v = map[t];
         if(v !== undefined){
@@ -64,7 +65,7 @@ template.helper('dateFormat', function (date, format) {
 // --------
 
 var data = {
-	time: (new Date).toString(),
+	time: 1408536771253,
 };
 var html = template('test', data);
 document.getElementById('content').innerHTML = html;
