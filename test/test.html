@@ -34,6 +34,11 @@ test('基本', function () {
 	equal(template('noEscape', data), 'hello <em>world</em>', '原文输出');
 });
 
+test('close&open tag', function() {
+	equal(template.compile('{{=value}}', {openTag: '{{', closeTag: '}}'})({value: 1}), '1', 'compile 定义开关标签');
+	equal(template.compile('<%=value%>{{=value}}{{=value%>', {openTag: ['<%', '{{'], closeTag: ['%>', '}}']})({value: 1}), '111', '多个开关标签混合');
+});
+
 test('特殊类型变量输出', function () {
 	var data = {value: 'hello <em>world</em>'};
 	equal(template('default', {value:function(){return 'hello world'}}), 'hello world', '函数类型运算后输出');
