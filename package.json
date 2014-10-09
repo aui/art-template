@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git://github.com/aui/artTemplate.git"
   },
+  "scripts": {
+    "test": "grunt qunit"
+  },
   "main": "./node/template.js",
   "version": "3.0.4",
   "devDependencies": {

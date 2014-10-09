@@ -1,4 +1,4 @@
-# artTemplate-3.0
+# artTemplate-3.0   [![Build Status](https://travis-ci.org/Bacra/artTemplate.svg?branch=master)](https://travis-ci.org/Bacra/artTemplate)
 
 新一代 javascript 模板引擎
 
