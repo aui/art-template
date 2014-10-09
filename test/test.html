@@ -116,13 +116,13 @@ test('辅助方法', function () {
 	    date = new Date(date);
 
 	    var map = {
-	        "M": date.getMonth() + 1, //月份 
-	        "d": date.getDate(), //日 
-	        "h": date.getHours(), //小时 
-	        "m": date.getMinutes(), //分 
-	        "s": date.getSeconds(), //秒 
-	        "q": Math.floor((date.getMonth() + 3) / 3), //季度 
-	        "S": date.getMilliseconds() //毫秒 
+	        "M": date.getUTCMonth() + 1, //月份 
+	        "d": date.getUTCDate(), //日 
+	        "h": date.getUTCHours(), //小时 
+	        "m": date.getUTCMinutes(), //分 
+	        "s": date.getUTCSeconds(), //秒 
+	        "q": Math.floor((date.getUTCMonth() + 3) / 3), //季度 
+	        "S": date.getUTCMilliseconds() //毫秒 
 	    };
 	    format = format.replace(/([yMdhmsqS])+/g, function(all, t){
 	        var v = map[t];
@@ -134,7 +134,7 @@ test('辅助方法', function () {
 	            return v;
 	        }
 	        else if(t === 'y'){
-	            return (date.getFullYear() + '').substr(4 - all.length);
+	            return (date.getUTCFullYear() + '').substr(4 - all.length);
 	        }
 	        return all;
 	    });
@@ -143,7 +143,7 @@ test('辅助方法', function () {
 
 	equal(template('helper', data), '<em>hello world</em>', '兼容以前的语法');
 	equal(template('helper2', data), '<em>hello world</em>', '使用新的管道风格');
-	equal(template('helper3', data), '2014年 08月 20日 19:59:36', '自定义时间函数 dateFormat');
+	equal(template('helper3', data), '2014年 08月 20日 11:59:36', '自定义时间函数 dateFormat');
 	equal(
 		template.compile("{{value | test | link: 'abcd'}}")({value: '<--->'})
 	, '&#60;i&#60;em&#62;&#60;---&#62;&#60;/em&#62;i&#62;[abcd]', '嵌套使用');
