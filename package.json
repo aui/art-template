@@ -13,14 +13,16 @@
     "url": "git://github.com/aui/artTemplate.git"
   },
   "main": "./node/template.js",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "devDependencies": {
     "express": "~4.4.3",
-    "grunt-cli": "*",
     "grunt": "*",
-    "grunt-contrib-jshint": "*",
+    "grunt-cli": "*",
     "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*"
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-qunit": "^0.5.2",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "^0.6.1"
   },
   "license": "BSD"
 }
