@@ -362,11 +362,12 @@ function stringify (code) {
 
 function tagRegExp (tag) {
 
+    var tmp = [];
     forEach(tag, function(val, index) {
-        tag[index] = val.replace(/([()\\|$\^*?.+\[\]\{\}\/])/g, '\\$1');
+        tmp[index] = val.replace(/([()\\|$\^*?.+\[\]\{\}\/])/g, '\\$1');
     });
 
-    return new RegExp(tag.join('|'), 'g')
+    return new RegExp(tmp.join('|'), 'g')
 }
 
 
@@ -627,7 +628,7 @@ defaults.parser = function (code, options) {
     // var split = args.split(' ');
     // split.shift();
 
-    code = code.replace(/^\s/, '');
+    code = code.replace(/^\s+/, '');
 
     var split = code.split(' ');
     var key = split.shift();
