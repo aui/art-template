@@ -77,7 +77,13 @@ module.exports = function (template) {
 	    file = file.replace(rExtname, '');
 
 	    options.filename = file;
-	    fn(null, template.renderFile(file, options));
+
+	    var content = template.renderFile(file, options);
+	    if (content == template.errorRender()) {
+	    	fn(new Error(content));
+	    } else {
+	    	fn(null, content);
+	    }
 	};
 
 
