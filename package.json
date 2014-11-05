@@ -16,7 +16,7 @@
     "test": "grunt qunit"
   },
   "main": "./node/template.js",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "devDependencies": {
     "express": "~4.4.3",
     "grunt": "*",
