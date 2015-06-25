@@ -15,7 +15,7 @@ var filtered = function (js, filter) {
     }
 
     return '$helpers.' + name + '(' + js + args + ')';
-}
+};
 
 
 defaults.parser = function (code, options) {
