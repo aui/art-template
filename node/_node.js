@@ -12,23 +12,44 @@ module.exports = function (template) {
 	defaults.extname = '.html';
 	defaults.encoding = 'utf-8';
 
+	function compileFromFS(filename) {
+		// 加载模板并编译
+		var source = readTemplate(filename);
+
+		if (typeof source === 'string') {
+			return template.compile(source, {
+				filename: filename
+			});
+		}
+	}
 
 	// 重写引擎编译结果获取方法
 	template.get = function (filename) {
 		
 	    var fn;
-	    
+
+
 	    if (cacheStore.hasOwnProperty(filename)) {
 	        // 使用内存缓存
 	        fn = cacheStore[filename];
 	    } else {
-	        // 加载模板并编译
-	        var source = readTemplate(filename);
-	        if (typeof source === 'string') {
-	            fn = template.compile(source, {
-	                filename: filename
-	            });
-	        }
+			fn = compileFromFS(filename);
+
+		    if (fn) {
+			    var watcher = fs.watch(filename + defaults.extname);
+
+			    // 文件发生改变，重新生成缓存
+			    // TODO： 观察删除文件，或者其他使文件发生变化的改动
+			    watcher.on('change', function (event) {
+				    if (event === 'change') {
+					    source = readTemplate(filename);
+
+					    cacheStore[filename] = template.compile(source, {
+						    filename: filename
+					    });
+				    }
+			    });
+		    }
 	    }
 
 	    return fn;
