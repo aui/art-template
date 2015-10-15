@@ -42,11 +42,7 @@ module.exports = function (template) {
 			    // TODO： 观察删除文件，或者其他使文件发生变化的改动
 			    watcher.on('change', function (event) {
 				    if (event === 'change') {
-					    source = readTemplate(filename);
-
-					    cacheStore[filename] = template.compile(source, {
-						    filename: filename
-					    });
+					    cacheStore[filename] = compileFromFS(filename);
 				    }
 			    });
 		    }
