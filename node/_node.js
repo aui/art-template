@@ -26,67 +26,67 @@ module.exports = function (template) {
 	// 重写引擎编译结果获取方法
 	template.get = function (filename) {
 		
-		var fn;
+	    var fn;
 
 
-		if (cacheStore.hasOwnProperty(filename)) {
-			// 使用内存缓存
-			fn = cacheStore[filename];
-		} else {
+	    if (cacheStore.hasOwnProperty(filename)) {
+	        // 使用内存缓存
+	        fn = cacheStore[filename];
+	    } else {
 			fn = compileFromFS(filename);
 
-			if (fn) {
-				var watcher = fs.watch(filename + defaults.extname);
+		    if (fn) {
+			    var watcher = fs.watch(filename + defaults.extname);
 
-				// 文件发生改变，重新生成缓存
-				// TODO： 观察删除文件，或者其他使文件发生变化的改动
-				watcher.on('change', function (event) {
-					if (event === 'change') {
-						source = readTemplate(filename);
+			    // 文件发生改变，重新生成缓存
+			    // TODO： 观察删除文件，或者其他使文件发生变化的改动
+			    watcher.on('change', function (event) {
+				    if (event === 'change') {
+					    source = readTemplate(filename);
 
-						cacheStore[filename] = template.compile(source, {
-							filename: filename
-						});
-					}
-				});
-			}
-		}
+					    cacheStore[filename] = template.compile(source, {
+						    filename: filename
+					    });
+				    }
+			    });
+		    }
+	    }
 
-		return fn;
+	    return fn;
 	};
 
 	
 	function readTemplate (id) {
-		id = path.join(defaults.base, id + defaults.extname);
-		
-		if (id.indexOf(defaults.base) !== 0) {
-			// 安全限制：禁止超出模板目录之外调用文件
-			throw new Error('"' + id + '" is not in the template directory');
-		} else {
-			try {
-				return fs.readFileSync(id, defaults.encoding);
-			} catch (e) {}
-		}
+	    id = path.join(defaults.base, id + defaults.extname);
+	    
+	    if (id.indexOf(defaults.base) !== 0) {
+	        // 安全限制：禁止超出模板目录之外调用文件
+	        throw new Error('"' + id + '" is not in the template directory');
+	    } else {
+	        try {
+	            return fs.readFileSync(id, defaults.encoding);
+	        } catch (e) {}
+	    }
 	}
 
 
 	// 重写模板`include``语句实现方法，转换模板为绝对路径
 	template.utils.$include = function (filename, data, from) {
-		
-		from = path.dirname(from);
-		filename = path.join(from, filename);
-		
-		return template.renderFile(filename, data);
+	    
+	    from = path.dirname(from);
+	    filename = path.join(from, filename);
+	    
+	    return template.renderFile(filename, data);
 	}
 
 
 	// express support
 	template.__express = function (file, options, fn) {
 
-		if (typeof options === 'function') {
-			fn = options;
-			options = {};
-		}
+	    if (typeof options === 'function') {
+	        fn = options;
+	        options = {};
+	    }
 
 
 		if (!rExtname) {
@@ -95,10 +95,10 @@ module.exports = function (template) {
 		}
 
 
-		file = file.replace(rExtname, '');
+	    file = file.replace(rExtname, '');
 
-		options.filename = file;
-		fn(null, template.renderFile(file, options));
+	    options.filename = file;
+	    fn(null, template.renderFile(file, options));
 	};
 
 
