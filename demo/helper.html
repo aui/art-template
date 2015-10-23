@@ -33,7 +33,17 @@
  */
 template.helper('dateFormat', function (date, format) {
 
+    if (typeof date === "string") {
+        var mts = date.match(/(\/Date\((\d+)\)\/)/);
+        if (mts && mts.length >= 3) {
+            date = parseInt(mts[2]);
+        }
+    }
     date = new Date(date);
+    if (!date || date.toUTCString() == "Invalid Date") {
+        return "";
+    }
+
     var map = {
         "M": date.getMonth() + 1, //月份 
         "d": date.getDate(), //日 
