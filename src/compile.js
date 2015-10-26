@@ -137,6 +137,16 @@ function stringify (code) {
     .replace(/\n/g, '\\n') + "'";
 }
 
+function tagRegExp (tag) {
+
+    var tmp = [];
+    forEach(tag, function(val, index) {
+        tmp[index] = val.replace(/([()\\|$\^*?.+\[\]\{\}\/])/g, '\\$1');
+    });
+
+    return new RegExp(tmp.join('|'), 'g')
+}
+
 
 function compiler (source, options) {
     
@@ -181,6 +191,9 @@ function compiler (source, options) {
     var mainCode = replaces[0];
 
     var footerCode = "return new String(" + replaces[3] + ");"
+    
+    if (openTag.join) openTag = tagRegExp(openTag);
+    if (closeTag.join) closeTag = tagRegExp(closeTag);
     
     // html与逻辑语法分离
     forEach(source.split(openTag), function (code) {

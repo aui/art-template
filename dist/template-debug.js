@@ -209,15 +209,17 @@ template.onerror = function (e) {
     }
 };
 
+template.errorRender = function () {
+    return '{Template Error}';
+};
+
 
 // 模板调试器
 var showDebugInfo = function (e) {
 
     template.onerror(e);
     
-    return function () {
-        return '{Template Error}';
-    };
+    return template.errorRender;
 };
 
 
@@ -360,6 +362,16 @@ function stringify (code) {
     .replace(/\n/g, '\\n') + "'";
 }
 
+function tagRegExp (tag) {
+
+    var tmp = [];
+    forEach(tag, function(val, index) {
+        tmp[index] = val.replace(/([()\\|$\^*?.+\[\]\{\}\/])/g, '\\$1');
+    });
+
+    return new RegExp(tmp.join('|'), 'g')
+}
+
 
 function compiler (source, options) {
     
@@ -404,6 +416,9 @@ function compiler (source, options) {
     var mainCode = replaces[0];
 
     var footerCode = "return new String(" + replaces[3] + ");"
+    
+    if (openTag.join) openTag = tagRegExp(openTag);
+    if (closeTag.join) closeTag = tagRegExp(closeTag);
     
     // html与逻辑语法分离
     forEach(source.split(openTag), function (code) {
@@ -615,7 +630,7 @@ defaults.parser = function (code, options) {
     // var split = args.split(' ');
     // split.shift();
 
-    code = code.replace(/^\s/, '');
+    code = code.replace(/^\s+/, '');
 
     var split = code.split(' ');
     var key = split.shift();

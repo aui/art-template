@@ -1,0 +1,23 @@
+{
+  "name": "artTemplate",
+  "description": "JavaScript Template Engine",
+  "version": "3.0.4",
+  "keywords": ["template", "node"],
+  "main": "dist/template.js",
+  "scripts": ["dist/*"],
+  "ignore": [
+    "demo",
+    "doc",
+    "node",
+    "src",
+    "test",
+    "Gruntfile.js",
+    "package.json",
+    "node_modules",
+    ".gitignore",
+    ".npmignore",
+    ".travis",
+    "README.md"
+  ],
+  "license": "BSD"
+}

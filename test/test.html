@@ -20,6 +20,15 @@
 <script id="debug-syntax" type="text/html">{{a b c d e f}}</script>
 <script id="helper" type="text/html">{{test value}}</script>
 <script id="helper2" type="text/html">{{#value | test}}</script>
+<script id="helper3" type="text/html">{{time | dateFormat:'yyyy年 MM月 dd日 hh:mm:ss'}}</script>
+
+<script id="xssURL" type="text/html">
+<img src="{{url_0}}" />
+<img src="{{url_1}}" />
+<img src="{{url_2}}" />
+<img src="{{url_3}}" />
+</script>
+
 
 <script>
 if (!window.console) {
@@ -32,6 +41,11 @@ test('基本', function () {
 	equal(typeof template.compile('{{value}}'), 'function', '编译成函数');
 	equal(template('default', data), 'hello &#60;em&#62;world&#60;/em&#62;', '编码输出');
 	equal(template('noEscape', data), 'hello <em>world</em>', '原文输出');
+});
+
+test('close&open tag', function() {
+	equal(template.compile('{{value%>', {openTag: '{{', closeTag: '%>'})({value: 1}), '1', 'compile 定义开关标签');
+	equal(template.compile('<%value%>{{value}}{{value%>', {openTag: ['<%', '{{'], closeTag: ['%>', '}}']})({value: 1}), '111', '多个开关标签混合');
 });
 
 test('特殊类型变量输出', function () {
@@ -49,6 +63,30 @@ test('特殊字符输出', function () {
 
 test('XSS防范测试', function () {
 	equal(template('default', {value:'<>"\'&'}), '&#60;&#62;&#34;&#39;&#38;', 'HTML字符转义');
+	
+	var data = {
+		url_0: 'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?" onload=alert(1)',
+		url_1: 'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?&#34; onload=alert(2)',
+		url_2: 'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?\\',
+		url_3: 'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?\\&quot;&#38;#34; onload=alert(2)'
+	};
+	var html = template('xssURL', data);
+	var container = document.getElementById('urlXSSContent');
+	container.innerHTML = html;
+
+	var nodes = container.getElementsByTagName('img');
+	var imgurl;
+	for(var i = nodes.length; i--;)
+	{
+		equal(template('default', {
+			value: [
+				'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?%22%20onload=alert(1)',
+				'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?%22%20onload=alert(2)',
+				'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?\\',
+				'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?\\%22&#34; onload=alert(2)'
+			][i]
+		}), nodes[i].src, 'HTML字符转义 url_'+i);
+	}
 });
 
 test('空值处理', function () {
@@ -65,7 +103,7 @@ test('内置方法', function () {
 });
 
 test('辅助方法', function () {
-	var data = {value: 'hello world'};
+	var data = {value: 'hello world', time: 1408535976126};
 	template.helper('test', function (content) {
 		return '<em>' + content + '</em>';
 	});
@@ -74,8 +112,38 @@ test('辅助方法', function () {
 		return '<i' + content + 'i>[' + url + ']';
 	});
 
+	template.helper('dateFormat', function (date, format) {
+	    date = new Date(date);
+
+	    var map = {
+	        "M": date.getUTCMonth() + 1, //月份 
+	        "d": date.getUTCDate(), //日 
+	        "h": date.getUTCHours(), //小时 
+	        "m": date.getUTCMinutes(), //分 
+	        "s": date.getUTCSeconds(), //秒 
+	        "q": Math.floor((date.getUTCMonth() + 3) / 3), //季度 
+	        "S": date.getUTCMilliseconds() //毫秒 
+	    };
+	    format = format.replace(/([yMdhmsqS])+/g, function(all, t){
+	        var v = map[t];
+	        if(v !== undefined){
+	            if(all.length > 1){
+	                v = '0' + v;
+	                v = v.substr(v.length-2);
+	            }
+	            return v;
+	        }
+	        else if(t === 'y'){
+	            return (date.getUTCFullYear() + '').substr(4 - all.length);
+	        }
+	        return all;
+	    });
+	    return format;
+	});
+
 	equal(template('helper', data), '<em>hello world</em>', '兼容以前的语法');
 	equal(template('helper2', data), '<em>hello world</em>', '使用新的管道风格');
+	equal(template('helper3', data), '2014年 08月 20日 11:59:36', '自定义时间函数 dateFormat');
 	equal(
 		template.compile("{{value | test | link: 'abcd'}}")({value: '<--->'})
 	, '&#60;i&#60;em&#62;&#60;---&#62;&#60;/em&#62;i&#62;[abcd]', '嵌套使用');
@@ -156,5 +224,6 @@ test('配置功能', function () {
 <body>
 	<div id="qunit"></div>
 	<div id="qunit-fixture">test markup</div>
+	<div id="urlXSSContent"></div>
 </body>
 </html>

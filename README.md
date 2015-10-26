@@ -1,4 +1,4 @@
-# artTemplate-3.0
+# artTemplate-3.0   [![Build Status](https://travis-ci.org/Bacra/artTemplate.svg?branch=master)](https://travis-ci.org/Bacra/artTemplate)
 
 新一代 javascript 模板引擎
 
@@ -116,8 +116,8 @@
 
 字段 | 类型 | 默认值| 说明
 ------------ | ------------- | ------------ | ------------
-openTag | String | ``'{{'`` | 逻辑语法开始标签
-closeTag | String | ``"}}"`` | 逻辑语法结束标签
+openTag | String/Array | ``'{{'`` | 逻辑语法开始标签
+closeTag | String/Array | ``"}}"`` | 逻辑语法结束标签
 escape | Boolean | ``true`` | 是否编码输出 HTML 字符
 cache | Boolean | ``true`` | 是否开启缓存（依赖 options 的 filename 字段）
 compress | Boolean | ``false`` | 是否压缩 HTML 多余空白字符
@@ -213,6 +213,10 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 4. ``template()``方法直接传入的模板改用``template.compile()``（v2初期版本）
 
 ## 更新日志
+
+###	v3.0.4
+
+1. 支持定义多个``openTag`` ``closeTag``，让模版在html编辑器下支持更好
 
 ###	v3.0.3
 
