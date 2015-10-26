@@ -666,6 +666,20 @@ defaults.parser = function (code, options) {
 
             code = '});';
             break;
+        case 'var':
+
+            code = ' var ' + args + ';';
+            break;
+
+        case 'for':
+
+            code = ' for (' + args + '){';
+            break;
+
+        case '/for':
+
+            code = "}";
+            break;
 
         case 'echo':
 
