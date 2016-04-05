@@ -1,4 +1,4 @@
-# artTemplate-3.0
+# artTemplate-3.0-beta
 
 新一代 javascript 模板引擎
 
@@ -293,4 +293,4 @@ Released under the MIT, BSD, and GPL Licenses
 
 [所有演示例子](http://aui.github.com/artTemplate/demo/index.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
 
-© tencent.com
+? tencent.com
