@@ -15,11 +15,10 @@ var filtered = function (js, filter) {
     }
 
     return '$helpers.' + name + '(' + js + args + ')';
-}
+};
 
 
 defaults.parser = function (code, options) {
-
     // var match = code.match(/([\w\$]*)(\b.*)/);
     // var key = match[1];
     // var args = match[2];
@@ -32,17 +31,12 @@ defaults.parser = function (code, options) {
     var key = split.shift();
     var args = split.join(' ');
 
-    
-
     switch (key) {
-
         case 'if':
-
             code = 'if(' + args + '){';
             break;
 
         case 'else':
-            
             if (split.shift() === 'if') {
                 split = ' if(' + split.join(' ') + ')';
             } else {
@@ -53,23 +47,21 @@ defaults.parser = function (code, options) {
             break;
 
         case '/if':
-
             code = '}';
             break;
 
         case 'each':
-            
             var object = split[0] || '$data';
             var as     = split[1] || 'as';
             var value  = split[2] || '$value';
             var index  = split[3] || '$index';
-            
+
             var param   = value + ',' + index;
-            
+
             if (as !== 'as') {
                 object = '[]';
             }
-            
+
             code =  '$each(' + object + ',function(' + param + '){';
             break;
 
@@ -87,6 +79,14 @@ defaults.parser = function (code, options) {
         case 'include':
 
             code = key + '(' + split.join(',') + ');';
+            break;
+
+        case '!':
+            code = args;
+            break;
+
+        case '//':
+            code = '/*' + args + '*/';
             break;
 
         default:
@@ -118,9 +118,7 @@ defaults.parser = function (code, options) {
 
             // 即将弃用 {{helperName value}}
             } else if (template.helpers[key]) {
-                
                 code = '=#' + key + '(' + split.join(',') + ');';
-            
             // 内容直接输出 {{value}}
             } else {
 
@@ -129,8 +127,7 @@ defaults.parser = function (code, options) {
 
             break;
     }
-    
-    
+
     return code;
 };
 
