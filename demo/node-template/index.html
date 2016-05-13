@@ -9,4 +9,12 @@
 	</ul>
 </div>
 
-{{include './public/footer'}} 
+字面量输出：
+
+[[!--
+    {{each list}}
+        <a href="{{$value.url}}">{{$value.title}}</a>
+    {{/each}}
+--]]
+
+{{include './public/footer'}}

@@ -13,12 +13,13 @@
     "url": "git://github.com/aui/artTemplate.git"
   },
   "main": "./node/template.js",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "devDependencies": {
     "express": "~4.4.3",
     "grunt-cli": "*",
     "grunt": "*",
     "grunt-contrib-jshint": "*",
+    "grunt-contrib-watch": "*",
     "grunt-contrib-concat": "*",
     "grunt-contrib-uglify": "*"
   },

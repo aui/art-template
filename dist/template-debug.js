@@ -44,6 +44,7 @@ var defaults = template.defaults = {
     escape: true,     // 是否编码输出变量的 HTML 字符
     cache: true,      // 是否开启缓存（依赖 options 的 filename 字段）
     compress: false,  // 是否压缩输出
+    literal: true,    // 是否开启字面量模板保护 [[!-- 这里的代码不解析 --]]
     parser: null      // 自定义语法格式器 @see: template-syntax.js
 };
 
@@ -240,7 +241,7 @@ var showDebugInfo = function (e) {
  * @return  {Function}  渲染方法
  */
 var compile = template.compile = function (source, options) {
-    
+
     // 合并默认配置
     options = options || {};
     for (var name in defaults) {
@@ -254,41 +255,41 @@ var compile = template.compile = function (source, options) {
 
 
     try {
-        
+
         var Render = compiler(source, options);
-        
+
     } catch (e) {
-    
+
         e.filename = filename || 'anonymous';
         e.name = 'Syntax Error';
 
         return showDebugInfo(e);
-        
+
     }
-    
-    
+
+
     // 对编译结果进行一次包装
 
     function render (data) {
-        
+
         try {
-            
+
             return new Render(data, filename) + '';
-            
+
         } catch (e) {
-            
+
             // 运行时出错后自动开启调试模式重新编译
             if (!options.debug) {
                 options.debug = true;
                 return compile(source, options)(data);
             }
-            
+
             return showDebugInfo(e)();
-            
+
         }
-        
+
     }
-    
+
 
     render.prototype = Render.prototype;
     render.toString = function () {
@@ -300,7 +301,7 @@ var compile = template.compile = function (source, options) {
         cacheStore[filename] = render;
     }
 
-    
+
     return render;
 
 };
@@ -362,20 +363,29 @@ function stringify (code) {
 
 
 function compiler (source, options) {
-    
+
     var debug = options.debug;
     var openTag = options.openTag;
     var closeTag = options.closeTag;
     var parser = options.parser;
     var compress = options.compress;
     var escape = options.escape;
-    
 
-    
+
+
     var line = 1;
     var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1};
-    
 
+    // 字面量输出的解析支持
+    // 业务有很多需求希望模板中有一段区块原样输出，里面express做后端语言希望输出art模板~ 这里的功能立马派上用场！
+    // 预发规则：[[!-- 原样输出 --]]
+    var literal = {};
+    if(false !== options.literal) {
+        source = source.replace(/\[\[!--([\w\W]*?)--\]\]/g, function(_, code, ch) {
+            literal[ch] = code;
+            return '{{=$literal[' + ch + ']}}';
+        });
+    }
 
     var isNewEngine = ''.trim;// '__proto__' in {}
     var replaces = isNewEngine
@@ -385,7 +395,7 @@ function compiler (source, options) {
     var concat = isNewEngine
         ? "$out+=text;return $out;"
         : "$out.push(text);";
-          
+
     var print = "function(){"
     +      "var text=''.concat.apply('',arguments);"
     +       concat
@@ -400,38 +410,38 @@ function compiler (source, options) {
     var headerCode = "'use strict';"
     + "var $utils=this,$helpers=$utils.$helpers,"
     + (debug ? "$line=0," : "");
-    
+
     var mainCode = replaces[0];
 
     var footerCode = "return new String(" + replaces[3] + ");"
-    
+
     // html与逻辑语法分离
     forEach(source.split(openTag), function (code) {
         code = code.split(closeTag);
-        
+
         var $0 = code[0];
         var $1 = code[1];
-        
+
         // code: [html]
         if (code.length === 1) {
-            
+
             mainCode += html($0);
-         
+
         // code: [logic, html]
         } else {
-            
+
             mainCode += logic($0);
-            
+
             if ($1) {
                 mainCode += html($1);
             }
         }
-        
+
 
     });
-    
+
     var code = headerCode + mainCode + footerCode;
-    
+
     // 调试语句
     if (debug) {
         code = "try{" + code + "}catch(e){"
@@ -445,17 +455,18 @@ function compiler (source, options) {
         +       "};"
         + "}";
     }
-    
-    
-    
+
+
+
     try {
-        
-        
+
+
         var Render = new Function("$data", "$filename", code);
         Render.prototype = utils;
+        Render.prototype.$literal = literal;
 
         return Render;
-        
+
     } catch (e) {
         e.temp = "function anonymous($data,$filename) {" + code + "}";
         throw e;
@@ -463,10 +474,10 @@ function compiler (source, options) {
 
 
 
-    
+
     // 处理 HTML 语句
     function html (code) {
-        
+
         // 记录行号
         line += code.split(/\n/).length - 1;
 
@@ -476,36 +487,36 @@ function compiler (source, options) {
             .replace(/\s+/g, ' ')
             .replace(/<!--[\w\W]*?-->/g, '');
         }
-        
+
         if (code) {
             code = replaces[1] + stringify(code) + replaces[2] + "\n";
         }
 
         return code;
     }
-    
-    
+
+
     // 处理逻辑语句
     function logic (code) {
 
         var thisLine = line;
-       
+
         if (parser) {
-        
+
              // 语法转换插件钩子
             code = parser(code, options);
-            
+
         } else if (debug) {
-        
+
             // 记录行号
             code = code.replace(/\n/g, function () {
                 line ++;
                 return "$line=" + line +  ";";
             });
-            
+
         }
-        
-        
+
+
         // 输出语句. 编码: <%=value%> 不编码:<%=#value%>
         // <%=#value%> 等同 v2.0.3 之前的 <%==value%>
         if (code.indexOf('=') === 0) {
@@ -520,7 +531,7 @@ function compiler (source, options) {
                 var name = code.replace(/\s*\([^\)]+\)/, '');
 
                 // 排除 utils.* | include | print
-                
+
                 if (!utils[name] && !/^(include|print)$/.test(name)) {
                     code = "$escape(" + code + ")";
                 }
@@ -529,19 +540,19 @@ function compiler (source, options) {
             } else {
                 code = "$string(" + code + ")";
             }
-            
+
 
             code = replaces[1] + code + replaces[2];
 
         }
-        
+
         if (debug) {
             code = "$line=" + thisLine + ";" + code;
         }
-        
+
         // 提取模板中的变量名
         forEach(getVariable(code), function (name) {
-            
+
             // name 值可能为空，在安卓低版本浏览器下
             if (!name || uniq[name]) {
                 return;
@@ -557,9 +568,9 @@ function compiler (source, options) {
                 value = print;
 
             } else if (name === 'include') {
-                
+
                 value = include;
-                
+
             } else if (utils[name]) {
 
                 value = "$utils." + name;
@@ -572,17 +583,17 @@ function compiler (source, options) {
 
                 value = "$data." + name;
             }
-            
+
             headerCode += name + "=" + value + ",";
             uniq[name] = true;
-            
-            
+
+
         });
-        
+
         return code + "\n";
     }
-    
-    
+
+
 };
 
 
