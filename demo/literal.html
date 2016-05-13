@@ -2,31 +2,54 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>basic-demo</title>
+<title>literal demo</title>
 <script src="../dist/template.js"></script>
+<style type="text/css">
+textarea {
+    border: none;
+    height: 120px; width: 400px;
+    resize: none;
+    outline: none;
+    color: #000;
+    display: block;
+    font-size: 14px
+}
+</style>
 </head>
 
 <body>
 <div id="content"></div>
 <script id="test" type="text/html">
-{{if isAdmin}}
-
 <h1>{{title}}</h1>
+{{include 'list'}}
+</script>
+<script id="list" type="text/html">
+
+模板<br>
+
+[[!--
+<textarea disabled>
+<ul>
+    {{each list as value i}}
+        <li>索引 {{i + 1}} ：{{value}}</li>
+    {{/each}}
+</ul>
+</textarea>
+--]]
+
+结果
+
 <ul>
     {{each list as value i}}
         <li>索引 {{i + 1}} ：{{value}}</li>
     {{/each}}
 </ul>
 
-<h1>字面量</h1>
-[[!-- {{=isAdmin}} --]]
-{{/if}}
 </script>
 
 <script>
 var data = {
-	title: '基本例子',
-	isAdmin: true,
+	title: '字面量输出',
 	list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
 };
 var html = template('test', data);

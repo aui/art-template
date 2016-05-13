@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     var sources_native = [
         'src/intro.js',
@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         'src/helper.js',
         'src/onerror.js',
         'src/compile.js',
-                    //<<<< 'src/syntax.js',
+        //<<<< 'src/syntax.js',
         'src/outro.js'
     ];
 
@@ -58,8 +58,8 @@ module.exports = function (grunt) {
         },
         jshint: {
             files: [
-              'dist/template-native.js',
-              'dist/template.js'
+                'dist/template-native.js',
+                'dist/template.js'
             ],
             options: {
                 curly: true,
@@ -83,17 +83,23 @@ module.exports = function (grunt) {
         },
         watch: {
             files: '<config:lint.files>',
-            tasks: 'lint qunit'
+            tasks: 'lint qunit',
+
+            sources: {
+                files: ['src/*.js'],
+                tasks: ['default']
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     //grunt.loadNpmTasks('grunt-contrib-qunit');
-    //grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
 
 
     grunt.registerTask('default', ['concat', /*'jshint',*/ 'uglify']);
+    grunt.registerTask('dev', ['default', 'watch']);
 
 };
