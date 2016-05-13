@@ -9,6 +9,8 @@
 
 <script id="default" type="text/html">{{value}}</script>
 <script id="noEscape" type="text/html">{{#value}}</script>
+<script id="literal" type="text/html">[[!--{{#value | test}}--]]</script>
+<script id="literal2" type="text/html">{{=value}}[[!--{{=字面量}}--]]</script>
 <script id="include" type="text/html">{{include 'include-content'}}</script>
 <script id="include2" type="text/html">{{include 'include-content'}}{{include 'include-content' data2}}</script>
 <script id="include-content" type="text/html">{{#value}}</script>
@@ -41,6 +43,11 @@ test('特殊类型变量输出', function () {
 	equal(template('default', {value:false}), '', 'Boolean(false)类型输出空值');
 	equal(template('default', {value:true}), '', 'Boolean(true)类型输出空值');
 	equal(template('default', {value:{}}), '', 'Object类型输出空值');
+});
+
+test('字面量输出支持', function () {
+	equal(template('literal', {}), '{{#value | test}}', '原样输出！');
+	equal(template('literal2', {value: '<OK>'}), '<OK>{{=字面量}}', '原样输出！');
 });
 
 test('特殊字符输出', function () {
