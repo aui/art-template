@@ -352,12 +352,16 @@ function getVariable (code) {
 
 // 字符串转义
 function stringify (code) {
-    return "'" + code
+    return "'" + stringify2(code) + "'";
+}
+
+function stringify2(code) {
+    return code
     // 单引号与反斜杠转义
     .replace(/('|\\)/g, '\\$1')
     // 换行符转义(windows + linux)
     .replace(/\r/g, '\\r')
-    .replace(/\n/g, '\\n') + "'";
+    .replace(/\n/g, '\\n');
 }
 
 
@@ -404,6 +408,17 @@ function compiler (source, options) {
     var mainCode = replaces[0];
 
     var footerCode = "return new String(" + replaces[3] + ");"
+
+    // 不需要处理的代码列表
+    var rawList = [];
+    var RAW_RE = /\{\{\{([\s\S]*?)\}\}\}/g;
+    var RAW_PLACEHOLDER = '##ARTTEMPLATE_RAW_PLACEHOLDER_';
+    var RAW_PLACEHOLDER_RE = /##ARTTEMPLATE_RAW_PLACEHOLDER_(\d+)/g;
+
+    source = source.replace(RAW_RE, function(all, code) {
+        rawList.push(code);
+        return RAW_PLACEHOLDER + (rawList.length - 1);
+    });
     
     // html与逻辑语法分离
     forEach(source.split(openTag), function (code) {
@@ -429,6 +444,12 @@ function compiler (source, options) {
         
 
     });
+
+
+    mainCode = mainCode.replace(RAW_PLACEHOLDER_RE, function(all, index) {
+        return stringify2(rawList[+index]);
+    });
+
     
     var code = headerCode + mainCode + footerCode;
     
