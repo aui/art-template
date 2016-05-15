@@ -23,7 +23,7 @@ var template = function (filename, content) {
 };
 
 
-template.version = '3.0.0';
+template.version = '3.2.0';
 
 
 /**
