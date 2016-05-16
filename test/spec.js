@@ -26,12 +26,12 @@ describe('test', function() {
     fn({}).should.equal('');
 
     tpl = [
-      '{{// ',
+      '{{//',
       '多行注释',
       '多行注释',
       '多行注释',
       '}}'
-    ].join('');
+    ].join('\n');
 
     fn = art.compile(tpl);
     fn({}).should.equal('');

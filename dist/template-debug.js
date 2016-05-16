@@ -631,7 +631,7 @@ defaults.parser = function (code, options) {
 
     code = code.replace(/^\s/, '');
 
-    var split = code.split(' ');
+    var split = code.split(/\s/);
     var key = split.shift();
     var args = split.join(' ');
 
