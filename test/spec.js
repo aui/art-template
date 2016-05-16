@@ -17,7 +17,7 @@ describe('test', function() {
   });
 
 
-  it('comment', function() {
+  it('comment with //', function() {
     var tpl = [
       '{{// 这是个注释}}'
     ].join('');
@@ -38,16 +38,10 @@ describe('test', function() {
   });
 
 
-  it('raw', function() {
-    var raw = '<span>\nMes\\sa\'ge: {{ msg }}\n</span>';
-    var tpl = [
-      '{{{',
-        raw,
-      '}}}'
-    ].join('');
-
+  it('use \\{{ and \\}} to output {{ and }}', function() {
+    var tpl = '<span>Message: \\{{ msg \\}} - \\{{ </span>';
     var fn = art.compile(tpl);
-    fn({}).should.equal(raw);
+    fn({}).should.equal('<span>Message: {{ msg }} - {{ </span>');
   });
 
 });
