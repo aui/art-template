@@ -14,6 +14,6 @@ var template = function (filename, content) {
 };
 
 
-template.version = '3.2.1';
+template.version = '3.2.2';
 
 
