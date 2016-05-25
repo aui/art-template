@@ -43,6 +43,5 @@ describe('test', function() {
     var fn = art.compile(tpl);
     fn({}).should.equal('<span>Message: {{ msg }} - {{ </span>');
   });
-
 });
 

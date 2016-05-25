@@ -736,18 +736,14 @@ defaults.parser = function (code, options) {
 };
 
 
-
-// RequireJS && SeaJS
-if (typeof define === 'function') {
-    define(function() {
-        return template;
-    });
-
-// NodeJS
-} else if (typeof exports !== 'undefined') {
-    module.exports = template;
+if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+  module.exports = template;
+} else if (typeof define === 'function') {
+  define(function() {
+    return template;
+  });
 } else {
-    this.template = template;
+  this.template = template;
 }
 
 })();
