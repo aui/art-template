@@ -1,0 +1,3 @@
+var cacheStore = template.cache = {};
+
+

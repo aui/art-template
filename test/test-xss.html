@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>xss-test</title>
-<script src="../dist/template.js"></script>
+<script src="../dist/template-native.js"></script>
 </head>
 
 <body>
@@ -23,7 +23,7 @@ var data = {
 	url_3: 'http://mat1.gtimg.com/www/images/qq2012/qqlogo_1x.png?\\',
 	index: '\\&quot;&#38;#34; onload=alert(2)'
 };
-var html = template.render('test', data);
+var html = template('test', data);
 document.getElementById('content').innerHTML = html;
 </script>
 </body>

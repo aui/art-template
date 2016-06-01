@@ -2,8 +2,9 @@ var template = require('../node/template.js');
 //console.log(template);
 template.config('base', __dirname);// 设置模板根目录，默认为引擎所在目录
 template.config('compress', true);// 压缩输出
+template.config('escape', false);// xss过滤
 
-var html = template('node-template/index', {
+var data = {
 	title: '国内要闻',
 	time: (new Date).toString(),
 	list: [
@@ -28,8 +29,15 @@ var html = template('node-template/index', {
 			url: 'http://news.qq.com/a/20130326/001307.htm'
 		}
 	]
-});
+};
+
+var render = template('tpl/index');
+
+var html = render(data);
 
 
-console.log(html);
-//console.log(template.cache)
+console.time('test');
+for (var i = 0; i < 999999; i ++) {
+	render(data)
+}
+console.timeEnd('test');
