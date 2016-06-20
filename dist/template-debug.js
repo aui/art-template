@@ -488,7 +488,7 @@ function compiler (source, options) {
         // 压缩多余空白与注释
         if (compress) {
             code = code
-            .replace(/\s+/g, ' ')
+            .replace(/((\r\n)|\n|\r)\s+/g, '\n')
             .replace(/<!--[\w\W]*?-->/g, '');
         }
         

@@ -43,5 +43,28 @@ describe('test', function() {
     var fn = art.compile(tpl);
     fn({}).should.equal('<span>Message: {{ msg }} - {{ </span>');
   });
+
+
+  it('compress', function() {
+    var tpl = `
+<div>
+  {{title}}
+  <ul>
+    <li>item</li>
+  </ul>
+</div>
+    `
+
+    var fn = art.compile(tpl, { compress: true });
+    var expect = `
+<div>
+Hello
+<ul>
+<li>item</li>
+</ul>
+</div>
+`;
+    fn({ title: 'Hello' }).should.equal(expect);
+  });
 });
 
