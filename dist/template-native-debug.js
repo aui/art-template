@@ -83,7 +83,7 @@ var renderFile = template.renderFile = function (filename, data) {
 /**
  * 获取编译缓存（可由外部重写此方法）
  * @param   {String}    模板名
- * @param   {Function}  编译好的函数
+ * @return   {Function}  编译好的函数
  */
 template.get = function (filename) {
 

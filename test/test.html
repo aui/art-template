@@ -8,6 +8,7 @@
 <script src="../dist/template-debug.js"></script>
 
 <script id="default" type="text/html">{{value}}</script>
+<script id="mutiple-spaces" type="text/html">{{  if 2 > 1  }}OK{{  /if  }}</script>
 <script id="noEscape" type="text/html">{{#value}}</script>
 <script id="include" type="text/html">{{include 'include-content'}}</script>
 <script id="include2" type="text/html">{{include 'include-content'}}{{include 'include-content' data2}}</script>
@@ -32,6 +33,7 @@ test('基本', function () {
 	equal(typeof template.compile('{{value}}'), 'function', '编译成函数');
 	equal(template('default', data), 'hello &#60;em&#62;world&#60;/em&#62;', '编码输出');
 	equal(template('noEscape', data), 'hello <em>world</em>', '原文输出');
+	equal(template('mutiple-spaces', {}), 'OK', '多个空白符')
 });
 
 test('特殊类型变量输出', function () {
