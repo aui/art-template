@@ -1,31 +1,35 @@
 'use strict';
 
 
-var art = require('../');
+const art = require('../');
 
 
 describe('test', function() {
 
   it('! for pure exression', function() {
-    var tpl = [
-      '{{! var a = "hello world"}}',
-      '{{a}}'
-    ].join('');
+    const tpl = `
+{{! var a = "hello world"}}
+{{a}}
+{{!
+var b = 'hello arttemplate'
+}}
+{{b}}
+`;
 
-    var fn = art.compile(tpl);
-    fn({}).should.be.equal('hello world');
+    const fn = art.compile(tpl);
+    fn({}).should.be.equal('\n\nhello world\n\nhello arttemplate\n');
   });
 
 
   it('comment with //', function() {
-    var tpl = [
+    const tpl = [
       '{{// 这是个注释}}'
     ].join('');
 
-    var fn = art.compile(tpl);
+    const fn = art.compile(tpl);
     fn({}).should.equal('');
 
-    tpl = [
+    const tpl2 = [
       '{{//',
       '多行注释',
       '多行注释',
@@ -33,20 +37,24 @@ describe('test', function() {
       '}}'
     ].join('\n');
 
-    fn = art.compile(tpl);
-    fn({}).should.equal('');
+    const fn2 = art.compile(tpl2);
+    fn2({}).should.equal('');
   });
 
 
   it('use \\{{ and \\}} to output {{ and }}', function() {
-    var tpl = '<span>Message: \\{{ msg \\}} - \\{{ </span>';
-    var fn = art.compile(tpl);
+    const tpl = '<span>Message: \\{{ msg \\}} - \\{{ </span>';
+    const fn = art.compile(tpl);
     fn({}).should.equal('<span>Message: {{ msg }} - {{ </span>');
+
+    const tpl2 = 'output special \\}}';
+    const fn2 = art.compile(tpl2);
+    fn2({}).should.equal('output special }}');
   });
 
 
   it('compress', function() {
-    var tpl = `
+    const tpl = `
 <div>
   {{title}}
   <ul>
@@ -55,8 +63,8 @@ describe('test', function() {
 </div>
     `
 
-    var fn = art.compile(tpl, { compress: true });
-    var expect = `
+    const fn = art.compile(tpl, { compress: true });
+    const expect = `
 <div>
 Hello
 <ul>
