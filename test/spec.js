@@ -14,30 +14,28 @@ describe('test', function() {
 var b = 'hello arttemplate'
 }}
 {{b}}
-`;
+    `;
 
-    const fn = art.compile(tpl);
-    fn({}).should.be.equal('\n\nhello world\n\nhello arttemplate\n');
+    const fn = art.compile(tpl.trim());
+    fn({}).trim().should.be.equal('hello world\n\nhello arttemplate');
   });
 
 
   it('comment with //', function() {
-    const tpl = [
-      '{{// 这是个注释}}'
-    ].join('');
+    const tpl = '{{// 这是个注释}}'
 
     const fn = art.compile(tpl);
     fn({}).should.equal('');
 
-    const tpl2 = [
-      '{{//',
-      '多行注释',
-      '多行注释',
-      '多行注释',
-      '}}'
-    ].join('\n');
+    const tpl2 = `
+{{//
+多行注释
+多行注释
+多行注释
+}}
+    `;
 
-    const fn2 = art.compile(tpl2);
+    const fn2 = art.compile(tpl2.trim());
     fn2({}).should.equal('');
   });
 
@@ -61,9 +59,9 @@ var b = 'hello arttemplate'
     <li>item</li>
   </ul>
 </div>
-    `
+    `;
 
-    const fn = art.compile(tpl, { compress: true });
+    const fn = art.compile(tpl.trim(), { compress: true });
     const expect = `
 <div>
 Hello
@@ -71,8 +69,8 @@ Hello
 <li>item</li>
 </ul>
 </div>
-`;
-    fn({ title: 'Hello' }).should.equal(expect);
+    `;
+    fn({ title: 'Hello' }).should.equal(expect.trim());
   });
 });
 
