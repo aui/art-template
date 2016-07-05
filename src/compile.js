@@ -29,7 +29,6 @@ var compile = template.compile = function (source, options) {
 
     var filename = options.filename;
 
-
     try {
         
         var Render = compiler(source, options);
@@ -46,8 +45,8 @@ var compile = template.compile = function (source, options) {
     
     // 对编译结果进行一次包装
 
-    function render (data) {
-        return Render.call(template.utils, data);
+    function render (data, filename) {
+        return Render.call(template.utils, data, filename);
     }
 
     render.toString = function () {
