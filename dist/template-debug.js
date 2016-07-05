@@ -270,27 +270,9 @@ var compile = template.compile = function (source, options) {
     // 对编译结果进行一次包装
 
     function render (data) {
-        
-        try {
-            
-            return new Render(data, filename) + '';
-            
-        } catch (e) {
-            
-            // 运行时出错后自动开启调试模式重新编译
-            if (!options.debug) {
-                options.debug = true;
-                return compile(source, options)(data);
-            }
-            
-            return showDebugInfo(e)();
-            
-        }
-        
+        return Render.call(template.utils, data);
     }
-    
 
-    render.prototype = Render.prototype;
     render.toString = function () {
         return Render.toString();
     };
@@ -403,7 +385,7 @@ function compiler (source, options) {
     
     var mainCode = replaces[0];
 
-    var footerCode = "return new String(" + replaces[3] + ");"
+    var footerCode = "return " + replaces[3] + ";"
 
     // 不需要处理的`{{`或`}}`列表
     var stamp = new Date().getTime();
@@ -464,19 +446,11 @@ function compiler (source, options) {
     
     
     try {
-        
-        
-        var Render = new Function("$data", "$filename", code);
-        Render.prototype = utils;
-
-        return Render;
-        
+        return new Function("$data", "$filename", code);
     } catch (e) {
         e.temp = "function anonymous($data,$filename) {" + code + "}";
         throw e;
     }
-
-
 
     
     // 处理 HTML 语句

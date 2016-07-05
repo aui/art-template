@@ -72,5 +72,19 @@ Hello
     `;
     fn({ title: 'Hello' }).should.equal(expect.trim());
   });
+
+
+  it('inspect $out', function() {
+    const tpl =`
+    <div>
+      {{app.control('item')}}
+    </div>
+    <div>
+      {{app.view('offer')}}
+    </div>
+    `;
+    const fn = art.compile(tpl.trim(), { compress: true });
+    console.log(fn.toString());
+  });
 });
 
