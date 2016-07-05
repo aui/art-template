@@ -13,6 +13,7 @@
  *      - debug         {Boolean}
  *      - cache         {Boolean}
  *      - parser        {Function}
+ *      - utils         {Object}
  *
  * @return  {Function}  渲染方法
  */
@@ -28,6 +29,7 @@ var compile = template.compile = function (source, options) {
 
 
     var filename = options.filename;
+    var utils = options.utils || template.utils;
 
     try {
         
@@ -46,13 +48,12 @@ var compile = template.compile = function (source, options) {
     // 对编译结果进行一次包装
 
     function render (data, filename) {
-        return Render.call(template.utils, data, filename);
+        return Render.call(utils, data, filename);
     }
 
     render.toString = function () {
         return Render.toString();
     };
-
 
     if (filename && options.cache) {
         cacheStore[filename] = render;
@@ -131,7 +132,7 @@ function compiler (source, options) {
 
     
     var line = 1;
-    var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1};
+    var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1,$$__ctx:1};
     
 
 
@@ -139,6 +140,8 @@ function compiler (source, options) {
     var replaces = isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
+
+    var inspect = 'var $$__ctx={get:function(){return $out},set:function(){$out=out}};\n'
 
     var concat = isNewEngine
         ? "$out+=text;return $out;"
@@ -160,8 +163,14 @@ function compiler (source, options) {
     + (debug ? "$line=0," : "");
     
     var mainCode = replaces[0];
+    if (options.inspect) {
+        mainCode += "\n" + inspect;
+    }
 
-    var footerCode = "return " + replaces[3] + ";"
+    var output = replaces[3];
+    var footerCode = options.inspect ?
+        "return $utils.$output(" + replaces[3] + ", $$__ctx);" :
+        "return $utils.$output(" + replaces[3] + ");";
 
     // 不需要处理的`{{`或`}}`列表
     var stamp = new Date().getTime();
@@ -287,14 +296,21 @@ function compiler (source, options) {
                 // 排除 utils.* | include | print
                 
                 if (!utils[name] && !/^(include|print)$/.test(name)) {
-                    code = "$escape(" + code + ",$out)";
+                    if (options.inspect) {
+                        code = "$escape(" + code + ",$$__ctx)";
+                    } else {
+                        code = "$escape(" + code + ")";
+                    }
                 }
 
             // 不编码
             } else {
-                code = "$string(" + code + ",$out)";
+                if (options.inspect) {
+                    code = "$string(" + code + ",$$__ctx)";
+                } else {
+                    code = "$string(" + code + ")";
+                }
             }
-            
 
             code = replaces[1] + code + replaces[2];
 

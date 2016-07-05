@@ -19,11 +19,12 @@
   "version": "3.4.0",
   "devDependencies": {
     "express": "~4.4.3",
-    "grunt-cli": "*",
     "grunt": "*",
-    "grunt-contrib-jshint": "*",
+    "grunt-cli": "*",
     "grunt-contrib-concat": "*",
+    "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",
+    "is-type-of": "~1.0.0",
     "mocha": "^2.2.1",
     "should": "^5.2.0"
   },
