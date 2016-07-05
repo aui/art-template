@@ -287,12 +287,12 @@ function compiler (source, options) {
                 // 排除 utils.* | include | print
                 
                 if (!utils[name] && !/^(include|print)$/.test(name)) {
-                    code = "$escape(" + code + ")";
+                    code = "$escape(" + code + ",$out)";
                 }
 
             // 不编码
             } else {
-                code = "$string(" + code + ")";
+                code = "$string(" + code + ",$out)";
             }
             
 
