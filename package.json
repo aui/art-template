@@ -16,7 +16,7 @@
     "url": "git://github.com/aui/artTemplate.git"
   },
   "main": "./node/template.js",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "devDependencies": {
     "express": "~4.4.3",
     "grunt": "*",
