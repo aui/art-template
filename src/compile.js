@@ -141,7 +141,7 @@ function compiler (source, options) {
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
 
-    var inspect = 'var $$__ctx={get:function(){return $out},set:function(){$out=out}};\n'
+    var inspect = 'var $$__ctx={data:$data,filename:$filename,get:function(){return $out},set:function(){$out=out}};\n'
 
     var concat = isNewEngine
         ? "$out+=text;return $out;"
@@ -152,10 +152,12 @@ function compiler (source, options) {
     +       concat
     +  "}";
 
+    var includeBody = options.inspect ?
+        "return $utils.$include(filename,data,$$__ctx);" :
+        "return $utils.$include(filename,data||$data,$filename);";
+
     var include = "function(filename,data){"
-    +      "data=data||$data;"
-    +      "var text=$utils.$include(filename,data,$filename);"
-    +       concat
+    +      includeBody
     +   "}";
 
     var headerCode = "'use strict';"

@@ -75,6 +75,36 @@ Hello
   });
 
 
+  it('include', function() {
+    const tpl = `
+      <ul>
+        {{each list as item}}
+        {{include('item', { item: item })}}
+        {{/each}}
+      </ul>
+    `;
+
+    const utils = Object.assign({}, art.utils, {
+      $include: function(name, data) {
+        return `<li>include ${name} ${JSON.stringify(data)}</li>`
+      }
+    });
+
+    const expect = `
+      <ul>
+        <li>include item {"item":"a"}</li>
+        <li>include item {"item":"b"}</li>
+        <li>include item {"item":"c"}</li>
+        <li>include item {"item":"d"}</li>
+      </ul>
+    `;
+    const list = ['a', 'b', 'c', 'd'];
+
+    const fn = art.compile(tpl, { utils: utils });
+    equal(fn({ list: list }), expect);
+  });
+
+
   it('with inspect', function() {
     const tpl = `
       <div>
@@ -133,5 +163,33 @@ Hello
     o.body.should.equal(expect);
     o.ctx.depends.length.should.equal(2);
   });
+
+
+  it('include with inspect ', function() {
+    const tpl = `
+      <div>
+        {{include('data')}}
+      </div>
+    `;
+
+    const utils = Object.assign({}, art.utils, {
+      $include: function(name, data, ctx) {
+        return name + ' ' + JSON.stringify(ctx.data);
+      }
+    });
+
+    const fn = art.compile(tpl, { utils: utils, inspect: true });
+    const expect = `
+      <div>
+        data {"name":"arttemplate"}
+      </div>
+    `;
+    equal(fn({ name: "arttemplate" }), expect);
+  });
 });
+
+
+function equal(a, b) {
+  a.replace(/\s+/g, ' ').should.equal(b.replace(/\s+/g, ' '));
+}
 
