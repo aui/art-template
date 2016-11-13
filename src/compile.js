@@ -296,6 +296,10 @@ function compiler (source, options) {
 
                 var name = code.replace(/\s*\([^\)]+\)/, '');
 
+                if(!options.strict) {
+                    code = "(function() {try { " + code + "; return " + code + ";} catch(error) {return '';} })()";
+                }
+                
                 // 排除 utils.* | include | print
                 
                 if (!utils[name] && !/^(include|print)$/.test(name)) {

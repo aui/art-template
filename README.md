@@ -121,7 +121,8 @@ closeTag | String | ``"}}"`` | 逻辑语法结束标签
 escape | Boolean | ``true`` | 是否编码输出 HTML 字符
 cache | Boolean | ``true`` | 是否开启缓存（依赖 options 的 filename 字段）
 compress | Boolean | ``false`` | 是否压缩 HTML 多余空白字符
-	
+strict | Boolean | ``false`` | 默认忽略不存在的属性
+
 ##	使用预编译 
 
 可突破浏览器限制，让前端模板拥有后端模板一样的同步“文件”加载能力：
