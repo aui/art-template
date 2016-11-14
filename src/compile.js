@@ -297,7 +297,7 @@ function compiler (source, options) {
                 var name = code.replace(/\s*\([^\)]+\)/, '');
 
                 if(!options.strict) {
-                    code = "(function() {try { " + code + "; return " + code + ";} catch(error) {return '';} })()";
+                    code = "(function() {try { " + code + "; if((" + code + " + '') == 'NaN') {return '';} return " + code + ";} catch(error) {return '';} })()";
                 }
                 
                 // 排除 utils.* | include | print
