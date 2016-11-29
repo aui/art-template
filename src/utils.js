@@ -55,9 +55,13 @@ var each = function (data, callback) {
 };
 
 
-var utils = template.utils = {
+var output = function(out) {
+    return out;
+};
 
-	$helpers: {},
+
+var utils = template.utils = {
+    $helpers: {},
 
     $include: renderFile,
 
@@ -65,6 +69,7 @@ var utils = template.utils = {
 
     $escape: escapeHTML,
 
-    $each: each
-    
+    $each: each,
+
+    $output: output
 };

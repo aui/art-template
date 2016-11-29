@@ -23,7 +23,7 @@ var template = function (filename, content) {
 };
 
 
-template.version = '3.0.0';
+template.version = '3.6.0';
 
 
 /**
@@ -166,9 +166,13 @@ var each = function (data, callback) {
 };
 
 
-var utils = template.utils = {
+var output = function(out) {
+    return out;
+};
 
-	$helpers: {},
+
+var utils = template.utils = {
+    $helpers: {},
 
     $include: renderFile,
 
@@ -176,9 +180,11 @@ var utils = template.utils = {
 
     $escape: escapeHTML,
 
-    $each: each
-    
-};/**
+    $each: each,
+
+    $output: output
+};
+/**
  * 添加模板辅助方法
  * @name    template.helper
  * @param   {String}    名称
@@ -236,6 +242,7 @@ var showDebugInfo = function (e) {
  *      - debug         {Boolean}
  *      - cache         {Boolean}
  *      - parser        {Function}
+ *      - utils         {Object}
  *
  * @return  {Function}  渲染方法
  */
@@ -251,7 +258,7 @@ var compile = template.compile = function (source, options) {
 
 
     var filename = options.filename;
-
+    var utils = options.utils || template.utils;
 
     try {
         
@@ -269,32 +276,13 @@ var compile = template.compile = function (source, options) {
     
     // 对编译结果进行一次包装
 
-    function render (data) {
-        
-        try {
-            
-            return new Render(data, filename) + '';
-            
-        } catch (e) {
-            
-            // 运行时出错后自动开启调试模式重新编译
-            if (!options.debug) {
-                options.debug = true;
-                return compile(source, options)(data);
-            }
-            
-            return showDebugInfo(e)();
-            
-        }
-        
+    function render (data, filename) {
+        return Render.call(utils, data, filename);
     }
-    
 
-    render.prototype = Render.prototype;
     render.toString = function () {
         return Render.toString();
     };
-
 
     if (filename && options.cache) {
         cacheStore[filename] = render;
@@ -351,7 +339,7 @@ function getVariable (code) {
 
 
 // 字符串转义
-function stringify (code) {
+function stringify(code) {
     return "'" + code
     // 单引号与反斜杠转义
     .replace(/('|\\)/g, '\\$1')
@@ -373,7 +361,7 @@ function compiler (source, options) {
 
     
     var line = 1;
-    var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1};
+    var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1,$$__ctx:1};
     
 
 
@@ -381,6 +369,8 @@ function compiler (source, options) {
     var replaces = isNewEngine
     ? ["$out='';", "$out+=", ";", "$out"]
     : ["$out=[];", "$out.push(", ");", "$out.join('')"];
+
+    var inspect = 'var $$__ctx={data:$data,filename:$filename,get:function(){return $out},set:function(){$out=out}};\n'
 
     var concat = isNewEngine
         ? "$out+=text;return $out;"
@@ -391,10 +381,12 @@ function compiler (source, options) {
     +       concat
     +  "}";
 
+    var includeBody = options.inspect ?
+        "return $utils.$include(filename,data,$$__ctx);" :
+        "return $utils.$include(filename,data||$data,$filename);";
+
     var include = "function(filename,data){"
-    +      "data=data||$data;"
-    +      "var text=$utils.$include(filename,data,$filename);"
-    +       concat
+    +      includeBody
     +   "}";
 
     var headerCode = "'use strict';"
@@ -402,8 +394,24 @@ function compiler (source, options) {
     + (debug ? "$line=0," : "");
     
     var mainCode = replaces[0];
+    if (options.inspect) {
+        mainCode += "\n" + inspect;
+    }
 
-    var footerCode = "return new String(" + replaces[3] + ");"
+    var output = replaces[3];
+    var footerCode = options.inspect ?
+        "return $utils.$output(" + replaces[3] + ", $$__ctx);" :
+        "return $utils.$output(" + replaces[3] + ");";
+
+    // 不需要处理的`{{`或`}}`列表
+    var stamp = new Date().getTime();
+    var OPEN_TAG = '##OPEN_TAG_' + stamp;
+    var OPEN_TAG_REG = new RegExp(OPEN_TAG, 'g');
+    var CLOSE_TAG = '##CLOSE_TAG_' + stamp;
+    var CLOSE_TAG_REG = new RegExp(CLOSE_TAG, 'g');
+
+    source = source.replace(/\\\{\{/g, OPEN_TAG)
+            .replace(/\\\}\}/g, CLOSE_TAG);
     
     // html与逻辑语法分离
     forEach(source.split(openTag), function (code) {
@@ -429,6 +437,11 @@ function compiler (source, options) {
         
 
     });
+
+
+    mainCode = mainCode.replace(OPEN_TAG_REG, '{{')
+            .replace(CLOSE_TAG_REG, '}}');
+
     
     var code = headerCode + mainCode + footerCode;
     
@@ -449,19 +462,11 @@ function compiler (source, options) {
     
     
     try {
-        
-        
-        var Render = new Function("$data", "$filename", code);
-        Render.prototype = utils;
-
-        return Render;
-        
+        return new Function("$data", "$filename", code);
     } catch (e) {
         e.temp = "function anonymous($data,$filename) {" + code + "}";
         throw e;
     }
-
-
 
     
     // 处理 HTML 语句
@@ -473,7 +478,7 @@ function compiler (source, options) {
         // 压缩多余空白与注释
         if (compress) {
             code = code
-            .replace(/\s+/g, ' ')
+            .replace(/((\r\n)|\n|\r)\s+/g, '\n')
             .replace(/<!--[\w\W]*?-->/g, '');
         }
         
@@ -522,14 +527,21 @@ function compiler (source, options) {
                 // 排除 utils.* | include | print
                 
                 if (!utils[name] && !/^(include|print)$/.test(name)) {
-                    code = "$escape(" + code + ")";
+                    if (options.inspect) {
+                        code = "$escape(" + code + ",$$__ctx)";
+                    } else {
+                        code = "$escape(" + code + ")";
+                    }
                 }
 
             // 不编码
             } else {
-                code = "$string(" + code + ")";
+                if (options.inspect) {
+                    code = "$string(" + code + ",$$__ctx)";
+                } else {
+                    code = "$string(" + code + ")";
+                }
             }
-            
 
             code = replaces[1] + code + replaces[2];
 
@@ -604,34 +616,21 @@ var filtered = function (js, filter) {
     }
 
     return '$helpers.' + name + '(' + js + args + ')';
-}
+};
 
 
 defaults.parser = function (code, options) {
-
-    // var match = code.match(/([\w\$]*)(\b.*)/);
-    // var key = match[1];
-    // var args = match[2];
-    // var split = args.split(' ');
-    // split.shift();
-
-    code = code.replace(/^\s/, '');
-
-    var split = code.split(' ');
-    var key = split.shift();
-    var args = split.join(' ');
-
-    
+    var match = code.match(/^\s*(\S+)([\s\S]*)$/);
+    var key = match[1];
+    var args = match[2];
+    var split = args.trim().split(/\s+/);
 
     switch (key) {
-
         case 'if':
-
             code = 'if(' + args + '){';
             break;
 
         case 'else':
-            
             if (split.shift() === 'if') {
                 split = ' if(' + split.join(' ') + ')';
             } else {
@@ -642,23 +641,21 @@ defaults.parser = function (code, options) {
             break;
 
         case '/if':
-
             code = '}';
             break;
 
         case 'each':
-            
             var object = split[0] || '$data';
             var as     = split[1] || 'as';
             var value  = split[2] || '$value';
             var index  = split[3] || '$index';
-            
+
             var param   = value + ',' + index;
-            
+
             if (as !== 'as') {
                 object = '[]';
             }
-            
+
             code =  '$each(' + object + ',function(' + param + '){';
             break;
 
@@ -676,6 +673,14 @@ defaults.parser = function (code, options) {
         case 'include':
 
             code = key + '(' + split.join(',') + ');';
+            break;
+
+        case '!':
+            code = args;
+            break;
+
+        case '//':
+            code = '/*' + args + '*/';
             break;
 
         default:
@@ -707,9 +712,7 @@ defaults.parser = function (code, options) {
 
             // 即将弃用 {{helperName value}}
             } else if (template.helpers[key]) {
-                
                 code = '=#' + key + '(' + split.join(',') + ');';
-            
             // 内容直接输出 {{value}}
             } else {
 
@@ -718,24 +721,19 @@ defaults.parser = function (code, options) {
 
             break;
     }
-    
-    
+
     return code;
 };
 
 
-
-// RequireJS && SeaJS
-if (typeof define === 'function') {
-    define(function() {
-        return template;
-    });
-
-// NodeJS
-} else if (typeof exports !== 'undefined') {
-    module.exports = template;
+if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+  module.exports = template;
+} else if (typeof define === 'function') {
+  define(function() {
+    return template;
+  });
 } else {
-    this.template = template;
+  this.template = template;
 }
 
 })();
