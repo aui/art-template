@@ -7,6 +7,42 @@ const art = require('../');
 
 describe('test', function() {
 
+  it('if expression', function() {
+    const tpl = `
+      {{if tag == 'a'}}
+        A
+      {{else if tag == 'b'}}
+        B
+      {{else}}
+        C
+      {{/if}}
+    `;
+
+    const fn = art.compile(tpl.trim());
+    fn({ tag: 'a' }).trim().should.equal('A');
+    fn({ tag: 'b' }).trim().should.equal('B');
+    fn({ tag: 'c' }).trim().should.equal('C');
+  });
+
+
+  it('for expression', function() {
+    const tpl = `
+    {{each list as item index}}
+      <li>{{index}} - {{item}}</li>
+    {{/each}}
+    `;
+
+    const fn = art.compile(tpl.trim());
+    const expect = `
+      <li>0 - A</li>
+      <li>1 - B</li>
+      <li>2 - C</li>
+    `;
+    fn({ list: ['A', 'B', 'C'] }).replace(/\s{2,}/g, ' ')
+      .should.equal(expect.replace(/\s{2,}/g, ' '));
+  });
+
+
   it('! for pure exression', function() {
     const tpl = `
 {{! var a = "hello world"}}
@@ -18,7 +54,7 @@ var b = 'hello arttemplate'
     `;
 
     const fn = art.compile(tpl.trim());
-    fn({}).trim().should.be.equal('hello world\n\nhello arttemplate');
+    fn({}).trim().should.equal('hello world\n\nhello arttemplate');
   });
 
 
@@ -185,6 +221,25 @@ Hello
       </div>
     `;
     equal(fn({ name: "arttemplate" }), expect);
+  });
+
+
+  it('comment with expression', function() {
+    const tpl = `
+    {{!
+      // asss
+      src = 1111;
+      var a = 1;
+      if (!showIndexInPage < 2) {
+        // 首屏直接显示220图片
+        src = 2222;
+      }
+    }}
+    {{src}}
+    `;
+
+    const fn = art.compile(tpl);
+    fn({ showIndexInPage: 3 }).trim().should.equal('2222');
   });
 });
 

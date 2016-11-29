@@ -620,17 +620,10 @@ var filtered = function (js, filter) {
 
 
 defaults.parser = function (code, options) {
-    // var match = code.match(/([\w\$]*)(\b.*)/);
-    // var key = match[1];
-    // var args = match[2];
-    // var split = args.split(' ');
-    // split.shift();
-
-    code = code.replace(/^\s/, '');
-
-    var split = code.split(/\s/);
-    var key = split.shift();
-    var args = split.join(' ');
+    var match = code.match(/^\s*(\S+)([\s\S]*)$/);
+    var key = match[1];
+    var args = match[2];
+    var split = args.trim().split(/\s+/);
 
     switch (key) {
         case 'if':

@@ -8,6 +8,7 @@
     "template"
   ],
   "scripts": {
+    "dist": "grunt",
     "test": "mocha --require should --reporter spec --recursive --bail --check-leaks test/spec.js"
   },
   "author": "tangbin <sugarpie.tang@gmail.com>",
