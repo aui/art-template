@@ -6,7 +6,7 @@
  * @return  {String}    渲染好的字符串
  */
 template.render = function (source, options) {
-    return compile(source, options);
+    return compile(source)(options);
 };
 
 
