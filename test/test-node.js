@@ -40,4 +40,7 @@ console.time('test');
 for (var i = 0; i < 999999; i ++) {
 	render(data)
 }
+
+console.log(html);
 console.timeEnd('test');
+
