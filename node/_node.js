@@ -34,18 +34,6 @@ module.exports = function (template) {
 	        fn = cacheStore[filename];
 	    } else {
 			fn = compileFromFS(filename);
-
-		    if (fn) {
-			    var watcher = fs.watch(filename + defaults.extname);
-
-			    // 文件发生改变，重新生成缓存
-			    // TODO： 观察删除文件，或者其他使文件发生变化的改动
-			    watcher.on('change', function (event) {
-				    if (event === 'change') {
-					    cacheStore[filename] = compileFromFS(filename);
-				    }
-			    });
-		    }
 	    }
 
 	    return fn;
