@@ -3,7 +3,7 @@ const tplTokens = require('../../src/compile/tpl-tokens');
 
 const test = (code, result, openTag = '{{', closeTag = '}}') => {
     it(code, () => {
-        assert.deepEqual(tplTokens(code, openTag, closeTag), result);
+        assert.deepEqual(result, tplTokens.parser(code, openTag, closeTag));
     });
 };
 

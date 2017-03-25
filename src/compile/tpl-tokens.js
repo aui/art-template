@@ -5,7 +5,7 @@
  * @param {string} closeTag
  * @return {Object[]}
  */
-const tplTokens = (source, openTag, closeTag) => {
+const parser = (source, openTag, closeTag) => {
 
     const tokens = [];
     source.split(openTag).forEach(code => {
@@ -32,4 +32,8 @@ const tplTokens = (source, openTag, closeTag) => {
     return tokens;
 };
 
-module.exports = tplTokens;
+
+
+module.exports = {
+    parser
+};

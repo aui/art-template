@@ -1,6 +1,5 @@
 const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
-const namespaces = require('./namespaces');
 const isOutputExpression = require('./is-output-expression');
 const utils = require('./utils');
 
@@ -8,9 +7,17 @@ class Compiler {
 
     constructor(options) {
         this.options = options;
+
+        // 记录模板源码行数
         this.line = 0;
+
+        // 记录编译后生成的代码
         this.scripts = [];
+
+        // 记录模板源码
         this.sources = [];
+
+        // 被注入的上下文
         this.context = { $utils: `$centext.$utils`, $out: '""' };
 
         if (options.debug) {
@@ -18,6 +25,7 @@ class Compiler {
         }
     }
 
+    // 注入上下文
     addContext(key) {
 
         let value = '';
@@ -53,12 +61,16 @@ class Compiler {
         this.context[key] = value;
     }
 
+
+    // 添加一条字符串（HTML）直接输出语句
     addString(source) {
         const code = `$out+=${JSON.stringify(source)}`;
         this.line += source.split(/\n/).length;
         this.scripts.push(code);
     }
 
+
+    // 添加一条逻辑表达式语句
     addExpression(source) {
         const options = this.options;
         const openTag = options.openTag;
@@ -69,11 +81,11 @@ class Compiler {
         const startLine = openTag.split(/\n/).length;
 
         let code = source.replace(openTag, ``).replace(closeTag, ``);
-        const tokens = jsTokens(code);
+        const tokens = jsTokens.parser(code);
 
 
         // 将数据做为模板渲染函数的作用域
-        namespaces(tokens).forEach(name => this.addContext(name));
+        jsTokens.namespaces(tokens).forEach(name => this.addContext(name));
 
 
         // 外部语法转换函数
@@ -85,9 +97,6 @@ class Compiler {
         // 处理输出语句
         if (isOutputExpression(tokens)) {
 
-            if (/^=[=#]/.test(code)) {
-                console.warn(`请使用 "=>" 代替 "=#"`);
-            }
 
             const isEscapeSyntax = escape && !/^=>/.test(code);
 
@@ -116,6 +125,8 @@ class Compiler {
         this.scripts.push(code);
     }
 
+
+    // 添加一条模板语句
     addSource(source) {
         const options = this.options;
         const openTag = options.openTag;
@@ -123,7 +134,7 @@ class Compiler {
 
         this.sources.push(source);
 
-        tplTokens(source, openTag, closeTag).forEach(token => {
+        tplTokens.parser(source, openTag, closeTag).forEach(token => {
             if (token.type === `string`) {
                 this.addString(token.value);
             } else if (token.type === `expression`) {
@@ -132,6 +143,8 @@ class Compiler {
         });
     }
 
+
+    // 构建渲染函数
     build() {
         const context = this.context;
         const options = this.options;
@@ -152,8 +165,7 @@ class Compiler {
                     name: "Render Error",
                     message: e.message,
                     line: $line,
-                    source: ${JSON.stringify(scriptsCode)}
-                                .split(/\\n/)[$line-1].replace(/^\\s+/,")
+                    source: ${JSON.stringify(scriptsCode)}.split(/\\n/)[$line-1].replace(/^\\s+/,")
                 };
             }
             `;
