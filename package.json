@@ -1,26 +1,25 @@
 {
-  "name": "art-template",
-  "description": "JavaScript Template Engine",
-  "homepage": "http://aui.github.com/artTemplate/",
-  "keywords": [
-    "util",
-    "functional",
-    "template"
-  ],
-  "author": "tangbin <sugarpie.tang@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/aui/artTemplate.git"
-  },
-  "main": "./node/template.js",
-  "version": "3.0.3",
-  "devDependencies": {
-    "express": "~4.4.3",
-    "grunt-cli": "*",
-    "grunt": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*"
-  },
-  "license": "BSD"
+    "name": "art-template",
+    "description": "JavaScript Template Engine",
+    "homepage": "http://aui.github.com/artTemplate/",
+    "keywords": [
+        "template"
+    ],
+    "author": "tangbin <sugarpie.tang@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/aui/artTemplate.git"
+    },
+    "scripts": {
+        "test": "mocha --recursive --bail 'test/**/*.js'"
+    },
+    "main": "./node/template.js",
+    "version": "4.0.0",
+    "devDependencies": {
+        "is-keyword-js": "^1.0.3",
+        "js-tokens": "^3.0.1",
+        "mocha": "^3.2.0",
+        "webpack": "^2.3.1"
+    },
+    "license": "BSD"
 }
