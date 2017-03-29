@@ -1,4 +1,4 @@
-const defaults = require('../defaults');
+const defaults = require('./defaults');
 const utils = require('./utils');
 const Compiler = require('./compiler');
 
@@ -6,17 +6,19 @@ const compile = (source, options) => {
     options = Object.assign({}, defaults, options);
 
     const filename = options.filename;
-    const compiler = new Compiler(options);
-    compiler.addSource(source);
+    const imports = options.imports;
+
+    const compiler = new Compiler(source, options);
 
     const render = data => {
         try {
 
-            return render.original(data, {
-                $filename: filename,
-                $filters: {},
-                $utils: utils
-            });
+            return render.original(
+                data,
+                filename,
+                Object.create(imports),
+                Object.create(utils)
+            );
 
         } catch (e) {
 
@@ -41,11 +43,6 @@ const compile = (source, options) => {
     render.toString = function() {
         return render.original.toString();
     };
-
-
-    if (filename !== `anonymous` && options.cache) {
-        options.cache[filename] = render;
-    }
 
 
     return render;
