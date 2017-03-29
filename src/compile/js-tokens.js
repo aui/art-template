@@ -49,14 +49,14 @@ const namespaces = tokens => {
 const isOutputExpression = tokens => {
     const list = trimRight(tokens);
     const lastToken = list[list.length - 1];
-    return lastToken.type !== `punctuator` || lastToken.value !== `{`;
+    return !!lastToken && (lastToken.value !== `{` && lastToken.value !== `}`);
 };
 
 
 // 根据索引删除列表中空白与注释 token
 const trimByIndex = (tokens, index) => {
     const token = tokens[index];
-    const isRemove = token.type === `whitespace` || token.type === `comment`;
+    const isRemove = !!token && (token.type === `whitespace` || token.type === `comment`);
     if (isRemove) {
         tokens.splice(index, 1);
     }
@@ -71,6 +71,7 @@ const trimByIndex = (tokens, index) => {
  * @param {Object[]} tokens 
  */
 const trimLeft = tokens => {
+    tokens = [].concat(...tokens);
     while (trimByIndex(tokens, 0)) {}
     return tokens;
 };
@@ -81,6 +82,7 @@ const trimLeft = tokens => {
  * @param {Object[]} tokens 
  */
 const trimRight = tokens => {
+    tokens = [].concat(...tokens);
     while (trimByIndex(tokens, tokens.length - 1)) {}
     return tokens;
 };
@@ -91,9 +93,18 @@ const trimRight = tokens => {
  * @param {Object[]} tokens 
  */
 const trim = tokens => {
-    trimLeft(tokens);
-    trimRight(tokens);
-    return tokens;
+    tokens = trimLeft(tokens);
+    return trimRight(tokens);
+};
+
+
+/**
+ * 将 tokens 还原为源代码
+ * @param {Object[]} tokens 
+ * @returns {string}
+ */
+const toString = tokens => {
+    return tokens.map(token => token.value).join('');
 };
 
 
@@ -103,5 +114,6 @@ module.exports = {
     isOutputExpression,
     trimLeft,
     trimRight,
-    trim
+    trim,
+    toString
 };

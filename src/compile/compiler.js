@@ -1,86 +1,119 @@
 const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
-const isOutputExpression = require('./is-output-expression');
+const isKeyword = require('is-keyword-js');
 const utils = require('./utils');
 
+const has = (object, key) => {
+    return object.hasOwnProperty(key);
+};
+
+
 class Compiler {
+    constructor(source, options) {
 
-    constructor(options) {
+        const openTag = options.openTag;
+        const closeTag = options.closeTag;
+
+        this.source = source;
         this.options = options;
-
-        // 记录模板源码行数
-        this.line = 0;
 
         // 记录编译后生成的代码
         this.scripts = [];
 
-        // 记录模板源码
-        this.sources = [];
-
         // 被注入的上下文
-        this.context = { $utils: `$centext.$utils`, $out: '""' };
+        this.context = { $out: '""' };
+
+        // 函数参数列表
+        this.argv = [`$data`, `$filename`, `$imports`, `$utils`];
+
+        // 特权变量名
+        this.spaceKey = [`$utils`, `$imports`];
+
+        // 特权变量值
+        this.spaceValue = [utils, options.imports];
+
+        // 内置方法
+        this.embedded = {
+            print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
+            include: `function(filename,data){return $out+=$utils.$include(filename,data||$data,{$:$filename})}`
+        };
 
         if (options.debug) {
             this.context.$line = '0';
         }
+
+
+        tplTokens.parser(source, openTag, closeTag).forEach(token => {
+            const type = token.type;
+            const value = token.value;
+            const line = token.line;
+            if (type === `string`) {
+                this.addString(value, line);
+            } else if (type === `expression`) {
+                this.addExpression(value, line);
+            }
+        });
     }
 
     // 注入上下文
-    addContext(key) {
+    addContext(name) {
 
         let value = '';
-        const contextNames = [`$filename`, `$filters`, `$utils`];
-        const print = `function(){var text=''.concat.apply('',arguments);return $out+=text}`;
-        const include = `function(filename,data){data=data||$data;var text=$include(filename,data,$filename);return $out+=text}`;
+        const argv = this.argv;
+        const embedded = this.embedded;
+        const context = this.context;
 
-        if (this.hasOwnProperty(key)) {
+        if (has(context, name) || argv.includes(name) || isKeyword(name)) {
             return;
         }
 
-        if (name === 'print') {
-
-            value = print;
-
-        } else if (name === 'include') {
-
-            value = include;
-
-        } else if (utils[name]) {
-
-            value = `$utils.${name}`;
-
-        } else if (contextNames.include(name)) {
-
-            value = `$content.${name}`;
-
+        if (has(embedded, name)) {
+            value = embedded[name];
         } else {
 
-            value = `$data[${JSON.stringify(name)}]`;
+            // 分配变量到 `$utils`, `$imports`  内部的值
+            const key = this.spaceKey.find((key, i) => {
+                const val = this.spaceValue[i];
+                return has(val, name);
+            });
+
+            value = `${key ? key : '$data'}.${name}`;
         }
 
-        this.context[key] = value;
+        context[name] = value;
     }
 
 
     // 添加一条字符串（HTML）直接输出语句
     addString(source) {
+
+        // 压缩多余空白与注释
+        if (this.options.compress) {
+            source = source
+                .replace(/\s+/g, ' ')
+                .replace(/<!--[\w\W]*?-->/g, '');
+        }
+
         const code = `$out+=${JSON.stringify(source)}`;
-        this.line += source.split(/\n/).length;
         this.scripts.push(code);
     }
 
 
     // 添加一条逻辑表达式语句
-    addExpression(source) {
+    addExpression(source, line) {
         const options = this.options;
         const openTag = options.openTag;
         const closeTag = options.closeTag;
         const parser = options.parser;
         const debug = options.debug;
-
-        const startLine = openTag.split(/\n/).length;
-
+        const escape = options.escape;
+        const escapeSymbol = options.escapeSymbol;
+        const rawSymbol = options.rawSymbol;
         let code = source.replace(openTag, ``).replace(closeTag, ``);
+
+        // v3 compat
+        code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
+
         const tokens = jsTokens.parser(code);
 
 
@@ -95,59 +128,44 @@ class Compiler {
 
 
         // 处理输出语句
-        if (isOutputExpression(tokens)) {
+        if (jsTokens.isOutputExpression(tokens)) {
 
+            const firstToken = jsTokens.trimLeft(tokens)[0];
+            const isRaw = firstToken.value === rawSymbol;
+            const isEscape = firstToken.value === escapeSymbol;
 
-            const isEscapeSyntax = escape && !/^=>/.test(code);
+            if (isRaw || isEscape) {
+                tokens.shift();
+                code = jsTokens.toString(tokens);
+            }
 
-            code = code.replace(/^=>?|[\s;]*$/g, '');
-
-
-
-            // todo 排除 utils.* | include | print 的编码
-            if (isEscapeSyntax) {
-
-                // 
-
-                code = `$escape(${code})`;
-            } else {
+            if (escape === false || isRaw) {
                 code = `$string(${code})`;
+                this.addContext(`$string`);
+            } else {
+                // !has(this.embedded, firstToken.value)
+                code = `$escape(${code})`;
+                this.addContext(`$escape`);
             }
 
             code = `$out+=${code}`;
         }
 
         if (debug) {
-            this.scripts.push(`$line=${startLine}`);
+            this.scripts.push(`$line=${line}`);
         }
 
-        this.line += source.split(/\n/).length;
         this.scripts.push(code);
-    }
-
-
-    // 添加一条模板语句
-    addSource(source) {
-        const options = this.options;
-        const openTag = options.openTag;
-        const closeTag = options.closeTag;
-
-        this.sources.push(source);
-
-        tplTokens.parser(source, openTag, closeTag).forEach(token => {
-            if (token.type === `string`) {
-                this.addString(token.value);
-            } else if (token.type === `expression`) {
-                this.addExpression(token.value);
-            }
-        });
     }
 
 
     // 构建渲染函数
     build() {
+
+        const options = this;
+        const source = options.source;
         const context = this.context;
-        const options = this.options;
+
         const contextCode = 'var ' + Object.keys(context).map(name => {
             return `${name}=${context[name]}`;
         }).join(',');
@@ -155,34 +173,37 @@ class Compiler {
 
         let code = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
 
+        if (options.sourceURL) {
+            code.push(`//# sourceURL=${options.sourceURL}`);
+        }
+
         if (options.debug) {
             code = `
             try{
                 ${code}
             }catch(e){
                 throw {
-                    filename: $filename,
+                    path: $filename,
                     name: "Render Error",
                     message: e.message,
                     line: $line,
-                    source: ${JSON.stringify(scriptsCode)}.split(/\\n/)[$line-1].replace(/^\\s+/,")
+                    source: ${JSON.stringify(source)}.split(/\\n/)[$line-1].replace(/^\\s+/,")
                 };
             }
             `;
         }
 
         try {
-            // $centext: $filename | $filters | $utils
-            return new Function(`$data`, `$centext`, code);
+            return new Function(this.argv, code);
         } catch (e) {
             // 编译失败，语法错误
             throw {
-                filename: options.filename,
+                path: options.filename,
                 name: 'Syntax Error',
                 message: e.message,
                 line: 0, // 动态构建的函数无法捕获错误
                 source: scriptsCode,
-                temp: `function anonymous($data,$centext) {${code}}`
+                temp: `function anonymous(${this.argv.join(',')}) {${code}}`
             };
         }
 
