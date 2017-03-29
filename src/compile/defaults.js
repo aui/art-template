@@ -23,6 +23,8 @@ const defaults = {
     sourceURL: null,
     // 错误处理函数
     onerror: onerror,
+    // 调试模式
+    debug: true,
     client: false,
     root: '/'
 };

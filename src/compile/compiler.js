@@ -13,6 +13,7 @@ class Compiler {
 
         const openTag = options.openTag;
         const closeTag = options.closeTag;
+        const filename = options.filename;
 
         this.source = source;
         this.options = options;
@@ -24,7 +25,7 @@ class Compiler {
         this.context = { $out: '""' };
 
         // 函数参数列表
-        this.argv = [`$data`, `$filename`, `$imports`, `$utils`];
+        this.argv = [`$data`, `$imports`, `$utils`];
 
         // 特权变量名
         this.spaceKey = [`$utils`, `$imports`];
@@ -35,10 +36,10 @@ class Compiler {
         // 内置方法
         this.embedded = {
             print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
-            include: `function(filename,data){return $out+=$utils.$include(filename,data||$data,{$:$filename})}`
+            include: `function(src,data){return $out+=$utils.$include(src,data||$data,${filename})}`
         };
 
-        if (options.debug) {
+        if (options.compileDebug) {
             this.context.$line = '0';
         }
 
@@ -105,7 +106,7 @@ class Compiler {
         const openTag = options.openTag;
         const closeTag = options.closeTag;
         const parser = options.parser;
-        const debug = options.debug;
+        const compileDebug = options.compileDebug;
         const escape = options.escape;
         const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
@@ -151,7 +152,7 @@ class Compiler {
             code = `$out+=${code}`;
         }
 
-        if (debug) {
+        if (compileDebug) {
             this.scripts.push(`$line=${line}`);
         }
 
@@ -163,27 +164,27 @@ class Compiler {
     build() {
 
         const options = this;
-        const source = options.source;
         const context = this.context;
+        const source = options.source;
+        const filename = options.filename;
+
 
         const contextCode = 'var ' + Object.keys(context).map(name => {
             return `${name}=${context[name]}`;
         }).join(',');
         const scriptsCode = this.scripts.join(';\n');
+        const sourceURL = options.sourceURL ? `//# sourceURL=${options.sourceURL}\n` : ``;
 
         let code = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
+        code = `function (${this.argv.join(',')}) {${code}}`;
 
-        if (options.sourceURL) {
-            code.push(`//# sourceURL=${options.sourceURL}`);
-        }
-
-        if (options.debug) {
+        if (options.compileDebug) {
             code = `
             try{
                 ${code}
             }catch(e){
                 throw {
-                    path: $filename,
+                    path: ${filename},
                     name: "Render Error",
                     message: e.message,
                     line: $line,
@@ -194,16 +195,16 @@ class Compiler {
         }
 
         try {
-            return new Function(this.argv, code);
+            return new Function(this.argv, `${sourceURL}return ${code}`)();
         } catch (e) {
             // 编译失败，语法错误
             throw {
-                path: options.filename,
+                path: filename,
                 name: 'Syntax Error',
                 message: e.message,
                 line: 0, // 动态构建的函数无法捕获错误
                 source: scriptsCode,
-                temp: `function anonymous(${this.argv.join(',')}) {${code}}`
+                temp: code
             };
         }
 

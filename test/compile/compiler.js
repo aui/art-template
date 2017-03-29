@@ -21,7 +21,6 @@ describe('#compile/compiler', () => {
         test('if', {});
         test('for', {});
         test('$data', {});
-        test('$filename', {});
         test('$imports', {});
         test('$utils', {});
 
