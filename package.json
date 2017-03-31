@@ -22,5 +22,8 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-uglify": "*"
   },
+  "scripts": {
+    "build": "grunt"
+  },
   "license": "BSD"
 }
