@@ -20,6 +20,13 @@ template.get = function (filename) {
             cache = compile(source, {
                 filename: filename
             });
+        } else {
+            // 如果节点不存在, 认为是模板字符串
+            var source = filename
+                .replace(/^\s*|\s*$/g, '');
+            cache = compile(source, {
+                filename: filename
+            });
         }
     }
 
