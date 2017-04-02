@@ -9,14 +9,14 @@ const config = require('./compile/config');
  * @return  {string|function}            如果 content 为 string 则编译并缓存模板，否则渲染模板
  */
 const template = (filename, content) => {
-    return typeof content === 'string' || content === undefined ?
+    return typeof content === 'object' ?
+        render({
+            filename
+        }, content) :
         compile({
             filename,
             source: content
-        }) :
-        render({
-            filename
-        }, content);
+        });
 };
 
 template.render = render;
