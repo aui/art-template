@@ -22,7 +22,13 @@ module.exports = {
     module: {
         rules: [{
             test: /\.js$/,
-            use: ['babel-loader?presets[]=es2015', 'eslint-loader']
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['es2015']
+                }
+            }, { loader: 'eslint-loader' }],
+
         }]
     }
 };
