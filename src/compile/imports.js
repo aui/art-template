@@ -33,7 +33,9 @@ const $escape = content => {
         .replace(/&(?![\w#]+;)|[<>"']/g, s => escapeMap[s]);
 };
 
-
+/**
+ * 导入的全局模板变量
+ */
 const imports = {
     $include,
     $escape

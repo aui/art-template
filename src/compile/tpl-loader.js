@@ -3,7 +3,7 @@
  * @param   {string}    模板名
  * @param   {string}
  */
-const fileLoader = filename => {
+const tplLoader = filename => {
     const isNodeEnv = typeof document !== 'object';
     if (isNodeEnv) {
         const fs = require('fs');
@@ -14,4 +14,4 @@ const fileLoader = filename => {
     }
 };
 
-module.exports = fileLoader;
+module.exports = tplLoader;

@@ -1,6 +1,6 @@
 const Compiler = require('./compiler');
 const config = require('./config');
-const fileLoader = require('./file-loader');
+const tplLoader = require('./tpl-loader');
 const tplPath = require('./tpl-path.js');
 
 
@@ -35,7 +35,7 @@ const compile = (source, options = {}) => {
     if (!source) {
         try {
             const target = tplPath(filename, options.root);
-            source = fileLoader(target);
+            source = tplLoader(target);
             options.source = source;
         } catch (e) {
 
