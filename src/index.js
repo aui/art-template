@@ -25,15 +25,18 @@ template.config = config;
 
 
 // Add require support
-if (require.extensions) {
-    require.extensions['.html'] = (module, flnm) => {
+if (module._compile) {
+    const loader = global.require;
+    loader.extensions['.html'] = (module, flnm) => {
         const filename = flnm || module.filename;
         const options = {
             filename: filename,
             client: true
         };
         const fn = compile(options);
-        module._compile('module.exports = ' + fn.toString() + ';', filename);
+        const importsPath = loader.resolve('./src/compile/imports');
+        module._compile(`var $imports=require(${JSON.stringify(importsPath)});\n` +
+            `module.exports = ${fn.toString()};`, filename);
     };
 }
 
