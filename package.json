@@ -11,10 +11,10 @@
         "url": "git://github.com/aui/artTemplate.git"
     },
     "scripts": {
-        "build": "webpack",
+        "build": "webpack -p",
         "test": "mocha --sort 'test/**/*.js'"
     },
-    "main": "./node/template.js",
+    "main": "lib/template.js",
     "version": "4.0.0",
     "devDependencies": {
         "babel-core": "^6.24.0",
@@ -27,5 +27,5 @@
         "webpack": "^2.3.2",
         "eslint": "^3.19.0"
     },
-    "license": "BSD"
+    "license": "MIT"
 }

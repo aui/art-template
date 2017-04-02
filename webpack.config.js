@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const version = require('./package.json').version;
 
@@ -6,22 +7,22 @@ module.exports = {
         'template': './src/index.js',
     },
     output: {
-        path: 'dist',
+        path: path.join(__dirname, 'lib'),
         filename: '[name].js',
-        library: `template`,
+        library: 'template',
         libraryTarget: 'umd'
     },
     plugins: [
-        new webpack.BannerPlugin('art-template@' + version + ' | https://github.com/aui/artTemplate')
+        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/artTemplate`)
     ],
     node: {
         fs: 'empty',
-        path: 'path'
+        path: 'empty'
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.js$/,
-            loader: 'babel-loader?presets[]=es2015!eslint-loader'
+            use: ['babel-loader?presets[]=es2015', 'eslint-loader']
         }]
     }
 };
