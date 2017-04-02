@@ -1,13 +1,8 @@
-const $include = (filename, data, base) => {
+const tplPath = require('./tpl-path.js');
+
+const $include = (filename, data, base, root) => {
     const compile = require('./index');
-    const isNodeEnv = typeof document !== 'object';
-
-    if (isNodeEnv) {
-        const path = require('path');
-        const dirname = path.dirname(base);
-        filename = path.resolve(root, dirname, filename);
-    }
-
+    filename = tplPath(filename, root, base);
     return compile({
         filename
     })(data);

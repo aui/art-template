@@ -1,7 +1,7 @@
 const Compiler = require('./compiler');
 const config = require('./config');
 const fileLoader = require('./file-loader');
-
+const tplPath = require('./tpl-path.js');
 
 
 
@@ -15,10 +15,10 @@ const compile = (source, options = {}) => {
 
     if (typeof source === 'object') {
         options = source;
+        source = options.source;
     }
 
     options = defaults(options, config);
-    source = source || options.source;
 
     const cache = options.cache;
     const filename = options.filename;
@@ -33,9 +33,10 @@ const compile = (source, options = {}) => {
 
     // 加载外部模板
     if (!source) {
-
         try {
-            source = fileLoader(filename);
+            const target = tplPath(filename, options.root);
+            source = fileLoader(target);
+            options.source = source;
         } catch (e) {
 
             const error = {
@@ -65,6 +66,7 @@ const compile = (source, options = {}) => {
         } catch (e) {
 
             if (options.onerror) {
+
                 // 运行时出错以调试模式重载
                 if (!options.compileDebug) {
                     options.compileDebug = true;

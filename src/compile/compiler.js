@@ -15,6 +15,7 @@ class Compiler {
         const openTag = options.openTag;
         const closeTag = options.closeTag;
         const filename = options.filename;
+        const root = options.root;
 
         this.source = source;
         this.options = options;
@@ -31,7 +32,7 @@ class Compiler {
                 [], `function(){var text=''.concat.apply('',arguments);return $out+=text}`
             ],
             include: [
-                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${filename})}`
+                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${JSON.stringify(filename)},${JSON.stringify(root)})}`
             ]
         };
 
@@ -62,6 +63,7 @@ class Compiler {
         const options = this.options;
         const imports = options.imports;
 
+
         if (has(context, name) || name === DATA || name === IMPORTS || isKeyword(name)) {
             return;
         }
@@ -83,11 +85,12 @@ class Compiler {
     // 添加一条字符串（HTML）直接输出语句
     addString(source) {
 
+        const options = this.options;
+        const compressor = options.compressor;
+
         // 压缩多余空白与注释
-        if (this.options.compress) {
-            source = source
-                .replace(/\s+/g, ` `)
-                .replace(/<!--[\w\W]*?-->/g, ``);
+        if (compressor) {
+            source = compressor(source);
         }
 
         const code = `$out+=${JSON.stringify(source)}`;
@@ -154,7 +157,7 @@ class Compiler {
 
         const options = this.options;
         const context = this.context;
-        const source = options.source;
+        const source = this.source;
         const filename = options.filename;
         const imports = options.imports;
 
@@ -188,9 +191,9 @@ class Compiler {
                 path: filename,
                 name: `Syntax Error`,
                 message: e.message,
-                line: 0, // 动态构建的函数无法捕获错误
-                source: scriptsCode,
-                temp: code
+                source: source,
+                script: code,
+                stack: e.stack
             };
         }
 

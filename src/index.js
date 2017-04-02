@@ -9,14 +9,14 @@ const config = require('./compile/config');
  * @return  {string|function}            如果 content 为 string 则编译并缓存模板，否则渲染模板
  */
 const template = (filename, content) => {
-    return typeof content === 'string' ?
+    return typeof content === 'string' || content === undefined ?
         compile({
             filename,
             source: content
         }) :
-        render(null, content, {
+        render({
             filename
-        });
+        }, content);
 };
 
 template.render = render;
@@ -26,8 +26,8 @@ template.config = config;
 
 // Add require support
 if (module._compile) {
-    const loader = global.require;
-    loader.extensions['.html'] = (module, flnm) => {
+    const loader = (() => require)(); // 避免 webpack 进行静态分析
+    loader.extensions[config.extension] = (module, flnm) => {
         const filename = flnm || module.filename;
         const options = {
             filename: filename,
