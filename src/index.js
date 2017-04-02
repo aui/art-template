@@ -23,4 +23,18 @@ template.render = render;
 template.compile = compile;
 template.config = config;
 
+
+// Add require support
+if (require.extensions) {
+    require.extensions['.html'] = (module, flnm) => {
+        const filename = flnm || module.filename;
+        const options = {
+            filename: filename,
+            client: true
+        };
+        const fn = compile(options);
+        module._compile('module.exports = ' + fn.toString() + ';', filename);
+    };
+}
+
 module.exports = template;
