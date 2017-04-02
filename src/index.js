@@ -1,23 +1,26 @@
+const render = require('./render');
+const compile = require('./compile');
+const config = require('./compile/config');
+
 /**
  * 模板引擎
- * @name    template
- * @param   {string}            模板名
- * @param   {Object, string}    数据。如果为字符串则编译并缓存编译结果
- * @return  {string, function}  渲染好的 HTML 字符串或者渲染方法
+ * @param   {string}            filename 模板名
+ * @param   {Object|string}     content  数据或模板内容
+ * @return  {string|function}            如果 content 为 string 则编译并缓存模板，否则渲染模板
  */
-const template = (filename, content, options) => {
+const template = (filename, content) => {
     return typeof content === 'string' ?
-        template.compile(content, {
-            filename: filename
+        compile({
+            filename,
+            source: content
         }) :
-        template.renderFile(filename, content, options);
+        render(null, content, {
+            filename
+        });
 };
 
-template.cache = require('./cache');
-template.render = require('./render');
-template.compile = require('./compile');
-template.renderFile = require('./render-file');
-template.fileLoader = require('./read-file');
-template.defaults = require('./compile/defaults');
+template.render = render;
+template.compile = compile;
+template.config = config;
 
 module.exports = template;

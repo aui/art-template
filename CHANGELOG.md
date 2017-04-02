@@ -6,4 +6,3 @@
 * `parser` 回调函数第三个参数接收 `tokens`
 * 非编码输出由 `<%=#value%>` 改为 `<%-value>`（依然兼容旧版本的语法）
 * `template.config()` 方法取消
-* 支持设置 `sourceURL`

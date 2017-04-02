@@ -1,16 +1,20 @@
-const $include = require('../render-file');
+const $include = (filename, data, base) => {
+    const compile = require('./index');
+    const isNodeEnv = typeof document !== 'object';
 
-const $string = value => {
-    if (typeof value !== 'string') {
-        if (typeof value === 'function') {
-            value = $string(value.call(value));
-        } else {
-            value = JSON.stringify(value) || '';
-        }
+    if (isNodeEnv) {
+        const path = require('path');
+        const dirname = path.dirname(base);
+        filename = path.resolve(root, dirname, filename);
     }
 
-    return value;
+    return compile({
+        filename
+    })(data);
 };
+
+
+
 
 
 const $escape = content => {
@@ -21,14 +25,25 @@ const $escape = content => {
         "'": "&#39;",
         "&": "&#38;"
     };
-    return $string(content)
+
+    const toString = value => {
+        if (typeof value !== 'string') {
+            if (typeof value === 'function') {
+                value = toString(value.call(value));
+            } else {
+                value = JSON.stringify(value) || '';
+            }
+        }
+
+        return value;
+    };
+    return toString(content)
         .replace(/&(?![\w#]+;)|[<>"']/g, s => escapeMap[s]);
 };
 
 
 const utils = {
     $include,
-    $string,
     $escape
 };
 

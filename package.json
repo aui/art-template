@@ -11,7 +11,7 @@
         "url": "git://github.com/aui/artTemplate.git"
     },
     "scripts": {
-        "test": "mocha --recursive --bail 'test/**/*.js'"
+        "test": "mocha --sort 'test/**/*.js'"
     },
     "main": "./node/template.js",
     "version": "4.0.0",

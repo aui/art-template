@@ -1,13 +1,13 @@
 const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
-const defaults = require('../../src/compile/defaults');
+const config = require('../../src/compile/config');
 
 describe('#compile/compiler', () => {
 
     describe('addContext', () => {
         const test = (code, result) => {
             it(code, () => {
-                const compiler = new Compiler('', defaults);
+                const compiler = new Compiler('', config);
                 compiler.addContext(code);
                 result.$out = '""';
                 assert.deepEqual(result, compiler.context);
@@ -24,12 +24,11 @@ describe('#compile/compiler', () => {
         test('$imports', {});
         test('$utils', {});
 
-        test('$string', { $string: '$utils.$string' });
         test('$escape', { $escape: '$utils.$escape' });
         test('$include', { $include: '$utils.$include' });
 
         it('imports', () => {
-            const options = Object.create(defaults);
+            const options = Object.create(config);
             options.imports.Math = Math;
             const compiler = new Compiler('', options);
             compiler.addContext('Math');
@@ -45,7 +44,7 @@ describe('#compile/compiler', () => {
     describe('addString', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, defaults, options);
+                options = Object.assign({}, config, options);
                 const compiler = new Compiler('', options);
                 compiler.addString(code);
                 assert.deepEqual(result, compiler.scripts);
@@ -70,7 +69,7 @@ describe('#compile/compiler', () => {
     describe('addExpression', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, defaults, options);
+                options = Object.assign({}, config, options);
                 const compiler = new Compiler('', options);
                 compiler.addExpression(code);
                 assert.deepEqual(result, compiler.scripts);
@@ -79,16 +78,14 @@ describe('#compile/compiler', () => {
 
         // v3 compat
         test('<%=value%>', ['$out+=$escape(value)']);
-        test('<%=#value%>', ['$out+=$string(value)']);
+        test('<%=#value%>', ['$out+=value']);
 
         // v4
-        test('<%value%>', ['$out+=$escape(value)']);
-        test('<% value %>', ['$out+=$escape( value )']);
-        test('<%-value%>', ['$out+=$string(value)']);
-        test('<%- value %>', ['$out+=$string( value )']);
+        test('<%-value%>', ['$out+=value']);
+        test('<%- value %>', ['$out+= value ']);
 
-        test('<%value%>', ['$out+=$string(value)'], { escape: false });
-        test('<%-value%>', ['$out+=$string(value)'], { escape: false });
+        test('<%=value%>', ['$out+=value'], { escape: false });
+        test('<%-value%>', ['$out+=value'], { escape: false });
 
         test('<%if (value) {%>', ['if (value) {']);
         test('<% if (value) { %>', [' if (value) { ']);
@@ -101,17 +98,17 @@ describe('#compile/compiler', () => {
     describe('addSource', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, defaults, options);
+                options = Object.assign({}, config, options);
                 const compiler = new Compiler(code, options);
                 assert.deepEqual(result, compiler.scripts);
             });
         };
 
         test('hello', ['$out+="hello"']);
-        test('<%value%>', ['$out+=$escape(value)']);
+        test('<%=value%>', ['$out+=$escape(value)']);
 
-        test('hello<%value%>', ['$out+="hello"', '$out+=$escape(value)']);
-        test('hello\n<%value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
+        test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
+        test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
         test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
 
@@ -121,18 +118,21 @@ describe('#compile/compiler', () => {
     describe('build', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, defaults, options);
+                options = Object.assign({}, config, options);
                 const compiler = new Compiler(code, options);
-                console.log(compiler.build().toString());
+                //console.log(compiler.build().toString());
                 assert.deepEqual(result, compiler.scripts);
             });
         };
 
         test('hello', ['$out+="hello"']);
-        test('<%value%>', ['$out+=$escape(value)']);
+        test('<%=value%>', ['$out+=$escape(value)']);
+        test('hello <%=value%>.', ['$out+="hello "', '$out+=$escape(value)', '$out+="."']);
+        test('<%-value%>', ['$out+=value']);
+        test('hello <%-value%>.', ['$out+="hello "', '$out+=value', '$out+="."']);
 
-        test('hello<%value%>', ['$out+="hello"', '$out+=$escape(value)']);
-        test('hello\n<%value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
+        test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
+        test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
         test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
 

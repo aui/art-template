@@ -1,7 +1,8 @@
+const utils = require('./utils');
 const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
 const isKeyword = require('is-keyword-js');
-const utils = require('./utils');
+
 
 const has = (object, key) => {
     return object.hasOwnProperty(key);
@@ -22,7 +23,7 @@ class Compiler {
         this.scripts = [];
 
         // 被注入的上下文
-        this.context = { $out: '""' };
+        this.context = { $out: `""` };
 
         // 函数参数列表
         this.argv = [`$data`, `$imports`, `$utils`];
@@ -33,14 +34,14 @@ class Compiler {
         // 特权变量值
         this.spaceValue = [utils, options.imports];
 
-        // 内置方法
+        // 内置特权方法
         this.embedded = {
             print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
             include: `function(src,data){return $out+=$utils.$include(src,data||$data,${filename})}`
         };
 
         if (options.compileDebug) {
-            this.context.$line = '0';
+            this.context.$line = `0`;
         }
 
 
@@ -59,7 +60,7 @@ class Compiler {
     // 注入上下文
     addContext(name) {
 
-        let value = '';
+        let value = ``;
         const argv = this.argv;
         const embedded = this.embedded;
         const context = this.context;
@@ -91,8 +92,8 @@ class Compiler {
         // 压缩多余空白与注释
         if (this.options.compress) {
             source = source
-                .replace(/\s+/g, ' ')
-                .replace(/<!--[\w\W]*?-->/g, '');
+                .replace(/\s+/g, ` `)
+                .replace(/<!--[\w\W]*?-->/g, ``);
         }
 
         const code = `$out+=${JSON.stringify(source)}`;
@@ -129,28 +130,22 @@ class Compiler {
 
 
         // 处理输出语句
-        if (jsTokens.isOutputExpression(tokens)) {
+        const firstToken = tokens[0];
+        const isRaw = firstToken && firstToken.value === rawSymbol;
+        const isEscape = firstToken && firstToken.value === escapeSymbol;
+        const isOutput = isRaw || isEscape;
 
-            const firstToken = jsTokens.trimLeft(tokens)[0];
-            const isRaw = firstToken.value === rawSymbol;
-            const isEscape = firstToken.value === escapeSymbol;
-
-            if (isRaw || isEscape) {
-                tokens.shift();
-                code = jsTokens.toString(tokens);
-            }
-
+        if (isOutput) {
+            tokens.shift();
+            code = jsTokens.toString(tokens);
             if (escape === false || isRaw) {
-                code = `$string(${code})`;
-                this.addContext(`$string`);
+                code = `$out+=${code}`;
             } else {
-                // !has(this.embedded, firstToken.value)
-                code = `$escape(${code})`;
+                code = `$out+=$escape(${code})`;
                 this.addContext(`$escape`);
             }
-
-            code = `$out+=${code}`;
         }
+
 
         if (compileDebug) {
             this.scripts.push(`$line=${line}`);
@@ -163,44 +158,40 @@ class Compiler {
     // 构建渲染函数
     build() {
 
-        const options = this;
+        const options = this.options;
         const context = this.context;
         const source = options.source;
         const filename = options.filename;
 
 
-        const contextCode = 'var ' + Object.keys(context).map(name => {
-            return `${name}=${context[name]}`;
-        }).join(',');
-        const scriptsCode = this.scripts.join(';\n');
-        const sourceURL = options.sourceURL ? `//# sourceURL=${options.sourceURL}\n` : ``;
+        const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
+        const scriptsCode = this.scripts.join(`;\n`);
+        const main = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
 
-        let code = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
-        code = `function (${this.argv.join(',')}) {${code}}`;
+
+        let code = `return function (${this.argv.join(',')}) {${main}}`;
+
 
         if (options.compileDebug) {
-            code = `
-            try{
-                ${code}
-            }catch(e){
-                throw {
-                    path: ${filename},
-                    name: "Render Error",
-                    message: e.message,
-                    line: $line,
-                    source: ${JSON.stringify(source)}.split(/\\n/)[$line-1].replace(/^\\s+/,")
-                };
-            }
-            `;
+            const throwCode = JSON.stringify({
+                path: filename,
+                name: `Render Error`,
+                message: `e.message`,
+                line: `$line`,
+                source: `${JSON.stringify(source)}.split(/\\n/)[$line-1].replace(/^\\s+/,")`
+            });
+
+            code = `try{${code}}catch(e){throw ${throwCode}}`;
         }
 
+
         try {
-            return new Function(this.argv, `${sourceURL}return ${code}`)();
+            return new Function(this.argv, code)();
         } catch (e) {
             // 编译失败，语法错误
             throw {
                 path: filename,
-                name: 'Syntax Error',
+                name: `Syntax Error`,
                 message: e.message,
                 line: 0, // 动态构建的函数无法捕获错误
                 source: scriptsCode,
