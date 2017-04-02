@@ -1,9 +1,9 @@
-const utils = require('./utils');
 const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
 const isKeyword = require('is-keyword-js');
 
-
+const DATA = `$data`;
+const IMPORTS = `$imports`;
 const has = (object, key) => {
     return object.hasOwnProperty(key);
 };
@@ -22,23 +22,19 @@ class Compiler {
         // 记录编译后生成的代码
         this.scripts = [];
 
-        // 被注入的上下文
+        // 运行时注入的上下文
         this.context = { $out: `""` };
-
-        // 函数参数列表
-        this.argv = [`$data`, `$imports`, `$utils`];
-
-        // 特权变量名
-        this.spaceKey = [`$utils`, `$imports`];
-
-        // 特权变量值
-        this.spaceValue = [utils, options.imports];
 
         // 内置特权方法
         this.embedded = {
-            print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
-            include: `function(src,data){return $out+=$utils.$include(src,data||$data,${filename})}`
+            print: [
+                [], `function(){var text=''.concat.apply('',arguments);return $out+=text}`
+            ],
+            include: [
+                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${filename})}`
+            ]
         };
+
 
         if (options.compileDebug) {
             this.context.$line = `0`;
@@ -61,26 +57,24 @@ class Compiler {
     addContext(name) {
 
         let value = ``;
-        const argv = this.argv;
         const embedded = this.embedded;
         const context = this.context;
+        const options = this.options;
+        const imports = options.imports;
 
-        if (has(context, name) || argv.includes(name) || isKeyword(name)) {
+        if (has(context, name) || name === DATA || name === IMPORTS || isKeyword(name)) {
             return;
         }
 
         if (has(embedded, name)) {
-            value = embedded[name];
+            embedded[name][0].forEach(name => this.addContext(name));
+            value = embedded[name][1];
+        } else if (has(imports, name)) {
+            value = `${IMPORTS}.${name}`;
         } else {
-
-            // 分配变量到 `$utils`, `$imports`  内部的值
-            const key = this.spaceKey.find((key, i) => {
-                const val = this.spaceValue[i];
-                return has(val, name);
-            });
-
-            value = `${key ? key : '$data'}.${name}`;
+            value = `${DATA}.${name}`;
         }
+
 
         context[name] = value;
     }
@@ -162,6 +156,7 @@ class Compiler {
         const context = this.context;
         const source = options.source;
         const filename = options.filename;
+        const imports = options.imports;
 
 
         const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
@@ -169,7 +164,7 @@ class Compiler {
         const main = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
 
 
-        let code = `return function (${this.argv.join(',')}) {${main}}`;
+        let code = `return function (${DATA}) {${main}}`;
 
 
         if (options.compileDebug) {
@@ -186,7 +181,7 @@ class Compiler {
 
 
         try {
-            return new Function(this.argv, code)();
+            return new Function(IMPORTS, code)(imports);
         } catch (e) {
             // 编译失败，语法错误
             throw {
@@ -201,6 +196,7 @@ class Compiler {
 
     }
 };
+
 
 
 module.exports = Compiler;

@@ -1,7 +1,8 @@
 const Compiler = require('./compiler');
 const config = require('./config');
-const utils = require('./utils');
 const fileLoader = require('./file-loader');
+
+
 
 
 /**
@@ -16,7 +17,7 @@ const compile = (source, options = {}) => {
         options = source;
     }
 
-    options = Object.assign({}, config, options);
+    options = defaults(options, config);
     source = source || options.source;
 
     const cache = options.cache;
@@ -59,11 +60,7 @@ const compile = (source, options = {}) => {
     const render = data => {
         try {
 
-            return render.source(
-                data,
-                Object.create(options.imports),
-                Object.create(utils)
-            );
+            return render.source(data);
 
         } catch (e) {
 
@@ -107,5 +104,37 @@ const compile = (source, options = {}) => {
 
     return render;
 };
+
+
+const deepClone = function(object) {
+    if (typeof object === 'object' && object !== null) {
+        if (Array.isArray(object)) {
+            const clone = [];
+            object.forEach(function(value, index) {
+                clone[index] = deepClone(value);
+            });
+            return clone;
+        } else {
+            const clone = {};
+            for (let name in object) {
+                clone[name] = deepClone(object[name]);
+            }
+            return clone;
+        }
+    } else {
+        return object;
+    }
+};
+
+
+
+const defaults = (options, defaults) => {
+    const config = deepClone(defaults);
+    for (let name in options) {
+        config[name] = deepClone(options[name]);
+    }
+    return config;
+};
+
 
 module.exports = compile;

@@ -14,9 +14,6 @@ const $include = (filename, data, base) => {
 };
 
 
-
-
-
 const $escape = content => {
     const escapeMap = {
         "<": "&#60;",
@@ -42,9 +39,9 @@ const $escape = content => {
 };
 
 
-const utils = {
+const imports = {
     $include,
     $escape
 };
 
-module.exports = utils;
+module.exports = imports;

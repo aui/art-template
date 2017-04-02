@@ -1,5 +1,6 @@
-const onerror = require('./onerror');
 const cache = require('./cache');
+const onerror = require('./onerror');
+const imports = require('./imports');
 
 /**
  * 默认配置
@@ -26,12 +27,17 @@ const config = {
     // 自定义语法格式器
     parser: null,
     // 导入的变量
-    imports: {},
+    imports: imports,
     // 错误处理函数
     onerror: onerror,
+    // 编译调试版
+    compileDebug: false,
+    // ------- NodeJS 环境专属配置 -------
+
     // 模板根目录
     root: '/',
-
+    // 模板扩展名
+    extension: '.html',
     // TODO
     client: false
 };
