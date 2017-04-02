@@ -1,23 +1,17 @@
-class Cache {
+const cache = {
+    _data: {},
 
-    constructor() {
-        this._data = {};
-    }
-
-
-    set(key, val) {
+    set: function(key, val) {
         this._data[key] = val;
-    }
+    },
 
-
-    get(key) {
+    get: function(key) {
         return this._data[key];
-    }
+    },
 
-
-    reset() {
+    reset: function() {
         this._data = {};
     }
-}
+};
 
-module.exports = new Cache();
+module.exports = cache;
