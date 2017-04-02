@@ -34,7 +34,7 @@ if (module._compile) {
             client: true
         };
         const fn = compile(options);
-        const importsPath = loader.resolve('./src/compile/imports');
+        const importsPath = loader.resolve('./compile/imports');
         module._compile(`var $imports=require(${JSON.stringify(importsPath)});\n` +
             `module.exports = ${fn.toString()};`, filename);
     };
