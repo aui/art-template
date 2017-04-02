@@ -13,6 +13,7 @@
     "scripts": {
         "build": "webpack -p",
         "dev": "webpack -w",
+        "publish": "git push && npm run build && npm publish",
         "test": "mocha --bail 'test/**/*.js'"
     },
     "main": "lib/template.js",
