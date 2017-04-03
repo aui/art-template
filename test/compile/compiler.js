@@ -1,14 +1,20 @@
 const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
-const config = require('../../src/compile/config');
+const defaults = require('../../src/compile/defaults');
+
+const compressor = source => {
+    return source
+        .replace(/\s+/g, ` `)
+        .replace(/<!--[\w\W]*?-->/g, ``);
+};
 
 describe('#compile/compiler', () => {
 
     describe('addContext', () => {
         const test = (code, result) => {
             it(code, () => {
-                config.source = '';
-                const compiler = new Compiler(config);
+                defaults.source = '';
+                const compiler = new Compiler(defaults);
                 compiler.addContext(code);
                 result.$out = '""';
                 assert.deepEqual(result, compiler.context);
@@ -28,7 +34,7 @@ describe('#compile/compiler', () => {
         test('$include', { $include: '$imports.$include' });
 
         it('imports', () => {
-            const options = Object.create(config);
+            const options = Object.create(defaults);
             options.imports.Math = Math;
             options.source = '';
             const compiler = new Compiler(options);
@@ -45,7 +51,7 @@ describe('#compile/compiler', () => {
     describe('addString', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, config, options);
+                options = Object.assign({}, defaults, options);
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.addString(code);
@@ -60,18 +66,18 @@ describe('#compile/compiler', () => {
         test('<div>hello</div>', ['$out+="<div>hello</div>"']);
         test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
 
-        // compress
-        test('  hello  ', ['$out+=" hello "'], { compress: true });
-        test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress: true });
-        test('"hello    world"', ['$out+="\\"hello world\\""'], { compress: true });
-        test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress: true });
+        // compressor
+        test('  hello  ', ['$out+=" hello "'], { compressor });
+        test('\n  hello  \n\n.', ['$out+=" hello ."'], { compressor });
+        test('"hello    world"', ['$out+="\\"hello world\\""'], { compressor });
+        test('\'hello    world\'', ['$out+="\'hello world\'"'], { compressor });
     });
 
 
     describe('addExpression', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, config, options);
+                options = Object.assign({}, defaults, options);
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.addExpression(code);
@@ -93,7 +99,7 @@ describe('#compile/compiler', () => {
         test('<%if (value) {%>', ['if (value) {']);
         test('<% if (value) { %>', [' if (value) { ']);
         test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-            compress: true
+            compressor: true
         });
 
     });
@@ -101,7 +107,7 @@ describe('#compile/compiler', () => {
     describe('addSource', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, config, options);
+                options = Object.assign({}, defaults, options);
                 options.source = code;
                 const compiler = new Compiler(options);
                 assert.deepEqual(result, compiler.scripts);
@@ -122,7 +128,7 @@ describe('#compile/compiler', () => {
     describe('build', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = Object.assign({}, config, options);
+                options = Object.assign({}, defaults, options);
                 options.source = code;
                 const compiler = new Compiler(options);
                 assert.deepEqual(result, compiler.scripts);

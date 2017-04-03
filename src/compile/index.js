@@ -1,8 +1,8 @@
 const Compiler = require('./compiler');
-const config = require('./config');
+const defaults = require('./defaults');
+const getOptions = require('./get-options');
 const tplLoader = require('./tpl-loader');
 const tplPath = require('./tpl-path.js');
-
 
 
 /**
@@ -15,23 +15,26 @@ const compile = (source, options = {}) => {
 
     if (typeof source === 'object') {
         options = source;
-        source = options.source;
     } else {
         options.source = source;
     }
 
-    options = defaults(options, config);
 
-    const cache = options.cache;
+    // 匹配缓存
     const filename = options.filename;
-
-    // 探寻缓存
+    const cache = options.cache !== undefined ? options.cache : defaults.cache
     if (cache && filename) {
         const render = cache.get(filename);
         if (render) {
             return render;
         }
     }
+
+
+    // 合并默认配置
+    options = getOptions(options, defaults);
+    source = options.source;
+
 
     // 加载外部模板
     if (!source) {
@@ -111,36 +114,6 @@ const compile = (source, options = {}) => {
     return render;
 };
 
-
-const deepClone = function(object) {
-    if (typeof object === 'object' && object !== null) {
-        if (Array.isArray(object)) {
-            const clone = [];
-            object.forEach(function(value, index) {
-                clone[index] = deepClone(value);
-            });
-            return clone;
-        } else {
-            const clone = {};
-            for (let name in object) {
-                clone[name] = deepClone(object[name]);
-            }
-            return clone;
-        }
-    } else {
-        return object;
-    }
-};
-
-
-
-const defaults = (options, defaults) => {
-    const config = deepClone(defaults);
-    for (let name in options) {
-        config[name] = deepClone(options[name]);
-    }
-    return config;
-};
 
 
 module.exports = compile;

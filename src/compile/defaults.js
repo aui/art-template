@@ -1,12 +1,12 @@
-const cache = require('./cache');
-const onerror = require('./onerror');
-const imports = require('./imports');
-const compressor = require('./compressor');
+const onerror = require('./adapter/onerror');
+const imports = require('./adapter/imports');
+const cache = require('./adapter/cache');
+
 
 /**
  * 默认配置
  */
-const config = {
+const defaults = {
     // 模板名字
     filename: null,
     // 模板内容
@@ -25,10 +25,8 @@ const config = {
     cache: cache,
     // 自定义语法格式器
     parser: null,
-    // 开启 HTML 压缩
-    compress: false,
     // HTML 语句压缩器
-    compressor: compressor,
+    compressor: null,
     // 导入的变量
     imports: imports,
     // 错误处理函数
@@ -41,4 +39,4 @@ const config = {
     extension: '.html'
 };
 
-module.exports = config;
+module.exports = defaults;

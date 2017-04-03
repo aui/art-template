@@ -85,10 +85,11 @@ class Compiler {
     // 添加一条字符串（HTML）直接输出语句
     addString(source) {
         const options = this.options;
+        const compressor = options.compressor;
 
         // 压缩多余空白与注释
-        if (options.compress) {
-            source = options.compressor(source);
+        if (compressor) {
+            source = compressor(source);
         }
 
         const code = `$out+=${stringify(source)}`;

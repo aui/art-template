@@ -1,6 +1,6 @@
 const render = require('./render');
 const compile = require('./compile');
-const config = require('./compile/config');
+const defaults = require('./compile/defaults');
 
 /**
  * 模板引擎
@@ -21,13 +21,13 @@ const template = (filename, content) => {
 
 template.render = render;
 template.compile = compile;
-template.config = config;
+template.defaults = defaults;
 
 
 // Add require support
 if (module._compile) {
     const loader = (() => require)(); // 避免 webpack 进行静态分析
-    loader.extensions[config.extension] = (module, flnm) => {
+    loader.extensions[defaults.extension] = (module, flnm) => {
         const filename = flnm || module.filename;
         const options = {
             filename: filename,
