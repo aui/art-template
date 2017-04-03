@@ -1,5 +1,5 @@
 const path = require('path');
-const isNodeEnv = typeof document !== 'object';
+const detectNode = require('detect-node');
 
 /**
  * 获取模板的绝对路径
@@ -9,7 +9,7 @@ const isNodeEnv = typeof document !== 'object';
  * @returns {string}
  */
 const tplPath = (filename, root, base) => {
-    if (isNodeEnv) {
+    if (detectNode) {
         const dirname = base ? path.dirname(base) : '';
         return path.resolve(root, dirname, filename);
     } else {

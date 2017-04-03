@@ -74,4 +74,13 @@ describe('#compile/index', () => {
     });
 
 
+    describe('toString', () => {
+        const render = compile('<%=value%>');
+        it('toString()', () => {
+            assert.deepEqual('string', typeof render.toString());
+            assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'));
+        });
+    });
+
+
 });
