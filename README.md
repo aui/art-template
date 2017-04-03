@@ -14,5 +14,5 @@
 [downloads-url]: https://npmjs.org/package/artTemplate
 [travis-ci-image]: https://travis-ci.org/huanleguang/artTemplate.svg?branch=master
 [travis-ci-url]: https://travis-ci.org/huanleguang/artTemplate
-[coveralls-img]: https://img.shields.io/coveralls/aui/artTemplate.svg)
+[coveralls-img]: https://img.shields.io/coveralls/aui/artTemplate.svg
 [coveralls-url]: https://coveralls.io/github/aui/artTemplate
