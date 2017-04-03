@@ -172,7 +172,7 @@ class Compiler {
         if (options.compileDebug) {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,
-                `name:"Render Error"`,
+                `name:"Runtime Error"`,
                 `message:e.message`,
                 `line:$line[0]`,
                 `source:$line[1]`
@@ -189,7 +189,7 @@ class Compiler {
             // 编译失败，语法错误
             throw {
                 path: filename,
-                name: `Syntax Error`,
+                name: `Compile Error`,
                 message: e.message,
                 source: source,
                 script: renderCode,

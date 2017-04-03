@@ -177,7 +177,7 @@ describe('#compile/compiler', () => {
         });
 
 
-        describe('Syntax Error`', () => {
+        describe('Compile Error`', () => {
             it('throw', () => {
                 const options = Object.create(defaults);
                 options.source = '<% a b c d %>';
@@ -186,7 +186,7 @@ describe('#compile/compiler', () => {
                 try {
                     compiler.build();
                 } catch (e) {
-                    assert.deepEqual('Syntax Error', e.name);
+                    assert.deepEqual('Compile Error', e.name);
                 }
             });
         });

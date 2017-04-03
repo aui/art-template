@@ -19,24 +19,24 @@ describe('#compile/index', () => {
 
 
     describe('errors', () => {
-        it('Render Error', () => {
+        it('Runtime Error', () => {
             const render = compile('<%=a.b.c%>');
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('Syntax Error', () => {
+        it('Compile Error', () => {
             const render = compile('<%=a b c%>');
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('Template not found', () => {
+        it('Compile Error: Template not found', () => {
             const render = compile({
                 filename: '/404.html'
             });
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('throw error: Render Error', () => {
+        it('throw error: Runtime Error', () => {
             const render = compile({
                 source: '<%=a.b.c%>',
                 onerror: null
@@ -45,18 +45,29 @@ describe('#compile/index', () => {
             try {
                 render({});
             } catch (e) {
-                assert.deepEqual('Render Error', e.name);
+                assert.deepEqual('Runtime Error', e.name);
             }
         });
 
-        it('throw error: Syntax Error', () => {
+        it('throw error: Compile Error: Template not found', () => {
+            try {
+                compile({
+                    filename: '/404.html',
+                    onerror: null
+                });
+            } catch (e) {
+                assert.deepEqual('Compile Error', e.name);
+            }
+        });
+
+        it('throw error: Compile Error', () => {
             try {
                 const render = compile('<%=a b c%>', {
                     onerror: null
                 });
                 render({});
             } catch (e) {
-                assert.deepEqual('Syntax Error', e.name);
+                assert.deepEqual('Compile Error', e.name);
             }
         });
 
