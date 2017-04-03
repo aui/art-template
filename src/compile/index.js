@@ -48,7 +48,7 @@ const compile = (source, options = {}) => {
             const error = {
                 path: filename,
                 name: 'Compile Error',
-                message: `Template not found: ${e.message}`,
+                message: `template not found: ${e.message}`,
                 stack: e.stack
             };
 

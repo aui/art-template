@@ -4,7 +4,8 @@ const version = require('./package.json').version;
 
 module.exports = {
     entry: {
-        'template': './src/index.js',
+        'template-native': './src/template-native.js',
+        'template-simple': './src/template-simple.js'
     },
     output: {
         path: path.join(__dirname, 'lib'),

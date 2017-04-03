@@ -104,19 +104,20 @@ class Compiler {
         const rawSymbol = options.rawSymbol;
         const expression = source.replace(openTag, ``).replace(closeTag, ``);
 
-        // v3 compat
+        // ... v3 compat ...
         let code = expression.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
 
-        const tokens = jsTokens.parser(code);
+        const tokens = jsTokens.trim(jsTokens.parser(code));
+        const addContext = name => this.addContext(name);
 
 
         // 将数据做为模板渲染函数的作用域
-        jsTokens.namespaces(tokens).forEach(name => this.addContext(name));
+        jsTokens.namespaces(tokens).forEach(addContext);
 
 
         // 外部语法转换函数
         if (parser) {
-            code = parser(code, options, tokens);
+            code = parser(code, options, tokens, addContext);
         }
 
 

@@ -96,7 +96,7 @@ describe('#compile/compiler', () => {
 
         // v4
         test('<%-value%>', ['$out+=value']);
-        test('<%- value %>', ['$out+= value ']);
+        test('<%- value %>', ['$out+= value']);
 
         test('<%=value%>', ['$out+=value'], { escape: false });
         test('<%-value%>', ['$out+=value'], { escape: false });
@@ -104,7 +104,7 @@ describe('#compile/compiler', () => {
         test('<%if (value) {%>', ['if (value) {']);
         test('<% if (value) { %>', [' if (value) { ']);
         test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-            compressor: true
+            compressor
         });
 
 
