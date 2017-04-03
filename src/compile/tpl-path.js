@@ -3,9 +3,9 @@ const isNodeEnv = typeof document !== 'object';
 
 /**
  * 获取模板的绝对路径
- * @param {string} filename 
- * @param {string} root 
- * @param {string} base 
+ * @param   {string} filename 
+ * @param   {string} root 
+ * @param   {?string} base 
  * @returns {string}
  */
 const tplPath = (filename, root, base) => {
