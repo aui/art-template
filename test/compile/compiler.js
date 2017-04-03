@@ -1,6 +1,7 @@
 const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
+const getOptions = require('../../src/compile/get-options');
 
 const compressor = source => {
     return source
@@ -11,10 +12,11 @@ const compressor = source => {
 describe('#compile/compiler', () => {
 
     describe('addContext', () => {
-        const test = (code, result) => {
+        const test = (code, result, options) => {
             it(code, () => {
-                defaults.source = '';
-                const compiler = new Compiler(defaults);
+                options = getOptions(options, defaults);
+                options.source = '';
+                const compiler = new Compiler(options);
                 compiler.addContext(code);
                 result.$out = '""';
                 assert.deepEqual(result, compiler.context);
@@ -29,6 +31,9 @@ describe('#compile/compiler', () => {
         test('for', {});
         test('$data', {});
         test('$imports', {});
+
+        test('print', { print: "function(){var text=''.concat.apply('',arguments);return $out+=text}" });
+        test('include', { include: "function(src,data){return $out+=$imports.$include(src,data||$data,null,\"/\")}" })
 
         test('$escape', { $escape: '$imports.$escape' });
         test('$include', { $include: '$imports.$include' });
@@ -80,7 +85,7 @@ describe('#compile/compiler', () => {
                 options = Object.assign({}, defaults, options);
                 options.source = '';
                 const compiler = new Compiler(options);
-                compiler.addExpression(code);
+                compiler.addExpression(code, 1);
                 assert.deepEqual(result, compiler.scripts);
             });
         };
@@ -100,6 +105,24 @@ describe('#compile/compiler', () => {
         test('<% if (value) { %>', [' if (value) { ']);
         test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
             compressor: true
+        });
+
+
+        describe('parser', () => {
+            test('<%@value%>', ['$out+=value'], {
+                parser: (code, options, tokens) => {
+                    if (tokens[0].value === '@') {
+                        tokens[0].value = '-';
+                    }
+                }
+            });
+        });
+
+
+        describe('compileDebug', () => {
+            test('<%-value%>', ['$line=[1,"<%-value%>"]', '$out+=value'], {
+                compileDebug: true
+            });
         });
 
     });
@@ -131,6 +154,7 @@ describe('#compile/compiler', () => {
                 options = Object.assign({}, defaults, options);
                 options.source = code;
                 const compiler = new Compiler(options);
+                compiler.build();
                 assert.deepEqual(result, compiler.scripts);
             });
         };
@@ -145,6 +169,27 @@ describe('#compile/compiler', () => {
         test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
         test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
+
+        describe('compileDebug', () => {
+            test('<%-value%>', ['$line=[1,"<%-value%>"]', '$out+=value'], {
+                compileDebug: true
+            });
+        });
+
+
+        describe('Syntax Error`', () => {
+            it('throw', () => {
+                const options = Object.create(defaults);
+                options.source = '<% a b c d %>';
+                const compiler = new Compiler(options);
+
+                try {
+                    compiler.build();
+                } catch (e) {
+                    assert.deepEqual('Syntax Error', e.name);
+                }
+            });
+        });
 
     });
 

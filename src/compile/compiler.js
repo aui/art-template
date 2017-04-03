@@ -139,7 +139,7 @@ class Compiler {
 
 
         if (compileDebug) {
-            this.scripts.push(`$line=[${line}, ${stringify(source)}]`);
+            this.scripts.push(`$line=[${line},${stringify(source)}]`);
         }
 
         this.scripts.push(code);

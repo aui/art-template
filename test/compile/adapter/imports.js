@@ -1,5 +1,6 @@
 const assert = require('assert');
 const imports = require('../../../src/compile/adapter/imports');
+const path = require('path');
 
 describe('#compile/adapter/imports', () => {
 
@@ -44,8 +45,14 @@ describe('#compile/adapter/imports', () => {
 
 
     describe('$include', () => {
-        it('is function', () => {
-            assert.deepEqual('function', typeof imports.$include);
+        it('read file', () => {
+            const root = path.resolve(__dirname, '..', '..', 'res');;
+            const base = path.resolve(root, 'index.html');
+            const data = {};
+            assert.deepEqual('hello world', imports.$include('./file.html', data, base, '/'));
+            assert.deepEqual('hello world', imports.$include('./file.html', data, base, root));
+            assert.deepEqual('hello world', imports.$include('file.html', data, base, '/'));
+            assert.deepEqual('hello world', imports.$include('file.html', data, base, root));
         });
     });
 

@@ -29,4 +29,10 @@ describe('#compile/tpl-path', () => {
     test(['/header.html', '/Root', '/Root/base/index.html'], '/header.html');
     test(['/header.html', '/Root', '/Web/base/index.html'], '/header.html');
 
+    // describe('browser', () => {
+    //     global.document = {};
+    //     test(['tpl-header', '/', 'tpl-index'], 'tpl-header');
+    //     delete global.document;
+    // });
+
 });
