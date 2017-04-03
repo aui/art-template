@@ -65,21 +65,19 @@ const compile = (source, options = {}) => {
     const compiler = new Compiler(options);
 
     const render = data => {
+
         try {
-
             return render.source(data);
-
         } catch (e) {
 
+            // 运行时出错以调试模式重载
+            if (!options.compileDebug) {
+                options.cache = null;
+                options.compileDebug = true;
+                return compile(options)(data);
+            }
+
             if (options.onerror) {
-
-                // 运行时出错以调试模式重载
-                if (!options.compileDebug) {
-                    options.cache = null;
-                    options.compileDebug = true;
-                    return compile(options)(data);
-                }
-
                 return options.onerror(e)();
             } else {
                 throw e;
