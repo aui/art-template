@@ -25,6 +25,8 @@ const config = {
     cache: cache,
     // 自定义语法格式器
     parser: null,
+    // 开启 HTML 压缩
+    compress: false,
     // HTML 语句压缩器
     compressor: compressor,
     // 导入的变量

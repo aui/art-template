@@ -4,9 +4,10 @@ const compile = require('../../src/compile/index');
 describe('#compile/index', () => {
     const test = (code, data, result) => {
         it(code, () => {
-            const html = compile(code, {
+            const render = compile(code, {
                 onerror: null
-            })(data);
+            });
+            const html = render(data);
             assert.deepEqual(result, html);
         });
     };

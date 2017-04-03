@@ -16,6 +16,8 @@ const compile = (source, options = {}) => {
     if (typeof source === 'object') {
         options = source;
         source = options.source;
+    } else {
+        options.source = source;
     }
 
     options = defaults(options, config);

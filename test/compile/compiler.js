@@ -1,202 +1,148 @@
-const jsTokens = require('./js-tokens');
-const tplTokens = require('./tpl-tokens');
-const isKeyword = require('is-keyword-js');
-const includes = require('lodash/includes');
+const assert = require('assert');
+const Compiler = require('../../src/compile/compiler');
+const config = require('../../src/compile/config');
 
-const DATA = `$data`;
-const has = (object, key) => {
-    return object.hasOwnProperty(key);
-};
+describe('#compile/compiler', () => {
 
-
-class Compiler {
-    constructor(source, options) {
-
-        const openTag = options.openTag;
-        const closeTag = options.closeTag;
-        const filename = options.filename;
-
-        this.source = source;
-        this.options = options;
-
-        // 记录编译后生成的代码
-        this.scripts = [];
-
-        // 运行时注入的上下文
-        this.context = { $out: `""` };
-
-        // 内置特权方法
-        this.embedded = {
-            print: [
-                [], `function(){var text=''.concat.apply('',arguments);return $out+=text}`
-            ],
-            include: [
-                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${filename})}`
-            ]
+    describe('addContext', () => {
+        const test = (code, result) => {
+            it(code, () => {
+                config.source = '';
+                const compiler = new Compiler(config);
+                compiler.addContext(code);
+                result.$out = '""';
+                assert.deepEqual(result, compiler.context);
+            });
         };
 
-
-        if (options.compileDebug) {
-            this.context.$line = `0`;
-        }
-
-
-        tplTokens.parser(source, openTag, closeTag).forEach(token => {
-            const type = token.type;
-            const value = token.value;
-            const line = token.line;
-            if (type === `string`) {
-                this.addString(value, line);
-            } else if (type === `expression`) {
-                this.addExpression(value, line);
-            }
+        test('value', {
+            value: '$data.value'
         });
-    }
 
-    // 注入上下文
-    addContext(name) {
+        test('if', {});
+        test('for', {});
+        test('$data', {});
+        test('$imports', {});
 
-        let value = ``;
-        const embedded = this.embedded;
-        const context = this.context;
-        const options = this.options;
-        const imports = options.imports;
-        const requires = [DATA, `$imports`];
+        test('$escape', { $escape: '$imports.$escape' });
+        test('$include', { $include: '$imports.$include' });
 
-        if (has(context, name) || includes(requires, name) || isKeyword(name)) {
-            return;
-        }
+        it('imports', () => {
+            const options = Object.create(config);
+            options.imports.Math = Math;
+            options.source = '';
+            const compiler = new Compiler(options);
+            compiler.addContext('Math');
+            assert.deepEqual({
+                $out: '""',
+                Math: '$imports.Math'
+            }, compiler.context);
+        });
 
-        if (has(embedded, name)) {
-            embedded[name][0].forEach(name => this.addContext(name));
-            value = embedded[name][1];
-        } else if (has(imports, name)) {
-            value = `$imports.${name}`;
-        } else {
-            value = `${DATA}.${name}`;
-        }
+    });
 
 
-        context[name] = value;
-    }
+    describe('addString', () => {
+        const test = (code, result, options) => {
+            it(code, () => {
+                options = Object.assign({}, config, options);
+                options.source = '';
+                const compiler = new Compiler(options);
+                compiler.addString(code);
+                assert.deepEqual(result, compiler.scripts);
+            });
+        };
+
+        // raw
+        test('hello', ['$out+="hello"']);
+        test('\'hello\'', ['$out+="\'hello\'"']);
+        test('"hello    world"', ['$out+="\\"hello    world\\""']);
+        test('<div>hello</div>', ['$out+="<div>hello</div>"']);
+        test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
+
+        // compress
+        test('  hello  ', ['$out+=" hello "'], { compress: true });
+        test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress: true });
+        test('"hello    world"', ['$out+="\\"hello world\\""'], { compress: true });
+        test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress: true });
+    });
 
 
-    // 添加一条字符串（HTML）直接输出语句
-    addString(source) {
-
-        // 压缩多余空白与注释
-        if (this.options.compress) {
-            source = source
-                .replace(/\s+/g, ` `)
-                .replace(/<!--[\w\W]*?-->/g, ``);
-        }
-
-        const code = `$out+=${JSON.stringify(source)}`;
-        this.scripts.push(code);
-    }
-
-
-    // 添加一条逻辑表达式语句
-    addExpression(source, line) {
-        const options = this.options;
-        const openTag = options.openTag;
-        const closeTag = options.closeTag;
-        const parser = options.parser;
-        const compileDebug = options.compileDebug;
-        const escape = options.escape;
-        const escapeSymbol = options.escapeSymbol;
-        const rawSymbol = options.rawSymbol;
-        let code = source.replace(openTag, ``).replace(closeTag, ``);
+    describe('addExpression', () => {
+        const test = (code, result, options) => {
+            it(code, () => {
+                options = Object.assign({}, config, options);
+                options.source = '';
+                const compiler = new Compiler(options);
+                compiler.addExpression(code);
+                assert.deepEqual(result, compiler.scripts);
+            });
+        };
 
         // v3 compat
-        code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
+        test('<%=value%>', ['$out+=$escape(value)']);
+        test('<%=#value%>', ['$out+=value']);
 
-        const tokens = jsTokens.parser(code);
+        // v4
+        test('<%-value%>', ['$out+=value']);
+        test('<%- value %>', ['$out+= value ']);
 
+        test('<%=value%>', ['$out+=value'], { escape: false });
+        test('<%-value%>', ['$out+=value'], { escape: false });
 
-        // 将数据做为模板渲染函数的作用域
-        jsTokens.namespaces(tokens).forEach(name => this.addContext(name));
+        test('<%if (value) {%>', ['if (value) {']);
+        test('<% if (value) { %>', [' if (value) { ']);
+        test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
+            compress: true
+        });
 
+    });
 
-        // 外部语法转换函数
-        if (parser) {
-            code = parser(code, options, tokens);
-        }
-
-
-        // 处理输出语句
-        const firstToken = tokens[0];
-        const isRaw = firstToken && firstToken.value === rawSymbol;
-        const isEscape = firstToken && firstToken.value === escapeSymbol;
-        const isOutput = isRaw || isEscape;
-
-        if (isOutput) {
-            tokens.shift();
-            code = jsTokens.toString(tokens);
-            if (escape === false || isRaw) {
-                code = `$out+=${code}`;
-            } else {
-                code = `$out+=$escape(${code})`;
-                this.addContext(`$escape`);
-            }
-        }
-
-
-        if (compileDebug) {
-            this.scripts.push(`$line=${line}`);
-        }
-
-        this.scripts.push(code);
-    }
-
-
-    // 构建渲染函数
-    build() {
-
-        const options = this.options;
-        const context = this.context;
-        const source = options.source;
-        const filename = options.filename;
-        const imports = options.imports;
-
-
-        const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
-        const scriptsCode = this.scripts.join(`;\n`);
-        const main = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
-
-
-        let code = `return function (${DATA}) {${main}}`;
-
-
-        if (options.compileDebug) {
-            const throwCode = JSON.stringify({
-                path: filename,
-                name: `Render Error`,
-                message: `e.message`,
-                line: `$line`,
-                source: `${JSON.stringify(source)}.split(/\\n/)[$line-1].replace(/^\\s+/,")`
+    describe('addSource', () => {
+        const test = (code, result, options) => {
+            it(code, () => {
+                options = Object.assign({}, config, options);
+                options.source = code;
+                const compiler = new Compiler(options);
+                assert.deepEqual(result, compiler.scripts);
             });
+        };
 
-            code = `try{${code}}catch(e){throw ${throwCode}}`;
-        }
+        test('hello', ['$out+="hello"']);
+        test('<%=value%>', ['$out+=$escape(value)']);
 
+        test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
+        test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
-        try {
-            return new Function(`$imports`, code)(imports);
-        } catch (e) {
-            // 编译失败，语法错误
-            throw {
-                path: filename,
-                name: `Syntax Error`,
-                message: e.message,
-                line: 0, // 动态构建的函数无法捕获错误
-                source: scriptsCode,
-                temp: code
-            };
-        }
+        test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
 
-    }
-};
+    });
 
 
-module.exports = Compiler;
+    describe('build', () => {
+        const test = (code, result, options) => {
+            it(code, () => {
+                options = Object.assign({}, config, options);
+                options.source = code;
+                const compiler = new Compiler(options);
+                assert.deepEqual(result, compiler.scripts);
+            });
+        };
+
+        test('hello', ['$out+="hello"']);
+        test('<%=value%>', ['$out+=$escape(value)']);
+        test('hello <%=value%>.', ['$out+="hello "', '$out+=$escape(value)', '$out+="."']);
+        test('<%-value%>', ['$out+=value']);
+        test('hello <%-value%>.', ['$out+="hello "', '$out+=value', '$out+="."']);
+
+        test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
+        test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
+
+        test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
+
+    });
+
+
+
+
+});
