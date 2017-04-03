@@ -12,7 +12,7 @@
 [node-version-url]: http://nodejs.org/download/
 [downloads-image]: https://img.shields.io/npm/dm/art-template.svg
 [downloads-url]: https://npmjs.org/package/art-template
-[travis-ci-image]: https://travis-ci.org/huanleguang/art-template.svg?branch=master
-[travis-ci-url]: https://travis-ci.org/huanleguang/art-template
+[travis-ci-image]: https://travis-ci.org/aui/art-template.svg?branch=master
+[travis-ci-url]: https://travis-ci.org/aui/art-template
 [coveralls-img]: https://img.shields.io/coveralls/aui/art-template.svg
 [coveralls-url]: https://coveralls.io/github/aui/art-template
