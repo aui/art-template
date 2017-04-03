@@ -1,14 +1,14 @@
 {
     "name": "art-template",
     "description": "JavaScript Template Engine",
-    "homepage": "http://aui.github.com/artTemplate/",
+    "homepage": "http://aui.github.com/art-template/",
     "keywords": [
         "template"
     ],
     "author": "tangbin <sugarpie.tang@gmail.com>",
     "repository": {
         "type": "git",
-        "url": "git://github.com/aui/artTemplate.git"
+        "url": "git://github.com/aui/art-template.git"
     },
     "scripts": {
         "build": "webpack -p",

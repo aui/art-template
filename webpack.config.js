@@ -13,7 +13,7 @@ module.exports = {
         libraryTarget: 'umd'
     },
     plugins: [
-        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/artTemplate`)
+        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`)
     ],
     node: {
         fs: 'empty',
