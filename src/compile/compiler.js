@@ -28,12 +28,8 @@ class Compiler {
 
         // 内置特权方法
         this.embedded = {
-            print: [
-                [], `function(){var text=''.concat.apply('',arguments);return $out+=text}`
-            ],
-            include: [
-                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
-            ]
+            print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
+            include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
         };
 
 
@@ -69,8 +65,7 @@ class Compiler {
         }
 
         if (has(embedded, name)) {
-            embedded[name][0].forEach(name => this.addContext(name));
-            value = embedded[name][1];
+            value = embedded[name];
         } else if (has(imports, name)) {
             value = `${IMPORTS}.${name}`;
         } else {
@@ -173,6 +168,7 @@ class Compiler {
         ].join(`;\n`);
 
 
+        // 插入运行时调试语句
         if (options.compileDebug) {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,
