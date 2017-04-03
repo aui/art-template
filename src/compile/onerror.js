@@ -4,16 +4,14 @@
  * @returns {string}
  */
 const onerror = error => {
-    var message = 'Template Error\n\n';
-    for (var name in error) {
-        message += '<' + name + '>\n' + error[name] + '\n\n';
-    }
+    let output = `Template Error`;
+    const message = JSON.stringify(error, null, 2);
 
     if (typeof console === 'object') {
-        console.error(message);
+        console.error(`${output}:`, message);
     }
 
-    return () => '{Template Error}';
+    return () => `{${output}}`;
 };
 
 module.exports = onerror;

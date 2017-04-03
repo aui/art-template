@@ -4,18 +4,18 @@ const isKeyword = require('is-keyword-js');
 
 const DATA = `$data`;
 const IMPORTS = `$imports`;
-const has = (object, key) => {
-    return object.hasOwnProperty(key);
-};
+const has = (object, key) => object.hasOwnProperty(key);
+const stringify = JSON.stringify;
 
 
 class Compiler {
-    constructor(source, options) {
+    constructor(options) {
 
         const openTag = options.openTag;
         const closeTag = options.closeTag;
         const filename = options.filename;
         const root = options.root;
+        const source = options.source;
 
         this.source = source;
         this.options = options;
@@ -32,13 +32,13 @@ class Compiler {
                 [], `function(){var text=''.concat.apply('',arguments);return $out+=text}`
             ],
             include: [
-                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${JSON.stringify(filename)},${JSON.stringify(root)})}`
+                [`$include`], `function(src,data){return $out+=$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
             ]
         };
 
 
         if (options.compileDebug) {
-            this.context.$line = `0`;
+            this.context.$line = `[0,""]`;
         }
 
 
@@ -93,7 +93,7 @@ class Compiler {
             source = compressor(source);
         }
 
-        const code = `$out+=${JSON.stringify(source)}`;
+        const code = `$out+=${stringify(source)}`;
         this.scripts.push(code);
     }
 
@@ -108,10 +108,10 @@ class Compiler {
         const escape = options.escape;
         const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
-        let code = source.replace(openTag, ``).replace(closeTag, ``);
+        const expression = source.replace(openTag, ``).replace(closeTag, ``);
 
         // v3 compat
-        code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
+        let code = expression.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
 
         const tokens = jsTokens.parser(code);
 
@@ -145,7 +145,7 @@ class Compiler {
 
 
         if (compileDebug) {
-            this.scripts.push(`$line=${line}`);
+            this.scripts.push(`$line=[${line}, ${stringify(source)}]`);
         }
 
         this.scripts.push(code);
@@ -164,27 +164,32 @@ class Compiler {
 
         const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
         const scriptsCode = this.scripts.join(`;\n`);
-        const main = [`"use strict"`, contextCode, scriptsCode, `return $out`].join(`;\n`);
 
 
-        let code = `return function (${DATA}) {${main}}`;
+        let renderCode = [
+            `"use strict"`,
+            contextCode,
+            scriptsCode,
+            `return $out`
+        ].join(`;\n`);
 
 
         if (options.compileDebug) {
-            const throwCode = JSON.stringify({
-                path: filename,
-                name: `Render Error`,
-                message: `e.message`,
-                line: `$line`,
-                source: `${JSON.stringify(source)}.split(/\\n/)[$line-1].replace(/^\\s+/,")`
-            });
-
-            code = `try{${code}}catch(e){throw ${throwCode}}`;
+            const throwCode = '{' + [
+                `path:${stringify(filename)}`,
+                `name:"Render Error"`,
+                `message:e.message`,
+                `line:$line[0]`,
+                `source:$line[1]`
+            ].join(`,`) + '}';
+            renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;
         }
+
+        renderCode = `function (${DATA}) {${renderCode}}`;
 
 
         try {
-            return new Function(IMPORTS, code)(imports);
+            return new Function(IMPORTS, `return ${renderCode}`)(imports);
         } catch (e) {
             // 编译失败，语法错误
             throw {
@@ -192,7 +197,7 @@ class Compiler {
                 name: `Syntax Error`,
                 message: e.message,
                 source: source,
-                script: code,
+                script: renderCode,
                 stack: e.stack
             };
         }

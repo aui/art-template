@@ -36,6 +36,7 @@ const compile = (source, options = {}) => {
         try {
             const target = tplPath(filename, options.root);
             source = tplLoader(target);
+            options.filename = target;
             options.source = source;
         } catch (e) {
 
@@ -56,7 +57,7 @@ const compile = (source, options = {}) => {
 
     }
 
-    const compiler = new Compiler(source, options);
+    const compiler = new Compiler(options);
 
     const render = data => {
         try {
@@ -69,8 +70,9 @@ const compile = (source, options = {}) => {
 
                 // 运行时出错以调试模式重载
                 if (!options.compileDebug) {
+                    options.cache = null;
                     options.compileDebug = true;
-                    return compile(source, options)(data);
+                    return compile(options)(data);
                 }
 
                 return options.onerror(e)();
