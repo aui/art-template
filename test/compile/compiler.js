@@ -110,7 +110,7 @@ describe('#compile/compiler', () => {
 
         describe('parser', () => {
             test('<%@value%>', ['$out+=value'], {
-                parser: (code, options, tokens) => {
+                parser: ({ tokens }) => {
                     if (tokens[0].value === '@') {
                         tokens[0].value = '-';
                     }
