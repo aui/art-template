@@ -24,17 +24,21 @@ class Compiler {
         this.scripts = [];
 
         // 运行时注入的上下文
-        this.context = { $out: `""` };
+        this.context = {};
 
-        // 内置特权方法
-        this.embedded = {
+        // 内置变量
+        this.internal = {
+            $out: `""`,
+            $line: `[0,""]`,
             print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
             include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
         };
 
 
+        this.parseContext(`$out`);
+
         if (options.compileDebug) {
-            this.context.$line = `[0,""]`;
+            this.parseContext(`$line`);
         }
 
 
@@ -48,13 +52,14 @@ class Compiler {
                 this.parseExpression(value, line);
             }
         });
+
     }
 
     // 解析上下文
     parseContext(name) {
 
         let value = ``;
-        const embedded = this.embedded;
+        const internal = this.internal;
         const context = this.context;
         const options = this.options;
         const imports = options.imports;
@@ -64,8 +69,8 @@ class Compiler {
             return;
         }
 
-        if (has(embedded, name)) {
-            value = embedded[name];
+        if (has(internal, name)) {
+            value = internal[name];
         } else if (has(imports, name)) {
             value = `${IMPORTS}.${name}`;
         } else {
@@ -93,6 +98,7 @@ class Compiler {
 
     // 解析逻辑表达式语句
     parseExpression(source, line) {
+
         const options = this.options;
         const openTag = options.openTag;
         const closeTag = options.closeTag;
@@ -127,6 +133,7 @@ class Compiler {
         if (isOutput) {
             tokens.shift();
             code = jsTokens.toString(tokens);
+
             if (escape === false || isRaw) {
                 code = `$out+=${code}`;
             } else {
@@ -154,15 +161,17 @@ class Compiler {
         const imports = options.imports;
 
 
+        const useStrictCode = `"use strict"`;
         const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
         const scriptsCode = this.scripts.join(`;\n`);
+        const returnCode = `return $out`;
 
 
         let renderCode = [
-            `"use strict"`,
+            useStrictCode,
             contextCode,
             scriptsCode,
-            `return $out`
+            returnCode
         ].join(`;\n`);
 
 
