@@ -23,6 +23,7 @@ const bindSyntax = (options = {}) => {
 
     options.parser = (code, options, tokens, addContext) => {
 
+        // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
             console.warn('Template Upgrade:',
                 `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
@@ -31,7 +32,7 @@ const bindSyntax = (options = {}) => {
 
         const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
-        const values = tokens.map(token => token.value);
+        const values = tokens.map(token => token.value).filter(value => /^\S+$/.test(value));
 
 
         // v3 compat: #value
@@ -40,41 +41,47 @@ const bindSyntax = (options = {}) => {
             values[0] = values[0].replace(/^#/, rawSymbol);
         }
 
-        const raw = values[0] === rawSymbol ? values.shift() : '';
+
+        // 输出标志
+        let inputSymbol = values[0] === rawSymbol ? values.shift() : escapeSymbol;
+
+
         const close = values[0] === '/' ? values.shift() : '';
-        const key = close + values[0];
-
-        const move = index => {
-            values.splice(0, index + 1);
-            return values.join('');
-        };
-
-        const call = name => {
-            values.splice(0, 2);
-            const args = values.map((value) => /^s+$/.test(value) ? ',' : value);
-            addContext(name);
-            return `${name}(${args});`;
-        };
+        const key = close + values.shift();
 
         switch (key) {
 
+            case '%':
+
+                // % for (var i = 0; i < data.length; i++){} %
+                tokens.shift();
+
+                if (tokens[tokens.length - 1] === key) {
+                    tokens.pop();
+                }
+
+                code = tokens.join('');
+                break;
+
             case 'set':
-                // set value = 0
-                code = `var ${move(1)};`;
+
+                // value = 0
+                code = `var ${values.join('')};`;
                 break;
 
             case 'if':
 
-                // if value
-                code = `if(${move(1)}){`;
+                // value
+                // value + 1
+                code = `if(${values.join('')}){`;
                 break;
 
             case 'else':
 
-
-                if (values[2] === 'if') {
-                    // else if value
-                    code = `}else if(${move(3)}){`;
+                if (values[0] === 'if') {
+                    // if value
+                    values.shift();
+                    code = `}else if(${values.join('')}){`;
                 } else {
                     // else
                     code = `}else{`;
@@ -90,22 +97,22 @@ const bindSyntax = (options = {}) => {
 
             case 'each':
 
-                // each
-                // each object
-                // each object value
-                // each object value index
+                // 
+                // object
+                // object value
+                // object value index
 
                 // ... v3 compat ...
-                // each object 'as' value
-                // each object 'as' value index
-                if (values[4] === 'as') {
+                // object 'as' value
+                // object 'as' value index
+                if (values[1] === 'as') {
                     upgrade('each object \'as\' value index', 'each object value index');
-                    values.splice(4, 2);
+                    values.splice(1, 1);
                 }
 
-                const object = values[2] || '$data';
-                const value = values[6] || '$value';
-                const index = values[8] || '$index';
+                const object = values[0] || '$data';
+                const value = values[1] || '$value';
+                const index = values[2] || '$index';
 
                 code = `$each(${object},function(${value},${index}){`;
                 addContext('$each');
@@ -122,7 +129,8 @@ const bindSyntax = (options = {}) => {
 
                 // echo value
                 // echo value value2 value3
-                code = call('print');
+                // echo(value + 1, value2)
+                code = `print(${values.join(',')});`;
                 break;
 
             case 'print':
@@ -132,43 +140,55 @@ const bindSyntax = (options = {}) => {
                 // print value value2 value3
                 // include './header'
                 // include './header' context
-                code = call(key);;
+                // include(name + '.html', context)
+                code = `${key}(${values.join(',')});`;
                 break;
 
             default:
 
                 if (values.indexOf('|') !== -1) {
 
+                    // 解析过滤器
                     // value | filter
                     // value|filter
                     // value | filter 'string'
                     // value | filter arg1 arg2 arg3
                     // value | filter1 arg1 | filter2 | filter3
-                    // >>> $imports.filter3($imports.filter2($imports.filter1(value, arg1)))
+                    // value * 1000 | filter
+                    // value[key] | filter
+                    // value1 || value2 | filter
 
                     // ... v3 compat ...
                     // value | filter1:'abcd' | filter2
 
-                    let current = [];
+                    let target = key;
                     const group = [];
-                    const output = values.shift();
+                    const v3split = ':';
 
-                    values.filter(v => !/^\s+$|:/.test(v)).forEach(value => {
+                    // 找到要过滤的目标表达式
+                    // values => ['value', '[', 'key', ']', '|', 'filter1', '|', 'filter2', 'argv1', 'argv2']
+                    // target => `value[key]`
+                    while (values[0] !== '|') target += values.shift();
+
+
+                    // 将过滤器解析成二维数组
+                    // group => [['filter1'], [['filter2', 'argv1', 'argv2']]
+                    values.filter(v => v !== v3split).forEach(value => {
                         if (value === '|') {
-                            current = [];
-                            group.push(current);
+                            group.push([]);
                         } else {
-                            current.push(value);
+                            group[group.length - 1].push(value);
                         }
                     });
 
-                    // [['filter1'], ['filter2'], ['filter3', 'arg1', 'arg2']]
-                    // >>> $imports.filter3($imports.filter2($imports.filter1()), 'arg1', 'arg2')
+
+                    // 将过滤器管道化
+                    // code => `$imports.filter2($imports.filter1(value[key]),argv1,argv2)`
                     group.reduce((accumulator, filter) => {
                         const name = filter.shift();
                         filter.unshift(accumulator);
                         return code = `$imports.${name}(${filter.join(',')})`;
-                    }, output);
+                    }, target);
 
 
                 } else if (options.imports[key]) {
@@ -176,13 +196,13 @@ const bindSyntax = (options = {}) => {
                     // ... v3 compat ...
                     // helperName value
                     upgrade('filterName value', 'value | filterName');
-                    code = rawSymbol + call(key);
+                    code = `${key}(${values.join(',')})`;
+                    inputSymbol = rawSymbol;
 
-                } else {
-
-                    // value
-                    code = (raw ? rawSymbol : escapeSymbol) + code;
                 }
+
+                // value
+                code = inputSymbol + code;
 
                 break;
         }
