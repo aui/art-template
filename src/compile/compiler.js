@@ -43,15 +43,15 @@ class Compiler {
             const value = token.value;
             const line = token.line;
             if (type === `string`) {
-                this.addString(value, line);
+                this.parseString(value, line);
             } else if (type === `expression`) {
-                this.addExpression(value, line);
+                this.parseExpression(value, line);
             }
         });
     }
 
-    // 注入上下文
-    addContext(name) {
+    // 解析上下文
+    parseContext(name) {
 
         let value = ``;
         const embedded = this.embedded;
@@ -77,14 +77,13 @@ class Compiler {
     }
 
 
-    // 添加一条字符串（HTML）直接输出语句
-    addString(source) {
+    // 解析字符串（HTML）直接输出语句
+    parseString(source, line) {
         const options = this.options;
-        const compressor = options.compressor;
+        const parseString = options.parseString;
 
-        // 压缩多余空白与注释
-        if (compressor) {
-            source = compressor(source);
+        if (parseString) {
+            source = parseString({ line, source, compiler: this });
         }
 
         const code = `$out+=${stringify(source)}`;
@@ -92,12 +91,12 @@ class Compiler {
     }
 
 
-    // 添加一条逻辑表达式语句
-    addExpression(source, line) {
+    // 解析逻辑表达式语句
+    parseExpression(source, line) {
         const options = this.options;
         const openTag = options.openTag;
         const closeTag = options.closeTag;
-        const parser = options.parser;
+        const parseExpression = options.parseExpression;
         const compileDebug = options.compileDebug;
         const escape = options.escape;
         const escapeSymbol = options.escapeSymbol;
@@ -110,12 +109,12 @@ class Compiler {
         const tokens = jsTokens.trim(jsTokens.parser(code));
 
         // 将数据做为模板渲染函数的作用域
-        jsTokens.namespaces(tokens).forEach(name => this.addContext(name));
+        jsTokens.namespaces(tokens).forEach(name => this.parseContext(name));
 
 
         // 外部语法转换函数
-        if (parser) {
-            code = parser({ tokens, line, source, compiler: this });
+        if (parseExpression) {
+            code = parseExpression({ tokens, line, source, compiler: this });
         }
 
 
@@ -132,7 +131,7 @@ class Compiler {
                 code = `$out+=${code}`;
             } else {
                 code = `$out+=$escape(${code})`;
-                this.addContext(`$escape`);
+                this.parseContext(`$escape`);
             }
         }
 

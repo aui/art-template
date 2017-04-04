@@ -23,7 +23,7 @@ const bindSyntax = (options = defaults) => {
     };
 
 
-    options.parser = ({ tokens, line, source, compiler }) => {
+    options.parseExpression = ({ tokens, line, source, compiler }) => {
 
         const options = compiler.options;
 
@@ -120,7 +120,7 @@ const bindSyntax = (options = defaults) => {
                 const index = values[2] || '$index';
 
                 code = `$each(${object},function(${value},${index}){`;
-                compiler.addContext('$each');
+                compiler.parseContext('$each');
 
                 break;
 

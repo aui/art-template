@@ -3,7 +3,7 @@ const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const getOptions = require('../../src/compile/get-options');
 
-const compressor = source => {
+const parseString = ({ source }) => {
     return source
         .replace(/\s+/g, ` `)
         .replace(/<!--[\w\W]*?-->/g, ``);
@@ -11,13 +11,13 @@ const compressor = source => {
 
 describe('#compile/compiler', () => {
 
-    describe('addContext', () => {
+    describe('parseContext', () => {
         const test = (code, result, options) => {
             it(code, () => {
                 options = getOptions(options, defaults);
                 options.source = '';
                 const compiler = new Compiler(options);
-                compiler.addContext(code);
+                compiler.parseContext(code);
                 result.$out = '""';
                 assert.deepEqual(result, compiler.context);
             });
@@ -43,7 +43,7 @@ describe('#compile/compiler', () => {
             options.imports.Math = Math;
             options.source = '';
             const compiler = new Compiler(options);
-            compiler.addContext('Math');
+            compiler.parseContext('Math');
             assert.deepEqual({
                 $out: '""',
                 Math: '$imports.Math'
@@ -53,13 +53,13 @@ describe('#compile/compiler', () => {
     });
 
 
-    describe('addString', () => {
+    describe('parseString', () => {
         const test = (code, result, options) => {
             it(code, () => {
                 options = Object.assign({}, defaults, options);
                 options.source = '';
                 const compiler = new Compiler(options);
-                compiler.addString(code);
+                compiler.parseString(code);
                 assert.deepEqual(result, compiler.scripts);
             });
         };
@@ -71,21 +71,21 @@ describe('#compile/compiler', () => {
         test('<div>hello</div>', ['$out+="<div>hello</div>"']);
         test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
 
-        // compressor
-        test('  hello  ', ['$out+=" hello "'], { compressor });
-        test('\n  hello  \n\n.', ['$out+=" hello ."'], { compressor });
-        test('"hello    world"', ['$out+="\\"hello world\\""'], { compressor });
-        test('\'hello    world\'', ['$out+="\'hello world\'"'], { compressor });
+        // parseString
+        test('  hello  ', ['$out+=" hello "'], { parseString });
+        test('\n  hello  \n\n.', ['$out+=" hello ."'], { parseString });
+        test('"hello    world"', ['$out+="\\"hello world\\""'], { parseString });
+        test('\'hello    world\'', ['$out+="\'hello world\'"'], { parseString });
     });
 
 
-    describe('addExpression', () => {
+    describe('parseExpression', () => {
         const test = (code, result, options) => {
             it(code, () => {
                 options = Object.assign({}, defaults, options);
                 options.source = '';
                 const compiler = new Compiler(options);
-                compiler.addExpression(code, 1);
+                compiler.parseExpression(code, 1);
                 assert.deepEqual(result, compiler.scripts);
             });
         };
@@ -104,13 +104,13 @@ describe('#compile/compiler', () => {
         test('<%if (value) {%>', ['if (value) {']);
         test('<% if (value) { %>', [' if (value) { ']);
         test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-            compressor
+            parseString
         });
 
 
-        describe('parser', () => {
+        describe('parseExpression', () => {
             test('<%@value%>', ['$out+=value'], {
-                parser: ({ tokens }) => {
+                parseExpression: ({ tokens }) => {
                     if (tokens[0].value === '@') {
                         tokens[0].value = '-';
                     }

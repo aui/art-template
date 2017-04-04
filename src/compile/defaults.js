@@ -23,10 +23,10 @@ const defaults = {
     escape: true,
     // 缓存（依赖 filename 字段）
     cache: cache,
-    // 自定义语法格式器
-    parser: null,
-    // HTML 语句压缩器
-    compressor: null,
+    // 模板逻辑表达式解析器
+    parseExpression: null,
+    // HTML 语句解析器
+    parseString: null,
     // 导入的变量
     imports: imports,
     // 错误处理函数
