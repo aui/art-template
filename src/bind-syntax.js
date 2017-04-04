@@ -23,13 +23,15 @@ const bindSyntax = (options = defaults) => {
     };
 
 
-    options.parser = (code, options, tokens, addContext) => {
+    options.parser = ({ tokens, line, source, compiler }) => {
+
+        const options = compiler.options;
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
-            console.warn('Template Upgrade:',
+            console.warn('Template upgrade example:',
                 `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
-                `\n`, options.filename || '');
+                `\n`, options.filename || '', `${line}:0-${source.length}`);
         };
 
         const escapeSymbol = options.escapeSymbol;
@@ -45,6 +47,7 @@ const bindSyntax = (options = defaults) => {
 
 
         // 输出标志
+        let code = '';
         let inputSymbol = values[0] === rawSymbol ? values.shift() : escapeSymbol;
 
 
@@ -117,7 +120,7 @@ const bindSyntax = (options = defaults) => {
                 const index = values[2] || '$index';
 
                 code = `$each(${object},function(${value},${index}){`;
-                addContext('$each');
+                compiler.addContext('$each');
 
                 break;
 

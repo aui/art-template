@@ -108,16 +108,14 @@ class Compiler {
         let code = expression.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
 
         const tokens = jsTokens.trim(jsTokens.parser(code));
-        const addContext = name => this.addContext(name);
-
 
         // 将数据做为模板渲染函数的作用域
-        jsTokens.namespaces(tokens).forEach(addContext);
+        jsTokens.namespaces(tokens).forEach(name => this.addContext(name));
 
 
         // 外部语法转换函数
         if (parser) {
-            code = parser(code, options, tokens, addContext);
+            code = parser({ tokens, line, source, compiler: this });
         }
 
 

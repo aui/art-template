@@ -13,7 +13,7 @@
     "scripts": {
         "build": "webpack -p",
         "dev": "webpack -w",
-        "publish": "git push && npm run build && npm publish",
+        "publish": "npm run build && npm run test && npm publish",
         "test": "istanbul cover node_modules/mocha/bin/_mocha --colors 'test/**/*.js'",
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
