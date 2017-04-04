@@ -17,7 +17,7 @@
         "test": "istanbul cover node_modules/mocha/bin/_mocha --colors 'test/**/*.js'",
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
-    "main": "lib/template-native.js",
+    "main": "lib/template.js",
     "version": "4.0.0",
     "engines": {
         "node": ">= 4.0.0"

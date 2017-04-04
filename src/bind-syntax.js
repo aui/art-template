@@ -1,8 +1,10 @@
+const defaults = require('./compile/defaults');
+
 /**
- * 设置简洁的模板语法
+ * 绑定超级模板语法
  * @param {Object} options 
  */
-const bindSyntax = (options = {}) => {
+const bindSyntax = (options = defaults) => {
 
     options.openTag = '{{';
     options.closeTag = '}}';

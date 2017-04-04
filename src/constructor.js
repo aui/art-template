@@ -1,6 +1,5 @@
 const render = require('./render');
 const compile = require('./compile');
-const defaults = require('./compile/defaults');
 
 /**
  * 模板引擎
@@ -19,8 +18,5 @@ const template = (filename, content) => {
         });
 };
 
-template.render = render;
-template.compile = compile;
-template.defaults = defaults;
 
 module.exports = template;
