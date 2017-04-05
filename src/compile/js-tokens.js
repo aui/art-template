@@ -41,17 +41,6 @@ const namespaces = tokens => {
 };
 
 
-/**
- * 判断是否为输出表达式
- * @param {Object[]} tokens
- * @return {string[]}
- */
-const isOutputExpression = tokens => {
-    const list = trimRight(tokens);
-    const lastToken = list[list.length - 1];
-    return !!lastToken && (lastToken.value !== `{` && lastToken.value !== `}`);
-};
-
 
 // 根据索引删除列表中空白与注释 token
 const trimByIndex = (tokens, index) => {
@@ -111,7 +100,6 @@ const toString = tokens => {
 module.exports = {
     parser,
     namespaces,
-    isOutputExpression,
     trimLeft,
     trimRight,
     trim,

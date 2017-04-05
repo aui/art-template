@@ -216,44 +216,36 @@ describe('#compile/js-tokens', () => {
     });
 
 
-    describe('is-output-expression', () => {
 
+    /*describe('autocomplete', () => {
         const test = (code, result) => {
             it(code, () => {
-                assert.deepEqual(result, jsTokens.isOutputExpression(jsTokens.parser(code)));
+                const tokens = jsTokens.parser(code);
+                const newTokens = jsTokens.autocomplete(tokens);
+                const newCode = jsTokens.toString(newTokens);
+                assert.deepEqual(result, newCode);
             });
         };
 
+        // (){ => }
+        // (()()){ => }
+        [/(^.*?(?:if|for)\s*\(.*?\)\s*{\s*$)/, '$1}'];
 
-        test('value', true);
-        test(' value ', true);
-        test(' value /**/', true);
-        test(' value /*}{*/', true);
-        test('value + a', true);
-        test('value + 2', true);
-        test('3 + value + 2.3', true);
-        test('value;', true);
-        test('value ? a : b', true);
-        test('value ? a : b ? c : d + 9.9', true);
+        test('if(value){', 'if(value){}');
+        test('for(var i in data){', 'for(var i in data){}');
 
-        test(' ', false);
-        test('/*value*/', false);
+        // ((){ => })
+        [/(^.*?\(\s*function\s*\(.*?\)\s*{$)|(^.*?\(\s*.*=>\s*{$)/, '$1})'];
 
-        test('{', false);
-        test(' { ', false);
-        test('}', false);
-        test(' } ', false);
+        test('each(function(a,b){', 'each(function(a,b){})');
+        test('each((a,b)=>{', 'each(()=>{})');
+        test('each(a=>{', 'each(a=>{})');
 
-        test('if (value) {', false);
-        test(' if (value) { ', false);
-
-        test('for (var i = 0; i < list.length; i++) {', false);
-        test(' for (var i = 0; i < list.length; i++) { ', false);
-
-        test('list.each(function() {', false);
-        test(' list.each(function() { ', false);
-
-
-    });
+        [/^\s*}.*?{?\s*$/, ''];
+        // }{ =>
+        test('}else{', '');
+        // } =>
+        test('}', '');
+    });*/
 
 });

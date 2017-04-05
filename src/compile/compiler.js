@@ -23,6 +23,8 @@ class Compiler {
         // 记录编译后生成的代码
         this.scripts = [];
 
+        this.stack = [];
+
         // 运行时注入的上下文
         this.context = {};
 
@@ -147,8 +149,58 @@ class Compiler {
             this.scripts.push(`$line=[${line},${stringify(source)}]`);
         }
 
+
+        this.stack.push({ source, code, line });
         this.scripts.push(code);
     }
+
+
+
+    // 检查逻辑表达式语法
+    checkExpression(source) {
+
+        const oneLine = source.split(/\n/).length === 1;
+
+        // 单行模板自动补全语法
+        const rules = [
+
+            // <% } %>
+            // <% }else{ %>
+            // <% }else if(a){ %>
+            [/^\s*}.*?{?\s*$/, ''],
+
+            // <% list.forEach(function(a,b){ %>
+            [/(^.*?\(\s*function\s*\(.*?\)\s*{\s*$)/, '$1})'],
+
+            // <% list.forEach((a,b)=>{ %>
+            [/(^.*?\(\s*.*=>\s*{\s*$)/, '$1})'],
+
+            // <% if(a){ %>
+            // <% for(var i in d){ %>
+            [/(^.*?\(.*?\)\s*{\s*$)/, '$1}']
+
+        ];
+
+        if (oneLine) {
+            let index = 0;
+            while (index < rules.length) {
+                if (rules[index][0].test(source)) {
+                    source = source.replace(...rules[index]);
+                    break;
+                }
+                index++;
+            };
+        }
+
+        try {
+            new Function(source);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+
 
 
     // 构建渲染函数
@@ -182,7 +234,8 @@ class Compiler {
                 `name:"Runtime Error"`,
                 `message:e.message`,
                 `line:$line[0]`,
-                `source:$line[1]`
+                `source:$line[1]`,
+                `stack:e.stack`
             ].join(`,`) + '}';
             renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;
         }
@@ -193,12 +246,27 @@ class Compiler {
         try {
             return new Function(IMPORTS, `return ${renderCode}`)(imports);
         } catch (e) {
-            // 编译失败，语法错误
+
+            let index = 0;
+            let line = 0;
+            let source2 = source;
+            let stack = this.stack;
+
+            while (index < stack.length) {
+                if (!this.checkExpression(stack[index].code)) {
+                    source2 = stack[index].source;
+                    line = stack[index].line;
+                    break;
+                }
+                index++;
+            };
+
             throw {
                 path: filename,
                 name: `Compile Error`,
                 message: e.message,
-                source: source,
+                line,
+                source: source2,
                 script: renderCode,
                 stack: e.stack
             };

@@ -148,6 +148,39 @@ describe('#compile/compiler', () => {
     });
 
 
+
+    describe('checkExpression', () => {
+        const test = (code, result, options) => {
+            it(code, () => {
+                options = Object.assign({}, defaults, options);
+                options.source = code;
+                const compiler = new Compiler(options);
+                assert.deepEqual(result, compiler.checkExpression(code));
+            });
+        };
+
+        test('if(a){', true);
+        test('for(var i in d){', true);
+        test('list.forEach(function(a,b){', true);
+        test('list.forEach((a,b)=>{', true);
+        test('}else if(a){', true);
+        test('}else{', true);
+        test('}', true);
+
+        test('if(a){}', true);
+        test('for(var i in d){}', true);
+        test('list.forEach(function(a,b){})', true);
+        test('list.forEach((a,b)=>{})', true);
+
+        test('@if(a){', false);
+        test('@for(var i in d){', false);
+        test('@list.forEach(function(a,b){', false);
+        test('@list.forEach((a,b)=>{', false);
+
+    });
+
+
+
     describe('build', () => {
         const test = (code, result, options) => {
             it(code, () => {
