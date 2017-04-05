@@ -23,6 +23,7 @@ class Compiler {
         // 记录编译后生成的代码
         this.scripts = [];
 
+        // 记录编译时调试语句
         this.stack = [];
 
         // 运行时注入的上下文
@@ -159,9 +160,7 @@ class Compiler {
     // 检查逻辑表达式语法
     checkExpression(source) {
 
-        const oneLine = source.split(/\n/).length === 1;
-
-        // 单行模板自动补全语法
+        // 没有闭合的块级模板语句规则
         const rules = [
 
             // <% } %>
@@ -181,16 +180,16 @@ class Compiler {
 
         ];
 
-        if (oneLine) {
-            let index = 0;
-            while (index < rules.length) {
-                if (rules[index][0].test(source)) {
-                    source = source.replace(...rules[index]);
-                    break;
-                }
-                index++;
-            };
-        }
+
+        let index = 0;
+        while (index < rules.length) {
+            if (rules[index][0].test(source)) {
+                source = source.replace(...rules[index]);
+                break;
+            }
+            index++;
+        };
+
 
         try {
             new Function(source);
