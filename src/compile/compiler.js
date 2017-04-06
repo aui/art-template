@@ -17,14 +17,10 @@ class Compiler {
         const root = options.root;
         const source = options.source;
 
-        this.source = source;
         this.options = options;
 
         // 记录编译后生成的代码
         this.scripts = [];
-
-        // 记录编译时调试语句
-        this.stack = [];
 
         // 运行时注入的上下文
         this.context = {};
@@ -95,7 +91,7 @@ class Compiler {
         }
 
         const code = `$out+=${stringify(source)}`;
-        this.scripts.push(code);
+        this.scripts.push({ source, line, code });
     }
 
 
@@ -147,12 +143,11 @@ class Compiler {
 
 
         if (compileDebug) {
-            this.scripts.push(`$line=[${line},${stringify(source)}]`);
+            code = `$line=[${line},${stringify(source)}];\n${code}`;
         }
 
 
-        this.stack.push({ source, code, line });
-        this.scripts.push(code);
+        this.scripts.push({ source, line, code });
     }
 
 
@@ -207,16 +202,16 @@ class Compiler {
 
         const options = this.options;
         const context = this.context;
-        const source = this.source;
+        const scripts = this.scripts;
+        const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
 
 
         const useStrictCode = `"use strict"`;
         const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
-        const scriptsCode = this.scripts.join(`;\n`);
+        const scriptsCode = scripts.map(script => script.code).join(`;\n`);
         const returnCode = `return $out`;
-
 
         let renderCode = [
             useStrictCode,
@@ -249,12 +244,11 @@ class Compiler {
             let index = 0;
             let line = 0;
             let source2 = source;
-            let stack = this.stack;
 
-            while (index < stack.length) {
-                if (!this.checkExpression(stack[index].code)) {
-                    source2 = stack[index].source;
-                    line = stack[index].line;
+            while (index < scripts.length) {
+                if (!this.checkExpression(scripts[index].code)) {
+                    source2 = scripts[index].source;
+                    line = scripts[index].line;
                     break;
                 }
                 index++;

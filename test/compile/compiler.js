@@ -60,7 +60,7 @@ describe('#compile/compiler', () => {
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.parseString(code);
-                assert.deepEqual(result, compiler.scripts);
+                assert.deepEqual(result, compiler.scripts.map(script => script.code));
             });
         };
 
@@ -86,7 +86,7 @@ describe('#compile/compiler', () => {
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.parseExpression(code, 1);
-                assert.deepEqual(result, compiler.scripts);
+                assert.deepEqual(result, compiler.scripts.map(script => script.code));
             });
         };
 
@@ -120,7 +120,7 @@ describe('#compile/compiler', () => {
 
 
         describe('compileDebug', () => {
-            test('<%-value%>', ['$line=[1,"<%-value%>"]', '$out+=value'], {
+            test('<%-value%>', ['$line=[1,\"<%-value%>\"];\n$out+=value'], {
                 compileDebug: true
             });
         });
@@ -133,7 +133,7 @@ describe('#compile/compiler', () => {
                 options = Object.assign({}, defaults, options);
                 options.source = code;
                 const compiler = new Compiler(options);
-                assert.deepEqual(result, compiler.scripts);
+                assert.deepEqual(result, compiler.scripts.map(script => script.code));
             });
         };
 
@@ -188,7 +188,7 @@ describe('#compile/compiler', () => {
                 options.source = code;
                 const compiler = new Compiler(options);
                 compiler.build();
-                assert.deepEqual(result, compiler.scripts);
+                assert.deepEqual(result, compiler.scripts.map(script => script.code));
             });
         };
 
@@ -204,7 +204,7 @@ describe('#compile/compiler', () => {
         test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
 
         describe('compileDebug', () => {
-            test('<%-value%>', ['$line=[1,"<%-value%>"]', '$out+=value'], {
+            test('<%-value%>', ['$line=[1,\"<%-value%>\"];\n$out+=value'], {
                 compileDebug: true
             });
         });
