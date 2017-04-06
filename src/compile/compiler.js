@@ -110,6 +110,8 @@ class Compiler {
 
         // ... v3 compat ...
         let code = expression.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
+        // ... ejs compat ...
+        code = code.replace(/^#/, '//').replace(/-$/, '');
 
         const tokens = jsTokens.trim(jsTokens.parser(code));
 
