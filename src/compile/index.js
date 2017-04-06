@@ -52,10 +52,10 @@ const compile = (source, options = {}) => {
                 stack: e.stack
             };
 
-            if (options.onerror) {
-                return options.onerror(error);
-            } else {
+            if (options.bail) {
                 throw error;
+            } else {
+                return options.debug(error);
             }
 
         }
@@ -77,10 +77,10 @@ const compile = (source, options = {}) => {
                 return compile(options)(data);
             }
 
-            if (options.onerror) {
-                return options.onerror(e)();
-            } else {
+            if (options.bail) {
                 throw e;
+            } else {
+                return options.debug(e)();
             }
 
         }
@@ -96,10 +96,10 @@ const compile = (source, options = {}) => {
         }
 
     } catch (e) {
-        if (options.onerror) {
-            return options.onerror(e);
-        } else {
+        if (options.bail) {
             throw e;
+        } else {
+            return options.debug(e);
         }
     }
 

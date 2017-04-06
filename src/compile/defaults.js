@@ -1,4 +1,4 @@
-const onerror = require('./adapter/onerror');
+const debug = require('./adapter/debug');
 const imports = require('./adapter/imports');
 const cache = require('./adapter/cache');
 
@@ -27,12 +27,14 @@ const defaults = {
     parseExpression: null,
     // HTML 语句解析器
     parseString: null,
-    // 导入的变量
+    // 导入的模板变量
     imports: imports,
-    // 错误处理函数
-    onerror: onerror,
-    // 编译调试版
+    // 调试处理函数
+    debug: debug,
+    // 是否编译调试版
     compileDebug: false,
+    // bail 如果为 true，编译错误与运行时错误都会抛出异常
+    bail: false,
     // 模板根目录（Node）
     root: '/',
     // 模板扩展名（Node, 只读）

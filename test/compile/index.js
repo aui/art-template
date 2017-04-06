@@ -5,7 +5,7 @@ describe('#compile/index', () => {
     const test = (code, data, result) => {
         it(code, () => {
             const render = compile(code, {
-                onerror: null
+                bail: true
             });
             const html = render(data);
             assert.deepEqual(result, html);
@@ -39,7 +39,7 @@ describe('#compile/index', () => {
         it('throw error: Runtime Error', () => {
             const render = compile({
                 source: '<%=a.b.c%>',
-                onerror: null
+                bail: true
             });
 
             try {
@@ -53,7 +53,7 @@ describe('#compile/index', () => {
             try {
                 compile({
                     filename: '/404.html',
-                    onerror: null
+                    bail: true
                 });
             } catch (e) {
                 assert.deepEqual('Compile Error', e.name);
@@ -63,7 +63,7 @@ describe('#compile/index', () => {
         it('throw error: Compile Error', () => {
             try {
                 const render = compile('<%=a b c%>', {
-                    onerror: null
+                    bail: true
                 });
                 render({});
             } catch (e) {
