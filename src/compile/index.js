@@ -35,6 +35,8 @@ const compile = (source, options = {}) => {
     options = getOptions(options, defaults);
     source = options.source;
 
+    const debug = options.debug;
+
 
     // 加载外部模板
     if (!source) {
@@ -53,9 +55,10 @@ const compile = (source, options = {}) => {
             };
 
             if (options.bail) {
+                debug(error)();
                 throw error;
             } else {
-                return options.debug(error);
+                return debug(error);
             }
 
         }
@@ -78,9 +81,10 @@ const compile = (source, options = {}) => {
             }
 
             if (options.bail) {
+                debug(e)();
                 throw e;
             } else {
-                return options.debug(e)();
+                return debug(e)();
             }
 
         }
@@ -97,9 +101,10 @@ const compile = (source, options = {}) => {
 
     } catch (e) {
         if (options.bail) {
+            debug(e)()
             throw e;
         } else {
-            return options.debug(e);
+            return debug(e);
         }
     }
 
