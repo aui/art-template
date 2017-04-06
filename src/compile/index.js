@@ -1,6 +1,5 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
-const getOptions = require('./get-options');
 const tplLoader = require('./tpl-loader');
 const tplPath = require('./tpl-path.js');
 
@@ -19,23 +18,23 @@ const compile = (source, options = {}) => {
         options.source = source;
     }
 
+    // 合并默认配置
+    options = defaults.$extend(options);
+    source = options.source;
+
+
+    const debug = options.debug;
+    const filename = options.filename;
+    const cache = options.cache;
+
 
     // 匹配缓存
-    const filename = options.filename;
-    const cache = options.cache !== undefined ? options.cache : defaults.cache
     if (cache && filename) {
         const render = cache.get(filename);
         if (render) {
             return render;
         }
     }
-
-
-    // 合并默认配置
-    options = getOptions(options, defaults);
-    source = options.source;
-
-    const debug = options.debug;
 
 
     // 加载外部模板

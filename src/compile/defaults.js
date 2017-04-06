@@ -38,7 +38,17 @@ const defaults = {
     // 模板根目录（Node）
     root: '/',
     // 模板扩展名（Node, 只读）
-    extname: '.html'
+    extname: '.html',
+
+    $extend: function(options) {
+        const copy = Object.create(this);
+        for (let name in options) {
+            copy[name] = options[name]
+        }
+        copy.imports.$escape = imports.$escape;
+        copy.imports.$include = imports.$include;
+        return copy;
+    }
 };
 
 module.exports = defaults;

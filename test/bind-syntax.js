@@ -2,7 +2,7 @@ const assert = require('assert');
 const compile = require('../src/compile');
 const bindSyntax = require('../src/bind-syntax');
 const defaults = require('../src/compile/defaults');
-const options = bindSyntax({ imports: defaults.imports });
+const options = bindSyntax({});
 
 describe('#bind-syntax', () => {
     const test = (code, data, result) => {

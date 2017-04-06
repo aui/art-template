@@ -1,7 +1,6 @@
 const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
-const getOptions = require('../../src/compile/get-options');
 
 const parseString = ({ source }) => {
     return source
@@ -14,7 +13,7 @@ describe('#compile/compiler', () => {
     describe('parseContext', () => {
         const test = (code, result, options) => {
             it(code, () => {
-                options = getOptions(options, defaults);
+                options = defaults.$extend(options);
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.parseContext(code);
