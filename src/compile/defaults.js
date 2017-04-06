@@ -38,7 +38,7 @@ const defaults = {
     // 模板根目录（Node）
     root: '/',
     // 模板扩展名（Node, 只读）
-    extension: '.html'
+    extname: '.html'
 };
 
 module.exports = defaults;
