@@ -9,6 +9,7 @@ const bindSyntax = (options = defaults) => {
     options.openTag = '{{';
     options.closeTag = '}}';
     options.rawSymbol = '@';
+    options.imports = options.imports || {};
 
     options.imports.$each = (data, callback) => {
         if (Array.isArray(data)) {
@@ -204,10 +205,18 @@ const bindSyntax = (options = defaults) => {
                     code = `${key}(${values.join(',')})`;
                     inputSymbol = rawSymbol;
 
+                } else {
+                    code = `${key}${code}`;
                 }
 
-                // value
-                code = inputSymbol + code;
+
+                if (inputSymbol === rawSymbol) {
+                    code = `$out+=${code}`;
+                } else {
+                    code = `$out+=$escape(${code})`;
+                    compiler.parseContext(`$escape`);
+                }
+
 
                 break;
         }

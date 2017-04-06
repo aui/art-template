@@ -118,28 +118,30 @@ class Compiler {
         // 将数据做为模板渲染函数的作用域
         jsTokens.namespaces(tokens).forEach(name => this.parseContext(name));
 
-
-        // 外部语法转换函数
         if (parseExpression) {
+
+            // 外部语法转换函数
             code = parseExpression({ tokens, line, source, compiler: this });
-        }
+
+        } else {
 
 
-        // 处理输出语句
-        const firstToken = tokens[0];
-        const isRaw = firstToken && firstToken.value === rawSymbol;
-        const isEscape = firstToken && firstToken.value === escapeSymbol;
-        const isOutput = isRaw || isEscape;
+            const firstToken = tokens[0];
+            const isRaw = firstToken && firstToken.value === rawSymbol;
+            const isEscape = firstToken && firstToken.value === escapeSymbol;
+            const isOutput = isRaw || isEscape;
 
-        if (isOutput) {
-            tokens.shift();
-            code = jsTokens.toString(tokens);
+            // 处理输出语句
+            if (isOutput) {
+                tokens.shift();
+                code = jsTokens.toString(tokens);
 
-            if (escape === false || isRaw) {
-                code = `$out+=${code}`;
-            } else {
-                code = `$out+=$escape(${code})`;
-                this.parseContext(`$escape`);
+                if (escape === false || isRaw) {
+                    code = `$out+=${code}`;
+                } else {
+                    code = `$out+=$escape(${code})`;
+                    this.parseContext(`$escape`);
+                }
             }
         }
 

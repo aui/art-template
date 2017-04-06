@@ -9,15 +9,14 @@ const templatePath = require.resolve('./template');
  */
 const bindExtname = (require, extname = defaults.extname) => {
 
-    if (!detectNode) {
-        return;
+    if (detectNode) {
+        require.extensions[extname] = (module, flnm) => {
+            const filename = flnm || module.filename;
+            const imports = `var template=require(${JSON.stringify(templatePath)})`;
+            module._compile(`${imports};\module.exports = template.compile({filename:${JSON.stringify(filename)}});`, filename);
+        };
     }
 
-    require.extensions[extname] = (module, flnm) => {
-        const filename = flnm || module.filename;
-        const imports = `var template=require(${JSON.stringify(templatePath)})`;
-        module._compile(`${imports};\module.exports = template.compile({filename:${JSON.stringify(filename)}});`, filename);
-    };
 };
 
 

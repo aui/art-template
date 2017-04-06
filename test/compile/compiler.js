@@ -110,10 +110,8 @@ describe('#compile/compiler', () => {
 
         describe('parseExpression', () => {
             test('<%@value%>', ['$out+=value'], {
-                parseExpression: ({ tokens }) => {
-                    if (tokens[0].value === '@') {
-                        tokens[0].value = '-';
-                    }
+                parseExpression: ({ source }) => {
+                    return source.replace(/<%@(.*?)%>/, '$out+=$1');
                 }
             });
         });
