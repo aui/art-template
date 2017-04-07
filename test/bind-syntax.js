@@ -65,11 +65,11 @@ describe('#bind-syntax', () => {
 
         test(`{{print "hello" ', ' "world"}}`, {}, `hello, world`);
         test(`{{value | brackets}}`, { value: '糖饼' }, '『糖饼』');
-        test(`{{time | dateFormat 'yyyy-MM-dd hh:mm:ss'}}`, { time: 1491566794863 }, `2017-04-07 20:06:34`);
-        test(`{{time|dateFormat 'yyyy-MM-dd hh:mm:ss'}}`, { time: 1491566794863 }, `2017-04-07 20:06:34`);
-        test(`{{time | dateFormat 'yyyy-MM-dd hh:mm:ss' | brackets}}`, { time: 1491566794863 }, `『2017-04-07 20:06:34』`);
-        test(`{{time * 1000 | dateFormat 'yyyy-MM-dd hh:mm:ss'}}`, { time: 1491566794 }, `2017-04-07 20:06:34`);
-        test(`{{time | dateFormat:'yyyy-MM-dd hh:mm:ss'}}`, { time: 1491566794863 }, `2017-04-07 20:06:34`); // ... v3 compat ...
+        test(`{{time | dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`);
+        test(`{{time|dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`);
+        test(`{{time | dateFormat 'yyyy-MM-dd' | brackets}}`, { time: 1491566794863 }, `『2017-04-07』`);
+        test(`{{time * 1000 | dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794 }, `2017-04-07`);
+        test(`{{time | dateFormat:'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`); // ... v3 compat ...
         test(`{{brackets value}}`, { value: '糖饼' }, '『糖饼』'); // ... v3 compat ...
     });
 
