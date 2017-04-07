@@ -19,24 +19,24 @@ describe('#compile/index', () => {
 
 
     describe('errors', () => {
-        it('Runtime Error', () => {
+        it('RuntimeError', () => {
             const render = compile('<%=a.b.c%>');
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('Compile Error', () => {
+        it('CompileError', () => {
             const render = compile('<%=a b c%>');
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('Compile Error: Template not found', () => {
+        it('CompileError: Template not found', () => {
             const render = compile({
                 filename: '/404.html'
             });
             assert.deepEqual('{Template Error}', render({}));
         });
 
-        it('throw error: Runtime Error', () => {
+        it('throw error: RuntimeError', () => {
             const render = compile({
                 source: '<%=a.b.c%>',
                 bail: true
@@ -45,29 +45,29 @@ describe('#compile/index', () => {
             try {
                 render({});
             } catch (e) {
-                assert.deepEqual('Runtime Error', e.name);
+                assert.deepEqual('RuntimeError', e.name);
             }
         });
 
-        it('throw error: Compile Error: Template not found', () => {
+        it('throw error: CompileError: Template not found', () => {
             try {
                 compile({
                     filename: '/404.html',
                     bail: true
                 });
             } catch (e) {
-                assert.deepEqual('Compile Error', e.name);
+                assert.deepEqual('CompileError', e.name);
             }
         });
 
-        it('throw error: Compile Error', () => {
+        it('throw error: CompileError', () => {
             try {
                 const render = compile('<%=a b c%>', {
                     bail: true
                 });
                 render({});
             } catch (e) {
-                assert.deepEqual('Compile Error', e.name);
+                assert.deepEqual('CompileError', e.name);
             }
         });
 

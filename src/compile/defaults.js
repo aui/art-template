@@ -54,7 +54,7 @@ const defaults = {
     // 模板根目录。Node 环境专用
     root: '/',
 
-    // 模板扩展名。Node 环境专用，template.bindExtname() 的默认配置
+    // 绑定的模板扩展名。Node 环境专用，template.bindExtname() 的默认配置
     extname: '.html',
 
     /**

@@ -236,7 +236,7 @@ class Compiler {
         if (options.compileDebug) {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,
-                `name:"Runtime Error"`,
+                `name:"RuntimeError"`,
                 `message:e.message`,
                 `line:$line[0]`,
                 `source:$line[1]`,
@@ -267,7 +267,7 @@ class Compiler {
 
             throw {
                 path: filename,
-                name: `Compile Error`,
+                name: `CompileError`,
                 message: e.message,
                 line,
                 source: source2,

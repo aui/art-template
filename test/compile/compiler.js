@@ -207,7 +207,7 @@ describe('#compile/compiler', () => {
         });
 
 
-        describe('Compile Error`', () => {
+        describe('CompileError`', () => {
             it('throw', () => {
                 const options = Object.create(defaults);
                 options.source = 'hello\n\n<% a b c d %>';
@@ -216,7 +216,7 @@ describe('#compile/compiler', () => {
                 try {
                     compiler.build();
                 } catch (e) {
-                    assert.deepEqual('Compile Error', e.name);
+                    assert.deepEqual('CompileError', e.name);
                     assert.deepEqual(3, e.line);
                 }
             });

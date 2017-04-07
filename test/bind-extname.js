@@ -21,21 +21,21 @@ describe('#bind-extname', () => {
         assert.deepEqual('hello world', render({}));
     });
 
-    it('compile error: bail=false', () => {
+    it('CompileError: bail=false', () => {
         defaults.bail = false;
         const render = require(path.join(__dirname, 'res', 'bind-extname.compile-error.tpl'));
         assert.deepEqual('{Template Error}', render({}));
         defaults.bail = resetBail;
     });
 
-    it('compile error: bail=true', () => {
+    it('CompileError: bail=true', () => {
         defaults.bail = true;
         let runder;
 
         try {
             runder = require(path.join(__dirname, 'res', 'bind-extname.compile-error.2.tpl'));
         } catch (e) {
-            assert.deepEqual('Compile Error', e.name);
+            assert.deepEqual('CompileError', e.name);
         }
 
         assert.deepEqual('undefined', typeof runder);
@@ -43,7 +43,7 @@ describe('#bind-extname', () => {
     });
 
 
-    it('runtime error: bail=false', () => {
+    it('RuntimeError: bail=false', () => {
         defaults.bail = false;
         const render = require(path.join(__dirname, 'res', 'bind-extname.runtime-error.tpl'));
         assert.deepEqual('{Template Error}', render({}));
@@ -51,13 +51,13 @@ describe('#bind-extname', () => {
     });
 
 
-    it('runtime error: bail=true', () => {
+    it('RuntimeError: bail=true', () => {
         defaults.bail = true;
         try {
             const render = require(path.join(__dirname, 'res', 'bind-extname.runtime-error.2.tpl'));
             render({});
         } catch (e) {
-            assert.deepEqual('Runtime Error', e.name);
+            assert.deepEqual('RuntimeError', e.name);
         }
         defaults.bail = resetBail;
     });
