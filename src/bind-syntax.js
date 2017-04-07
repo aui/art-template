@@ -37,7 +37,7 @@ const bindSyntax = (options = defaults) => {
 
         const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
-        const values = tokens.map(token => token.value).filter(value => /^\S+$/.test(value));
+        const values = tokens.map(token => token.value).filter(value => !/^\s+$/.test(value));
 
 
         // v3 compat: #value

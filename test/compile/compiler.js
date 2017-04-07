@@ -117,7 +117,7 @@ describe('#compile/compiler', () => {
 
 
         describe('compileDebug', () => {
-            test('<%-value%>', ['$line=[1,\"<%-value%>\"];\n$out+=value'], {
+            test('<%-value%>', ['$line=[1,\"<%-value%>\"]', '$out+=value'], {
                 compileDebug: true
             });
         });
@@ -201,7 +201,7 @@ describe('#compile/compiler', () => {
         test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
 
         describe('compileDebug', () => {
-            test('<%-value%>', ['$line=[1,\"<%-value%>\"];\n$out+=value'], {
+            test('<%-value%>', ['$line=[1,\"<%-value%>\"]', '$out+=value'], {
                 compileDebug: true
             });
         });

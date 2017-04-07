@@ -7,9 +7,7 @@ const IMPORTS = `$imports`;
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
-/**
- * @class Compiler
- */
+/** @class Compiler */
 class Compiler {
     /**
      * 模板编译器
@@ -154,7 +152,7 @@ class Compiler {
 
 
         if (compileDebug) {
-            code = `$line=[${line},${stringify(source)}];\n${code}`;
+            this.scripts.push({ source, line, code: `$line=[${line},${stringify(source)}]` });
         }
 
 
