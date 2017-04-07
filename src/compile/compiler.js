@@ -7,8 +7,14 @@ const IMPORTS = `$imports`;
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
-
+/**
+ * @class Compiler
+ */
 class Compiler {
+    /**
+     * 模板编译器
+     * @param   {Object}    options
+     */
     constructor(options) {
 
         const openTag = options.openTag;
@@ -107,9 +113,10 @@ class Compiler {
         const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
         const expression = source.replace(openTag, ``).replace(closeTag, ``);
+        let code = expression;
 
         // ... v3 compat ...
-        let code = expression.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
+        code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
         // ... ejs compat ...
         code = code.replace(/^#/, '//').replace(/-$/, '');
 
