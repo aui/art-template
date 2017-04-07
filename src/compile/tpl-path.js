@@ -9,6 +9,7 @@ const detectNode = require('detect-node');
  * @returns {string}
  */
 const tplPath = (filename, root, base) => {
+    /* istanbul ignore else  */
     if (detectNode) {
         const dirname = base ? path.dirname(base) : '';
         return path.resolve(root, dirname, filename);

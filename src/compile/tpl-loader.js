@@ -5,6 +5,7 @@
  */
 const detectNode = require('detect-node');
 const tplLoader = filename => {
+    /* istanbul ignore else  */
     if (detectNode) {
         const fs = require('fs');
         return fs.readFileSync(filename, 'utf8');

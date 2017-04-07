@@ -4,7 +4,6 @@ const version = require('./package.json').version;
 
 module.exports = {
     entry: {
-        'template-core': './src/template.js',
         'template': './src/index.js'
     },
     output: {

@@ -210,13 +210,14 @@ describe('#compile/compiler', () => {
         describe('Compile Error`', () => {
             it('throw', () => {
                 const options = Object.create(defaults);
-                options.source = '<% a b c d %>';
+                options.source = 'hello\n\n<% a b c d %>';
                 const compiler = new Compiler(options);
 
                 try {
                     compiler.build();
                 } catch (e) {
                     assert.deepEqual('Compile Error', e.name);
+                    assert.deepEqual(3, e.line);
                 }
             });
         });

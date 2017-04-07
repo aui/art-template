@@ -1,6 +1,6 @@
 const defaults = require('./compile/defaults');
 const detectNode = require('detect-node');
-const templatePath = require.resolve('./template');
+const templatePath = require.resolve('./index');
 
 /**
  * 绑定模板文件后缀名，以让 NodeJS 支持 `require(templateFile)`
