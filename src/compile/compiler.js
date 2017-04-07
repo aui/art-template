@@ -115,8 +115,6 @@ class Compiler {
 
         // ... v3 compat ...
         code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
-        // ... ejs compat ...
-        code = code.replace(/^#/, '//').replace(/-$/, '');
 
         const tokens = jsTokens.trim(jsTokens.parser(code));
 
@@ -149,6 +147,10 @@ class Compiler {
                 }
             }
         }
+
+
+        // ... ejs compat ...
+        code = code.replace(/^#/, '//').replace(/-$/, '');
 
 
         if (compileDebug) {

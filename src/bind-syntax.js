@@ -53,7 +53,7 @@ const bindSyntax = (options = defaults) => {
 
 
         const close = values[0] === '/' ? values.shift() : '';
-        const key = close + values.shift();
+        let key = close + values.shift();
 
         switch (key) {
 
@@ -62,11 +62,11 @@ const bindSyntax = (options = defaults) => {
                 // % for (var i = 0; i < data.length; i++){} %
                 tokens.shift();
 
-                if (tokens[tokens.length - 1] === key) {
+                if (tokens[tokens.length - 1].value === key) {
                     tokens.pop();
                 }
 
-                code = tokens.join('');
+                code = tokens.map(token => token.value).join('');
                 break;
 
             case 'set':
@@ -136,8 +136,7 @@ const bindSyntax = (options = defaults) => {
                 // echo value
                 // echo value value2 value3
                 // echo(value + 1, value2)
-                code = `print(${values.join(',')});`;
-                break;
+                key = 'print';
 
             case 'print':
             case 'include':
@@ -148,6 +147,7 @@ const bindSyntax = (options = defaults) => {
                 // include './header' context
                 // include(name + '.html', context)
                 code = `${key}(${values.join(',')});`;
+                compiler.parseContext(key);
                 break;
 
             default:
@@ -179,7 +179,9 @@ const bindSyntax = (options = defaults) => {
 
                     // 将过滤器解析成二维数组
                     // group => [['filter1'], [['filter2', 'argv1', 'argv2']]
-                    values.filter(v => v !== v3split).forEach(value => {
+                    values.filter(v => {
+                        return v !== v3split;
+                    }).forEach(value => {
                         if (value === '|') {
                             group.push([]);
                         } else {
@@ -206,7 +208,7 @@ const bindSyntax = (options = defaults) => {
                     inputSymbol = rawSymbol;
 
                 } else {
-                    code = `${key}${code}`;
+                    code = `${key}${values.join('')}`;
                 }
 
 
