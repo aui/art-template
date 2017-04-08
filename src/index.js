@@ -1,7 +1,6 @@
 const render = require('./render');
 const compile = require('./compile');
 const defaults = require('./compile/defaults');
-const bindSyntax = require('./bind-syntax');
 const bindExtname = require('./bind-extname');
 
 /**
@@ -25,8 +24,9 @@ template.render = render;
 template.compile = compile;
 template.defaults = defaults;
 template.bindExtname = bindExtname;
-template.bindSyntax = bindSyntax;
 template.cache = defaults.cache;
 template.imports = defaults.imports;
+
+bindExtname(require);
 
 module.exports = template;

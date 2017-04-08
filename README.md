@@ -9,11 +9,10 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 ``NEW! v4.0``
 
-1. 调试功能增强：支持编译阶段捕获语法错误具体行
-2. 支持原生 Javascript 语法与简约语法混合书写
-3. 兼容 Ejs 模板语法
-4. NodeJS 支持 `require(templatePath)` 方式载入模板（参考 `template.bindExtname(extname)`）
-6. 兼容 v3.0 模板语法，并解决简洁语法中空格可能导致出错的问题
+1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板语句
+2. 同时支持原生 Javascript 语法、简约语法
+3. 兼容 Ejs 模板语法，兼容 v3.0 模板语法，并解决简洁语法中空格可能导致出错的问题
+4. NodeJS 支持 `require(templatePath)` 方式载入 `.html` 模板
 
 ## 特性
 
@@ -160,6 +159,8 @@ template.imports.$dateFormat = function(date, format){/*[code..]*/};
 {{time * 1000 | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
 ```
 
+你可以使用 `|` 将多个过滤器连接起来，它依次会从左到右执行。
+
 ```html
 <%= $dateFormat(time * 1000, 'yyyy-MM-dd hh:mm:ss') %>
 ```
@@ -297,11 +298,11 @@ template.imports.$parseInt = parseInt;
 
 **注入全局变量**
 
-模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用。
-
 ```javascript
 template.imports.$console = console;
 ```
+
+模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用，并且要在编译之前进行声明。
 
 ## 选项
 
