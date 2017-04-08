@@ -81,7 +81,7 @@ const syntax = {
                 // object 'as' value
                 // object 'as' value index
                 if (values[1] === 'as') {
-                    upgrade('each object \'as\' value index', 'each object value index');
+                    upgrade('each object as value index', 'each object value index');
                     values.splice(1, 1);
                 }
 
