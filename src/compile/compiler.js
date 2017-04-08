@@ -7,7 +7,6 @@ const IMPORTS = `$imports`;
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
-/** @class Compiler */
 class Compiler {
     /**
      * 模板编译器
@@ -15,8 +14,6 @@ class Compiler {
      */
     constructor(options) {
 
-        const openTag = options.openTag;
-        const closeTag = options.closeTag;
         const filename = options.filename;
         const root = options.root;
         const source = options.source;
@@ -38,28 +35,28 @@ class Compiler {
         };
 
 
-        this.parseContext(`$out`);
+        this.importContext(`$out`);
 
         if (options.compileDebug) {
-            this.parseContext(`$line`);
+            this.importContext(`$line`);
         }
 
 
-        tplTokens.parser(source, openTag, closeTag).forEach(token => {
+        tplTokens.parser(source, options.syntax).forEach(token => {
+
             const type = token.type;
-            const value = token.value;
-            const line = token.line;
+
             if (type === `string`) {
-                this.parseString(value, line);
+                this.parseString(token);
             } else if (type === `expression`) {
-                this.parseExpression(value, line);
+                this.parseExpression(token);
             }
         });
 
     }
 
-    // 解析上下文
-    parseContext(name) {
+    // 导入上下文
+    importContext(name) {
 
         let value = ``;
         const internal = this.internal;
@@ -86,12 +83,15 @@ class Compiler {
 
 
     // 解析字符串（HTML）直接输出语句
-    parseString(source, line) {
-        const options = this.options;
-        const parseString = options.parseString;
+    parseString(tplToken) {
 
-        if (parseString) {
-            source = parseString({ line, source, compiler: this });
+        let source = tplToken.value;
+        const line = tplToken.line;
+        const options = this.options;
+        const compress = options.compress;
+
+        if (compress) {
+            source = compress({ line, source, compiler: this });
         }
 
         const code = `$out+=${stringify(source)}`;
@@ -100,69 +100,36 @@ class Compiler {
 
 
     // 解析逻辑表达式语句
-    parseExpression(source, line) {
+    parseExpression(tplToken) {
 
+        const source = tplToken.value;
+        const line = tplToken.line;
         const options = this.options;
-        const openTag = options.openTag;
-        const closeTag = options.closeTag;
-        const rawSymbol = options.rawSymbol;
-        const escapeSymbol = options.escapeSymbol;
-        const escape = options.escape;
         const compileDebug = options.compileDebug;
-        const parseExpression = options.parseExpression;
+
+        let code = tplToken.code;
+        const jsToken = jsTokens.trim(jsTokens.parser(code));
+
+        jsTokens.namespaces(jsToken).forEach(name => this.importContext(name));
+        tplToken = tplToken.parser({ tplToken, jsToken, compiler: this });
 
 
-
-        const expression = source.replace(openTag, ``).replace(closeTag, ``);
-        let code = expression;
-
-        // ... v3 compat ...
-        code = code.replace(/^=[=#]/, rawSymbol).replace(/^=/, escapeSymbol);
-
-        const tokens = jsTokens.trim(jsTokens.parser(code));
-
-        // 将数据做为模板渲染函数的作用域
-        jsTokens.namespaces(tokens).forEach(name => this.parseContext(name));
-
-        if (parseExpression) {
-
-            // 外部语法转换函数
-            code = parseExpression({ tokens, line, source, compiler: this });
-
-        } else {
-
-
-            const firstToken = tokens[0];
-            const isRaw = firstToken && firstToken.value === rawSymbol;
-            const isEscape = firstToken && firstToken.value === escapeSymbol;
-            const isOutput = isRaw || isEscape;
-
-            // 处理输出语句
-            if (isOutput) {
-                tokens.shift();
-                code = jsTokens.toString(tokens);
-
-                // ... ejs compat ...
-                code = code.replace(/-$/, '');
-
-                if (escape === false || isRaw) {
-                    code = `$out+=${code}`;
-                } else {
-                    code = `$out+=$escape(${code})`;
-                    this.parseContext(`$escape`);
-                }
+        if (tplToken.output) {
+            if (escape === false || tplToken.output === 'RAW') {
+                code = `$out+=${tplToken.code}`;
             } else {
-
-                // ... ejs compat ...
-                code = code.replace(/^#/, '//');
+                code = `$out+=$escape(${tplToken.code})`;
+                this.importContext(`$escape`);
             }
+        } else {
+            code = tplToken.code;
         }
-
 
 
         if (compileDebug) {
             this.scripts.push({ source, line, code: `$line=[${line},${stringify(source)}]` });
         }
+
 
         this.scripts.push({ source, line, code });
     }

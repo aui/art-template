@@ -3,7 +3,7 @@ const bindExtname = require('../src/bind-extname');
 const defaults = require('../src/compile/defaults');
 const path = require('path');
 const resetBail = defaults.bail;
-
+const extname = defaults.extname;
 
 describe('#bind-extname', () => {
 
@@ -61,5 +61,8 @@ describe('#bind-extname', () => {
         }
         defaults.bail = resetBail;
     });
+
+
+    defaults.extname = extname;
 
 });

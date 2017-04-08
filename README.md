@@ -11,10 +11,9 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 1. 调试功能增强：支持编译阶段捕获语法错误具体行
 2. 兼容 Ejs 模板语法
-3. 支持原生语法与简洁语法混搭（参考 `template.bindSyntax()`）
+3. 支持原生 Javascript 语法与简约语法混合书写
 4. NodeJS 支持 `require(templatePath)` 方式载入模板（参考 `template.bindExtname(extname)`）
-5. 兼容 v3.0 模板语法
-6. 修复旧版本模板语法可能因为空格导致出错的问题
+6. 兼容 v3.0 模板语法，并解决简洁语法中空格可能导致出错的问题
 
 ## 特性
 
@@ -53,7 +52,20 @@ template.render(source, data, options); // => Rendered HTML string
 
 ## 语法
 
-### 默认语法
+art-template 同时支持 `{{expression}}` 简约语法与 javascript 原生语法 `<% expression %>`。
+
+```html
+{{if user}}
+  <h2>{{user.name}}</h2>
+  <ul>
+    {{each user.tags}}
+        {{$value}}
+    {{/each}}
+  </ul>
+{{/if}}
+```
+
+等价：
 
 ```html
 <% if (user) { %>
@@ -69,46 +81,11 @@ template.render(source, data, options); // => Rendered HTML string
 **编码后输出**
 
 ```html
-<%= value %>
-```
-
-**原始输出**
-
-```html
-<%- value %>
-```
-
-**子模板**
-
-```html
-<% include('./header.html', $data) %>
-```
-
-**print**
-
-```html
-<% print(val, val2, val3) %>
-```
-
-### 超级语法
-
-运行 `template.bindSyntax()` 即可开启超级语法。
-
-```html
-{{if user}}
-  <h2>{{user.name}}</h2>
-  <ul>
-    {{each user.tags}}
-        {{$value}}
-    {{/each}}
-  </ul>
-{{/if}}
-```
-
-**编码后输出**
-
-```html
 {{value}}
+```
+
+```html
+<%= value %>
 ```
 
 **原始输出**
@@ -117,17 +94,29 @@ template.render(source, data, options); // => Rendered HTML string
 {{@value}}
 ```
 
+```html
+<%- value %>
+```
+
 **条件控制**
 
 ```html
 {{if value}}
-    <!--content-->
+    [...]
 {{else if value2}}
-    <!--content-->
+    [...]
 {{/if}}
 ```
 
-**循环**
+```html
+<% if (value) { %>
+    [...]
+<% else if (value2) { %>
+    [...]
+<% } %>
+```
+
+**循环控制**
 
 ```html
 {{each target}}
@@ -143,20 +132,10 @@ template.render(source, data, options); // => Rendered HTML string
 
 `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`。
 
-**子模板**
-
 ```html
-{{include './header.html' $data}}
-```
-
-**过滤器**
-
-```javascript
-template.imports.dateFormat = function(date, format){/*[code..]*/};
-```
-
-```html
-{{time * 1000 | dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+<% target.forEach(function($value, $index){ %>
+    <%= $value %> <%= $index %>
+<% }); %>
 ```
 
 **变量**
@@ -165,15 +144,42 @@ template.imports.dateFormat = function(date, format){/*[code..]*/};
 {{set temp = data.sub.content}}
 ```
 
-**嵌入原生 javascript 语句**
+```html
+<% var temp = data.sub.content; %>
+```
+
+**过滤器**
+
+```javascript
+template.imports.$dateFormat = function(date, format){/*[code..]*/};
+```
 
 ```html
-{{%
-    include('./header.html');
-    for (var i = 0; i < list.length; i++) {
-        print('value:', list[i]);
-    }
-%}}
+{{time * 1000 | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+```
+
+```html
+<%= $dateFormat(time * 1000, 'yyyy-MM-dd hh:mm:ss') %>
+```
+
+**子模板**
+
+```html
+{{include './header.html' $data}}
+```
+
+```html
+<% include('./header.html', $data) %>
+```
+
+**print**
+
+```html
+{{print val val2 val3}}
+```
+
+```html
+<% print(val, val2, val3) %>
 ```
 
 ## API
@@ -248,8 +254,6 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 模板引擎默认配置。
 
 ```javascript
-template.defaults.openTag = '<?js';
-template.defaults.closeTag = '?>';
 template.defaults.imports.$brackets = function(string) {
     return `『${string}』`;
 };
@@ -280,20 +284,14 @@ template.imports.$parseInt = parseInt;
 
 ```javascript
 {
+    // 模板内容
+    source: null,
+
     // 模板名字。如果没有 source 字段，会根据此来加载模板
     filename: null,
 
-    // 逻辑语法开始标签
-    openTag: '<%',
-
-    // 逻辑语法结束标签
-    closeTag: '%>',
-
-    // 编码输出操作符。只支持一个字符
-    escapeSymbol: '=',
-
-    // 原始输出操作符。只支持一个字符
-    rawSymbol: '-',
+    // 模板语法解析器
+    syntax: [nativeSyntax, artSyntax],
 
     // 数据编码处理器
     escape: escape,
@@ -304,11 +302,8 @@ template.imports.$parseInt = parseInt;
     // 缓存控制接口（依赖 filename 字段）
     cache: cache,
 
-    // 模板逻辑表达式解析器。可用来声明自定义语法
-    parseExpression: null,
-
-    // HTML 语句解析器。可用来压缩 HTML
-    parseString: null,
+    // HTML 压缩器
+    compress: null,
 
     // 导入的模板变量
     imports: {},
@@ -326,6 +321,6 @@ template.imports.$parseInt = parseInt;
     root: '/',
 
     // 绑定的模板扩展名。Node 环境专用，template.bindExtname() 的默认配置
-    extname: '.html',
+    extname: '.html'
 }
 ```

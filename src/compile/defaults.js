@@ -2,6 +2,9 @@ const debug = require('./adapter/debug');
 const cache = require('./adapter/cache');
 const escape = require('./adapter/escape');
 const include = require('./adapter/include');
+const each = require('./adapter/each');
+const nativeSyntax = require('./adapter/syntax.native');
+const artSyntax = require('./adapter/syntax.art');
 
 /** 模板编译器默认配置 */
 const defaults = {
@@ -12,17 +15,8 @@ const defaults = {
     // 模板名字。如果没有 source 字段，会根据此来加载模板
     filename: null,
 
-    // 逻辑语法开始标签
-    openTag: '<%',
-
-    // 逻辑语法结束标签
-    closeTag: '%>',
-
-    // 编码输出操作符。只支持一个字符
-    escapeSymbol: '=',
-
-    // 原始输出操作符。只支持一个字符
-    rawSymbol: '-',
+    // 模板语法解析器
+    syntax: [nativeSyntax, artSyntax],
 
     // 数据编码处理器
     escape: escape,
@@ -33,11 +27,8 @@ const defaults = {
     // 缓存控制接口（依赖 filename 字段）
     cache: cache,
 
-    // 模板逻辑表达式解析器。可用来声明自定义语法
-    parseExpression: null,
-
-    // HTML 语句解析器。可用来压缩 HTML
-    parseString: null,
+    // HTML 压缩器
+    compress: null,
 
     // 导入的模板变量
     imports: {},
@@ -76,6 +67,8 @@ const defaults = {
         if (this.include) {
             copy.imports.$include = this.include;
         }
+
+        copy.imports.$each = each;
 
         return copy;
     }

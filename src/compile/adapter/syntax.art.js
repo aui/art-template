@@ -1,32 +1,16 @@
-const defaults = require('./compile/defaults');
+const syntax = {
 
-/**
- * 绑定超级模板语法
- * @param {Object} options 
- */
-const bindSyntax = (options = defaults) => {
+    name: 'BASIC',
+    open: '{{',
+    close: '}}',
+    escape: '',
+    raw: '@',
 
-    options.openTag = '{{';
-    options.closeTag = '}}';
-    options.rawSymbol = '@';
-    options.imports = options.imports || {};
+    parser: ({ tplToken, jsToken, compiler }) => {
 
-    options.imports.$each = (data, callback) => {
-        if (Array.isArray(data)) {
-            for (let i = 0, len = data.length; i < len; i++) {
-                callback(data[i], i, data);
-            }
-        } else {
-            for (let i in data) {
-                callback(data[i], i);
-            }
-        }
-    };
-
-
-    options.parseExpression = ({ tokens, line, source, compiler }) => {
-
+        const source = tplToken.value;
         const options = compiler.options;
+        const line = tplToken.line;
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
@@ -35,39 +19,24 @@ const bindSyntax = (options = defaults) => {
                 `\n`, options.filename || '', `${line}:0-${source.length}`);
         };
 
-        const escapeSymbol = options.escapeSymbol;
-        const rawSymbol = options.rawSymbol;
-        const values = tokens.map(token => token.value).filter(value => !/^\s+$/.test(value));
+        const values = jsToken.map(token => token.value).filter(value => !/^\s+$/.test(value));
 
 
         // v3 compat: #value
         if (values[0] === '#') {
             upgrade('#value', '@value');
-            values[0] = values[0].replace(/^#/, rawSymbol);
+            values[0] = values[0].replace(/^#/, '');
+            tplToken.output = 'RAW';
         }
 
 
-        // 输出标志
         let code = '';
-        let inputSymbol = values[0] === rawSymbol ? values.shift() : escapeSymbol;
 
 
         const close = values[0] === '/' ? values.shift() : '';
         let key = close + values.shift();
 
         switch (key) {
-
-            case '%':
-
-                // % for (var i = 0; i < data.length; i++){} %
-                tokens.shift();
-
-                if (tokens[tokens.length - 1].value === key) {
-                    tokens.pop();
-                }
-
-                code = tokens.map(token => token.value).join('');
-                break;
 
             case 'set':
 
@@ -205,18 +174,15 @@ const bindSyntax = (options = defaults) => {
                     // helperName value
                     upgrade('filterName value', 'value | filterName');
                     code = `${key}(${values.join(',')})`;
-                    inputSymbol = rawSymbol;
+                    tplToken.output = 'RAW';
 
                 } else {
                     code = `${key}${values.join('')}`;
                 }
 
 
-                if (inputSymbol === rawSymbol) {
-                    code = `$out+=${code}`;
-                } else {
-                    code = `$out+=$escape(${code})`;
-                    compiler.importContext(`$escape`);
+                if (tplToken.output !== 'RAW') {
+                    tplToken.output = 'ESCAPE';
                 }
 
 
@@ -224,10 +190,11 @@ const bindSyntax = (options = defaults) => {
         }
 
 
-        return code;
-    };
+        tplToken.code = code;
 
-    return options;
+        return tplToken;
+    }
 };
 
-module.exports = bindSyntax;
+
+module.exports = syntax;

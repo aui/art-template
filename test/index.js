@@ -20,6 +20,7 @@ describe('#index', () => {
             const render = template('template.file.html');
             const html = render({});
             assert.deepEqual('hello world', html);
+            defaults.root = root;
         });
 
         it('cache', () => {
@@ -53,6 +54,3 @@ describe('#index', () => {
     });
 
 });
-
-
-defaults.root = root;
