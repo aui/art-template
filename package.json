@@ -18,7 +18,7 @@
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
     "main": "lib/template.js",
-    "version": "4.0.0",
+    "version": "4.0.0-beta",
     "engines": {
         "node": ">= 4.0.0"
     },
