@@ -26,7 +26,12 @@ describe('#compile/index', () => {
             test(`<%= print('hello > world') %>`, {}, 'hello &#62; world');
         });
 
-        describe('ejs', () => {
+        describe('syntax compat: art-template@v3', () => {
+            test('<%== value %>', { value: '<aui>' }, '<aui>');
+            test('<%=# value %>', { value: '<aui>' }, '<aui>');
+        });
+
+        describe('syntax compat: ejs', () => {
             test('<%# value %>', { value: 'aui' }, '');
             test('<%= value -%>', { value: 'aui' }, 'aui');
         });

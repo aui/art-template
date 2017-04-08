@@ -10,13 +10,13 @@ const syntax = {
 
         let code = tplToken.code;
 
-
-        if (/^=[=#]/.test(code)) {
-            // ... v3 compat ...
-            tplToken.output = 'RAW';
-        }
-
         if (tplToken.output) {
+
+            if (/^[=#]/.test(code)) {
+                // ... v3 compat ...
+                code = code.replace(/^[=#]/, '');
+                tplToken.output = 'RAW';
+            }
 
             // ... ejs compat ...
             code = code.replace(/-$/, '');
