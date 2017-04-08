@@ -26,5 +26,7 @@ template.compile = compile;
 template.defaults = defaults;
 template.bindExtname = bindExtname;
 template.bindSyntax = bindSyntax;
+template.cache = defaults.cache;
+template.imports = defaults.imports;
 
 module.exports = template;

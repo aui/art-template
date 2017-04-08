@@ -6,11 +6,11 @@ const include = require('./adapter/include');
 /** 模板编译器默认配置 */
 const defaults = {
 
-    // 模板名字。如果没有 source 字段，会根据此来加载模板
-    filename: null,
-
     // 模板内容
     source: null,
+
+    // 模板名字。如果没有 source 字段，会根据此来加载模板
+    filename: null,
 
     // 逻辑语法开始标签
     openTag: '<%',

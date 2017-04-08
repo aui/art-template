@@ -232,7 +232,6 @@ class Compiler {
         ].join(`;\n`);
 
 
-        // 插入运行时调试语句
         if (options.compileDebug) {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,

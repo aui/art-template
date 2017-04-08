@@ -21,6 +21,12 @@ describe('#index', () => {
             const html = render({});
             assert.deepEqual('hello world', html);
         });
+
+        it('cache', () => {
+            template('/index.html', 'hi, <%=value%>.');
+            const html = template('/index.html', { value: 'aui' });
+            assert.deepEqual('hi, aui.', html);
+        });
     });
 
 
