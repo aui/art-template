@@ -105,11 +105,14 @@ class Compiler {
         const options = this.options;
         const openTag = options.openTag;
         const closeTag = options.closeTag;
-        const parseExpression = options.parseExpression;
-        const compileDebug = options.compileDebug;
-        const escape = options.escape;
-        const escapeSymbol = options.escapeSymbol;
         const rawSymbol = options.rawSymbol;
+        const escapeSymbol = options.escapeSymbol;
+        const escape = options.escape;
+        const compileDebug = options.compileDebug;
+        const parseExpression = options.parseExpression;
+
+
+
         const expression = source.replace(openTag, ``).replace(closeTag, ``);
         let code = expression;
 
@@ -139,24 +142,27 @@ class Compiler {
                 tokens.shift();
                 code = jsTokens.toString(tokens);
 
+                // ... ejs compat ...
+                code = code.replace(/-$/, '');
+
                 if (escape === false || isRaw) {
                     code = `$out+=${code}`;
                 } else {
                     code = `$out+=$escape(${code})`;
                     this.parseContext(`$escape`);
                 }
+            } else {
+
+                // ... ejs compat ...
+                code = code.replace(/^#/, '//');
             }
         }
 
-
-        // ... ejs compat ...
-        code = code.replace(/^#/, '//').replace(/-$/, '');
 
 
         if (compileDebug) {
             this.scripts.push({ source, line, code: `$line=[${line},${stringify(source)}]` });
         }
-
 
         this.scripts.push({ source, line, code });
     }

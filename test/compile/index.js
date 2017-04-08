@@ -13,10 +13,20 @@ describe('#compile/index', () => {
     };
 
 
-    test('hello <%=value%>.', { value: 'aui' }, 'hello aui.');
-    test('hello <%=value%>.', { value: '<aui>' }, 'hello &#60;aui&#62;.');
-    test('hello <%-value%>.', { value: '<aui>' }, 'hello <aui>.');
+    describe('output', () => {
+        test('hello <%=value%>.', { value: 'aui' }, 'hello aui.');
+        test('hello <%=value%>.', { value: '<aui>' }, 'hello &#60;aui&#62;.');
+        test('hello <%-value%>.', { value: '<aui>' }, 'hello <aui>.');
 
+        test(`<%\nprint('hello > world')\n%>`, {}, 'hello > world');
+        test(`<%- print('hello > world') %>`, {}, 'hello > world');
+        test(`<%= print('hello > world') %>`, {}, 'hello &#62; world');
+    });
+
+    describe('ejs', () => {
+        test('<%# value %>', { value: 'aui' }, '');
+        test('<%= value -%>', { value: 'aui' }, 'aui');
+    });
 
     describe('errors', () => {
         it('RuntimeError', () => {
