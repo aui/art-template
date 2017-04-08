@@ -217,7 +217,7 @@ class Compiler {
             renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;
         }
 
-        renderCode = `function (${DATA}) {${renderCode}}`;
+        renderCode = `function(${DATA}){\n${renderCode}\n}`;
 
 
         try {

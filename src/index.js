@@ -27,6 +27,4 @@ template.bindExtname = bindExtname;
 template.cache = defaults.cache;
 template.imports = defaults.imports;
 
-bindExtname(require);
-
 module.exports = template;

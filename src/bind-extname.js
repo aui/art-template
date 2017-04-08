@@ -20,4 +20,7 @@ const bindExtname = (require, extname = defaults.extname) => {
 };
 
 
+//bindExtname(require);
+
+
 module.exports = bindExtname;
