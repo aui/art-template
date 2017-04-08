@@ -78,7 +78,7 @@ art-template 同时支持 `{{expression}}` 简约语法与 javascript 原生语�
 <% } %>
 ```
 
-**编码后输出**
+**标准输出**
 
 ```html
 {{value}}
@@ -97,6 +97,8 @@ art-template 同时支持 `{{expression}}` 简约语法与 javascript 原生语�
 ```html
 <%- value %>
 ```
+
+原始输出语句不会对 `HTML` 内容进行转义。
 
 **条件控制**
 
@@ -172,6 +174,8 @@ template.imports.$dateFormat = function(date, format){/*[code..]*/};
 <% include('./header.html', $data) %>
 ```
 
+`include` 第二个参数默认值为 `$data`，可以被覆盖。
+
 **print**
 
 ```html
@@ -193,8 +197,9 @@ template.imports.$dateFormat = function(date, format){/*[code..]*/};
 #### NodeJS
 
 ```javascript
+var template = require('art-template');
 var filename = '/Users/aui/templates/tpl-user.html';
-var html = templage(filename, {
+var html = template(filename, {
     user: {
         name: 'aui'
     }
@@ -212,7 +217,7 @@ var html = templage(filename, {
 
 <script>
 var filename = 'tpl-user';
-var html = templage(filename, {
+var html = template(filename, {
     user: {
         name: 'aui'
     }
@@ -281,6 +286,22 @@ template.imports.$parseInt = parseInt;
 模板缓存中心。这是 `template.defaults.cache` 的快捷方式。
 
 如果为 `false` 则不会启用缓存。
+
+## 全局变量
+
+**内置变量**
+
+* `$data` 传入模板的数据
+* `print(...argv)` 在当前位置输出字符串
+* `include(filename, data)` 载入子模板
+
+**注入全局变量**
+
+模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用。
+
+```javascript
+template.imports.$console = console;
+```
 
 ## 选项
 
