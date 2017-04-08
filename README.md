@@ -9,9 +9,9 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 ``NEW! v4.0``
 
-1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板语句
+1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板所在行
 2. 同时支持原生 Javascript 语法、简约语法
-3. 兼容 Ejs 模板语法，兼容 v3.0 模板语法，并解决简洁语法中空格可能导致出错的问题
+3. 兼容 Ejs 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
 4. NodeJS 支持 `require(templatePath)` 方式载入 `.html` 模板
 
 ## 特性
@@ -32,10 +32,43 @@ npm install art-template --save
 
 ## 快速入门
 
+#### NodeJS
+
 ```html
+<!--templates/tpl-user.html-->
 <% if (user) { %>
   <h2><%= user.name %></h2>
 <% } %>
+```
+
+```javascript
+var template = require('art-template');
+var filename = '/Users/aui/templates/tpl-user.html';
+var html = template(filename, {
+    user: {
+        name: 'aui'
+    }
+});
+```
+
+#### 浏览器
+
+```html
+<script id="tpl-user" type="text/html">
+<% if (user) { %>
+  <h2><%= user.name %></h2>
+<% } %>
+</script>
+
+<script src="art-template/lib/template.js"></script>
+<script>
+var filename = 'tpl-user';
+var html = template(filename, {
+    user: {
+        name: 'aui'
+    }
+});
+</script>
 ```
 
 ### 使用
@@ -51,7 +84,7 @@ template.render(source, data, options); // => Rendered HTML string
 
 ## 语法
 
-art-template 同时支持 `{{expression}}` 简约语法与 javascript 原生语法 `<% expression %>`。
+art-template 同时支持 `{{expression}}` 简约语法与任意 javascript 表达式 `<% expression %>`。
 
 ```html
 {{if user}}
@@ -187,44 +220,11 @@ template.imports.$dateFormat = function(date, format){/*[code..]*/};
 <% print(val, val2, val3) %>
 ```
 
-> `include` 与 `print` 是内置函数，无需使用输出语法。
-
 ## API
 
 ###	template(filename, data)
 
-根据 `filename` 渲染模板。
-
-#### NodeJS
-
-```javascript
-var template = require('art-template');
-var filename = '/Users/aui/templates/tpl-user.html';
-var html = template(filename, {
-    user: {
-        name: 'aui'
-    }
-});
-```
-
-#### 浏览器
-
-```html
-<script id="tpl-user" type="text/html">
-<% if (user) { %>
-  <h2><%= user.name %></h2>
-<% } %>
-</script>
-
-<script>
-var filename = 'tpl-user';
-var html = template(filename, {
-    user: {
-        name: 'aui'
-    }
-});
-</script>
-```
+根据模板名渲染模板。
 
 ###	template(filename, string)
 
@@ -240,7 +240,7 @@ template('/welcome.html', {
 }); // => "hi, aui."
 ```
 
-###	template.compile(source, options)
+###	\#compile(source, options)
 
 编译模板并返回一个渲染函数。
 
@@ -249,7 +249,7 @@ var render = template.compile('hi, <%=value%>.');
 var html = render({value: 'aui'});
 ```
 
-###	template.render(source, data, options)
+###	\#render(source, data, options)
 
 编译并返回渲染结果。
 
@@ -257,9 +257,9 @@ var html = render({value: 'aui'});
 var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ```
 
-###	template.defaults
+###	\#defaults
 
-模板引擎默认配置。
+模板引擎默认配置。参考 [选项](#选项)
 
 ```javascript
 template.defaults.imports.$brackets = function(string) {
@@ -270,7 +270,7 @@ var render = template.compile('hi, <?js=$brackets(value)?>.');
 var html = render({value: 'aui'}); // => "hi, 『aui』."
 ```
 
-### template.imports
+### \#imports
 
 向模板中注入上下文。这是 `template.defaults.imports` 的快捷方式。
 
@@ -282,11 +282,15 @@ template.imports.$parseInt = parseInt;
 <%= $parseInt(value) %>
 ```
 
-### template.cache
+### \#bindExtname(require, extname)
 
-模板缓存中心。这是 `template.defaults.cache` 的快捷方式。
+关联后缀名，支持 `require(templatePath)` 形式加载模板。
 
-如果为 `false` 则不会启用缓存。
+```javascript
+template.bindExtname(require, '.ejs');
+var render = template(__dirname + '/index.ejs');
+var html = render(data);
+```
 
 ## 全局变量
 
