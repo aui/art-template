@@ -1,7 +1,5 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
-const tplLoader = require('./tpl-loader');
-const tplPath = require('./tpl-path.js');
 
 
 /**
@@ -40,8 +38,8 @@ const compile = (source, options = {}) => {
     // 加载外部模板
     if (!source) {
         try {
-            const target = tplPath(filename, options.root);
-            source = tplLoader(target);
+            const target = options.resolveFilename(filename, options.root);
+            source = options.loader(target);
             options.filename = target;
             options.source = source;
         } catch (e) {

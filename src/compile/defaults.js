@@ -1,7 +1,9 @@
 const debug = require('./adapter/debug');
 const cache = require('./adapter/cache');
 const escape = require('./adapter/escape');
+const loader = require('./adapter/loader');
 const include = require('./adapter/include');
+const resolveFilename = require('./adapter/resolve-filename');
 const each = require('./adapter/each');
 const nativeSyntax = require('./adapter/syntax.native');
 const artSyntax = require('./adapter/syntax.art');
@@ -24,6 +26,9 @@ const defaults = {
     // 模板内部 include 功能处理器
     include: include,
 
+    // 模板路径转换器
+    resolveFilename: resolveFilename,
+
     // 缓存控制接口（依赖 filename 字段）
     cache: cache,
 
@@ -35,6 +40,9 @@ const defaults = {
 
     // 调试处理函数
     debug: debug,
+
+    // 模板文件加载器
+    loader: loader,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
     compileDebug: false,

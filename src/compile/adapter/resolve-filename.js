@@ -8,7 +8,7 @@ const detectNode = require('detect-node');
  * @param   {?string} base 
  * @returns {string}
  */
-const tplPath = (filename, root, base) => {
+const resolveFilename = (filename, root, base) => {
     /* istanbul ignore else  */
     if (detectNode) {
         const dirname = base ? path.dirname(base) : '';
@@ -18,4 +18,4 @@ const tplPath = (filename, root, base) => {
     }
 };
 
-module.exports = tplPath;
+module.exports = resolveFilename;

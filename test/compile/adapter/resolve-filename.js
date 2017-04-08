@@ -1,11 +1,11 @@
 const assert = require('assert');
-const tplPath = require('../../src/compile/tpl-path');
+const resolveFilename = require('../../../src/compile/adapter/resolve-filename');
 
-describe('#compile/tpl-path', () => {
+describe('#compile/adapter/resolve-filename', () => {
 
     const test = (args, result) => {
         it(JSON.stringify(args), () => {
-            assert.deepEqual(result, tplPath(...args));
+            assert.deepEqual(result, resolveFilename(...args));
         });
     };
 

@@ -8,8 +8,8 @@
  */
 const include = (filename, data, base, root) => {
     const compile = require('../index');
-    const tplPath = require('../tpl-path');
-    filename = tplPath(filename, root, base);
+    const resolveFilename = require('./resolve-filename');
+    filename = resolveFilename(filename, root, base);
     return compile({
         filename
     })(data);

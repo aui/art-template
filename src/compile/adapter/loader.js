@@ -4,7 +4,7 @@
  * @param   {string}
  */
 const detectNode = require('detect-node');
-const tplLoader = filename => {
+const loader = filename => {
     /* istanbul ignore else  */
     if (detectNode) {
         const fs = require('fs');
@@ -15,4 +15,4 @@ const tplLoader = filename => {
     }
 };
 
-module.exports = tplLoader;
+module.exports = loader;
