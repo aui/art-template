@@ -110,9 +110,9 @@ describe('#compile/js-tokens', () => {
 
 
 
-    describe('variables', () => {
+    describe('getVariables', () => {
 
-        const getvariables = code => jsTokens.variables(jsTokens.parser(code));
+        const getvariables = code => jsTokens.getVariables(jsTokens.parser(code));
         const test = (code, result) => {
             it(code, () => {
                 assert.deepEqual(result, getvariables(code));
@@ -131,121 +131,5 @@ describe('#compile/js-tokens', () => {
         test('a ".b.c; d;" /*e*/ f', ['a', 'f']);
 
     });
-
-
-    describe('trimLeft', () => {
-
-        const test = (code, result) => {
-            it(code, () => {
-                const tokens = jsTokens.parser(code);
-                const length = tokens.length;
-                assert.deepEqual(result, jsTokens.trimLeft(tokens));
-                assert.deepEqual(length, tokens.length);
-            });
-        };
-
-        test(' value', [{
-            type: 'name',
-            value: 'value'
-        }]);
-
-        test('     value', [{
-            type: 'name',
-            value: 'value'
-        }]);
-
-        test('     value ', [{
-            type: 'name',
-            value: 'value'
-        }, {
-            type: 'whitespace',
-            value: ' '
-        }]);
-    });
-
-
-    describe('trimRight', () => {
-        const test = (code, result) => {
-            it(code, () => {
-                const tokens = jsTokens.parser(code);
-                const length = tokens.length;
-                assert.deepEqual(result, jsTokens.trimRight(tokens));
-                assert.deepEqual(length, tokens.length);
-            });
-        };
-
-        test('value ', [{
-            type: 'name',
-            value: 'value'
-        }]);
-
-        test('value     ', [{
-            type: 'name',
-            value: 'value'
-        }]);
-
-        test(' value     ', [{
-            type: 'whitespace',
-            value: ' '
-        }, {
-            type: 'name',
-            value: 'value'
-        }]);
-    });
-
-
-    describe('trim', () => {
-        const test = (code, result) => {
-            it(code, () => {
-                const tokens = jsTokens.parser(code);
-                const length = tokens.length;
-                assert.deepEqual(result, jsTokens.trim(tokens));
-                assert.deepEqual(length, tokens.length);
-            });
-        };
-
-        test(' value ', [{
-            type: 'name',
-            value: 'value'
-        }]);
-
-        test('    value     ', [{
-            type: 'name',
-            value: 'value'
-        }]);
-    });
-
-
-
-    /*describe('autocomplete', () => {
-        const test = (code, result) => {
-            it(code, () => {
-                const tokens = jsTokens.parser(code);
-                const newTokens = jsTokens.autocomplete(tokens);
-                const newCode = jsTokens.toString(newTokens);
-                assert.deepEqual(result, newCode);
-            });
-        };
-
-        // (){ => }
-        // (()()){ => }
-        [/(^.*?(?:if|for)\s*\(.*?\)\s*{\s*$)/, '$1}'];
-
-        test('if(value){', 'if(value){}');
-        test('for(var i in data){', 'for(var i in data){}');
-
-        // ((){ => })
-        [/(^.*?\(\s*function\s*\(.*?\)\s*{$)|(^.*?\(\s*.*=>\s*{$)/, '$1})'];
-
-        test('each(function(a,b){', 'each(function(a,b){})');
-        test('each((a,b)=>{', 'each(()=>{})');
-        test('each(a=>{', 'each(a=>{})');
-
-        [/^\s*}.*?{?\s*$/, ''];
-        // }{ =>
-        test('}else{', '');
-        // } =>
-        test('}', '');
-    });*/
 
 });

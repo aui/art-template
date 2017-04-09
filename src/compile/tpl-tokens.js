@@ -1,5 +1,12 @@
 const jsTokens = require('./js-tokens');
 
+const TYPE_STRING = 'string';
+const TYPE_EXPRESSION = 'expression';
+const TYPE_RAW = 'RAW';
+const TYPE_ESCAPE = 'ESCAPE';
+
+
+
 /**
  * 将模板转换为 Tokens
  * @param {string} source 
@@ -8,7 +15,7 @@ const jsTokens = require('./js-tokens');
  */
 const parser = (source, syntax) => {
 
-    // todo column
+    // TODO column
     let line = 1;
     const tokens = [];
     const escapeReg = string => string.replace(/(.)/g, '\\$1');
@@ -21,9 +28,8 @@ const parser = (source, syntax) => {
 
         let cursor = 0;
         const lastToken = tokens[tokens.length - 1];
-        const type = 'string';
         const value = match[0];
-        const token = { type, value, line };
+        const token = { type: TYPE_STRING, value, line };
 
         line += value.split(/\n/).length - 1;
 
@@ -35,16 +41,17 @@ const parser = (source, syntax) => {
                 const close = tag.close;
                 const code = value.slice(open.length, value.length - close.length);
                 const output = {
-                    [tag.raw]: 'RAW',
-                    [tag.escape]: 'ESCAPE'
+                    [tag.raw]: TYPE_RAW,
+                    [tag.escape]: TYPE_ESCAPE
                 };
 
-                token.type = 'expression';
+                token.type = TYPE_EXPRESSION;
+
                 token.syntax = tag.name;
                 token.output = output[code.slice(0, 1)] || false; // tag.raw 与 tag.escape 只允许一个字符
                 token.code = token.output ? code.slice(1) : code;
                 token.tokens = jsTokens.parser(token.code);
-                token.variables = jsTokens.variables(token.tokens);
+                token.variables = jsTokens.getVariables(token.tokens);
                 token.parser = tag.parser;
 
                 break;
@@ -54,7 +61,7 @@ const parser = (source, syntax) => {
         }
 
 
-        if (lastToken && lastToken.type === 'string' && token.type === 'string') {
+        if (lastToken && lastToken.type === TYPE_STRING && token.type === TYPE_STRING) {
             // 连接字符串
             lastToken.value += token.value;
         } else {
@@ -67,6 +74,11 @@ const parser = (source, syntax) => {
 };
 
 
+
 module.exports = {
-    parser
+    parser,
+    TYPE_STRING,
+    TYPE_EXPRESSION,
+    TYPE_RAW,
+    TYPE_ESCAPE
 };

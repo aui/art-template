@@ -7,6 +7,7 @@ const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
 class Compiler {
+
     /**
      * 模板编译器
      * @param   {Object}    options
@@ -45,9 +46,9 @@ class Compiler {
 
             const type = tokens.type;
 
-            if (type === `string`) {
+            if (type === tplTokens.TYPE_STRING) {
                 this.parseString(tokens);
-            } else if (type === `expression`) {
+            } else if (type === tplTokens.TYPE_EXPRESSION) {
                 this.parseExpression(tokens);
             }
         });
@@ -112,7 +113,7 @@ class Compiler {
 
 
         if (tokens.output) {
-            if (escape === false || tokens.output === 'RAW') {
+            if (escape === false || tokens.output === tplTokens.TYPE_RAW) {
                 code = `$out+=${tokens.code}`;
             } else {
                 code = `$out+=$escape(${tokens.code})`;
