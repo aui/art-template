@@ -10,7 +10,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 ``NEW! v4.0``
 
 1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板所在行
-2. 同时支持原生 Javascript 语法、简约语法
+2. 同时支持原生 JavaScript 语法、简约语法
 3. 兼容 Ejs 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
 4. NodeJS 支持 `require(templatePath)` 方式载入 `.html` 模板
 
@@ -71,15 +71,17 @@ var html = template(filename, {
 </script>
 ```
 
-### 使用
+### 核心方法
 
 ```javascript
-template(filename, data); // => Rendered HTML string
+// 基于模板名渲染模板
+template(filename, data);
 
-var render = template.compile(source, options);
-render(data); // => Rendered HTML string
+// 将模板源代码编译成函数
+template.compile(source, options);
 
-template.render(source, data, options); // => Rendered HTML string
+// 将模板源代码编译成函数并立刻执行
+template.render(source, data, options);
 ```
 
 ## 语法
@@ -186,16 +188,15 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 javascript 表�
 
 ```javascript
 template.imports.$dateFormat = function(date, format){/*[code..]*/};
+template.imports.$timestamp = function(value){return value * 1000};
 ```
 
 ```html
-{{time * 1000 | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+{{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
 ```
 
-你可以使用 `|` 将多个过滤器连接起来，它依次会从左到右执行。
-
 ```html
-<%= $dateFormat(time * 1000, 'yyyy-MM-dd hh:mm:ss') %>
+<%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
 
 **子模板**
@@ -226,7 +227,16 @@ template.imports.$dateFormat = function(date, format){/*[code..]*/};
 
 根据模板名渲染模板。
 
-###	template(filename, string)
+```javascript
+// compile && cache
+var html template('/welcome.html', {
+    value: 'aui'
+});
+```
+
+> 如果在浏览器中使用，`filename` 请传入存放模板的元素 `id`。
+
+###	template(filename, source)
 
 编译模板并缓存。
 
@@ -296,15 +306,19 @@ var html = render(data);
 
 **内置变量**
 
-* `$data` 传入模板的数据
-* `$imports` 等同 `template.imports`
-* `print(...argv)` 在当前位置输出字符串
-* `include(filename, data)` 载入子模板
+* `$data`  传入模板的数据 `{Object|array}`
+* `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
+* `print`  字符串输出函数 `{function}`
+* `include`  子模板载入函数 `{function}`
 
 **注入全局变量**
 
 ```javascript
 template.imports.$console = console;
+```
+
+```html
+<% $console.log('hello world') %>
 ```
 
 模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用，并且要在编译之前进行声明。
