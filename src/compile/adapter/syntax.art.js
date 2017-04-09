@@ -1,6 +1,6 @@
 const syntax = {
 
-    name: 'BASIC',
+    name: 'ART',
     open: '{{',
     close: '}}',
     escape: '',
