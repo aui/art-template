@@ -12,13 +12,13 @@ describe('#compile/tpl-tokens', () => {
     };
 
     test('hello', [{
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: 'hello',
         line: 1
     }]);
 
     test('{{name}}', [{
-        type: 'expression',
+        type: tplTokens.TYPE_EXPRESSION,
         value: '{{name}}',
         line: 1,
         syntax: 'ART',
@@ -34,11 +34,11 @@ describe('#compile/tpl-tokens', () => {
 
 
     test('hello {{name}}.', [{
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: 'hello ',
         line: 1
     }, {
-        type: 'expression',
+        type: tplTokens.TYPE_EXPRESSION,
         value: '{{name}}',
         line: 1,
         syntax: 'ART',
@@ -51,17 +51,17 @@ describe('#compile/tpl-tokens', () => {
         variables: ['name'],
         parser: syntax[1].parser
     }, {
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: '.',
         line: 1
     }]);
 
     test('hello {{name + aaa}}.\n', [{
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: 'hello ',
         line: 1
     }, {
-        type: 'expression',
+        type: tplTokens.TYPE_EXPRESSION,
         value: '{{name + aaa}}',
         line: 1,
         syntax: 'ART',
@@ -86,17 +86,17 @@ describe('#compile/tpl-tokens', () => {
         variables: ['name', 'aaa'],
         parser: syntax[1].parser
     }, {
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: '.\n',
         line: 1
     }]);
 
     test('hello \n{{\n name + aaa}}.', [{
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: 'hello \n',
         line: 1
     }, {
-        type: 'expression',
+        type: tplTokens.TYPE_EXPRESSION,
         value: '{{\n name + aaa}}',
         line: 2,
         syntax: 'ART',
@@ -124,7 +124,7 @@ describe('#compile/tpl-tokens', () => {
         variables: ['name', 'aaa'],
         parser: syntax[1].parser
     }, {
-        type: 'string',
+        type: tplTokens.TYPE_STRING,
         value: '.',
         line: 3
     }]);

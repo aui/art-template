@@ -1,10 +1,11 @@
 const assert = require('assert');
 const compile = require('../../src/compile/index');
+const tplTokens = require('../../src/compile/tpl-tokens');
 
 
 describe('#compile/index', () => {
 
-    describe('syntax.eval', () => {
+    describe('syntax.native', () => {
         const test = (code, data, result) => {
             it(code, () => {
                 const render = compile(code, {
@@ -24,6 +25,9 @@ describe('#compile/index', () => {
             test(`<%\nprint('hello > world')\n%>`, {}, 'hello > world');
             test(`<%- print('hello > world') %>`, {}, 'hello > world');
             test(`<%= print('hello > world') %>`, {}, 'hello &#62; world');
+
+            // empty
+            //test('', {}, '');
         });
 
         describe('syntax compat: art-template@v3', () => {
@@ -99,12 +103,13 @@ describe('#compile/index', () => {
                 assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'));
             });
         });
+
     });
 
 
 
 
-    describe('syntax.basic', () => {
+    describe('syntax.art', () => {
         const test = (code, data, result, options = {}) => {
             it(code, () => {
                 const render = compile(code, options);
@@ -246,6 +251,25 @@ describe('#compile/index', () => {
             });
             assert.deepEqual('<div> </div> aui', render({
                 value: 'aui'
+            }));
+        });
+
+        it('syntax', () => {
+            const render = compile('hello ${name} <%=name%>', {
+                syntax: [{
+                    name: 'ES6',
+                    open: '${',
+                    close: '}',
+                    escape: '',
+                    raw: '',
+                    parser: ({ tokens, compiler }) => {
+                        tokens.output = tplTokens.TYPE_ESCAPE;
+                        return tokens;
+                    }
+                }]
+            });
+            assert.deepEqual('hello aui <%=name%>', render({
+                name: 'aui'
             }));
         });
 

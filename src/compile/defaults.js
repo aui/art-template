@@ -11,10 +11,10 @@ const artSyntax = require('./adapter/syntax.art');
 /** 模板编译器默认配置 */
 const defaults = {
 
-    // 模板内容
+    // 模板内容。如果没有此字段，则会根据 filename 来加载模板内容
     source: null,
 
-    // 模板名字。如果没有 source 字段，会根据此来加载模板
+    // 模板名字
     filename: null,
 
     // 模板语法规则
