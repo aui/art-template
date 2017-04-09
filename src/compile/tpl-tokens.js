@@ -47,11 +47,22 @@ const parser = (source, syntax) => {
 
                 token.type = TYPE_EXPRESSION;
 
+                // 语法名称
                 token.syntax = tag.name;
+
+                // 输出语句类型
                 token.output = output[code.slice(0, 1)] || false; // tag.raw 与 tag.escape 只允许一个字符
+
+                // 主要代码
                 token.code = token.output ? code.slice(1) : code;
+
+                // jsTokens
                 token.tokens = jsTokens.parser(token.code);
+
+                // 使用的变量
                 token.variables = jsTokens.getVariables(token.tokens);
+
+                // tplTokens 处理器
                 token.parser = tag.parser;
 
                 break;

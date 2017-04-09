@@ -1,13 +1,13 @@
 const assert = require('assert');
 const tplTokens = require('../../src/compile/tpl-tokens');
-const syntaxNative = require('../../src/compile/adapter/syntax.native');
-const syntaxArt = require('../../src/compile/adapter/syntax.art');
+const defaults = require('../../src/compile/defaults');
+const syntax = defaults.syntax;
 
 describe('#compile/tpl-tokens', () => {
 
     const test = (code, result) => {
         it(code, () => {
-            assert.deepEqual(result, tplTokens.parser(code, [syntaxNative, syntaxArt]));
+            assert.deepEqual(result, tplTokens.parser(code, syntax));
         });
     };
 
@@ -29,7 +29,7 @@ describe('#compile/tpl-tokens', () => {
             value: 'name'
         }],
         variables: ['name'],
-        parser: syntaxArt.parser
+        parser: syntax[1].parser
     }]);
 
 
@@ -49,7 +49,7 @@ describe('#compile/tpl-tokens', () => {
             value: 'name'
         }],
         variables: ['name'],
-        parser: syntaxArt.parser
+        parser: syntax[1].parser
     }, {
         type: 'string',
         value: '.',
@@ -84,7 +84,7 @@ describe('#compile/tpl-tokens', () => {
             value: 'aaa'
         }],
         variables: ['name', 'aaa'],
-        parser: syntaxArt.parser
+        parser: syntax[1].parser
     }, {
         type: 'string',
         value: '.\n',
@@ -122,7 +122,7 @@ describe('#compile/tpl-tokens', () => {
             value: 'aaa'
         }],
         variables: ['name', 'aaa'],
-        parser: syntaxArt.parser
+        parser: syntax[1].parser
     }, {
         type: 'string',
         value: '.',

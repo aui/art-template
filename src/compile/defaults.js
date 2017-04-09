@@ -17,10 +17,24 @@ const defaults = {
     // 模板名字。如果没有 source 字段，会根据此来加载模板
     filename: null,
 
-    // 模板语法解析器
-    syntax: [nativeSyntax, artSyntax],
+    // 模板语法规则
+    syntax: [{
+        name: 'NATIVE',
+        open: '<%',
+        close: '%>',
+        escape: '=',
+        raw: '-',
+        parser: nativeSyntax
+    }, {
+        name: 'ART',
+        open: '{{',
+        close: '}}',
+        escape: '',
+        raw: '@',
+        parser: artSyntax
+    }],
 
-    // 数据编码处理器
+    // 数据编码处理器。为 false 则关闭编码输出功能
     escape: escape,
 
     // 模板内部 include 功能处理器
@@ -29,7 +43,7 @@ const defaults = {
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // 缓存控制接口（依赖 filename 字段）
+    // 缓存控制接口（依赖 filename 字段）。为 false 则关闭缓存
     cache: cache,
 
     // HTML 压缩器
@@ -53,33 +67,36 @@ const defaults = {
     // 模板根目录。Node 环境专用
     root: '/',
 
-    // 绑定的模板扩展名。Node 环境专用，template.bindExtname() 的默认配置
-    extname: '.html',
+    // 绑定的模板扩展名。Node 环境专用，template.bindExtname(template, [extname]) 的默认配置
+    extname: '.html'
 
-    /**
-     * 继承默认配置
-     * @param   {Object}    options
-     * @returns {Object}
-     */
-    $extend: function(options) {
-        const copy = Object.create(this);
-
-        for (let name in options) {
-            copy[name] = options[name]
-        }
-
-        if (this.escape) {
-            copy.imports.$escape = this.escape;
-        }
-
-        if (this.include) {
-            copy.imports.$include = this.include;
-        }
-
-        copy.imports.$each = each;
-
-        return copy;
-    }
 };
+
+
+/**
+ * 继承默认配置
+ * @param   {Object}    options
+ * @returns {Object}
+ */
+defaults.$extend = function(options) {
+    const copy = Object.create(this);
+
+    for (let name in options) {
+        copy[name] = options[name]
+    }
+
+    if (this.escape) {
+        copy.imports.$escape = this.escape;
+    }
+
+    if (this.include) {
+        copy.imports.$include = this.include;
+    }
+
+    copy.imports.$each = each;
+
+    return copy;
+};
+
 
 module.exports = defaults;

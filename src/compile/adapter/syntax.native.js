@@ -1,36 +1,27 @@
-const syntax = {
+const parser = ({ tokens }) => {
 
-    name: 'EVAL',
-    open: '<%',
-    close: '%>',
-    escape: '=',
-    raw: '-',
+    let code = tokens.code;
 
-    parser: ({ tokens }) => {
+    if (tokens.output) {
 
-        let code = tokens.code;
-
-        if (tokens.output) {
-
-            if (/^[=#]/.test(code)) {
-                // ... v3 compat ...
-                code = code.replace(/^[=#]/, '');
-                tokens.output = 'RAW';
-            }
-
-            // ... ejs compat ...
-            code = code.replace(/-$/, '');
-
-        } else {
-
-            // ... ejs compat ...
-            code = code.replace(/^#/, '//');
+        if (/^[=#]/.test(code)) {
+            // ... v3 compat ...
+            code = code.replace(/^[=#]/, '');
+            tokens.output = 'RAW';
         }
 
-        tokens.code = code;
+        // ... ejs compat ...
+        code = code.replace(/-$/, '');
 
-        return tokens;
+    } else {
+
+        // ... ejs compat ...
+        code = code.replace(/^#/, '//');
     }
+
+    tokens.code = code;
+
+    return tokens;
 };
 
-module.exports = syntax;
+module.exports = parser;
