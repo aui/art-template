@@ -24,6 +24,11 @@ describe('#compile/tpl-tokens', () => {
         syntax: 'ART',
         output: false,
         code: 'name',
+        tokens: [{
+            type: 'name',
+            value: 'name'
+        }],
+        variables: ['name'],
         parser: syntaxArt.parser
     }]);
 
@@ -39,6 +44,11 @@ describe('#compile/tpl-tokens', () => {
         syntax: 'ART',
         output: false,
         code: 'name',
+        tokens: [{
+            type: 'name',
+            value: 'name'
+        }],
+        variables: ['name'],
         parser: syntaxArt.parser
     }, {
         type: 'string',
@@ -57,6 +67,23 @@ describe('#compile/tpl-tokens', () => {
         syntax: 'ART',
         output: false,
         code: 'name + aaa',
+        tokens: [{
+            type: 'name',
+            value: 'name'
+        }, {
+            type: 'whitespace',
+            value: ' '
+        }, {
+            type: 'punctuator',
+            value: '+'
+        }, {
+            type: 'whitespace',
+            value: ' '
+        }, {
+            type: 'name',
+            value: 'aaa'
+        }],
+        variables: ['name', 'aaa'],
         parser: syntaxArt.parser
     }, {
         type: 'string',
@@ -75,6 +102,26 @@ describe('#compile/tpl-tokens', () => {
         syntax: 'ART',
         output: false,
         code: '\n name + aaa',
+        tokens: [{
+            type: 'whitespace',
+            value: '\n '
+        }, {
+            type: 'name',
+            value: 'name'
+        }, {
+            type: 'whitespace',
+            value: ' '
+        }, {
+            type: 'punctuator',
+            value: '+'
+        }, {
+            type: 'whitespace',
+            value: ' '
+        }, {
+            type: 'name',
+            value: 'aaa'
+        }],
+        variables: ['name', 'aaa'],
         parser: syntaxArt.parser
     }, {
         type: 'string',

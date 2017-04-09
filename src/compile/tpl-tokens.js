@@ -1,3 +1,5 @@
+const jsTokens = require('./js-tokens');
+
 /**
  * 将模板转换为 Tokens
  * @param {string} source 
@@ -41,6 +43,8 @@ const parser = (source, syntax) => {
                 token.syntax = tag.name;
                 token.output = output[code.slice(0, 1)] || false; // tag.raw 与 tag.escape 只允许一个字符
                 token.code = token.output ? code.slice(1) : code;
+                token.tokens = jsTokens.parser(token.code);
+                token.variables = jsTokens.variables(token.tokens);
                 token.parser = tag.parser;
 
                 break;

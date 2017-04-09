@@ -110,12 +110,12 @@ describe('#compile/js-tokens', () => {
 
 
 
-    describe('namespaces', () => {
+    describe('variables', () => {
 
-        const getNamespaces = code => jsTokens.namespaces(jsTokens.parser(code));
+        const getvariables = code => jsTokens.variables(jsTokens.parser(code));
         const test = (code, result) => {
             it(code, () => {
-                assert.deepEqual(result, getNamespaces(code));
+                assert.deepEqual(result, getvariables(code));
             });
         };
 

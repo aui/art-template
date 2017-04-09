@@ -1,4 +1,3 @@
-const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
 const isKeyword = require('is-keyword-js');
 
@@ -42,14 +41,14 @@ class Compiler {
         }
 
 
-        tplTokens.parser(source, options.syntax).forEach(token => {
+        tplTokens.parser(source, options.syntax).forEach(tokens => {
 
-            const type = token.type;
+            const type = tokens.type;
 
             if (type === `string`) {
-                this.parseString(token);
+                this.parseString(tokens);
             } else if (type === `expression`) {
-                this.parseExpression(token);
+                this.parseExpression(tokens);
             }
         });
 
@@ -83,10 +82,10 @@ class Compiler {
 
 
     // 解析字符串（HTML）直接输出语句
-    parseString(tplToken) {
+    parseString(tokens) {
 
-        let source = tplToken.value;
-        const line = tplToken.line;
+        let source = tokens.value;
+        const line = tokens.line;
         const options = this.options;
         const compress = options.compress;
 
@@ -100,29 +99,27 @@ class Compiler {
 
 
     // 解析逻辑表达式语句
-    parseExpression(tplToken) {
+    parseExpression(tokens) {
 
-        const source = tplToken.value;
-        const line = tplToken.line;
+        let code = tokens.code;
+        const source = tokens.value;
+        const line = tokens.line;
         const options = this.options;
         const compileDebug = options.compileDebug;
 
-        let code = tplToken.code;
-        const jsToken = jsTokens.trim(jsTokens.parser(code));
-
-        jsTokens.namespaces(jsToken).forEach(name => this.importContext(name));
-        tplToken = tplToken.parser({ tplToken, jsToken, compiler: this });
+        tokens.variables.forEach(name => this.importContext(name));
+        tokens = tokens.parser({ tokens, compiler: this });
 
 
-        if (tplToken.output) {
-            if (escape === false || tplToken.output === 'RAW') {
-                code = `$out+=${tplToken.code}`;
+        if (tokens.output) {
+            if (escape === false || tokens.output === 'RAW') {
+                code = `$out+=${tokens.code}`;
             } else {
-                code = `$out+=$escape(${tplToken.code})`;
+                code = `$out+=$escape(${tokens.code})`;
                 this.importContext(`$escape`);
             }
         } else {
-            code = tplToken.code;
+            code = tokens.code;
         }
 
 

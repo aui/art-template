@@ -25,7 +25,7 @@ const parser = code => {
  * @param {Object[]} tokens
  * @return {string[]}
  */
-const namespaces = tokens => {
+const variables = tokens => {
     let ignore = false;
     return tokens.filter(token => {
         return token.type !== `whitespace` && token.type !== `comment`;
@@ -99,7 +99,7 @@ const toString = tokens => {
 
 module.exports = {
     parser,
-    namespaces,
+    variables,
     trimLeft,
     trimRight,
     trim,

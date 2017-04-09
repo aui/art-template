@@ -6,11 +6,12 @@ const syntax = {
     escape: '',
     raw: '@',
 
-    parser: ({ tplToken, jsToken, compiler }) => {
+    parser: ({ tokens, compiler }) => {
 
-        const source = tplToken.value;
+        const jsToken = tokens.tokens;
+        const source = tokens.value;
         const options = compiler.options;
-        const line = tplToken.line;
+        const line = tokens.line;
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
@@ -26,7 +27,7 @@ const syntax = {
         if (values[0] === '#') {
             upgrade('#value', '@value');
             values[0] = values[0].replace(/^#/, '');
-            tplToken.output = 'RAW';
+            tokens.output = 'RAW';
         }
 
 
@@ -174,15 +175,15 @@ const syntax = {
                     // helperName value
                     upgrade('filterName value', 'value | filterName');
                     code = `${key}(${values.join(',')})`;
-                    tplToken.output = 'RAW';
+                    tokens.output = 'RAW';
 
                 } else {
                     code = `${key}${values.join('')}`;
                 }
 
 
-                if (tplToken.output !== 'RAW') {
-                    tplToken.output = 'ESCAPE';
+                if (tokens.output !== 'RAW') {
+                    tokens.output = 'ESCAPE';
                 }
 
 
@@ -190,9 +191,9 @@ const syntax = {
         }
 
 
-        tplToken.code = code;
+        tokens.code = code;
 
-        return tplToken;
+        return tokens;
     }
 };
 

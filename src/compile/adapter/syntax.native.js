@@ -6,16 +6,16 @@ const syntax = {
     escape: '=',
     raw: '-',
 
-    parser: ({ tplToken }) => {
+    parser: ({ tokens }) => {
 
-        let code = tplToken.code;
+        let code = tokens.code;
 
-        if (tplToken.output) {
+        if (tokens.output) {
 
             if (/^[=#]/.test(code)) {
                 // ... v3 compat ...
                 code = code.replace(/^[=#]/, '');
-                tplToken.output = 'RAW';
+                tokens.output = 'RAW';
             }
 
             // ... ejs compat ...
@@ -27,9 +27,9 @@ const syntax = {
             code = code.replace(/^#/, '//');
         }
 
-        tplToken.code = code;
+        tokens.code = code;
 
-        return tplToken;
+        return tokens;
     }
 };
 
