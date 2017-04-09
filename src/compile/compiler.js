@@ -80,16 +80,6 @@ class Compiler {
     }
 
 
-    getVariables(tokens) {
-        return jsTokens.getVariables(tokens);
-    }
-
-
-    getTokens(source) {
-        return jsTokens.parser(source);
-    }
-
-
     // 解析字符串（HTML）直接输出语句
     parseString(tokens) {
 
@@ -122,8 +112,8 @@ class Compiler {
 
 
         if (!script.variables) {
-            const tokens = this.getTokens(code);
-            variables.push(...this.getVariables(tokens));
+            const tokens = jsTokens.parser(code);
+            variables.push(...jsTokens.getVariables(tokens));
         }
 
 

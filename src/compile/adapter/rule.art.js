@@ -1,13 +1,19 @@
+const jsTokens = require('../js-tokens');
 const nativeRule = {
     test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
     use: ([raw, close, code], compiler) => {
 
-
-        const tokens = compiler.getTokens(code);
+        const tokens = jsTokens.parser(code);
         const options = compiler.options;
+        const result = {};
+        const values = tokens
+            .map(token => token.value)
+            .filter(value => !/^\s+$/.test(value));
 
-        let variables;
-        let output = raw ? 'RAW' : false;
+
+        let output = raw ? 'raw' : false;
+        let key = close + values.shift();
+
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
@@ -16,7 +22,6 @@ const nativeRule = {
                 `\n`, options.filename || '');
         };
 
-        const values = tokens.map(token => token.value).filter(value => !/^\s+$/.test(value));
 
 
         // v3 compat: #value
@@ -24,7 +29,7 @@ const nativeRule = {
             upgrade('#value', '@value');
         }
 
-        let key = close + values.shift();
+
 
         switch (key) {
 
@@ -81,7 +86,7 @@ const nativeRule = {
                 const index = values[2] || '$index';
 
                 code = `$each(${object},function(${value},${index}){`;
-                variables = [`$each`, object];
+                result.variables = [`$each`, object];
 
                 break;
 
@@ -165,7 +170,7 @@ const nativeRule = {
                     // helperName value
                     upgrade('filterName value', 'value | filterName');
                     code = `${key}(${values.join(',')})`;
-                    output = 'RAW';
+                    output = 'raw';
 
                 } else {
                     code = `${key}${values.join('')}`;
@@ -173,14 +178,18 @@ const nativeRule = {
 
 
                 if (!output) {
-                    output = 'ESCAPE';
+                    output = 'escape';
                 }
 
 
                 break;
         }
 
-        return variables ? { code, output, variables } : { code, output };
+
+        result.code = code;
+        result.output = output;
+
+        return result;
     }
 };
 

@@ -1,14 +1,14 @@
 const TYPE_STRING = 'string';
 const TYPE_EXPRESSION = 'expression';
-const TYPE_RAW = 'RAW';
-const TYPE_ESCAPE = 'ESCAPE';
+const TYPE_RAW = 'raw';
+const TYPE_ESCAPE = 'escape';
 
 
 
 /**
  * 将模板转换为 Tokens
  * @param {string}  source 
- * @param {array}   syntax @see defaults.syntax
+ * @param {array}   rules @see defaults.rules
  * @param {Object}  context
  * @return {Object[]}
  */
@@ -22,9 +22,12 @@ const parser = (source, rules, context) => {
 
 
     const walk = rule => {
+
         const test = rule.test;
         const use = rule.use;
-        const group = new RegExp(`${test.source}|^$|[\\w\\W]`, `g`);
+        const flags = test.ignoreCase ? `ig` : `g`;
+        const pattern = `${test.source}|^$|[\\w\\W]`;
+        const group = new RegExp(pattern, flags);
 
         for (let i = 0; i < tokens.length; i++) {
             const token = tokens[i];
@@ -51,8 +54,9 @@ const parser = (source, rules, context) => {
                 if (type === TYPE_STRING) {
 
                     const lastToken = substitute[substitute.length - 1];
+                    const continuously = lastToken && lastToken.type === TYPE_STRING;
 
-                    if (lastToken && lastToken.type === TYPE_STRING) {
+                    if (continuously) {
 
                         // 连接连续的字符串
                         lastToken.value += value;

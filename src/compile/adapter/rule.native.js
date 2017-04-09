@@ -3,8 +3,8 @@ const nativeRule = {
     use: ([output, raw, code]) => {
 
         const outputType = {
-            '-': 'RAW',
-            '=': 'ESCAPE',
+            '-': 'raw',
+            '=': 'escape',
             '': false
         };
 
