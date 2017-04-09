@@ -328,24 +328,16 @@ template.imports.$console = console;
 ```javascript
 {
 
-    // 模板名字。如果没有 source 字段，会根据此来加载模板
+    // 模板名字
     filename: null,
 
     // 模板语法规则
-    syntax: [{
-        name: 'NATIVE',
-        open: '<%',
-        close: '%>',
-        escape: '=',
-        raw: '-',
-        parser: nativeSyntax
+    rules: [{
+        test: /<%([#=-]?)([=#]?)([\w\W]*?)(-?)%>/,
+        use: nativeRule
     }, {
-        name: 'ART',
-        open: '{{',
-        close: '}}',
-        escape: '',
-        raw: '@',
-        parser: artSyntax
+        test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
+        use: artRule
     }],
 
     // 数据编码处理器。为 false 则关闭编码输出功能
