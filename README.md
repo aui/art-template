@@ -297,6 +297,7 @@ var html = render(data);
 **内置变量**
 
 * `$data` 传入模板的数据
+* `$imports` 等同 `template.imports`
 * `print(...argv)` 在当前位置输出字符串
 * `include(filename, data)` 载入子模板
 
