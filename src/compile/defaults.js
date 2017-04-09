@@ -5,8 +5,8 @@ const loader = require('./adapter/loader');
 const include = require('./adapter/include');
 const resolveFilename = require('./adapter/resolve-filename');
 const each = require('./adapter/each');
-const nativeSyntax = require('./adapter/syntax.native');
-const artSyntax = require('./adapter/syntax.art');
+const nativeRule = require('./adapter/rule.native');
+const artRule = require('./adapter/rule.art');
 
 /** 模板编译器默认配置 */
 const defaults = {
@@ -18,21 +18,7 @@ const defaults = {
     filename: null,
 
     // 模板语法规则
-    syntax: [{
-        name: 'NATIVE',
-        open: '<%',
-        close: '%>',
-        escape: '=',
-        raw: '-',
-        parser: nativeSyntax
-    }, {
-        name: 'ART',
-        open: '{{',
-        close: '}}',
-        escape: '',
-        raw: '@',
-        parser: artSyntax
-    }],
+    rules: [nativeRule, artRule],
 
     // 数据编码处理器。为 false 则关闭编码输出功能
     escape: escape,

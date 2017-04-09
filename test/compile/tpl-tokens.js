@@ -1,13 +1,20 @@
 const assert = require('assert');
 const tplTokens = require('../../src/compile/tpl-tokens');
+const jsTokens = require('../../src/compile/js-tokens');
 const defaults = require('../../src/compile/defaults');
-const syntax = defaults.syntax;
+const rules = defaults.rules;
 
 describe('#compile/tpl-tokens', () => {
 
     const test = (code, result) => {
         it(code, () => {
-            assert.deepEqual(result, tplTokens.parser(code, syntax));
+            assert.deepEqual(result, tplTokens.parser(code, rules, {
+                getTokens: jsTokens.parser,
+                getVariables: jsTokens.getVariables,
+                options: {
+                    imports: {}
+                }
+            }));
         });
     };
 
@@ -21,15 +28,10 @@ describe('#compile/tpl-tokens', () => {
         type: tplTokens.TYPE_EXPRESSION,
         value: '{{name}}',
         line: 1,
-        syntax: 'ART',
-        output: false,
-        code: 'name',
-        tokens: [{
-            type: 'name',
-            value: 'name'
-        }],
-        variables: ['name'],
-        parser: syntax[1].parser
+        script: {
+            code: 'name',
+            output: tplTokens.TYPE_ESCAPE
+        }
     }]);
 
 
@@ -41,15 +43,10 @@ describe('#compile/tpl-tokens', () => {
         type: tplTokens.TYPE_EXPRESSION,
         value: '{{name}}',
         line: 1,
-        syntax: 'ART',
-        output: false,
-        code: 'name',
-        tokens: [{
-            type: 'name',
-            value: 'name'
-        }],
-        variables: ['name'],
-        parser: syntax[1].parser
+        script: {
+            code: 'name',
+            output: tplTokens.TYPE_ESCAPE
+        }
     }, {
         type: tplTokens.TYPE_STRING,
         value: '.',
@@ -64,27 +61,10 @@ describe('#compile/tpl-tokens', () => {
         type: tplTokens.TYPE_EXPRESSION,
         value: '{{name + aaa}}',
         line: 1,
-        syntax: 'ART',
-        output: false,
-        code: 'name + aaa',
-        tokens: [{
-            type: 'name',
-            value: 'name'
-        }, {
-            type: 'whitespace',
-            value: ' '
-        }, {
-            type: 'punctuator',
-            value: '+'
-        }, {
-            type: 'whitespace',
-            value: ' '
-        }, {
-            type: 'name',
-            value: 'aaa'
-        }],
-        variables: ['name', 'aaa'],
-        parser: syntax[1].parser
+        script: {
+            code: 'name+aaa',
+            output: tplTokens.TYPE_ESCAPE
+        }
     }, {
         type: tplTokens.TYPE_STRING,
         value: '.\n',
@@ -99,34 +79,28 @@ describe('#compile/tpl-tokens', () => {
         type: tplTokens.TYPE_EXPRESSION,
         value: '{{\n name + aaa}}',
         line: 2,
-        syntax: 'ART',
-        output: false,
-        code: '\n name + aaa',
-        tokens: [{
-            type: 'whitespace',
-            value: '\n '
-        }, {
-            type: 'name',
-            value: 'name'
-        }, {
-            type: 'whitespace',
-            value: ' '
-        }, {
-            type: 'punctuator',
-            value: '+'
-        }, {
-            type: 'whitespace',
-            value: ' '
-        }, {
-            type: 'name',
-            value: 'aaa'
-        }],
-        variables: ['name', 'aaa'],
-        parser: syntax[1].parser
+        script: {
+            code: 'name+aaa',
+            output: tplTokens.TYPE_ESCAPE
+        }
     }, {
         type: tplTokens.TYPE_STRING,
         value: '.',
         line: 3
+    }]);
+
+    test('hello\n\n<% a b c d %>', [{
+        type: tplTokens.TYPE_STRING,
+        value: 'hello\n\n',
+        line: 1
+    }, {
+        type: tplTokens.TYPE_EXPRESSION,
+        value: '<% a b c d %>',
+        line: 3,
+        script: {
+            code: ' a b c d ',
+            output: false
+        }
     }]);
 
 });

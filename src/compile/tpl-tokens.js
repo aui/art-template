@@ -1,5 +1,3 @@
-const jsTokens = require('./js-tokens');
-
 const TYPE_STRING = 'string';
 const TYPE_EXPRESSION = 'expression';
 const TYPE_RAW = 'RAW';
@@ -9,77 +7,86 @@ const TYPE_ESCAPE = 'ESCAPE';
 
 /**
  * 将模板转换为 Tokens
- * @param {string} source 
- * @param {array} syntax @see defaults.syntax
+ * @param {string}  source 
+ * @param {array}   syntax @see defaults.syntax
+ * @param {Object}  context
  * @return {Object[]}
  */
-const parser = (source, syntax) => {
+const parser = (source, rules, context) => {
 
-    // TODO column
-    let line = 1;
-    const tokens = [];
-    const escapeReg = string => string.replace(/(.)/g, '\\$1');
-    const syntaxReg = syntax.map(tag => `(${escapeReg(tag.open)}[\\w\\W]*?${escapeReg(tag.close)})`);
-    const SYNTAX = new RegExp(syntaxReg.join('|') + '|(^$|[\\w\\W])', 'g');
+    const tokens = [{
+        type: TYPE_STRING,
+        value: source,
+        line: 1
+    }];
 
-    source.match(SYNTAX).forEach(item => {
-        SYNTAX.lastIndex = 0;
-        const match = SYNTAX.exec(item);
 
-        let cursor = 0;
-        const lastToken = tokens[tokens.length - 1];
-        const value = match[0];
-        const token = { type: TYPE_STRING, value, line };
+    const walk = rule => {
+        const test = rule.test;
+        const use = rule.use;
+        const group = new RegExp(`${test.source}|^$|[\\w\\W]`, `g`);
 
-        line += value.split(/\n/).length - 1;
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            const type = token.type;
+            let line = 1;
 
-        while (cursor < syntax.length) {
-            if (match[cursor + 1]) {
-
-                const tag = syntax[cursor];
-                const open = tag.open;
-                const close = tag.close;
-                const code = value.slice(open.length, value.length - close.length);
-                const output = {
-                    [tag.raw]: TYPE_RAW,
-                    [tag.escape]: TYPE_ESCAPE
-                };
-
-                token.type = TYPE_EXPRESSION;
-
-                // 语法名称
-                token.syntax = tag.name;
-
-                // 输出语句类型
-                token.output = output[code.slice(0, 1)] || false; // tag.raw 与 tag.escape 只允许一个字符
-
-                // 主要代码
-                token.code = token.output ? code.slice(1) : code;
-
-                // jsTokens
-                token.tokens = jsTokens.parser(token.code);
-
-                // 使用的变量
-                token.variables = jsTokens.getVariables(token.tokens);
-
-                // tplTokens 处理器
-                token.parser = tag.parser;
-
-                break;
+            if (type !== TYPE_STRING) {
+                line += token.value.split(/\n/).length - 1;
+                continue;
             }
 
-            cursor++;
+            const matchs = token.value.match(group);
+            const substitute = [];
+
+            for (let m = 0; m < matchs.length; m++) {
+                let value = matchs[m];
+
+                test.lastIndex = 0;
+
+                const values = test.exec(value);
+                const type = values ? TYPE_EXPRESSION : TYPE_STRING;
+
+
+                if (type === TYPE_STRING) {
+
+                    const lastToken = substitute[substitute.length - 1];
+
+                    if (lastToken && lastToken.type === TYPE_STRING) {
+
+                        // 连接连续的字符串
+                        lastToken.value += value;
+
+                    } else {
+
+                        const token = { type, value, line };
+                        substitute.push(token);
+
+                    }
+
+                } else {
+
+                    const match = values.slice(1);
+                    const script = use(match, context);
+                    const token = { type, value, line, script };
+                    substitute.push(token);
+
+                }
+
+                line += value.split(/\n/).length - 1;
+            }
+
+
+            tokens.splice(i, 1, ...substitute);
+            i += substitute.length - 1;
+
         }
+    };
 
 
-        if (lastToken && lastToken.type === TYPE_STRING && token.type === TYPE_STRING) {
-            // 连接字符串
-            lastToken.value += token.value;
-        } else {
-            tokens.push(token);
-        }
-
-    });
+    for (let i = 0; i < rules.length; i++) {
+        walk(rules[i]);
+    }
 
     return tokens;
 };

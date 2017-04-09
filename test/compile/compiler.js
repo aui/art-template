@@ -2,7 +2,7 @@ const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const tplTokens = require('../../src/compile/tpl-tokens');
-const syntaxEval = require('../../src/compile/adapter/syntax.native');
+const ruleNative = require('../../src/compile/adapter/rule.native');
 
 const compress = ({ source }) => {
     return source
@@ -60,7 +60,7 @@ describe('#compile/compiler', () => {
     //             options = defaults.$extend(options);
     //             options.source = '';
     //             const compiler = new Compiler(options);
-    //             const token = tplTokens.parser(code, [syntaxEval]);
+    //             const token = tplTokens.parser(code, [ruleNative]);
     //             compiler.parseString(token[0]);
     //             assert.deepEqual(result, compiler.scripts.map(script => script.code));
     //         });
@@ -86,7 +86,7 @@ describe('#compile/compiler', () => {
     //         it(code, () => {
     //             options = defaults.$extend(options);
     //             options.source = '';
-    //             const token = tplTokens.parser(code, [syntaxEval]);
+    //             const token = tplTokens.parser(code, [ruleNative]);
     //             const compiler = new Compiler(options);
     //             compiler.parseExpression(token[0]);
     //             assert.deepEqual(result, compiler.scripts.map(script => script.code));

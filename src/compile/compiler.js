@@ -1,3 +1,4 @@
+const jsTokens = require('./js-tokens');
 const tplTokens = require('./tpl-tokens');
 const isKeyword = require('is-keyword-js');
 
@@ -42,13 +43,10 @@ class Compiler {
         }
 
 
-        tplTokens.parser(source, options.syntax).forEach(tokens => {
-
-            const type = tokens.type;
-
-            if (type === tplTokens.TYPE_STRING) {
+        tplTokens.parser(source, options.rules, this).forEach(tokens => {
+            if (tokens.type === tplTokens.TYPE_STRING) {
                 this.parseString(tokens);
-            } else if (type === tplTokens.TYPE_EXPRESSION) {
+            } else {
                 this.parseExpression(tokens);
             }
         });
@@ -82,6 +80,16 @@ class Compiler {
     }
 
 
+    getVariables(tokens) {
+        return jsTokens.getVariables(tokens);
+    }
+
+
+    getTokens(source) {
+        return jsTokens.parser(source);
+    }
+
+
     // 解析字符串（HTML）直接输出语句
     parseString(tokens) {
 
@@ -102,25 +110,30 @@ class Compiler {
     // 解析逻辑表达式语句
     parseExpression(tokens) {
 
-        let code = tokens.code;
+
         const source = tokens.value;
         const line = tokens.line;
         const options = this.options;
         const compileDebug = options.compileDebug;
+        const script = tokens.script;
+        const output = script.output;
+        const variables = script.variables || [];
+        let code = script.code;
 
-        tokens.variables.forEach(name => this.importContext(name));
-        tokens = tokens.parser({ tokens, compiler: this });
+
+        if (!script.variables) {
+            const tokens = this.getTokens(code);
+            variables.push(...this.getVariables(tokens));
+        }
 
 
-        if (tokens.output) {
-            if (escape === false || tokens.output === tplTokens.TYPE_RAW) {
-                code = `$out+=${tokens.code}`;
+        if (output) {
+            if (escape === false || output === tplTokens.TYPE_RAW) {
+                code = `$out+=${script.code}`;
             } else {
-                code = `$out+=$escape(${tokens.code})`;
-                this.importContext(`$escape`);
+                code = `$out+=$escape(${script.code})`;
+                variables.push(`$escape`);
             }
-        } else {
-            code = tokens.code;
         }
 
 
@@ -129,6 +142,7 @@ class Compiler {
         }
 
 
+        variables.forEach(name => this.importContext(name));
         this.scripts.push({ source, line, code });
     }
 

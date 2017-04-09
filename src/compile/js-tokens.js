@@ -8,7 +8,7 @@ const isKeyword = require('is-keyword-js');
  * @return {Object[]}
  */
 const parser = code => {
-    return code.match(jsTokens).map(value => {
+    const tokens = code.match(jsTokens).map(value => {
         jsTokens.lastIndex = 0;
         return matchToToken(jsTokens.exec(value));
     }).map(token => {
@@ -17,6 +17,8 @@ const parser = code => {
         }
         return token;
     });
+
+    return tokens;
 };
 
 

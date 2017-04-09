@@ -5,7 +5,7 @@ const tplTokens = require('../../src/compile/tpl-tokens');
 
 describe('#compile/index', () => {
 
-    describe('syntax.native', () => {
+    describe('rule.native', () => {
         const test = (code, data, result) => {
             it(code, () => {
                 const render = compile(code, {
@@ -109,7 +109,7 @@ describe('#compile/index', () => {
 
 
 
-    describe('syntax.art', () => {
+    describe('rule.art', () => {
         const test = (code, data, result, options = {}) => {
             it(code, () => {
                 const render = compile(code, options);
@@ -255,19 +255,20 @@ describe('#compile/index', () => {
         });
 
         it('syntax', () => {
-            const render = compile('hello ${name} <%=name%>', {
-                syntax: [{
-                    name: 'ES6',
-                    open: '${',
-                    close: '}',
-                    escape: '',
-                    raw: '',
-                    parser: ({ tokens, compiler }) => {
-                        tokens.output = tplTokens.TYPE_ESCAPE;
-                        return tokens;
+            const source = 'hello ${name} <%=name%>';
+            const options = {
+                rules: [{
+                    test: /\${([\w\W]*?)}/,
+                    use: ([code]) => {
+                        return {
+                            code,
+                            output: tplTokens.TYPE_ESCAPE
+                        };
                     }
                 }]
-            });
+            };
+            const render = compile(source, options);
+
             assert.deepEqual('hello aui <%=name%>', render({
                 name: 'aui'
             }));
