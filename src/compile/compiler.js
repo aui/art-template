@@ -91,7 +91,7 @@ class Compiler {
         const compress = options.compress;
 
         if (compress) {
-            source = compress({ line, source, compiler: this });
+            source = compress(source);
         }
 
         const code = `$out+=${stringify(source)}`;

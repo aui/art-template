@@ -222,6 +222,8 @@ describe('#compile/index', () => {
     });
 
 
+
+
     describe('syntax.mix', () => {
         const test = (code, data, result, options = {}) => {
             it(code, () => {
@@ -231,6 +233,21 @@ describe('#compile/index', () => {
         };
 
         test('<%=a%>, {{b}}', { a: 1, b: 2 }, '1, 2');
+
+    });
+
+
+
+    describe('options', () => {
+
+        it('compress', () => {
+            const render = compile('<div>     </div>\n     <%=value%>', {
+                compress: require('../../src/compile/adapter/compress')
+            });
+            assert.deepEqual('<div> </div> aui', render({
+                value: 'aui'
+            }));
+        });
 
     });
 
