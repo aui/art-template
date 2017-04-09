@@ -1,10 +1,11 @@
 const jsTokens = require('../js-tokens');
 const nativeRule = {
     test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
-    use: ([raw, close, code], compiler) => {
+    use: function(match, raw, close, code) {
 
-        const tokens = jsTokens.parser(code);
+        const compiler = this;
         const options = compiler.options;
+        const tokens = jsTokens.parser(code);
         const result = {};
         const values = tokens
             .map(token => token.value)
@@ -102,6 +103,7 @@ const nativeRule = {
                 // echo value value2 value3
                 // echo(value + 1, value2)
                 key = 'print';
+                tokens[0].value = key;
                 upgrade('echo value', 'print value');
 
             case 'print':
@@ -160,7 +162,7 @@ const nativeRule = {
                     group.reduce((accumulator, filter) => {
                         const name = filter.shift();
                         filter.unshift(accumulator);
-                        return code = `$imports.${name}(${filter.join(',')})`;
+                        return code = `${name}(${filter.join(',')})`;
                     }, target);
 
 
@@ -188,6 +190,11 @@ const nativeRule = {
 
         result.code = code;
         result.output = output;
+
+        if (!result.variables) {
+            result.variables = jsTokens.getVariables(tokens);
+        }
+
 
         return result;
     }

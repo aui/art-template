@@ -7,9 +7,9 @@ const TYPE_ESCAPE = 'escape';
 
 /**
  * 将模板转换为 Tokens
- * @param {string}  source 
- * @param {array}   rules @see defaults.rules
- * @param {Object}  context
+ * @param {string}      source 
+ * @param {Object[]}    rules     @see defaults.rules
+ * @param {Object}      context
  * @return {Object[]}
  */
 const parser = (source, rules, context) => {
@@ -70,8 +70,7 @@ const parser = (source, rules, context) => {
 
                 } else {
 
-                    const match = values.slice(1);
-                    const script = use(match, context);
+                    const script = use.apply(context, values);
                     const token = { type, value, line, script };
                     substitute.push(token);
 

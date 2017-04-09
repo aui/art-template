@@ -30,7 +30,8 @@ describe('#compile/tpl-tokens', () => {
         line: 1,
         script: {
             code: 'name',
-            output: tplTokens.TYPE_ESCAPE
+            output: tplTokens.TYPE_ESCAPE,
+            variables: ['name']
         }
     }]);
 
@@ -45,7 +46,8 @@ describe('#compile/tpl-tokens', () => {
         line: 1,
         script: {
             code: 'name',
-            output: tplTokens.TYPE_ESCAPE
+            output: tplTokens.TYPE_ESCAPE,
+            variables: ['name']
         }
     }, {
         type: tplTokens.TYPE_STRING,
@@ -63,7 +65,8 @@ describe('#compile/tpl-tokens', () => {
         line: 1,
         script: {
             code: 'name+aaa',
-            output: tplTokens.TYPE_ESCAPE
+            output: tplTokens.TYPE_ESCAPE,
+            variables: ['name', 'aaa']
         }
     }, {
         type: tplTokens.TYPE_STRING,
@@ -81,7 +84,8 @@ describe('#compile/tpl-tokens', () => {
         line: 2,
         script: {
             code: 'name+aaa',
-            output: tplTokens.TYPE_ESCAPE
+            output: tplTokens.TYPE_ESCAPE,
+            variables: ['name', 'aaa']
         }
     }, {
         type: tplTokens.TYPE_STRING,

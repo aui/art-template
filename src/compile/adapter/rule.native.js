@@ -1,6 +1,6 @@
 const nativeRule = {
     test: /<%([#=-]?)([=#]?)([\w\W]*?)(-?)%>/,
-    use: ([output, raw, code]) => {
+    use: (match, output, raw, code) => {
 
         const outputType = {
             '-': 'raw',

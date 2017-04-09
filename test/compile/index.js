@@ -259,7 +259,7 @@ describe('#compile/index', () => {
             const options = {
                 rules: [{
                     test: /\${([\w\W]*?)}/,
-                    use: ([code]) => {
+                    use: (match, code) => {
                         return {
                             code,
                             output: tplTokens.TYPE_ESCAPE
