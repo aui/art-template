@@ -41,18 +41,7 @@ const getVariables = tokens => {
 };
 
 
-/**
- * 将 tokens 还原为源代码
- * @param {Object[]} tokens 
- * @returns {string}
- */
-const toString = tokens => {
-    return tokens.map(token => token.value).join('');
-};
-
-
 module.exports = {
     parser,
-    getVariables,
-    toString
+    getVariables
 };
