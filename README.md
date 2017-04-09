@@ -161,7 +161,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 javascript 表�
 ```
 
 ```html
-{{each target as val key}}
+{{each target val key}}
     {{key}} {{val}}
 {{/each}}
 ```
