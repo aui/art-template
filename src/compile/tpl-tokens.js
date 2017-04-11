@@ -17,61 +17,73 @@ const parser = (source, rules, context) => {
     const tokens = [{
         type: TYPE_STRING,
         value: source,
-        line: 1
+        line: 0,
+        start: 0,
+        end: source.length
     }];
 
 
     const walk = rule => {
 
-        const test = rule.test;
-        const use = rule.use;
-        const flags = test.ignoreCase ? `ig` : `g`;
-        const pattern = `${test.source}|^$|[\\w\\W]`;
+        const flags = rule.test.ignoreCase ? `ig` : `g`;
+        const pattern = `${rule.test.source}|^$|[\\w\\W]`;
         const group = new RegExp(pattern, flags);
 
-        for (let i = 0; i < tokens.length; i++) {
-            const token = tokens[i];
-            const type = token.type;
-            let line = 1;
+        for (let index = 0; index < tokens.length; index++) {
 
-            if (type !== TYPE_STRING) {
-                line += token.value.split(/\n/).length - 1;
+            if (tokens[index].type !== TYPE_STRING) {
                 continue;
             }
 
-            const matchs = token.value.match(group);
+
+            let line = tokens[index].line;
+            let start = tokens[index].start;
+            let end = tokens[index].end;
+
+            const matchs = tokens[index].value.match(group);
             const substitute = [];
 
             for (let m = 0; m < matchs.length; m++) {
                 let value = matchs[m];
 
-                test.lastIndex = 0;
+                rule.test.lastIndex = 0;
 
-                const values = test.exec(value);
+                const values = rule.test.exec(value);
                 const type = values ? TYPE_EXPRESSION : TYPE_STRING;
+                const lastSubstitute = substitute[substitute.length - 1];
+                const lastToken = lastSubstitute || tokens[index];
+                const lastValue = lastToken.value;
 
+
+                if (lastToken.line === line) {
+                    start = lastSubstitute ? lastSubstitute.end : start;
+                } else {
+                    start = lastValue.length - lastValue.lastIndexOf('\n') - 1;
+                }
+
+
+                end = start + value.length;
+
+                const token = { type, value, line, start, end };
 
                 if (type === TYPE_STRING) {
 
-                    const lastToken = substitute[substitute.length - 1];
-                    const continuously = lastToken && lastToken.type === TYPE_STRING;
+                    if (lastSubstitute && lastSubstitute.type === TYPE_STRING) {
 
-                    if (continuously) {
-
-                        // 连接连续的字符串
-                        lastToken.value += value;
+                        lastSubstitute.value += value;
+                        lastSubstitute.end += value.length;
 
                     } else {
 
-                        const token = { type, value, line };
+
                         substitute.push(token);
 
                     }
 
                 } else {
 
-                    const script = use.apply(context, values);
-                    const token = { type, value, line, script };
+                    const script = rule.use.apply(context, values);
+                    token.script = script;
                     substitute.push(token);
 
                 }
@@ -80,8 +92,8 @@ const parser = (source, rules, context) => {
             }
 
 
-            tokens.splice(i, 1, ...substitute);
-            i += substitute.length - 1;
+            tokens.splice(index, 1, ...substitute);
+            index += substitute.length - 1;
 
         }
     };

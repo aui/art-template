@@ -212,7 +212,7 @@ class Compiler {
                 `path:${stringify(filename)}`,
                 `name:"RuntimeError"`,
                 `message:e.message`,
-                `line:$line[0]`,
+                `line:$line[0]+1`,
                 `source:$line[1]`,
                 `stack:e.stack`
             ].join(`,`) + '}';
