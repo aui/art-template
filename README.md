@@ -13,6 +13,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 2. 同时支持原生 JavaScript 语法、简约语法
 3. 兼容 Ejs 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
 4. NodeJS 支持 `require(templatePath)` 方式载入 `.html` 模板
+4. 支持定义模板的语法
 
 ## 特性
 
@@ -333,7 +334,7 @@ template.imports.$console = console;
 
     // 模板语法规则
     rules: [{
-        test: /<%([#=-]?)([=#]?)([\w\W]*?)(-?)%>/,
+        test: /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/,
         use: nativeRule
     }, {
         test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
