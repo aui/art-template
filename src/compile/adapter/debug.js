@@ -6,7 +6,9 @@
 const debug = error => {
 
     if (typeof console === 'object') {
-        console.error(`Template Error:`, error);
+        const stack = error.stack;
+        delete error.stack;
+        console.error(`Template Error: ` + JSON.stringify(error, null, 4) + '\n\n' + stack);
     }
 
     return () => `{Template Error}`;
