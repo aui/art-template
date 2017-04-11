@@ -11,18 +11,18 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板所在行
 2. 同时支持原生 JavaScript 语法、简约语法
-3. 兼容 Ejs 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
-4. NodeJS 支持 `require(templatePath)` 方式载入 `.html` 模板
-4. 支持定义模板的语法
+3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
+4. NodeJS 支持 `require(templatePath)` 方式载入 `.art` 后缀模板
+4. 支持定义模板的语法规则
 
 ## 特性
 
-* 针对 Nodejs 与 V8 引擎优化，运行时速度是 Mustache、tpl 等模板引擎的 20 多倍
+* 针对 NodeJS 与 V8 引擎优化，运行时速度是 Mustache、tpl 等模板引擎的 20 多倍
 * 支持编译、运行时调试，可以定位到错误模板所在的行号
 * 兼容 Ejs 模板语法
 * 支持 ES 严格模式环境运行
 * 支持预编译模板
-* 支持原生 Javascript 和类似 Mustache 风格的模板语法
+* 支持原生 JavaScript 和类似 Mustache 风格的模板语法
 * 只有 5KB 大小
 
 ## 安装
@@ -87,7 +87,7 @@ template.render(source, data, options);
 
 ## 语法
 
-art-template 同时支持 `{{expression}}` 简约语法与任意 javascript 表达式 `<% expression %>`。
+art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表达式 `<% expression %>`。
 
 ```html
 {{if user}}
@@ -188,6 +188,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 javascript 表�
 **过滤器**
 
 ```javascript
+// 向模板中导入变量
 template.imports.$dateFormat = function(date, format){/*[code..]*/};
 template.imports.$timestamp = function(value){return value * 1000};
 ```
@@ -235,7 +236,9 @@ var html template('/welcome.html', {
 });
 ```
 
-> 如果在浏览器中使用，`filename` 请传入存放模板的元素 `id`。
+> 在浏览器中，`filename` 请传入存放模板的元素 `id`
+>
+> 在 NodeJS 中，`filename` 如果非绝对路径，则会根据 `options.root` 来定位模板
 
 ###	template(filename, source)
 
@@ -295,7 +298,7 @@ template.imports.$parseInt = parseInt;
 
 ### \#bindExtname(require, extname)
 
-关联后缀名，支持 `require(templatePath)` 形式加载模板。
+关联后缀名，支持 `require(templatePath)` 形式加载模板（仅 NodeJS 环境中可使用）。
 
 ```javascript
 template.bindExtname(require, '.ejs');
@@ -324,7 +327,35 @@ template.imports.$console = console;
 
 模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用，并且要在编译之前进行声明。
 
+## 定义语法规则
+
+从一个简单的例子说起，让模板引擎支持 ES6 `${name}` 模板字符串的解析：
+
+```javascript
+template.defaults.rules.push({
+    test: /\${([\w\W]*?)}/,
+    use: function(match, code) {
+        return {
+            code: code,
+            output: 'escape' // 'escape' | 'raw' | false
+        }
+    }
+});
+```
+
+其中，`test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
+
+1. 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
+2. 返回值：返回一个对象，包含 `code` 与 `output` 两个字段：
+    1. `code` 转换后的 JavaScript 语句
+    2. `output` 描述 `code` 的类型，可选值：
+        1. `'escape'` 编码后进行输出
+        2. `'raw'` 输出原始内容
+        3. `false` 不输出任何内容
+
 ## 选项
+
+`template.defaults`
 
 ```javascript
 {
@@ -333,13 +364,7 @@ template.imports.$console = console;
     filename: null,
 
     // 模板语法规则
-    rules: [{
-        test: /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/,
-        use: nativeRule
-    }, {
-        test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
-        use: artRule
-    }],
+    rules: [nativeRule, artRule],
 
     // 数据编码处理器。为 false 则关闭编码输出功能
     escape: escape,
@@ -357,7 +382,11 @@ template.imports.$console = console;
     compress: null,
 
     // 导入的模板变量
-    imports: {},
+    imports: {
+        $each: each,
+        $escape: escape,
+        $include: include
+    },
 
     // 调试处理函数
     debug: debug,
@@ -372,10 +401,7 @@ template.imports.$console = console;
     bail: false,
 
     // 模板根目录。Node 环境专用
-    root: '/',
-
-    // 绑定的模板扩展名。Node 环境专用，template.bindExtname(template, [extname]) 的默认配置
-    extname: '.html'
+    root: '/'
 
 };
 ```
