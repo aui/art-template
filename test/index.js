@@ -5,52 +5,29 @@ const path = require('path');
 
 const root = defaults.root;
 
+module.exports = {
+    before: () => {
+        console.log('#index');
+    },
 
-
-describe('#index', () => {
-
-    describe('template', () => {
-        it('render', () => {
+    'template': {
+        'render': () => {
             const html = template(__dirname + '/res/template.file.html', {});
             assert.deepEqual('hello world', html);
-        });
+        },
 
-        it('compile', () => {
+        'compile': () => {
             defaults.root = path.join(__dirname, 'res');
             const render = template('template.file.html');
             const html = render({});
             assert.deepEqual('hello world', html);
             defaults.root = root;
-        });
+        },
 
-        it('cache', () => {
+        'cache': () => {
             template('/index.html', 'hi, <%=value%>.');
             const html = template('/index.html', { value: 'aui' });
             assert.deepEqual('hi, aui.', html);
-        });
-    });
-
-
-    describe('render', () => {
-        const test = (code, data, result) => {
-            it(code, () => {
-                assert.deepEqual(result, template.render(code, data));
-            });
-        };
-        test('hello, <%=value%>.', {
-            value: 'aui'
-        }, 'hello, aui.');
-    });
-
-    describe('compile', () => {
-        const test = (code, data, result) => {
-            it(code, () => {
-                assert.deepEqual(result, template.compile(code)(data));
-            });
-        };
-        test('hello, <%=value%>.', {
-            value: 'aui'
-        }, 'hello, aui.');
-    });
-
-});
+        }
+    }
+};

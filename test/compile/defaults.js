@@ -1,8 +1,8 @@
 const assert = require('assert');
 const defaults = require('../../src/compile/defaults');
+module.exports = {
 
-describe('#compile/defaults', () => {
-    it('is object', () => {
-        assert.deepEqual('object', typeof defaults);
-    });
-});
+    before: () => {
+        console.log('#compile/defaults');
+    }
+};

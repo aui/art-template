@@ -2,136 +2,131 @@ const assert = require('assert');
 const compile = require('../../src/compile/index');
 const tplTokens = require('../../src/compile/tpl-tokens');
 
+let render, data, result;
 
-describe('#compile/index', () => {
+module.exports = {
 
-    describe('rule.native', () => {
-        const test = (code, data, result) => {
-            it(code, () => {
-                const render = compile(code, {
-                    bail: true
-                });
-                const html = render(data);
-                assert.deepEqual(result, html);
-            });
-        };
+    before: () => {
+        console.log('#compile/index');
+    },
+
+    'rule.native': {
+
+        'output': () => {
 
 
-        describe('output', () => {
-            test('hello <%=value%>.', { value: 'aui' }, 'hello aui.');
-            test('hello <%=value%>.', { value: '<aui>' }, 'hello &#60;aui&#62;.');
-            test('hello <%-value%>.', { value: '<aui>' }, 'hello <aui>.');
+            render = compile('hello <%=value%>.');
+            data = { value: 'aui' };
+            result = render(data);
+            assert.deepEqual('hello aui.', result);
 
-            test(`<%\nprint('hello > world')\n%>`, {}, 'hello > world');
-            test(`<%- print('hello > world') %>`, {}, 'hello > world');
-            test(`<%= print('hello > world') %>`, {}, 'hello &#62; world');
+            render = compile('hello <%=value%>.');
+            data = { value: '<aui>' };
+            result = render(data);
+            assert.deepEqual('hello &#60;aui&#62;.', result);
 
-            // empty
-            //test('', {}, '');
-        });
+            render = compile('hello <%-value%>.');
+            data = { value: '<aui>' };
+            result = render(data);
+            assert.deepEqual('hello <aui>.', result);
 
-        describe('syntax compat: art-template@v3', () => {
-            test('<%== value %>', { value: '<aui>' }, '<aui>');
-            test('<%=# value %>', { value: '<aui>' }, '<aui>');
-        });
+            render = compile(`<%\nprint('hello > world')\n%>`);
+            data = {};
+            result = render(data);
+            assert.deepEqual('hello > world', result);
 
-        describe('syntax compat: ejs', () => {
-            test('<%# value %>', { value: 'aui' }, '');
-            test('<%= value -%>', { value: 'aui' }, 'aui');
-        });
+            render = compile(`<%- print('hello > world') %>`);
+            data = {};
+            result = render(data);
+            assert.deepEqual('hello > world', result);
 
-        describe('errors', () => {
-            it('RuntimeError', () => {
-                const render = compile('<%=a.b.c%>');
-                assert.deepEqual('{Template Error}', render({}));
-            });
+            render = compile(`<%= print('hello > world') %>`);
+            data = {};
+            result = render(data);
+            assert.deepEqual('hello &#62; world', result);
 
-            it('CompileError', () => {
-                const render = compile('<%=a b c%>');
-                assert.deepEqual('{Template Error}', render({}));
-            });
+            // todo empty
+        },
 
-            it('CompileError: Template not found', () => {
-                const render = compile({
-                    filename: '/404.html'
-                });
-                assert.deepEqual('{Template Error}', render({}));
-            });
-
-            it('throw error: RuntimeError', () => {
-                const render = compile({
-                    source: '<%=a.b.c%>',
-                    bail: true
-                });
-
-                try {
-                    render({});
-                } catch (e) {
-                    assert.deepEqual('RuntimeError', e.name);
-                }
-            });
-
-            it('throw error: CompileError: Template not found', () => {
-                try {
-                    compile({
-                        filename: '/404.html',
-                        bail: true
-                    });
-                } catch (e) {
-                    assert.deepEqual('CompileError', e.name);
-                }
-            });
-
-            it('throw error: CompileError', () => {
-                try {
-                    const render = compile('<%=a b c%>', {
-                        bail: true
-                    });
-                    render({});
-                } catch (e) {
-                    assert.deepEqual('CompileError', e.name);
-                }
-            });
-
-        });
+        'syntax compat: art-template@v3': () => {
 
 
-        describe('toString', () => {
-            const render = compile('<%=value%>');
-            it('toString()', () => {
-                assert.deepEqual('string', typeof render.toString());
-                assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'));
-            });
-        });
+            render = compile('<%== value %>');
+            data = { value: '<aui>' };
+            result = render(data);
+            assert.deepEqual('<aui>', result);
 
-    });
+            render = compile('<%=# value %>');
+            data = { value: '<aui>' };
+            result = render(data);
+            assert.deepEqual('<aui>', result);
+        },
+
+        'syntax compat: ejs': () => {
 
 
+            render = compile('<%# value %>');
+            data = { value: 'aui' };
+            result = render(data);
+            assert.deepEqual('', result);
 
+            render = compile('<%= value -%>');
+            data = { value: 'aui' };
+            result = render(data);
+            assert.deepEqual('aui', result);
+        }
 
-    describe('rule.art', () => {
-        const test = (code, data, result, options = {}) => {
-            it(code, () => {
-                const render = compile(code, options);
-                assert.deepEqual(result, render(data));
-            });
-        };
+    },
 
-        describe('basic', () => {
-            test('hello', {}, 'hello');
-            test('hello, {{value}}.', { value: 'world' }, 'hello, world.');
-            test('{{value}}', { value: '<>' }, '&#60;&#62;')
-            test('{{@value}}', { value: '<>' }, '<>');
-            test('{{a + b + c}}', { a: 0, b: 1, c: 2 }, '3');
-            test('{{a ? b : c}}', { a: 0, b: 1, c: 2 }, '2');
-            test('{{a || b || c}}', { a: 0, b: 1, c: 2 }, '1');
+    'rule.art': {
+        'output': () => {
 
-            // ... v3 compat ...
-            test('{{#value}}', { value: '<>' }, '<>');
-        });
+            render = compile('hello');
+            data = {};
+            result = render(data);
+            assert.deepEqual('hello', result);
 
-        describe('filter', () => {
+            render = compile('hello, {{value}}.');
+            data = { value: 'world' };
+            result = render(data);
+            assert.deepEqual('hello, world.', result);
 
+            render = compile('{{value}}');
+            data = { value: '<>' };
+            result = render(data);
+            assert.deepEqual('&#60;&#62;', result);
+
+            render = compile('{{@value}}');
+            data = { value: '<>' };
+            result = render(data);
+            assert.deepEqual('<>', result);
+
+            render = compile('{{a + b + c}}');
+            data = { a: 0, b: 1, c: 2 };
+            result = render(data);
+            assert.deepEqual('3', result);
+
+            render = compile('{{a ? b : c}}');
+            data = { a: 0, b: 1, c: 2 };
+            result = render(data);
+            assert.deepEqual('2', result);
+
+            render = compile('{{a || b || c}}');
+            data = { a: 0, b: 1, c: 2 };
+            result = render(data);
+            assert.deepEqual('1', result);
+
+        },
+
+        'syntax compat: art-template@v3': () => {
+
+            render = compile('{{#value}}');
+            data = { value: '<>' };
+            result = render(data);
+            assert.deepEqual('<>', result);
+        },
+
+        'filter': () => {
             const dateFormat = (date, format) => {
                 date = new Date(date);
                 const map = {
@@ -169,6 +164,11 @@ describe('#compile/index', () => {
             const brackets = string => `『${string}』`;
             const options = { imports: { dateFormat, brackets } };
 
+            const test = (code, data, result, options = {}) => {
+                const render = compile(code, options);
+                assert.deepEqual(result, render(data));
+            };
+
             test(`{{print "hello" ', ' "world"}}`, {}, `hello, world`, options);
             test(`{{value | brackets}}`, { value: '糖饼' }, '『糖饼』', options);
             test(`{{time | dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`, options);
@@ -177,84 +177,134 @@ describe('#compile/index', () => {
             test(`{{time * 1000 | dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794 }, `2017-04-07`, options);
             test(`{{time | dateFormat:'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`, options); // ... v3 compat ...
             test(`{{brackets value}}`, { value: '糖饼' }, '『糖饼』', options); // ... v3 compat ...
-        });
-
-        // describe('include', () => {
-        //     compile('#title: {{title}}', {
-        //         root: '/',
-        //         filename: '/header.html'
-        //     });
-
-        //     test(`{{include 'header.html'}}\ncontent: {{content}}`, { title: 'hello', content: 'world' }, `#title: hello\ncontent: world`);
-        //     test(`{{include './header.html'}}\ncontent: {{content}}`, { title: 'hello', content: 'world' }, `#title: hello\ncontent: world`);
-        //     test(`{{include 'header.html' sub}}\ncontent: {{content}}`, { title: 'hello', content: 'world', sub: { title: '糖饼' } }, `#title: 糖饼\ncontent: world`);
-        // });
+        },
 
 
-        describe('echo', () => {
-            test('{{echo 2017}}', {}, '2017');
-            test('{{echo value}}', { value: 'hello' }, 'hello');
-        });
+        'include': () => {
+            compile('#title: {{title}}', {
+                root: '/',
+                filename: '/header.html'
+            });
+
+            render = compile(`{{include 'header.html'}}\ncontent: {{content}}`);
+            data = { title: 'hello', content: 'world' };
+            result = render(data);
+            assert.deepEqual(`#title: hello\ncontent: world`, result);
+
+            render = compile(`{{include './header.html'}}\ncontent: {{content}}`);
+            data = { title: 'hello', content: 'world' };
+            result = render(data);
+            assert.deepEqual(`#title: hello\ncontent: world`, result);
+
+            render = compile(`{{include 'header.html' sub}}\ncontent: {{content}}`);
+            data = { title: 'hello', content: 'world', sub: { title: '糖饼' } };
+            result = render(data);
+            assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
+        },
 
 
-        describe('each', () => {
-            test('{{each}}{{$index}}{{$value}}{{/each}}', ['a', 'b', 'c'], '0a1b2c');
-            test('{{each}}{{$index}}{{$value}}{{/each}}', { a: 1, b: 2, c: 3 }, 'a1b2c3');
+        'echo': () => {
+            render = compile('{{echo 2017}}');
+            data = {};
+            result = render(data);
+            assert.deepEqual('2017', result);
+            render = compile('{{echo value}}');
+            data = { value: 'hello' };
+            result = render(data);
+            assert.deepEqual('hello', result);
+        },
 
-            test('{{each list}}{{$index}}{{$value}}{{/each}}', { list: ['a', 'b', 'c'] }, '0a1b2c');
-            test('{{each list val}}{{$index}}{{val}}{{/each}}', { list: ['a', 'b', 'c'] }, '0a1b2c');
-            test('{{each list val key}}{{key}}{{val}}{{/each}}', { list: ['a', 'b', 'c'] }, '0a1b2c');
+
+        'each': () => {
+            render = compile('{{each}}{{$index}}{{$value}}{{/each}}');
+            data = ['a', 'b', 'c'];
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+            render = compile('{{each}}{{$index}}{{$value}}{{/each}}');
+            data = { a: 1, b: 2, c: 3 };
+            result = render(data);
+            assert.deepEqual('a1b2c3', result);
+
+            render = compile('{{each list}}{{$index}}{{$value}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+            render = compile('{{each list val}}{{$index}}{{val}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+            render = compile('{{each list val key}}{{key}}{{val}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
 
             // ... v3 compat ...
-            test('{{each list as val}}{{$index}}{{val}}{{/each}}', { list: ['a', 'b', 'c'] }, '0a1b2c');
-            test('{{each list as val key}}{{key}}{{val}}{{/each}}', { list: ['a', 'b', 'c'] }, '0a1b2c');
-        });
+            render = compile('{{each list as val}}{{$index}}{{val}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+            render = compile('{{each list as val key}}{{key}}{{val}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+        },
 
 
-        describe('if', () => {
-            test('{{if value}}hello world{{/if}}', { value: true }, 'hello world');
-            test('{{if value}}hello world{{else}}hello 糖饼{{/if}}', { value: false }, 'hello 糖饼');
-            test('{{if value !== false}}hello world{{else}}hello 糖饼{{/if}}', { value: false }, 'hello 糖饼');
-            test('{{if value!==false}}hello world{{else}}hello 糖饼{{/if}}', { value: false }, 'hello 糖饼');
-            test('{{if a + b === 3}}hello world{{/if}}', { a: 1, b: 2 }, 'hello world');
-            test('{{if a}}hello world{{else if b}}😊{{/if}}', { a: 0, b: 2 }, '😊');
-        });
+        'if': () => {
+            render = compile('{{if value}}hello world{{/if}}');
+            data = { value: true };
+            result = render(data);
+            assert.deepEqual('hello world', result);
+
+            render = compile('{{if value}}hello world{{else}}hello 糖饼{{/if}}');
+            data = { value: false };
+            result = render(data);
+            assert.deepEqual('hello 糖饼', result);
+
+            render = compile('{{if value !== false}}hello world{{else}}hello 糖饼{{/if}}');
+            data = { value: false };
+            result = render(data);
+            assert.deepEqual('hello 糖饼', result);
+
+            render = compile('{{if value!==false}}hello world{{else}}hello 糖饼{{/if}}');
+            data = { value: false };
+            result = render(data);
+            assert.deepEqual('hello 糖饼', result);
+
+            render = compile('{{if a + b === 3}}hello world{{/if}}');
+            data = { a: 1, b: 2 };
+            result = render(data);
+            assert.deepEqual('hello world', result);
+
+            render = compile('{{if a}}hello world{{else if b}}😊{{/if}}');
+            data = { a: 0, b: 2 };
+            result = render(data);
+            assert.deepEqual('😊', result);
+        },
 
 
-        describe('set', () => {
-            test('{{set value="😊"}}{{value}}', {}, '😊');
-        });
-    });
+        'set': () => {
+            render = compile('{{set value="😊"}}{{value}}');
+            data = {};
+            result = render(data);
+            assert.deepEqual('😊', result);
+        }
 
 
+    },
 
 
-    describe('syntax.mix', () => {
-        const test = (code, data, result, options = {}) => {
-            it(code, () => {
-                const render = compile(code, options);
-                assert.deepEqual(result, render(data));
-            });
-        };
-
-        test('<%=a%>, {{b}}', { a: 1, b: 2 }, '1, 2');
-
-    });
-
-
-
-    describe('options', () => {
-
-        it('compress', () => {
+    'options': {
+        'compress': () => {
             const render = compile('<div>     </div>\n     <%=value%>', {
                 compress: require('../../src/compile/adapter/compress')
             });
             assert.deepEqual('<div> </div> aui', render({
                 value: 'aui'
             }));
-        });
+        },
 
-        it('syntax', () => {
+        'syntax': () => {
             const source = 'hello ${name} <%=name%>';
             const options = {
                 rules: [{
@@ -272,8 +322,76 @@ describe('#compile/index', () => {
             assert.deepEqual('hello aui <%=name%>', render({
                 name: 'aui'
             }));
-        });
+        }
+    },
 
-    });
+    'rule.mix': {},
 
-});
+    'errors': {
+        'RuntimeError': {
+            'error': () => {
+                const render = compile('<%=a.b.c%>');
+                assert.deepEqual('{Template Error}', render({}));
+            },
+
+            'throw error': () => {
+                const render = compile({
+                    source: '<%=a.b.c%>',
+                    bail: true
+                });
+
+                try {
+                    render({});
+                } catch (e) {
+                    assert.deepEqual('RuntimeError', e.name);
+                }
+            }
+        },
+
+
+        'CompileError': {
+
+            'error': () => {
+                const render = compile('<%=a b c%>');
+                assert.deepEqual('{Template Error}', render({}));
+            },
+
+            'throw error': () => {
+                try {
+                    const render = compile('<%=a b c%>', {
+                        bail: true
+                    });
+                    render({});
+                } catch (e) {
+                    assert.deepEqual('CompileError', e.name);
+                }
+            },
+
+            'template not found': () => {
+                const render = compile({
+                    filename: '/404.html'
+                });
+                assert.deepEqual('{Template Error}', render({}));
+            },
+
+            'throw error: template not found': () => {
+                try {
+                    compile({
+                        filename: '/404.html',
+                        bail: true
+                    });
+                } catch (e) {
+                    assert.deepEqual('CompileError', e.name);
+                }
+            }
+        }
+    },
+
+    'toString': {
+        'compile to string': () => {
+            const render = compile('<%=value%>');
+            assert.deepEqual('string', typeof render.toString());
+            assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'))
+        }
+    }
+};

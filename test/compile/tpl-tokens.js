@@ -1,110 +1,156 @@
 const assert = require('assert');
 const tplTokens = require('../../src/compile/tpl-tokens');
-const jsTokens = require('../../src/compile/js-tokens');
-const defaults = require('../../src/compile/defaults');
-const rules = defaults.rules;
 
-describe('#compile/tpl-tokens', () => {
+module.exports = {
+    before: () => {
+        console.log('#compile/tpl-tokens');
+    },
 
-    const test = (code, result) => {
-        it(code, () => {
-            assert.deepEqual(result, tplTokens.parser(code, rules, {
-                getTokens: jsTokens.parser,
-                getVariables: jsTokens.getVariables,
-                options: {
-                    imports: {}
+    'type & value': {
+
+        [tplTokens.TYPE_STRING]: () => {
+            const result = tplTokens.parser('value', []);
+            assert.deepEqual([{
+                type: tplTokens.TYPE_STRING,
+                value: 'value',
+                line: 0,
+                start: 0,
+                end: 5
+            }], result);
+        },
+
+
+        [tplTokens.TYPE_EXPRESSION]: () => {
+            const rule = {
+                test: /<%([\w\W]*?)%>/,
+                use: (match, code) => {
+                    return {
+                        code,
+                        output: false
+                    };
                 }
-            }));
-        });
-    };
+            };
+            const result = tplTokens.parser('<%value%>', [rule]);
+            assert.deepEqual([{
+                type: tplTokens.TYPE_EXPRESSION,
+                value: '<%value%>',
+                line: 0,
+                start: 0,
+                end: 9,
+                script: {
+                    code: 'value',
+                    output: false
+                }
+            }], result);
+        },
 
-    test('hello', [{
-        type: tplTokens.TYPE_STRING,
-        value: 'hello',
-        line: 1
-    }]);
 
-    test('{{name}}', [{
-        type: tplTokens.TYPE_EXPRESSION,
-        value: '{{name}}',
-        line: 1,
-        script: {
-            code: 'name',
-            output: tplTokens.TYPE_ESCAPE,
-            variables: ['name']
+        [tplTokens.TYPE_STRING + ' & ' + tplTokens.TYPE_EXPRESSION]: () => {
+            const rule = {
+                test: /<%([\w\W]*?)%>/,
+                use: (match, code) => {
+                    return {
+                        code,
+                        output: false
+                    };
+                }
+            };
+            const result = tplTokens.parser('hello, <%value%>', [rule]);
+            assert.deepEqual([{
+                type: tplTokens.TYPE_STRING,
+                value: 'hello, ',
+                line: 0,
+                start: 0,
+                end: 7
+            }, {
+                type: tplTokens.TYPE_EXPRESSION,
+                value: '<%value%>',
+                line: 0,
+                start: 7,
+                end: 16,
+                script: {
+                    code: 'value',
+                    output: false
+                }
+            }], result);
         }
-    }]);
+    },
+
+    'line & start & end': {
+        'check that the values are correct': () => {
+            let result;
+            const rules = [{
+                test: /<%([\w\W]*?)%>/,
+                use: (match, code) => {
+                    return {
+                        code,
+                        output: false
+                    };
+                }
+            }, {
+                test: /\${([\w\W]*?)}/,
+                use: (match, code) => {
+                    return {
+                        code,
+                        output: 'escape'
+                    };
+                }
+            }];
 
 
-    test('hello {{name}}.', [{
-        type: tplTokens.TYPE_STRING,
-        value: 'hello ',
-        line: 1
-    }, {
-        type: tplTokens.TYPE_EXPRESSION,
-        value: '{{name}}',
-        line: 1,
-        script: {
-            code: 'name',
-            output: tplTokens.TYPE_ESCAPE,
-            variables: ['name']
+            result = tplTokens.parser('hello,\n <%value%>', rules);
+            assert.deepEqual([{
+                type: tplTokens.TYPE_STRING,
+                value: 'hello,\n ',
+                line: 0,
+                start: 0,
+                end: 8
+            }, {
+                type: tplTokens.TYPE_EXPRESSION,
+                value: '<%value%>',
+                line: 1,
+                start: 1,
+                end: 10,
+                script: {
+                    code: 'value',
+                    output: false
+                }
+            }], result);
+
+            result = tplTokens.parser('hello,\n <%\nvalue\n%>\nxx${abc}', rules);
+            assert.deepEqual([{
+                type: tplTokens.TYPE_STRING,
+                value: 'hello,\n ',
+                line: 0,
+                start: 0,
+                end: 8
+            }, {
+                type: tplTokens.TYPE_EXPRESSION,
+                value: '<%\nvalue\n%>',
+                line: 1,
+                start: 1,
+                end: 12,
+                script: {
+                    code: '\nvalue\n',
+                    output: false
+                }
+            }, {
+                type: tplTokens.TYPE_STRING,
+                value: '\nxx',
+                line: 3,
+                start: 2,
+                end: 5
+            }, {
+                type: tplTokens.TYPE_EXPRESSION,
+                value: '${abc}',
+                line: 4,
+                start: 2,
+                end: 8,
+                script: {
+                    code: 'abc',
+                    output: 'escape'
+                }
+            }], result);
         }
-    }, {
-        type: tplTokens.TYPE_STRING,
-        value: '.',
-        line: 1
-    }]);
-
-    test('hello {{name + aaa}}.\n', [{
-        type: tplTokens.TYPE_STRING,
-        value: 'hello ',
-        line: 1
-    }, {
-        type: tplTokens.TYPE_EXPRESSION,
-        value: '{{name + aaa}}',
-        line: 1,
-        script: {
-            code: 'name+aaa',
-            output: tplTokens.TYPE_ESCAPE,
-            variables: ['name', 'aaa']
-        }
-    }, {
-        type: tplTokens.TYPE_STRING,
-        value: '.\n',
-        line: 1
-    }]);
-
-    test('hello \n{{\n name + aaa}}.', [{
-        type: tplTokens.TYPE_STRING,
-        value: 'hello \n',
-        line: 1
-    }, {
-        type: tplTokens.TYPE_EXPRESSION,
-        value: '{{\n name + aaa}}',
-        line: 2,
-        script: {
-            code: 'name+aaa',
-            output: tplTokens.TYPE_ESCAPE,
-            variables: ['name', 'aaa']
-        }
-    }, {
-        type: tplTokens.TYPE_STRING,
-        value: '.',
-        line: 3
-    }]);
-
-    test('hello\n\n<% a b c d %>', [{
-        type: tplTokens.TYPE_STRING,
-        value: 'hello\n\n',
-        line: 1
-    }, {
-        type: tplTokens.TYPE_EXPRESSION,
-        value: '<% a b c d %>',
-        line: 3,
-        script: {
-            code: ' a b c d ',
-            output: false
-        }
-    }]);
-
-});
+    }
+};

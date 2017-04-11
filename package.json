@@ -14,7 +14,7 @@
         "build": "webpack -p",
         "dev": "webpack -w",
         "publish": "npm run build && npm run test && npm publish",
-        "test": "istanbul cover node_modules/mocha/bin/_mocha --colors 'test/**/*.js'",
+        "test": "istanbul cover node_modules/mocha/bin/_mocha -- --ui exports --colors 'test/**/*.js'",
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
     "main": "lib/template.js",
