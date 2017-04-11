@@ -30,7 +30,7 @@ class Compiler {
         // 内置变量
         this.internal = {
             $out: `""`,
-            $line: `[0,""]`,
+            $line: `[0,0,0,""]`,
             print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
             include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
         };
@@ -81,10 +81,9 @@ class Compiler {
 
 
     // 解析字符串（HTML）直接输出语句
-    parseString(tokens) {
+    parseString(token) {
 
-        let source = tokens.value;
-        const line = tokens.line;
+        let source = token.value;
         const options = this.options;
         const compress = options.compress;
 
@@ -93,27 +92,28 @@ class Compiler {
         }
 
         const code = `$out+=${stringify(source)}`;
-        this.scripts.push({ source, line, code });
+        this.scripts.push({ source, token, code });
     }
 
 
     // 解析逻辑表达式语句
-    parseExpression(tokens) {
+    parseExpression(token) {
 
 
-        const source = tokens.value;
-        const line = tokens.line;
+        const source = token.value;
+        const line = token.line;
+        const start = token.start;
         const options = this.options;
         const compileDebug = options.compileDebug;
-        const script = tokens.script;
+        const script = token.script;
         const output = script.output;
         const variables = script.variables || [];
         let code = script.code.trim();
 
 
         if (!script.variables) {
-            const tokens = jsTokens.parser(code);
-            variables.push(...jsTokens.getVariables(tokens));
+            const token = jsTokens.parser(code);
+            variables.push(...jsTokens.getVariables(token));
         }
 
 
@@ -128,12 +128,13 @@ class Compiler {
 
 
         if (compileDebug) {
-            this.scripts.push({ source, line, code: `$line=[${line},${stringify(source)}]` });
+            const lineData = [line, start, stringify(source)].join(',');
+            this.scripts.push({ source, token, code: `$line=[${lineData}]` });
         }
 
 
         variables.forEach(name => this.importContext(name));
-        this.scripts.push({ source, line, code });
+        this.scripts.push({ source, token, code });
     }
 
 
@@ -213,7 +214,8 @@ class Compiler {
                 `name:"RuntimeError"`,
                 `message:e.message`,
                 `line:$line[0]+1`,
-                `source:$line[1]`,
+                `start:$line[1]+1`,
+                `source:$line[2]`,
                 `stack:e.stack`
             ].join(`,`) + '}';
             renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;
@@ -228,12 +230,15 @@ class Compiler {
 
             let index = 0;
             let line = 0;
+            let start = 0;
             let source2 = source;
 
             while (index < scripts.length) {
-                if (!this.checkExpression(scripts[index].code)) {
-                    source2 = scripts[index].source;
-                    line = scripts[index].line;
+                const current = scripts[index];
+                if (!this.checkExpression(current.code)) {
+                    source2 = current.source;
+                    line = current.token.line;
+                    start = current.token.start;
                     break;
                 }
                 index++;
@@ -244,6 +249,7 @@ class Compiler {
                 name: `CompileError`,
                 message: e.message,
                 line,
+                start,
                 source: source2,
                 script: renderCode,
                 stack: e.stack

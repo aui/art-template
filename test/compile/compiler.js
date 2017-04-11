@@ -129,7 +129,7 @@ module.exports = {
             test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
 
             // compileDebug
-            test('<%-value%>', ['$line=[0,\"<%-value%>\"]', '$out+=value'], {
+            test('<%-value%>', ['$line=[0,0,\"<%-value%>\"]', '$out+=value'], {
                 compileDebug: true
             });
             // CompileError
