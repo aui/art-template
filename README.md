@@ -254,7 +254,7 @@ template('/welcome.html', {
 }); // => "hi, aui."
 ```
 
-###	\#compile(source, options)
+###	.compile(source, options)
 
 编译模板并返回一个渲染函数。
 
@@ -263,7 +263,7 @@ var render = template.compile('hi, <%=value%>.');
 var html = render({value: 'aui'});
 ```
 
-###	\#render(source, data, options)
+###	.render(source, data, options)
 
 编译并返回渲染结果。
 
@@ -271,7 +271,7 @@ var html = render({value: 'aui'});
 var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ```
 
-###	\#defaults
+###	.defaults
 
 模板引擎默认配置。参考 [选项](#选项)
 
@@ -284,7 +284,7 @@ var render = template.compile('hi, <?js=$brackets(value)?>.');
 var html = render({value: 'aui'}); // => "hi, 『aui』."
 ```
 
-### \#imports
+### .imports
 
 向模板中注入上下文。这是 `template.defaults.imports` 的快捷方式。
 
@@ -296,7 +296,7 @@ template.imports.$parseInt = parseInt;
 <%= $parseInt(value) %>
 ```
 
-### \#bindExtname(require, extname)
+### .bindExtname(require, extname)
 
 关联后缀名，支持 `require(templatePath)` 形式加载模板（仅 NodeJS 环境中可使用）。
 
@@ -337,7 +337,7 @@ template.defaults.rules.push({
     use: function(match, code) {
         return {
             code: code,
-            output: 'escape' // 'escape' | 'raw' | false
+            output: 'escape'
         }
     }
 });
@@ -352,6 +352,35 @@ template.defaults.rules.push({
         1. `'escape'` 编码后进行输出
         2. `'raw'` 输出原始内容
         3. `false` 不输出任何内容
+
+### 示例
+
+创造一个 `<?js expression ?>` 语法模板：
+
+```html
+<?js if (user) { ?>
+  <h2><?= user.name ?></h2>
+<? } ?>
+```
+
+```javascript
+template.defaults.rules.push({
+    test: /<\?js([=-]?)([\w\W]*?)\?>/,
+    use: function(match, output, code) {
+        output = ({
+            '=': 'escape',
+            '-': 'raw',
+            '': false
+        }}[output];
+        return {
+            code: code,
+            output: output
+        }
+    }
+});
+```
+
+> 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析。
 
 ## 选项
 
