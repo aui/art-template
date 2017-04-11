@@ -1,7 +1,7 @@
 /**
  * 编码模板输出的内容
- * @param   {Any}   content
- * @returns {string}
+ * @param  {any}   content
+ * @return {string}
  */
 const escape = content => {
 

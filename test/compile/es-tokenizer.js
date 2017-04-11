@@ -1,17 +1,17 @@
 const assert = require('assert');
-const jsTokens = require('../../src/compile/js-tokens');
+const esTokenizer = require('../../src/compile/es-tokenizer');
 
 
 module.exports = {
 
     before: () => {
-        console.log('#compile/js-tokens');
+        console.log('#compile/es-tokenizer');
     },
 
     'parser': {
         'basic': () => {
             const test = (code, result) => {
-                assert.deepEqual(result, jsTokens.parser(code));
+                assert.deepEqual(result, esTokenizer(code));
             };
 
             test('var', [{
@@ -106,27 +106,6 @@ module.exports = {
                 type: 'number',
                 value: '0'
             }]);
-        }
-    },
-
-
-    'getVariables': {
-        'basic': () => {
-            const getvariables = code => jsTokens.getVariables(jsTokens.parser(code));
-            const test = (code, result) => {
-                assert.deepEqual(result, getvariables(code));
-            };
-
-            test('var', []);
-            test('var a', ['a']);
-            test('a', ['a']);
-            test('a.b', ['a']);
-            test('a.b;c', ['a', 'c']);
-            test('a.b\nd', ['a', 'd']);
-            test('0.99 + a', ['a']);
-            test('0.99 + a + b.c', ['a', 'b']);
-            test('a /*.*/. b /**/; c', ['a', 'c']);
-            test('a ".b.c; d;" /*e*/ f', ['a', 'f']);
         }
     }
 };

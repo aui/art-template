@@ -7,7 +7,7 @@ const isKeyword = require('is-keyword-js');
  * @param {string} code
  * @return {Object[]}
  */
-const parser = code => {
+const esTokenizer = code => {
     const tokens = code.match(jsTokens).map(value => {
         jsTokens.lastIndex = 0;
         return matchToToken(jsTokens.exec(value));
@@ -22,28 +22,4 @@ const parser = code => {
 };
 
 
-/**
- * 获取变量列表
- * @param {Object[]} tokens
- * @return {string[]}
- */
-const getVariables = tokens => {
-    let ignore = false;
-    return tokens.filter(token => {
-        return token.type !== `whitespace` && token.type !== `comment`;
-    }).filter(token => {
-        if (token.type === `name` && !ignore) {
-            return true;
-        }
-
-        ignore = token.type === `punctuator` && token.value === `.`;
-
-        return false;
-    }).map(tooken => tooken.value);
-};
-
-
-module.exports = {
-    parser,
-    getVariables
-};
+module.exports = esTokenizer;

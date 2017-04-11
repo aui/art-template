@@ -1,5 +1,5 @@
 const assert = require('assert');
-const tplTokens = require('../../src/compile/tpl-tokens');
+const tplTokenizer = require('../../src/compile/tpl-tokenizer');
 
 module.exports = {
     before: () => {
@@ -8,10 +8,10 @@ module.exports = {
 
     'type & value': {
 
-        [tplTokens.TYPE_STRING]: () => {
-            const result = tplTokens.parser('value', []);
+        [tplTokenizer.TYPE_STRING]: () => {
+            const result = tplTokenizer('value', []);
             assert.deepEqual([{
-                type: tplTokens.TYPE_STRING,
+                type: tplTokenizer.TYPE_STRING,
                 value: 'value',
                 line: 0,
                 start: 0,
@@ -20,7 +20,7 @@ module.exports = {
         },
 
 
-        [tplTokens.TYPE_EXPRESSION]: () => {
+        [tplTokenizer.TYPE_EXPRESSION]: () => {
             const rule = {
                 test: /<%([\w\W]*?)%>/,
                 use: (match, code) => {
@@ -30,9 +30,9 @@ module.exports = {
                     };
                 }
             };
-            const result = tplTokens.parser('<%value%>', [rule]);
+            const result = tplTokenizer('<%value%>', [rule]);
             assert.deepEqual([{
-                type: tplTokens.TYPE_EXPRESSION,
+                type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%value%>',
                 line: 0,
                 start: 0,
@@ -45,7 +45,7 @@ module.exports = {
         },
 
 
-        [tplTokens.TYPE_STRING + ' & ' + tplTokens.TYPE_EXPRESSION]: () => {
+        [tplTokenizer.TYPE_STRING + ' & ' + tplTokenizer.TYPE_EXPRESSION]: () => {
             const rule = {
                 test: /<%([\w\W]*?)%>/,
                 use: (match, code) => {
@@ -55,15 +55,15 @@ module.exports = {
                     };
                 }
             };
-            const result = tplTokens.parser('hello, <%value%>', [rule]);
+            const result = tplTokenizer('hello, <%value%>', [rule]);
             assert.deepEqual([{
-                type: tplTokens.TYPE_STRING,
+                type: tplTokenizer.TYPE_STRING,
                 value: 'hello, ',
                 line: 0,
                 start: 0,
                 end: 7
             }, {
-                type: tplTokens.TYPE_EXPRESSION,
+                type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%value%>',
                 line: 0,
                 start: 7,
@@ -98,15 +98,15 @@ module.exports = {
             }];
 
 
-            result = tplTokens.parser('hello,\n <%value%>', rules);
+            result = tplTokenizer('hello,\n <%value%>', rules);
             assert.deepEqual([{
-                type: tplTokens.TYPE_STRING,
+                type: tplTokenizer.TYPE_STRING,
                 value: 'hello,\n ',
                 line: 0,
                 start: 0,
                 end: 8
             }, {
-                type: tplTokens.TYPE_EXPRESSION,
+                type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%value%>',
                 line: 1,
                 start: 1,
@@ -117,15 +117,15 @@ module.exports = {
                 }
             }], result);
 
-            result = tplTokens.parser('hello,\n <%\nvalue\n%>\nxx${abc}', rules);
+            result = tplTokenizer('hello,\n <%\nvalue\n%>\nxx${abc}', rules);
             assert.deepEqual([{
-                type: tplTokens.TYPE_STRING,
+                type: tplTokenizer.TYPE_STRING,
                 value: 'hello,\n ',
                 line: 0,
                 start: 0,
                 end: 8
             }, {
-                type: tplTokens.TYPE_EXPRESSION,
+                type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%\nvalue\n%>',
                 line: 1,
                 start: 1,
@@ -135,13 +135,13 @@ module.exports = {
                     output: false
                 }
             }, {
-                type: tplTokens.TYPE_STRING,
+                type: tplTokenizer.TYPE_STRING,
                 value: '\nxx',
                 line: 3,
                 start: 2,
                 end: 5
             }, {
-                type: tplTokens.TYPE_EXPRESSION,
+                type: tplTokenizer.TYPE_EXPRESSION,
                 value: '${abc}',
                 line: 4,
                 start: 2,

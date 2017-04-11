@@ -4,7 +4,7 @@
  * @param   {Object}    data
  * @param   {string}    base
  * @param   {string}    root
- * @returns {string}
+ * @return  {string}
  */
 const include = (filename, data, base, root) => {
     const compile = require('../index');

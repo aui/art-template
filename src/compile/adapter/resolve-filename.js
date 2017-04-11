@@ -6,7 +6,7 @@ const detectNode = require('detect-node');
  * @param   {string} filename 
  * @param   {string} root 
  * @param   {?string} base 
- * @returns {string}
+ * @return  {string}
  */
 const resolveFilename = (filename, root, base) => {
     /* istanbul ignore else  */

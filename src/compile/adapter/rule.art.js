@@ -1,11 +1,10 @@
-const jsTokens = require('../js-tokens');
 const nativeRule = {
     test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
     use: function(match, raw, close, code) {
 
         const compiler = this;
         const options = compiler.options;
-        const tokens = jsTokens.parser(code);
+        const tokens = compiler.getEsTokens(code);
         const result = {};
         const values = tokens
             .map(token => token.value)
@@ -192,7 +191,7 @@ const nativeRule = {
         result.output = output;
 
         if (!result.variables) {
-            result.variables = jsTokens.getVariables(tokens);
+            result.variables = compiler.getVariables(tokens);
         }
 
 

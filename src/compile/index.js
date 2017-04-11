@@ -6,7 +6,7 @@ const defaults = require('./defaults');
  * 编译模版
  * @param {string|Object} source   模板内容
  * @param {?Object}       options  编译选项
- * @returns {function}
+ * @return {function}
  */
 const compile = (source, options = {}) => {
 

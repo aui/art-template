@@ -1,5 +1,5 @@
-const jsTokens = require('./js-tokens');
-const tplTokens = require('./tpl-tokens');
+const esTokenizer = require('./es-tokenizer');
+const tplTokenizer = require('./tpl-tokenizer');
 const isKeyword = require('is-keyword-js');
 
 const DATA = `$data`;
@@ -43,8 +43,8 @@ class Compiler {
         }
 
 
-        tplTokens.parser(source, options.rules, this).forEach(tokens => {
-            if (tokens.type === tplTokens.TYPE_STRING) {
+        this.getTplTokens(source, options.rules, this).forEach(tokens => {
+            if (tokens.type === tplTokenizer.TYPE_STRING) {
                 this.parseString(tokens);
             } else {
                 this.parseExpression(tokens);
@@ -53,7 +53,57 @@ class Compiler {
 
     }
 
-    // 导入上下文
+
+
+    /**
+     * 将模板代码转换成 tplToken 数组
+     * @param   {string} source 
+     * @return {array}
+     */
+    getTplTokens(...args){
+        return tplTokenizer(...args);
+    }
+
+
+
+    /**
+     * 将模板表达式转换成 esToken 数组
+     * @param   {string} source 
+     * @return {array}
+     */
+    getEsTokens(source) {
+        return esTokenizer(source);
+    }
+
+
+
+    /**
+     * 获取变量列表
+     * @param {Object[]} esTokens
+     * @return {string[]}
+     */
+    getVariables(esTokens) {
+        let ignore = false;
+        return esTokens.filter(esToken => {
+            return esToken.type !== `whitespace` && esToken.type !== `comment`;
+        }).filter(esToken => {
+            if (esToken.type === `name` && !ignore) {
+                return true;
+            }
+
+            ignore = esToken.type === `punctuator` && esToken.value === `.`;
+
+            return false;
+        }).map(tooken => tooken.value);
+    }
+
+
+
+    /**
+     * 导入模板上下文
+     * @param {string} name 
+     * @memberOf Compiler
+     */
     importContext(name) {
 
         let value = ``;
@@ -80,10 +130,14 @@ class Compiler {
     }
 
 
-    // 解析字符串（HTML）直接输出语句
-    parseString(token) {
 
-        let source = token.value;
+    /**
+     * 解析字符串（HTML）直接输出语句
+     * @param {Object} tplToken 
+     */
+    parseString(tplToken) {
+
+        let source = tplToken.value;
         const options = this.options;
         const compress = options.compress;
 
@@ -92,33 +146,37 @@ class Compiler {
         }
 
         const code = `$out+=${stringify(source)}`;
-        this.scripts.push({ source, token, code });
+        this.scripts.push({ source, tplToken, code });
     }
 
 
-    // 解析逻辑表达式语句
-    parseExpression(token) {
+
+    /**
+     * 解析逻辑表达式语句
+     * @param {Object} tplToken 
+     */
+    parseExpression(tplToken) {
 
 
-        const source = token.value;
-        const line = token.line;
-        const start = token.start;
+        const source = tplToken.value;
+        const line = tplToken.line;
+        const start = tplToken.start;
         const options = this.options;
         const compileDebug = options.compileDebug;
-        const script = token.script;
+        const script = tplToken.script;
         const output = script.output;
         const variables = script.variables || [];
         let code = script.code.trim();
 
 
         if (!script.variables) {
-            const token = jsTokens.parser(code);
-            variables.push(...jsTokens.getVariables(token));
+            const esToken = this.getEsTokens(code);
+            variables.push(...this.getVariables(esToken));
         }
 
 
         if (output) {
-            if (escape === false || output === tplTokens.TYPE_RAW) {
+            if (escape === false || output === tplTokenizer.TYPE_RAW) {
                 code = `$out+=${script.code}`;
             } else {
                 code = `$out+=$escape(${script.code})`;
@@ -129,18 +187,22 @@ class Compiler {
 
         if (compileDebug) {
             const lineData = [line, start, stringify(source)].join(',');
-            this.scripts.push({ source, token, code: `$line=[${lineData}]` });
+            this.scripts.push({ source, tplToken, code: `$line=[${lineData}]` });
         }
 
 
         variables.forEach(name => this.importContext(name));
-        this.scripts.push({ source, token, code });
+        this.scripts.push({ source, tplToken, code });
     }
 
 
 
-    // 检查逻辑表达式语法
-    checkExpression(source) {
+    /**
+     * 检查解析后的模板语句是否存在语法错误
+     * @param  {string} script 
+     * @return {boolean}
+     */
+    checkExpression(script) {
 
         // 没有闭合的块级模板语句规则
         const rules = [
@@ -165,8 +227,8 @@ class Compiler {
 
         let index = 0;
         while (index < rules.length) {
-            if (rules[index][0].test(source)) {
-                source = source.replace(...rules[index]);
+            if (rules[index][0].test(script)) {
+                script = script.replace(...rules[index]);
                 break;
             }
             index++;
@@ -174,7 +236,7 @@ class Compiler {
 
 
         try {
-            new Function(source);
+            new Function(script);
             return true;
         } catch (e) {
             return false;
@@ -183,8 +245,10 @@ class Compiler {
 
 
 
-
-    // 构建渲染函数
+    /**
+     * 编译
+     * @return  {function}
+     */
     build() {
 
         const options = this.options;
@@ -237,8 +301,8 @@ class Compiler {
                 const current = scripts[index];
                 if (!this.checkExpression(current.code)) {
                     source2 = current.source;
-                    line = current.token.line;
-                    start = current.token.start;
+                    line = current.tplToken.line;
+                    start = current.tplToken.start;
                     break;
                 }
                 index++;

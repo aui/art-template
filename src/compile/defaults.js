@@ -36,7 +36,11 @@ const defaults = {
     compress: null,
 
     // 导入的模板变量
-    imports: {},
+    imports: {
+        $each: each,
+        $escape: escape,
+        $include: include
+    },
 
     // 调试处理函数
     debug: debug,
@@ -51,10 +55,7 @@ const defaults = {
     bail: false,
 
     // 模板根目录。Node 环境专用
-    root: '/',
-
-    // 绑定的模板扩展名。Node 环境专用，template.bindExtname(template, [extname]) 的默认配置
-    extname: '.html'
+    root: '/'
 
 };
 
@@ -62,7 +63,7 @@ const defaults = {
 /**
  * 继承默认配置
  * @param   {Object}    options
- * @returns {Object}
+ * @return {Object}
  */
 defaults.$extend = function(options) {
     const copy = Object.create(this);
@@ -70,16 +71,6 @@ defaults.$extend = function(options) {
     for (let name in options) {
         copy[name] = options[name]
     }
-
-    if (this.escape) {
-        copy.imports.$escape = this.escape;
-    }
-
-    if (this.include) {
-        copy.imports.$include = this.include;
-    }
-
-    copy.imports.$each = each;
 
     return copy;
 };

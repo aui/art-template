@@ -1,6 +1,7 @@
 const assert = require('assert');
 const compile = require('../../src/compile/index');
-const tplTokens = require('../../src/compile/tpl-tokens');
+const tplTokenizer = require('../../src/compile/tpl-tokenizer');
+const defaults = require('../../src/compile/defaults');
 
 let render, data, result;
 
@@ -162,7 +163,8 @@ module.exports = {
             };
 
             const brackets = string => `『${string}』`;
-            const options = { imports: { dateFormat, brackets } };
+            const imports = Object.assign({}, defaults.imports, { dateFormat, brackets });
+            const options = { imports };
 
             const test = (code, data, result, options = {}) => {
                 const render = compile(code, options);
@@ -312,7 +314,7 @@ module.exports = {
                     use: (match, code) => {
                         return {
                             code,
-                            output: tplTokens.TYPE_ESCAPE
+                            output: tplTokenizer.TYPE_ESCAPE
                         };
                     }
                 }]

@@ -1,14 +1,15 @@
 /**
  * 调试器
  * @param   {Object} error 
- * @returns {string}
+ * @return {string}
  */
 const debug = error => {
 
     if (typeof console === 'object') {
         const stack = error.stack;
         delete error.stack;
-        console.error(`Template Error: ` + JSON.stringify(error, null, 4) + '\n\n' + stack);
+        error = JSON.stringify(error, null, 4);
+        console.error(`Template Error: ${error}\n\n${stack}`);
     }
 
     return () => `{Template Error}`;

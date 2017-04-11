@@ -1,7 +1,6 @@
 const assert = require('assert');
 const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
-const tplTokens = require('../../src/compile/tpl-tokens');
 const ruleNative = require('../../src/compile/adapter/rule.native');
 
 const compress = ({ source }) => {
@@ -14,6 +13,27 @@ const compress = ({ source }) => {
 module.exports = {
     before: () => {
         console.log('#compile/index');
+    },
+
+    'getVariables': {
+        'basic': ()=>{
+            const test = (code, result) => {
+                const tokens = Compiler.prototype.getEsTokens(code);
+                const variables = Compiler.prototype.getVariables(tokens);
+                assert.deepEqual(result, variables);
+            };
+
+            test('var', []);
+            test('var a', ['a']);
+            test('a', ['a']);
+            test('a.b', ['a']);
+            test('a.b;c', ['a', 'c']);
+            test('a.b\nd', ['a', 'd']);
+            test('0.99 + a', ['a']);
+            test('0.99 + a + b.c', ['a', 'b']);
+            test('a /*.*/. b /**/; c', ['a', 'c']);
+            test('a ".b.c; d;" /*e*/ f', ['a', 'f']);
+        }
     },
 
     'importContext': {
@@ -74,6 +94,64 @@ module.exports = {
             test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
             test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
+        }
+    },
+
+    'parseString': {
+        'basic': () => {
+            const test = (code, result, options) => {
+                it(code, () => {
+                    options = defaults.$extend(options);
+                    options.source = '';
+                    const compiler = new Compiler(options);
+                    const token = compiler.getTplTokens(code, [ruleNative]);
+                    compiler.parseString(token[0]);
+                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
+                });
+            };
+
+            // raw
+            test('hello', ['$out+="hello"']);
+            test('\'hello\'', ['$out+="\'hello\'"']);
+            test('"hello    world"', ['$out+="\\"hello    world\\""']);
+            test('<div>hello</div>', ['$out+="<div>hello</div>"']);
+            test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
+
+            // compress
+            test('  hello  ', ['$out+=" hello "'], { compress });
+            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress });
+            test('"hello    world"', ['$out+="\\"hello world\\""'], { compress });
+            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress });
+        },
+
+        'parseExpression': () => {
+            const test = (code, result, options) => {
+                it(code, () => {
+                    options = defaults.$extend(options);
+                    options.source = '';
+                    const compiler = new Compiler(options);
+                    const token = compiler.getTplTokens(code, [ruleNative]);
+                    compiler.parseExpression(token[0]);
+                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
+                });
+            };
+
+            // v3 compat
+            test('<%=value%>', ['$out+=$escape(value)']);
+            test('<%=#value%>', ['$out+=value']);
+
+            // v4
+            test('<%-value%>', ['$out+=value']);
+            test('<%- value %>', ['$out+= value']);
+
+            test('<%=value%>', ['$out+=value'], { escape: false });
+            test('<%-value%>', ['$out+=value'], { escape: false });
+
+            test('<%if (value) {%>', ['if (value) {']);
+            test('<% if (value) { %>', [' if (value) { ']);
+            test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
+                compress
+            });
         }
     },
 
@@ -151,63 +229,5 @@ module.exports = {
             }
         }
 
-    },
-
-    'parseString': {
-        'basic': () => {
-            const test = (code, result, options) => {
-                it(code, () => {
-                    options = defaults.$extend(options);
-                    options.source = '';
-                    const compiler = new Compiler(options);
-                    const token = tplTokens.parser(code, [ruleNative]);
-                    compiler.parseString(token[0]);
-                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
-                });
-            };
-
-            // raw
-            test('hello', ['$out+="hello"']);
-            test('\'hello\'', ['$out+="\'hello\'"']);
-            test('"hello    world"', ['$out+="\\"hello    world\\""']);
-            test('<div>hello</div>', ['$out+="<div>hello</div>"']);
-            test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
-
-            // compress
-            test('  hello  ', ['$out+=" hello "'], { compress });
-            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress });
-            test('"hello    world"', ['$out+="\\"hello world\\""'], { compress });
-            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress });
-        },
-
-        'parseExpression': () => {
-            const test = (code, result, options) => {
-                it(code, () => {
-                    options = defaults.$extend(options);
-                    options.source = '';
-                    const token = tplTokens.parser(code, [ruleNative]);
-                    const compiler = new Compiler(options);
-                    compiler.parseExpression(token[0]);
-                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
-                });
-            };
-
-            // v3 compat
-            test('<%=value%>', ['$out+=$escape(value)']);
-            test('<%=#value%>', ['$out+=value']);
-
-            // v4
-            test('<%-value%>', ['$out+=value']);
-            test('<%- value %>', ['$out+= value']);
-
-            test('<%=value%>', ['$out+=value'], { escape: false });
-            test('<%-value%>', ['$out+=value'], { escape: false });
-
-            test('<%if (value) {%>', ['if (value) {']);
-            test('<% if (value) { %>', [' if (value) { ']);
-            test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-                compress
-            });
-        }
     }
 };

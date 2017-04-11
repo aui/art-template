@@ -12,7 +12,7 @@ const TYPE_ESCAPE = 'escape';
  * @param {Object}      context
  * @return {Object[]}
  */
-const parser = (source, rules, context) => {
+const tplTokenizer = (source, rules, context) => {
 
     const tokens = [{
         type: TYPE_STRING,
@@ -107,11 +107,10 @@ const parser = (source, rules, context) => {
 };
 
 
+tplTokenizer.TYPE_STRING = TYPE_STRING;
+tplTokenizer.TYPE_EXPRESSION = TYPE_EXPRESSION;
+tplTokenizer.TYPE_RAW = TYPE_RAW;
+tplTokenizer.TYPE_ESCAPE = TYPE_ESCAPE;
 
-module.exports = {
-    parser,
-    TYPE_STRING,
-    TYPE_EXPRESSION,
-    TYPE_RAW,
-    TYPE_ESCAPE
-};
+
+module.exports = tplTokenizer;
