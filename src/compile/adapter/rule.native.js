@@ -1,21 +1,19 @@
 const nativeRule = {
-    test: /<%([#=-]?)([=#]?)([\w\W]*?)(-?)%>/,
-    use: (match, output, raw, code) => {
+    test: /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/,
+    use: (match, comment, output, code) => {
 
         const outputType = {
             '-': 'raw',
             '=': 'escape',
-            '': false
+            '': false,
+            // v3 compat: raw output
+            '==': 'raw',
+            '=#': 'raw',
         };
 
         // ejs compat: comment tag
-        if (output === '#') {
+        if (comment) {
             code = `//${code}`;
-        }
-
-        // v3 compat: raw output
-        if (raw) {
-            output = '-';
         }
 
         // ejs compat: trims following newline
