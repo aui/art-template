@@ -73,7 +73,7 @@ module.exports = {
             test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
             test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
+            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
         }
     },
 
@@ -126,7 +126,7 @@ module.exports = {
             test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
             test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$out+="\\nhello\\n"', ' } ']);
+            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
 
             // compileDebug
             test('<%-value%>', ['$line=[0,\"<%-value%>\"]', '$out+=value'], {
@@ -151,90 +151,63 @@ module.exports = {
             }
         }
 
+    },
+
+    'parseString': {
+        'basic': () => {
+            const test = (code, result, options) => {
+                it(code, () => {
+                    options = defaults.$extend(options);
+                    options.source = '';
+                    const compiler = new Compiler(options);
+                    const token = tplTokens.parser(code, [ruleNative]);
+                    compiler.parseString(token[0]);
+                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
+                });
+            };
+
+            // raw
+            test('hello', ['$out+="hello"']);
+            test('\'hello\'', ['$out+="\'hello\'"']);
+            test('"hello    world"', ['$out+="\\"hello    world\\""']);
+            test('<div>hello</div>', ['$out+="<div>hello</div>"']);
+            test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
+
+            // compress
+            test('  hello  ', ['$out+=" hello "'], { compress });
+            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress });
+            test('"hello    world"', ['$out+="\\"hello world\\""'], { compress });
+            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress });
+        },
+
+        'parseExpression': () => {
+            const test = (code, result, options) => {
+                it(code, () => {
+                    options = defaults.$extend(options);
+                    options.source = '';
+                    const token = tplTokens.parser(code, [ruleNative]);
+                    const compiler = new Compiler(options);
+                    compiler.parseExpression(token[0]);
+                    assert.deepEqual(result, compiler.scripts.map(script => script.code));
+                });
+            };
+
+            // v3 compat
+            test('<%=value%>', ['$out+=$escape(value)']);
+            test('<%=#value%>', ['$out+=value']);
+
+            // v4
+            test('<%-value%>', ['$out+=value']);
+            test('<%- value %>', ['$out+= value']);
+
+            test('<%=value%>', ['$out+=value'], { escape: false });
+            test('<%-value%>', ['$out+=value'], { escape: false });
+
+            test('<%if (value) {%>', ['if (value) {']);
+            test('<% if (value) { %>', [' if (value) { ']);
+            test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
+                compress
+            });
+        }
     }
 };
-
-// describe('#compile/compiler', () => {
-
-
-
-//     // describe('parseString', () => {
-//     //     const test = (code, result, options) => {
-//     //         it(code, () => {
-//     //             options = defaults.$extend(options);
-//     //             options.source = '';
-//     //             const compiler = new Compiler(options);
-//     //             const token = tplTokens.parser(code, [ruleNative]);
-//     //             compiler.parseString(token[0]);
-//     //             assert.deepEqual(result, compiler.scripts.map(script => script.code));
-//     //         });
-//     //     };
-
-//     //     // raw
-//     //     test('hello', ['$out+="hello"']);
-//     //     test('\'hello\'', ['$out+="\'hello\'"']);
-//     //     test('"hello    world"', ['$out+="\\"hello    world\\""']);
-//     //     test('<div>hello</div>', ['$out+="<div>hello</div>"']);
-//     //     test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
-
-//     //     // compress
-//     //     test('  hello  ', ['$out+=" hello "'], { compress });
-//     //     test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress });
-//     //     test('"hello    world"', ['$out+="\\"hello world\\""'], { compress });
-//     //     test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress });
-//     // });
-
-
-//     // describe('parseExpression', () => {
-//     //     const test = (code, result, options) => {
-//     //         it(code, () => {
-//     //             options = defaults.$extend(options);
-//     //             options.source = '';
-//     //             const token = tplTokens.parser(code, [ruleNative]);
-//     //             const compiler = new Compiler(options);
-//     //             compiler.parseExpression(token[0]);
-//     //             assert.deepEqual(result, compiler.scripts.map(script => script.code));
-//     //         });
-//     //     };
-
-//     //     // v3 compat
-//     //     test('<%=value%>', ['$out+=$escape(value)']);
-//     //     test('<%=#value%>', ['$out+=value']);
-
-//     //     // v4
-//     //     test('<%-value%>', ['$out+=value']);
-//     //     test('<%- value %>', ['$out+= value']);
-
-//     //     test('<%=value%>', ['$out+=value'], { escape: false });
-//     //     test('<%-value%>', ['$out+=value'], { escape: false });
-
-//     //     test('<%if (value) {%>', ['if (value) {']);
-//     //     test('<% if (value) { %>', [' if (value) { ']);
-//     //     test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-//     //         compress
-//     //     });
-
-
-//     //     describe('parseExpression', () => {
-//     //         test('<%@value%>', ['$out+=value'], {
-//     //             parseExpression: ({ source }) => {
-//     //                 return source.replace(/<%@(.*?)%>/, '$out+=$1');
-//     //             }
-//     //         });
-//     //     });
-
-
-//     //     describe('compileDebug', () => {
-//     //         test('<%-value%>', ['$line=[0,\"<%-value%>\"]', '$out+=value'], {
-//     //             compileDebug: true
-//     //         });
-//     //     });
-
-//     // });
-
-
-
-
-
-
-// });

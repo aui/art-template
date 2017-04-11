@@ -108,7 +108,7 @@ class Compiler {
         const script = tokens.script;
         const output = script.output;
         const variables = script.variables || [];
-        let code = script.code;
+        let code = script.code.trim();
 
 
         if (!script.variables) {
