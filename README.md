@@ -13,11 +13,11 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 [在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
 
-``NEW! v4.0-bate``
+`NEW!` *v4.0-beta*
 
 1. 调试功能增强：定位语法错误
 2. 同时支持原生 JavaScript 语法、简约语法
-3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
+3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 v3.0 模板语法，并修复其历史 BUG
 4. NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
 4. 支持定义模板的语法规则
 
