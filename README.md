@@ -36,7 +36,7 @@ npm install art-template --save
 #### NodeJS
 
 ```html
-<!--templates/tpl-user.html-->
+<!--./tpl-user.html-->
 <% if (user) { %>
   <h2><%= user.name %></h2>
 <% } %>
@@ -44,8 +44,7 @@ npm install art-template --save
 
 ```javascript
 var template = require('art-template');
-var filename = '/Users/aui/templates/tpl-user.html';
-var html = template(filename, {
+var html = template(__diranme + '/tpl-user.html', {
     user: {
         name: 'aui'
     }
@@ -63,8 +62,7 @@ var html = template(filename, {
 
 <script src="art-template/lib/template.js"></script>
 <script>
-var filename = 'tpl-user';
-var html = template(filename, {
+var html = template('tpl-user', {
     user: {
         name: 'aui'
     }
@@ -161,18 +159,13 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{/each}}
 ```
 
-```html
-{{each target val key}}
-    {{key}} {{val}}
-{{/each}}
-```
-
-`target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`。
+1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
+2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
 
 ```html
-<% target.forEach(function($value, $index){ %>
-    <%= $value %> <%= $index %>
-<% }); %>
+<% for(var i = 0; i < target.length; i++){ %>
+    <%= i %> <%= target[i] %>
+<% } %>
 ```
 
 **变量**
@@ -211,7 +204,7 @@ template.imports.$timestamp = function(value){return value * 1000};
 <% include('./header.html', $data) %>
 ```
 
-`include` 第二个参数默认值为 `$data`，可以被覆盖。
+`include` 第二个参数默认值为 `$data`，可以自定义。
 
 **print**
 
@@ -230,8 +223,7 @@ template.imports.$timestamp = function(value){return value * 1000};
 根据模板名渲染模板。
 
 ```javascript
-// compile && cache
-var html template('/welcome.html', {
+var html = template('/welcome.html', {
     value: 'aui'
 });
 ```
@@ -251,7 +243,7 @@ template('/welcome.html', 'hi, <%=value%>.');
 // use
 template('/welcome.html', {
     value: 'aui'
-}); // => "hi, aui."
+});
 ```
 
 ###	.compile(source, options)
@@ -302,7 +294,7 @@ template.imports.$parseInt = parseInt;
 
 ```javascript
 template.bindExtname('.ejs');
-var render = template(__dirname + '/index.ejs');
+var render = require(__dirname + '/index.ejs');
 var html = render(data);
 ```
 
@@ -439,3 +431,7 @@ template.defaults.rules.push({
 
 1. NodeJS v1.0+
 2. IE9+（小于 IE9 需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 支持）
+
+## 授权协议
+
+[MIT](./LICENSE)
