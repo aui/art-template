@@ -41,7 +41,7 @@ module.exports = function (template) {
 
 	
 	function readTemplate (id) {
-	    id = path.join(defaults.base, id + defaults.extname);
+	    id = path.resolve(defaults.base, id + defaults.extname);
 	    
 	    if (id.indexOf(defaults.base) !== 0) {
 	        // 安全限制：禁止超出模板目录之外调用文件
