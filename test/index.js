@@ -24,6 +24,13 @@ module.exports = {
             defaults.root = root;
         },
 
+        'include': ()=>{
+            defaults.root = path.join(__dirname, 'res');
+            const html = template('index/index.html', {name: 'aui'});
+            assert.deepEqual('hello aui\nhello 糖饼', html);
+            defaults.root = root;
+        },
+
         'cache': () => {
             template('/index.html', 'hi, <%=value%>.');
             const html = template('/index.html', { value: 'aui' });
