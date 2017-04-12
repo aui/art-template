@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>print-demo</title>
+<script src="../../lib/template.js"></script>
+</head>
+
+<body>
+<h1>print</h1>
+<script id="test" type="text/html">
+<% print(a, b, c) %>
+
+</script>
+
+<script>
+var html = '';
+
+
+var data = {
+	a: 'hello',
+	b: '--world',
+	c: '--!!!'
+};
+
+html = template('test', data);
+document.write(html);
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>debug-demo</title>
+<script src="../../lib/template.js"></script>
+</head>
+
+<body>
+<h1>错误捕获（请打开控制台）</h1>
+<script id="test" type="text/html">
+<ul>
+{{each list}}
+{{/each}}
+
+{{window.alert=null}}
+</ul>
+</script>
+
+<script>
+
+
+var html = '';
+html = template('test', {});
+document.write(html);
+</script>
+</body>
+</html>
+
+
+

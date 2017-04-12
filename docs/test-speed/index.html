@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Template Engine Rendering Speed Test</title>
+<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/highcharts.js"></script>
+
+<script src="../../lib/template.js"></script>
+<script src="js/doT.min.js"></script>
+<script src="js/ejs.min.js"></script>
+<script src="js/handlebars.js"></script>
+<script src="js/mustache.min.js"></script>
+<script src="js/tmpl.js"></script>
+
+<script>
+// 数据量
+var length = 50;
+// 渲染次数
+var number = 1000;
+
+var data = {
+    list: []
+};
+
+for (var i = 0; i < length; i ++) {
+    data.list.push({
+        index: i,
+        user: '<strong style="color:red">糖饼</strong>',
+        site: 'https://github.com/aui',
+        weibo: 'http://weibo.com/planeart',
+        QQweibo: 'http://t.qq.com/tangbin'
+    });
+};
+
+
+// 待测试的引擎列表
+var testList = [
+
+    {
+        name: 'art-template',
+        tester: function () {
+            var source = document.getElementById('template').innerHTML;
+            var fn = template.compile(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
+
+    {
+        name: 'ejs',
+        tester: function () {
+            var source = document.getElementById('template').innerHTML;
+            var fn = ejs.compile(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
+
+    {
+        name: 'doT',
+        tester: function () {
+            var source = document.getElementById('doT').innerHTML;
+            var doTtmpl = doT.template(source);
+            for (var i = 0; i < number; i ++) {
+                doTtmpl(data);
+            }
+        }
+    },
+
+    {
+        name: 'Handlebars',
+        tester: function () {
+            var source = document.getElementById('Handlebars').innerHTML;
+            var fn = Handlebars.compile(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
+
+    {
+        name: 'tmpl',
+        tester: function () {
+            var source = document.getElementById('tmpl').innerHTML;
+            var fn = tmpl(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    },
+
+    {
+        name: 'Mustache',
+        tester: function () {
+            var source = document.getElementById('Mustache').innerHTML;
+            for (var i = 0; i < number; i ++) {
+                Mustache.to_html(source, data);
+            }
+        }
+    }
+
+];
+
+
+
+var runTest = function () {
+
+    var Timer = function (){
+        this.startTime = + new Date;
+    };
+
+    Timer.prototype.stop = function(){
+        return + new Date - this.startTime;
+    };
+
+    var colors = Highcharts.getOptions().colors;
+    var categories = [];
+
+    for (var i = 0; i < testList.length; i ++) {
+        categories.push(testList[i].name);
+    }
+
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            height: categories.length * 40,
+            type: 'bar'
+        },
+
+        title: {
+            text: 'Template Engine Rendering Speed Test'
+        },
+
+        subtitle: {
+            text: length + ' data × ' + number + ' calls'
+        },
+
+        xAxis: {
+            categories: categories,
+            labels: {
+                align: 'right',
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Time(ms)'
+            }
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.x +'</b><br/>'+
+                    this.y + 'ms';
+            }
+
+        },
+
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        return this.y + 'ms';
+                    }
+                }
+            }
+        },
+        series: [{
+            data : []
+        }]
+
+    });
+
+    var log = function (message) {
+        document.getElementById('log').innerHTML = message;
+    };
+
+    var tester = function (target) {
+
+
+        var time = new Timer;
+        target.tester();
+        var endTime = time.stop();
+
+        chart.series[0].addPoint({
+            color: colors.shift(),
+            y: endTime
+        });
+
+
+        if (!testList.length) {
+            log('done');
+            return;
+        }
+
+        target = testList.shift();
+
+        log('runing.. ' + target.name);
+
+        setTimeout(function () {
+            tester(target);
+        }, 500);
+
+    };
+
+    var target = testList.shift();
+    log('runing.. ' + target.name);
+    tester(target);
+
+};
+</script>
+
+
+
+<!-- art-template || ejs || lodash-template || underscore-template -->
+<script id="template" type="text/tmpl">
+<ul>
+    <% for (i = 0, l = list.length; i < l; i ++) { %>
+        <li>User: <%- list[i].user %> / Web Site:<%- list[i].site %></li>
+    <% } %>
+</ul>
+</script>
+
+<!-- tmpl -->
+<script id="tmpl" type="text/tmpl">
+<ul>
+    <% for (var val, i = 0, l = list.length; i < l; i ++) { %>
+        <% val = list[i]; %>
+        <li>User: <%=val.user%> / Web Site:<%=val.site%></li>
+    <% } %>
+</ul>
+</script>
+
+<!-- doT -->
+<script id="doT" type="text/tmpl">
+<ul>
+    {{ for (var val, i = 0, l = it.list.length; i < l; i ++) { }}
+        {{ val = it.list; }}
+        <li>User: {{=val[i].user}} / Web Site:{{=val[i].site}}</li>
+    {{ } }}
+</ul>
+</script>
+
+<!--Mustache -->
+<script id="Mustache" type="text/tmpl">
+<ul>
+    {{#list}}
+        <li>User: {{{user}}} / Web Site:{{{site}}}</li>
+    {{/list}}
+</ul>
+</script>
+
+<!--Handlebars  -->
+<script id="Handlebars" type="text/tmpl">
+<ul>
+    {{#list}}
+        <li>User: {{{user}}} / Web Site:{{{site}}}</li>
+    {{/list}}
+</ul>
+</script>
+</head>
+
+<body>
+<h1>Template Engine Rendering Speed Test</h1>
+<p><strong><script>document.write(length);</script></strong> data × <strong><script>document.write(number)</script></strong> calls. options = {escape:false, cache:true}</p>
+<p><button id="button-test" onclick="this.disabled=true;runTest()" style="padding: 5px;">Run Test&raquo;</button> <span id="log" style="font-size:12px"><script>for (var i = 0; i < testList.length; i ++) {document.write(testList[i].name + '; ')}</script></span></p>
+<div id="container" style="min-width: 400px; margin: 0 auto"></div>
+</body>
+</html>

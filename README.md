@@ -1,211 +1,453 @@
-# artTemplate
-###### 新一代 javascript 模板引擎
-=================
+# art-template
 
-artTemplate 是新一代 javascript 模板引擎，它在 v8 中的渲染效率可接近 javascript 性能极限，在 chrome 下渲染效率测试中分别是知名引擎 Mustache 与 micro tmpl 的 25 、 32 倍。
-
-引擎支持调试。若渲染中遇到错误，调试器可精确定位到产生异常的模板语句，解决前端模板难以调试的问题。
-
-这一切都在 2kb(gzip) 中实现！
-
-## 快速上手
-
-### 编写模板
-
-使用一个``type="text/html"``的``script``标签存放模板：
-	
-	<script id="test" type="text/html">
-	<h1><%=title%></h1>
-	<ul>
-    	<%for(i = 0; i < list.length; i ++) {%>
-        	<li>条目内容 <%=i + 1%> ：<%=list[i]%></li>
-    	<%}%>
-	</ul>
-	</script>
-	
-模板逻辑语法开始与结束的界定符号为``<%`` 与``%>``，若``<%``后面紧跟``=``号则输出变量内容。
-
-### 渲染模板
-
-``template.render(id, data)``
-	
-	var data = {
-		title: '标签',
-		list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
-	};
-	var html = template.render('test', data);
-	document.getElementById('content').innerHTML = html;
+[![NPM Version](https://img.shields.io/npm/v/art-template.svg)](https://npmjs.org/package/art-template)
+[![NPM Downloads](https://img.shields.io/npm/dm/art-template.svg)](https://npmjs.org/package/art-template)
+[![Node.js Version](https://img.shields.io/node/v/art-template.svg)](http://nodejs.org/download/)
+[![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg)](https://coveralls.io/github/aui/art-template)
+[![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 
 
-[演示](http://aui.github.com/artTemplate/demo/basic.html)
+art-template 是一个性能出众、设计巧妙的模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
+[![chart](./docs/test-speed/chart.png)](http://aui.github.io/art-template/docs/test-speed/)
 
-## 嵌入子模板
+[在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
 
-``<%include(id, [data])%>``语句可以嵌入子模板，其中第二个参数是可选的，它默认传入当前的数据。
+``NEW! v4.0-bate``
 
-	<script id="test" type="text/html">
-	<h1><%=title%></h1>
-	<%include('list')%>
-	</script>
-	
-	<script id="list" type="text/html">
-	<ul>
-    	<%for(i = 0; i < list.length; i ++) {%>
-        	<li>条目内容 <%=i + 1%> ：<%=list[i]%></li>
-    	<%}%>
-	</ul>
-	</script>
-	
-[演示](http://aui.github.com/artTemplate/demo/include.html)
+1. 调试功能增强：定位语法错误
+2. 同时支持原生 JavaScript 语法、简约语法
+3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
+4. NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
+4. 支持定义模板的语法规则
 
-## 不转义HTML
+## 特性
 
-模板引擎默认数据包含的 HTML 字符进行转义以避免 XSS 漏洞，若不需要转义的地方可使用两个``=``号。
+* 针对 NodeJS 与 V8 引擎优化，渲染速度出众
+* 支持编译、运行时调试，可以定位到错误模板所在的行号
+* 兼容 EJS 模板语法
+* 支持 ES 严格模式环境运行
+* 支持预编译模板
+* 支持原生 JavaScript 和类似 Mustache 风格的模板语法
+* 只有 5KB 大小
 
-	<script id="test" type="text/html">
-	<%==value%>
-	</script>
-	
-若需要关闭默认转义，可以设置``template.isEscape = false``。
+## 安装
 
-[演示](http://aui.github.com/artTemplate/demo/no-escape.html)
+```
+npm install art-template@4.0.0-beta --save
+```
 
-## 在js中存放模板
+## 快速入门
 
-``template.compile([id], source)``将返回一个渲染函数。其中 id 参数是可选的，如果使用了 id 参数，可以使用``template.render(id, data)``渲染模板。
+### NodeJS
 
-	var source =
-	  '<ul>'
-	+    '<% for (var i = 0; i < list.length; i ++) { %>'
-	+        '<li>索引 <%= i + 1 %> ：<%= list[i] %></li>'
-	+    '<% } %>'
-	+ '</ul>';
-	
-	var data = {
-	    list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
-	};
-	
-	var render = template.compile(source);
-	var html = render(data);
-	document.getElementById('content').innerHTML = html;
-	
-[演示](http://aui.github.com/artTemplate/demo/compile.html)
+```html
+<!--./tpl-user.html-->
+<% if (user) { %>
+  <h2><%= user.name %></h2>
+<% } %>
+```
 
-## 添加辅助方法
+```javascript
+var template = require('art-template');
+var html = template(__diranme + '/tpl-user.html', {
+    user: {
+        name: 'aui'
+    }
+});
+```
 
-``template.helper(name, callback)``辅助方法一般用来进行字符串替换，如 XSS 过滤、UBB 替换、脏话替换等。
+### 浏览器
 
-例如扩展一个UBB替换方法：
+```html
+<script id="tpl-user" type="text/html">
+<% if (user) { %>
+  <h2><%= user.name %></h2>
+<% } %>
+</script>
 
-	template.helper('$ubb2html', function (content) {
-    	return content
-    	.replace(/\[b\]([^\[]*?)\[\/b\]/igm, '<b>$1</b>')
-    	.replace(/\[i\]([^\[]*?)\[\/i\]/igm, '<i>$1</i>')
-    	.replace(/\[u\]([^\[]*?)\[\/u\]/igm, '<u>$1</u>')
-    	.replace(/\[url=([^\]]*)\]([^\[]*?)\[\/url\]/igm, '<a href="$1">$2</a>')
-    	.replace(/\[img\]([^\[]*?)\[\/img\]/igm, '<img src="$1" />');
-	});
-	
-在模板中的使用方式：
+<script src="art-template/lib/template.js"></script>
+<script>
+var html = template('tpl-user', {
+    user: {
+        name: 'aui'
+    }
+});
+</script>
+```
 
-	<%=$ubb2html(content) %>
-	
-注意：引擎不会对辅助方法输出的 HTML 字符进行转义。
-	
-[演示](http://aui.github.com/artTemplate/demo/helper.html)
+### 核心方法
 
-## 设置界定符
+```javascript
+// 基于模板名渲染模板
+template(filename, data);
 
-若前端模板语法与后端语法产生冲突，可以修改模板引擎界定符，例如：
+// 将模板源代码编译成函数
+template.compile(source, options);
 
-	template.openTag = "<!--[";
-	template.closeTag = "]-->";
-	
-[演示](http://aui.github.com/artTemplate/demo/tag.html)
+// 将模板源代码编译成函数并立刻执行
+template.render(source, data, options);
+```
 
-## 自定义语法
+## 语法
 
-artTemplate 提供一个语法扩展用来简化模板逻辑语法。语法示例：
+art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表达式 `<% expression %>`。
 
-	{if admin}
-    	<h3>{title}</h3>
-    	<ul>
-    	    {each list}
-            	<li>{$index + 1}: {$value}</li>
-       		{/each}
-    	</ul>
-	{/if}
-	
-[详情](http://aui.github.com/artTemplate/extensions/index.html)
+```html
+{{if user}}
+  <h2>{{user.name}}</h2>
+  <ul>
+    {{each user.tags}}
+        {{$value}}
+    {{/each}}
+  </ul>
+{{/if}}
+```
 
-## 自动化工具
+等价：
 
-### 预编译工具
+```html
+<% if (user) { %>
+  <h2><%= user.name %></h2>
+  <ul>
+    <% for(var i = 0; i < user.tags.length; i++){ %>
+        <%= user.tags[i] %>
+    <% } %>
+  </ul>
+<% } %>
+```
 
-使用它可以让前端模版不再受浏览器的限制，支持如后端模版一样按文件放置、include语句等优秀的特性。
+### 标准输出
 
-编译后的模板不再依赖模板引擎，模板可以通过 [SeaJS](http://seajs.org) 或 [RequireJS](http://requirejs.org) 等加载器进行异步加载，亦能利用它们成熟的打包合并工具进行上线前的优化
+```html
+{{value}}
+```
 
-项目主页：<https://github.com/cdc-im/atc>
+```html
+<%= value %>
+```
 
-### 抽取工具
+### 原始输出
 
-``./tools/combine.html(http://aui.github.com/artTemplate/tools/combine.html)``
+```html
+{{@value}}
+```
 
-可以把 HTML 中的模板提取出来以便把模板嵌入到 js 文件中。
+```html
+<%- value %>
+```
 
-与编译工具不同的是，抽取后的模板仍然依赖引擎运行。
+原始输出语句不会对 `HTML` 内容进行转义。
 
-## 模板编码规范
+### 条件
 
-1、不能使用 javascript 关键字作为模板变量(包括 ECMA5 严格模式下新增的关键字):
+```html
+{{if value}}
+    [...]
+{{else if value2}}
+    [...]
+{{/if}}
+```
 
-> break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, abstract, boolean, byte, char, class, const, double, enum, export, extends, final, float, goto, implements, import, int, interface, long, native, package, private, protected, public, short, static, super, synchronized, throws, transient, volatile, arguments, let, yield
+```html
+<% if (value) { %>
+    [...]
+<% else if (value2) { %>
+    [...]
+<% } %>
+```
 
-2、模板禁止读写全局变量，除非给模板定义辅助方法。例如：
+### 循环
 
-	template.helper('Math', Math)
+```html
+{{each target}}
+    {{$index}} {{$value}}
+{{/each}}
+```
 
-> artTemplate编译后的模板将运行在沙箱内，模板语句无法读写外部对象。
-> 
-> 在使用原生语法的引擎中，模板中若引用外部对象，随着项目复杂度增加，那时候谁都不能确定模板中的变量到底是数据还是全局对象，这种复杂的依赖关系将为会项目带来巨大的维护成本。
+1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
+2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
 
+```html
+<% for(var i = 0; i < target.length; i++){ %>
+    <%= i %> <%= target[i] %>
+<% } %>
+```
 
-## 更新记录
+## 变量
 
-### v2.0.1
+```html
+{{set temp = data.sub.content}}
+```
 
-1.	修复模板变量静态分析的[BUG](https://github.com/aui/artTemplate/pull/22)
+```html
+<% var temp = data.sub.content; %>
+```
 
-### v2.0 release
+## 子模板
 
-1.	编译工具更名为 atc，成为 artTemplate 的子项目单独维护：<https://github.com/cdc-im/atc>
+```html
+{{include './header.html' $data}}
+```
 
-### v2.0 beta5
+```html
+<% include('./header.html', $data) %>
+```
 
-1. 修复编译工具可能存在重复依赖的问题。感谢 @warmhug
-2. 修复``include``内部实现可能产生上下文不一致的问题。感谢 @warmhug
-3. 支持使用拖拽文件到``compile.cmd``图标上进行单独编译
+`include` 第二个参数默认值为 `$data`，可以自定义。
 
-### v2.0 beta4
+### print
 
-1. 修复编译工具在压缩模板可能导致 HTML 意外截断的问题。感谢 @warmhug
-2. 完善编译工具对``include``支持支持，可以支持不同目录之间模板嵌套
-3. 修复编译工具没能正确处理自定义语法插件的辅助方法
+```html
+{{print val val2 val3}}
+```
 
-### v2.0 beta1
+```html
+<% print(val, val2, val3) %>
+```
 
-1.	对非String、Number类型的数据不输出，而Function类型求值后输出。
-2.	默认对html进行转义输出，原文输出可使用``<%==value%>``，也可以关闭默认的转义功能``template.isEscape = false``。
-3.	增加批处理工具支持把模板编译成不依赖模板引擎的 js 文件，可通过 RequireJS、SeaJS 等模块加载器进行异步加载。
+### 过滤器
+
+```javascript
+// 向模板中导入过滤器
+template.imports.$dateFormat = function(date, format){/*[code..]*/};
+template.imports.$timestamp = function(value){return value * 1000};
+```
+
+```html
+{{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+```
+
+```html
+<%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
+```
+
+## 全局变量
+
+### 内置变量
+
+* `$data`  传入模板的数据 `{Object|array}`
+* `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
+* `print`  字符串输出函数 `{function}`
+* `include`  子模板载入函数 `{function}`
+
+> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['user-list']`
+
+### 注入全局变量
+
+```javascript
+template.imports.$console = console;
+```
+
+```html
+<% $console.log('hello world') %>
+```
+
+模板外部所有的变量都需要使用 `template.imports` 注入、并且要在模板编译之前进行声明才能使用。
+
+## 缓存
+
+缓存默认是开启的，开发环境中可以关闭它：
+
+```javascript
+template.defaults.cache = false;
+```
+
+## 定义语法规则
+
+从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
+
+```javascript
+template.defaults.rules.push({
+    test: /\${([\w\W]*?)}/,
+    use: function(match, code) {
+        return {
+            code: code,
+            output: 'escape'
+        }
+    }
+});
+```
+
+其中 `test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
+
+* 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
+* 返回值：必须返回一个对象，包含 `code` 与 `output` 两个字段：
+    * `code` 转换后的 JavaScript 语句
+    * `output` 描述 `code` 的类型，可选值：
+        * `'escape'` 编码后进行输出
+        * `'raw'` 输出原始内容
+        * `false` 不输出任何内容
+
+### 示例
+
+创造一个 `<?js expression ?>` 语法模板：
+
+```html
+<?js if (user) { ?>
+  <h2><?js= user.name ?></h2>
+<?js } ?>
+```
+
+```javascript
+template.defaults.rules.push({
+    test: /<\?js([=-]?)([\w\W]*?)\?>/,
+    use: function(match, output, code) {
+        output = ({
+            '=': 'escape',
+            '-': 'raw',
+            '': false
+        }}[output];
+        return {
+            code: code,
+            output: output
+        }
+    }
+});
+```
+
+> 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
+
+## API
+
+###	template(filename, data)
+
+根据模板名渲染模板。
+
+```javascript
+var html = template('/welcome.html', {
+    value: 'aui'
+});
+```
+
+> 在浏览器中，`filename` 请传入存放模板的元素 `id`
+>
+> 在 NodeJS 中，`filename` 如果非绝对路径，则会根据 `options.root` 来定位模板
+
+###	template(filename, source)
+
+编译模板并缓存。
+
+```javascript
+// compile && cache
+template('/welcome.html', 'hi, <%=value%>.');
+
+// use
+template('/welcome.html', {
+    value: 'aui'
+});
+```
+
+###	.compile(source, options)
+
+编译模板并返回一个渲染函数。
+
+```javascript
+var render = template.compile('hi, <%=value%>.');
+var html = render({value: 'aui'});
+```
+
+###	.render(source, data, options)
+
+编译并返回渲染结果。
+
+```javascript
+var html = template.render('hi, <%=value%>.', {value: 'aui'});
+```
+
+###	.defaults
+
+模板引擎默认配置。参考 [选项](#选项)
+
+```javascript
+template.defaults.imports.$brackets = function(string) {
+    return `『${string}』`;
+};
+
+var render = template.compile('hi, <?js=$brackets(value)?>.');
+var html = render({value: 'aui'}); // => "hi, 『aui』."
+```
+
+### .imports
+
+向模板中注入上下文。这是 `template.defaults.imports` 的快捷方式。
+
+```javascript
+template.imports.$parseInt = parseInt;
+```
+
+```html
+<%= $parseInt(value) %>
+```
+
+### .bindExtname(extname)
+
+关联后缀名，支持 `require(path)` 加载模板（仅 NodeJS 环境中可使用）。
+
+```javascript
+template.bindExtname('.ejs');
+var render = require(__dirname + '/index.ejs');
+var html = render(data);
+```
+
+## 选项
+
+`template.defaults`
+
+```javascript
+{
+
+    // 模板名字
+    filename: null,
+
+    // 模板语法规则
+    rules: [nativeRule, artRule],
+
+    // 数据编码处理器。为 false 则关闭编码输出功能
+    escape: escape,
+
+    // 模板内部 include 功能处理器
+    include: include,
+
+    // 模板路径转换器
+    resolveFilename: resolveFilename,
+
+    // 缓存控制接口（依赖 filename 字段）。为 false 则关闭缓存
+    cache: cache,
+
+    // HTML 压缩器
+    compress: null,
+
+    // 导入的模板变量
+    imports: {
+        $each: each,
+        $escape: escape,
+        $include: include
+    },
+
+    // 调试处理函数
+    debug: debug,
+
+    // 模板文件加载器
+    loader: loader,
+
+    // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
+    compileDebug: false,
+
+    // bail 如果为 true，编译错误与运行时错误都会抛出异常
+    bail: false,
+
+    // 模板根目录。Node 环境专用
+    root: '/'
+
+};
+```
+
+## 兼容性
+
+1. NodeJS v1.0+
+2. IE9+（小于 IE9 需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 支持）
 
 ## 授权协议
 
-Released under the MIT, BSD, and GPL Licenses
-
-============
-
-[演示例子](http://aui.github.com/artTemplate/demo/index.html) | [性能测试](http://aui.github.com/artTemplate/test/test-speed.html) | [引擎原理](http://cdc.tencent.com/?p=5723)
-
-© cdc.tencent.com
+[MIT](./LICENSE)
