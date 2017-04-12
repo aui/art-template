@@ -7,7 +7,7 @@
 
 art-template 是一个性能出众、设计巧妙的模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
-``NEW! v4.0``
+``NEW! v4.0-bate``
 
 1. 调试功能增强：定位语法错误
 2. 同时支持原生 JavaScript 语法、简约语法
@@ -17,7 +17,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 ## 特性
 
-* 针对 NodeJS 与 V8 引擎优化，运行时速度是 Mustache、tpl 等模板引擎的 20 多倍
+* 针对 NodeJS 与 V8 引擎优化，运行时速度是 Mustache、T 等模板引擎的 20 多倍
 * 支持编译、运行时调试，可以定位到错误模板所在的行号
 * 兼容 Ejs 模板语法
 * 支持 ES 严格模式环境运行
@@ -28,7 +28,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 ## 安装
 
 ```
-npm install art-template --save
+npm install art-template@4.0.0-beta --save
 ```
 
 ## 快速入门
