@@ -218,7 +218,7 @@ encoding | String | ``'utf-8'`` | 指定模板编码
 
 ###	v3.1.0
 
-1. 修复``template.runder()``方法与文档表现不一致的问题
+1. 修复``template.render()``方法与文档表现不一致的问题
 2. 去掉鸡肋的``fs.watch``特性
 
 ###	v3.0.3
