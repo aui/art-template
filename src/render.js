@@ -1,12 +1,12 @@
+const compile = require('./compile');
+
 /**
  * 渲染模板
- * @name    template.render
- * @param   {String}    模板
- * @param   {Object}    数据
- * @return  {String}    渲染好的字符串
+ * @param   {string|Object}    source  模板内容
+ * @param   {Object}    data    数据
+ * @param   {?Object}   options 选项
+ * @return  {string}            渲染好的字符串
  */
-template.render = function (source, options) {
-    return compile(source, options);
-};
+const render = (source, data, options) => compile(source, options)(data);
 
-
+module.exports = render;

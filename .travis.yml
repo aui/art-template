@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - 6
+cache:
+  directories:
+    - node_modules
+branches:
+  only:
+  - master
+  - 4.0.0
+install:
+  - npm install
+script:
+  - npm test
+  - npm run build
+after_success:
+  - npm run coverage
