@@ -7,7 +7,7 @@
 
 art-template 是一个性能出众、设计巧妙的模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
-[在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
+[在线速度测试](http://aui.github.io/art-template/test-speed/)
 
 ``NEW! v4.0-bate``
 
