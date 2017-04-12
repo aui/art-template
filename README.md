@@ -434,3 +434,8 @@ template.defaults.rules.push({
 
 };
 ```
+
+## 兼容性
+
+1. NodeJS v1.0+
+2. IE9+（小于 IE9 需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 支持）
