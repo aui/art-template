@@ -9,10 +9,10 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 ``NEW! v4.0``
 
-1. 调试功能增强：现在无论是编译错误还是运行时错误都可以捕获到模板所在行
+1. 调试功能增强：定位语法错误
 2. 同时支持原生 JavaScript 语法、简约语法
 3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template v3.0 模板语法，并修复其历史 BUG
-4. NodeJS 支持 `require(templatePath)` 方式载入 `.art` 后缀模板
+4. NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
 4. 支持定义模板的语法规则
 
 ## 特性
@@ -296,12 +296,12 @@ template.imports.$parseInt = parseInt;
 <%= $parseInt(value) %>
 ```
 
-### .bindExtname(require, extname)
+### .bindExtname(extname)
 
-关联后缀名，支持 `require(templatePath)` 形式加载模板（仅 NodeJS 环境中可使用）。
+关联后缀名，支持 `require(path)` 加载模板（仅 NodeJS 环境中可使用）。
 
 ```javascript
-template.bindExtname(require, '.ejs');
+template.bindExtname('.ejs');
 var render = template(__dirname + '/index.ejs');
 var html = render(data);
 ```
@@ -359,8 +359,8 @@ template.defaults.rules.push({
 
 ```html
 <?js if (user) { ?>
-  <h2><?= user.name ?></h2>
-<? } ?>
+  <h2><?js= user.name ?></h2>
+<?js } ?>
 ```
 
 ```javascript

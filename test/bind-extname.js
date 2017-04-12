@@ -9,9 +9,8 @@ const extname = defaults.extname;
 module.exports = {
     before: () => {
         console.log('#bind-extname');
-        defaults.extname = '.html';
-        bindExtname(require);
-        bindExtname(require, '.tpl');
+        bindExtname('.html');
+        bindExtname('.tpl');
     },
 
     after: () => {

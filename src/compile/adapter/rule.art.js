@@ -191,6 +191,7 @@ const nativeRule = {
         result.output = output;
 
         if (!result.variables) {
+            // 性能优化
             result.variables = compiler.getVariables(tokens);
         }
 
