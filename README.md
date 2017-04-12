@@ -4,6 +4,8 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/art-template.svg)](https://npmjs.org/package/art-template)
 [![Node.js Version](https://img.shields.io/node/v/art-template.svg)](http://nodejs.org/download/)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg)](https://coveralls.io/github/aui/art-template)
+[![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
+
 
 art-template 是一个性能出众、设计巧妙的模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
@@ -229,7 +231,7 @@ template.imports.$timestamp = function(value){return value * 1000};
 * `print`  字符串输出函数 `{function}`
 * `include`  子模板载入函数 `{function}`
 
-> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['key']`
+> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['user-list']`
 
 ### 注入全局变量
 
