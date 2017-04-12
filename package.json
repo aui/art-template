@@ -2,6 +2,7 @@
     "name": "art-template",
     "description": "JavaScript Template Engine",
     "homepage": "http://aui.github.com/art-template/",
+    "version": "4.0.0-beta1",
     "keywords": [
         "template"
     ],
@@ -17,7 +18,6 @@
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
     "main": "lib/template.js",
-    "version": "4.0.0-beta",
     "engines": {
         "node": ">= 4.0.0"
     },

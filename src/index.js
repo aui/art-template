@@ -29,7 +29,6 @@ template.imports = defaults.imports;
 
 if (detectNode) {
     bindExtname(EXTNAME, require);
-    template.bindExtname = bindExtname;
 }
 
 module.exports = template;

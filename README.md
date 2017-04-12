@@ -1,7 +1,6 @@
 # art-template
 
 [![NPM Version](https://img.shields.io/npm/v/art-template.svg)](https://npmjs.org/package/art-template)
-[![NPM Downloads](https://img.shields.io/npm/dm/art-template.svg)](https://npmjs.org/package/art-template)
 [![Node.js Version](https://img.shields.io/node/v/art-template.svg)](http://nodejs.org/download/)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg)](https://coveralls.io/github/aui/art-template)
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
@@ -199,10 +198,6 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 ### print
 
 ```html
-{{print val val2 val3}}
-```
-
-```html
 <% print(val, val2, val3) %>
 ```
 
@@ -378,16 +373,6 @@ template.imports.$parseInt = parseInt;
 
 ```html
 <%= $parseInt(value) %>
-```
-
-### .bindExtname(extname)
-
-关联后缀名，支持 `require(path)` 加载模板（仅 NodeJS 环境中可使用）。
-
-```javascript
-template.bindExtname('.ejs');
-var render = require(__dirname + '/index.ejs');
-var html = render(data);
 ```
 
 ## 选项
