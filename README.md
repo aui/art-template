@@ -23,7 +23,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 * 针对 NodeJS 与 V8 引擎优化，渲染速度出众
 * 支持编译、运行时调试，可以定位到错误模板所在的行号
-* 兼容 Ejs 模板语法
+* 兼容 EJS 模板语法
 * 支持 ES 严格模式环境运行
 * 支持预编译模板
 * 支持原生 JavaScript 和类似 Mustache 风格的模板语法
@@ -207,7 +207,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 ### 过滤器
 
 ```javascript
-// 向模板中导入变量
+// 向模板中导入过滤器
 template.imports.$dateFormat = function(date, format){/*[code..]*/};
 template.imports.$timestamp = function(value){return value * 1000};
 ```
@@ -219,6 +219,92 @@ template.imports.$timestamp = function(value){return value * 1000};
 ```html
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
+
+## 全局变量
+
+### 内置变量
+
+* `$data`  传入模板的数据 `{Object|array}`
+* `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
+* `print`  字符串输出函数 `{function}`
+* `include`  子模板载入函数 `{function}`
+
+> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['key']`
+
+### 注入全局变量
+
+```javascript
+template.imports.$console = console;
+```
+
+```html
+<% $console.log('hello world') %>
+```
+
+模板外部所有的变量都需要使用 `template.imports` 注入、并且要在模板编译之前进行声明才能使用。
+
+## 缓存
+
+缓存默认是开启的，开发环境中可以关闭它：
+
+```javascript
+template.defaults.cache = false;
+```
+
+## 定义语法规则
+
+从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
+
+```javascript
+template.defaults.rules.push({
+    test: /\${([\w\W]*?)}/,
+    use: function(match, code) {
+        return {
+            code: code,
+            output: 'escape'
+        }
+    }
+});
+```
+
+其中 `test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
+
+* 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
+* 返回值：必须返回一个对象，包含 `code` 与 `output` 两个字段：
+    * `code` 转换后的 JavaScript 语句
+    * `output` 描述 `code` 的类型，可选值：
+        * `'escape'` 编码后进行输出
+        * `'raw'` 输出原始内容
+        * `false` 不输出任何内容
+
+### 示例
+
+创造一个 `<?js expression ?>` 语法模板：
+
+```html
+<?js if (user) { ?>
+  <h2><?js= user.name ?></h2>
+<?js } ?>
+```
+
+```javascript
+template.defaults.rules.push({
+    test: /<\?js([=-]?)([\w\W]*?)\?>/,
+    use: function(match, output, code) {
+        output = ({
+            '=': 'escape',
+            '-': 'raw',
+            '': false
+        }}[output];
+        return {
+            code: code,
+            output: output
+        }
+    }
+});
+```
+
+> 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
 
 ## API
 
@@ -301,82 +387,6 @@ template.bindExtname('.ejs');
 var render = require(__dirname + '/index.ejs');
 var html = render(data);
 ```
-
-## 全局变量
-
-### 内置变量
-
-* `$data`  传入模板的数据 `{Object|array}`
-* `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
-* `print`  字符串输出函数 `{function}`
-* `include`  子模板载入函数 `{function}`
-
-### 注入全局变量
-
-```javascript
-template.imports.$console = console;
-```
-
-```html
-<% $console.log('hello world') %>
-```
-
-模板外部所有的变量都需要使用 `template.imports` 注入后才可以使用，并且要在编译之前进行声明。
-
-## 定义语法规则
-
-从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
-
-```javascript
-template.defaults.rules.push({
-    test: /\${([\w\W]*?)}/,
-    use: function(match, code) {
-        return {
-            code: code,
-            output: 'escape'
-        }
-    }
-});
-```
-
-其中 `test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
-
-* 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
-* 返回值：必须返回一个对象，包含 `code` 与 `output` 两个字段：
-    * `code` 转换后的 JavaScript 语句
-    * `output` 描述 `code` 的类型，可选值：
-        * `'escape'` 编码后进行输出
-        * `'raw'` 输出原始内容
-        * `false` 不输出任何内容
-
-### 示例
-
-创造一个 `<?js expression ?>` 语法模板：
-
-```html
-<?js if (user) { ?>
-  <h2><?js= user.name ?></h2>
-<?js } ?>
-```
-
-```javascript
-template.defaults.rules.push({
-    test: /<\?js([=-]?)([\w\W]*?)\?>/,
-    use: function(match, output, code) {
-        output = ({
-            '=': 'escape',
-            '-': 'raw',
-            '': false
-        }}[output];
-        return {
-            code: code,
-            output: output
-        }
-    }
-});
-```
-
-> 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析。
 
 ## 选项
 
