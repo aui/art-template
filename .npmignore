@@ -1,3 +1,8 @@
 test
-demo
-doc
+example
+coverage
+webpack.config.js
+.eslintrc.json
+.gitignore
+.npmignore
+.travis.yml
