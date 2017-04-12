@@ -33,7 +33,7 @@ npm install art-template --save
 
 ## 快速入门
 
-#### NodeJS
+### NodeJS
 
 ```html
 <!--./tpl-user.html-->
@@ -51,7 +51,7 @@ var html = template(__diranme + '/tpl-user.html', {
 });
 ```
 
-#### 浏览器
+### 浏览器
 
 ```html
 <script id="tpl-user" type="text/html">
@@ -111,7 +111,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% } %>
 ```
 
-**标准输出**
+### 标准输出
 
 ```html
 {{value}}
@@ -121,7 +121,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <%= value %>
 ```
 
-**原始输出**
+### 原始输出
 
 ```html
 {{@value}}
@@ -133,7 +133,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 
 原始输出语句不会对 `HTML` 内容进行转义。
 
-**条件控制**
+### 条件
 
 ```html
 {{if value}}
@@ -151,7 +151,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% } %>
 ```
 
-**循环控制**
+### 循环
 
 ```html
 {{each target}}
@@ -168,7 +168,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% } %>
 ```
 
-**变量**
+## 变量
 
 ```html
 {{set temp = data.sub.content}}
@@ -178,7 +178,29 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% var temp = data.sub.content; %>
 ```
 
-**过滤器**
+## 子模板
+
+```html
+{{include './header.html' $data}}
+```
+
+```html
+<% include('./header.html', $data) %>
+```
+
+`include` 第二个参数默认值为 `$data`，可以自定义。
+
+### print
+
+```html
+{{print val val2 val3}}
+```
+
+```html
+<% print(val, val2, val3) %>
+```
+
+### 过滤器
 
 ```javascript
 // 向模板中导入变量
@@ -192,28 +214,6 @@ template.imports.$timestamp = function(value){return value * 1000};
 
 ```html
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
-```
-
-**子模板**
-
-```html
-{{include './header.html' $data}}
-```
-
-```html
-<% include('./header.html', $data) %>
-```
-
-`include` 第二个参数默认值为 `$data`，可以自定义。
-
-**print**
-
-```html
-{{print val val2 val3}}
-```
-
-```html
-<% print(val, val2, val3) %>
 ```
 
 ## API
@@ -300,14 +300,14 @@ var html = render(data);
 
 ## 全局变量
 
-**内置变量**
+### 内置变量
 
 * `$data`  传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
 * `print`  字符串输出函数 `{function}`
 * `include`  子模板载入函数 `{function}`
 
-**注入全局变量**
+### 注入全局变量
 
 ```javascript
 template.imports.$console = console;
@@ -321,7 +321,7 @@ template.imports.$console = console;
 
 ## 定义语法规则
 
-从一个简单的例子说起，让模板引擎支持 ES6 `${name}` 模板字符串的解析：
+从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
 
 ```javascript
 template.defaults.rules.push({
@@ -335,15 +335,15 @@ template.defaults.rules.push({
 });
 ```
 
-其中，`test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
+其中 `test` 是匹配字符串正则，`use` 是匹配后的调用函数。关于 `use` 函数：
 
-1. 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
-2. 返回值：返回一个对象，包含 `code` 与 `output` 两个字段：
-    1. `code` 转换后的 JavaScript 语句
-    2. `output` 描述 `code` 的类型，可选值：
-        1. `'escape'` 编码后进行输出
-        2. `'raw'` 输出原始内容
-        3. `false` 不输出任何内容
+* 参数：一个参数为匹配到的字符串，其余的参数依次接收 `test` 正则的分组匹配内容
+* 返回值：必须返回一个对象，包含 `code` 与 `output` 两个字段：
+    * `code` 转换后的 JavaScript 语句
+    * `output` 描述 `code` 的类型，可选值：
+        * `'escape'` 编码后进行输出
+        * `'raw'` 输出原始内容
+        * `false` 不输出任何内容
 
 ### 示例
 
