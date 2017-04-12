@@ -1,6 +1,5 @@
-const detectNode = require('detect-node');
 const templatePath = require.resolve('./index');
-const EXTNAME = '.art';
+
 
 /**
  * 绑定模板文件后缀名，以让 NodeJS 支持 `require(templateFile)`
@@ -16,11 +15,6 @@ const bindExtname = (extname, loader = require) => {
     };
 
 };
-
-
-if (detectNode) {
-    bindExtname(EXTNAME, require);
-}
 
 
 module.exports = bindExtname;
