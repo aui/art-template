@@ -12,12 +12,13 @@
 <script src="js/handlebars.js"></script>
 <script src="js/mustache.min.js"></script>
 <script src="js/tmpl.js"></script>
+<script src="js/pug.js"></script>
 
 <script>
 // 数据量
-var length = 50;
+var length = 64;
 // 渲染次数
-var number = 1000;
+var number = 2048;
 
 var data = {
     list: []
@@ -42,9 +43,37 @@ var testList = [
         tester: function () {
             var source = document.getElementById('template').innerHTML;
             var fn = template.compile(source);
+            var html = '';
             for (var i = 0; i < number; i ++) {
-                fn(data);
+                html = fn(data);
             }
+            return html;
+        }
+    },
+
+    {
+        name: 'art-template(fast mode)',
+        tester: function () {
+            var source = document.getElementById('template-fast-mode').innerHTML;
+            var fn = template.compile(source);
+            var html = '';
+            for (var i = 0; i < number; i ++) {
+                html = fn(data);
+            }
+            return html;
+        }
+    },
+
+    {
+        name: 'doT',
+        tester: function () {
+            var source = document.getElementById('doT').innerHTML;
+            var fn = doT.template(source);
+            var html = '';
+            for (var i = 0; i < number; i ++) {
+                html = fn(data);
+            }
+            return html;
         }
     },
 
@@ -53,20 +82,25 @@ var testList = [
         tester: function () {
             var source = document.getElementById('template').innerHTML;
             var fn = ejs.compile(source);
+            var html = '';
             for (var i = 0; i < number; i ++) {
-                fn(data);
+                html = fn(data);
             }
+            return html;
         }
     },
 
     {
-        name: 'doT',
+        name: 'Jade / pug',
         tester: function () {
-            var source = document.getElementById('doT').innerHTML;
-            var doTtmpl = doT.template(source);
+            var source = document.getElementById('pug').innerHTML;
+            var pug = require('pug');
+            var fn = pug.compile(source);
+            var html = '';
             for (var i = 0; i < number; i ++) {
-                doTtmpl(data);
+                html = fn(data);
             }
+            return html;
         }
     },
 
@@ -75,9 +109,23 @@ var testList = [
         tester: function () {
             var source = document.getElementById('Handlebars').innerHTML;
             var fn = Handlebars.compile(source);
+            var html = '';
             for (var i = 0; i < number; i ++) {
-                fn(data);
+                html = fn(data);
             }
+            return html;
+        }
+    },
+
+    {
+        name: 'Mustache',
+        tester: function () {
+            var source = document.getElementById('Mustache').innerHTML;
+            var html = '';
+            for (var i = 0; i < number; i ++) {
+                html = Mustache.to_html(source, data);
+            }
+            return html;
         }
     },
 
@@ -86,19 +134,11 @@ var testList = [
         tester: function () {
             var source = document.getElementById('tmpl').innerHTML;
             var fn = tmpl(source);
+            var html = '';
             for (var i = 0; i < number; i ++) {
-                fn(data);
+                html = fn(data);
             }
-        }
-    },
-
-    {
-        name: 'Mustache',
-        tester: function () {
-            var source = document.getElementById('Mustache').innerHTML;
-            for (var i = 0; i < number; i ++) {
-                Mustache.to_html(source, data);
-            }
+            return html;
         }
     }
 
@@ -135,7 +175,7 @@ var runTest = function () {
         },
 
         subtitle: {
-            text: length + ' data × ' + number + ' calls'
+            text: length + ' item × ' + number + ' calls'
         },
 
         xAxis: {
@@ -152,7 +192,7 @@ var runTest = function () {
         yAxis: {
             min: 0,
             title: {
-                text: 'Time(ms)'
+                text: 'Time'
             }
         },
 
@@ -195,7 +235,8 @@ var runTest = function () {
 
 
         var time = new Timer;
-        target.tester();
+        var html = target.tester();
+        console.log(target.name + '------------------\n', html);
         var endTime = time.stop();
 
         chart.series[0].addPoint({
@@ -235,6 +276,22 @@ var runTest = function () {
         <li>User: <%- list[i].user %> / Web Site:<%- list[i].site %></li>
     <% } %>
 </ul>
+</script>
+
+<script id="template-fast-mode" type="text/tmpl">
+<ul>
+    <% for (i = 0, l = $data.list.length; i < l; i ++) { %>
+        <li>User: <%- $data.list[i].user %> / Web Site:<%- $data.list[i].site %></li>
+    <% } %>
+</ul>
+</script>
+
+<script id="pug" type="text/tmpl">
+ul
+    -for (i = 0, l = list.length; i < l; i ++) {
+        li User: !{list[i].user} / Web Site:!{list[i].site}
+    -}
+
 </script>
 
 <!-- tmpl -->
@@ -278,7 +335,7 @@ var runTest = function () {
 
 <body>
 <h1>Template Engine Rendering Speed Test</h1>
-<p><strong><script>document.write(length);</script></strong> data × <strong><script>document.write(number)</script></strong> calls. options = {escape:false, cache:true}</p>
+<p><strong><script>document.write(length);</script></strong> item × <strong><script>document.write(number)</script></strong> calls. options = {escape:false, cache:true}</p>
 <p><button id="button-test" onclick="this.disabled=true;runTest()" style="padding: 5px;">Run Test&raquo;</button> <span id="log" style="font-size:12px"><script>for (var i = 0; i < testList.length; i ++) {document.write(testList[i].name + '; ')}</script></span></p>
 <div id="container" style="min-width: 400px; margin: 0 auto"></div>
 </body>
