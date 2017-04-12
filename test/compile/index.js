@@ -21,6 +21,11 @@ module.exports = {
             result = render(data);
             assert.deepEqual('hello aui.', result);
 
+            render = compile('hello <%=值%>.');
+            data = { '值': 'aui' };
+            result = render(data);
+            assert.deepEqual('hello aui.', result);         
+
             render = compile('hello <%=value%>.');
             data = { value: '<aui>' };
             result = render(data);
