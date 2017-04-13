@@ -139,10 +139,10 @@ class Compiler {
 
         let source = tplToken.value;
         const options = this.options;
-        const compress = options.compress;
+        const compressor = options.compressor;
 
-        if (compress) {
-            source = compress(source);
+        if (compressor) {
+            source = compressor(source);
         }
 
         const code = `$out+=${stringify(source)}`;

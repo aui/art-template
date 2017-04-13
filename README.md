@@ -408,7 +408,7 @@ template.imports.$parseInt = parseInt;
     cache: cache,
 
     // HTML 压缩器
-    compress: null,
+    compressor: null,
 
     // 导入的模板变量
     imports: {

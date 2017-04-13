@@ -309,9 +309,9 @@ module.exports = {
 
 
     'options': {
-        'compress': () => {
+        'compressor': () => {
             const render = compile('<div>     </div>\n     <%=value%>', {
-                compress: require('../../src/compile/adapter/compress')
+                compressor: require('../../src/compile/adapter/compressor')
             });
             assert.deepEqual('<div> </div> aui', render({
                 value: 'aui'

@@ -3,7 +3,7 @@ const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const ruleNative = require('../../src/compile/adapter/rule.native');
 
-const compress = ({ source }) => {
+const compressor = ({ source }) => {
     return source
         .replace(/\s+/g, ` `)
         .replace(/<!--[\w\W]*?-->/g, ``);
@@ -117,11 +117,11 @@ module.exports = {
             test('<div>hello</div>', ['$out+="<div>hello</div>"']);
             test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
 
-            // compress
-            test('  hello  ', ['$out+=" hello "'], { compress });
-            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compress });
-            test('"hello    world"', ['$out+="\\"hello world\\""'], { compress });
-            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compress });
+            // compressor
+            test('  hello  ', ['$out+=" hello "'], { compressor });
+            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compressor });
+            test('"hello    world"', ['$out+="\\"hello world\\""'], { compressor });
+            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compressor });
         },
 
         'parseExpression': () => {
@@ -150,7 +150,7 @@ module.exports = {
             test('<%if (value) {%>', ['if (value) {']);
             test('<% if (value) { %>', [' if (value) { ']);
             test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-                compress
+                compressor
             });
         }
     },
