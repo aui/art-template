@@ -20,11 +20,8 @@ const defaults = {
     // 模板语法规则
     rules: [nativeRule, artRule],
 
-    // 数据编码处理器。为 false 则关闭编码输出功能
-    escape: escape,
-
-    // 模板内部 include 功能处理器
-    include: include,
+    // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
+    escape: true,
 
     // 模板路径转换器
     resolveFilename: resolveFilename,

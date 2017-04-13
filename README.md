@@ -16,7 +16,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 1. 调试功能增强：定位语法错误
 2. 同时支持原生 JavaScript 语法、简约语法
-3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 v3.0 模板语法，并修复其历史 BUG
+3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template@3.0 模板语法
 4. NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
 4. 支持定义模板的语法规则
 
@@ -173,7 +173,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% } %>
 ```
 
-## 变量
+### 变量
 
 ```html
 {{set temp = data.sub.content}}
@@ -183,7 +183,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <% var temp = data.sub.content; %>
 ```
 
-## 子模板
+### 子模板
 
 ```html
 {{include './header.html' $data}}
@@ -303,6 +303,16 @@ template.defaults.rules.push({
 
 > 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
 
+## 使用 `require(templatePath)`
+
+引入 art-template 后，NodeJS 支持使用 `require()` 来加载 `.art` 后缀的模板文件。
+
+```javascript
+var template = require('art-template');
+var view = require('./index.art');
+var html = view(data); 
+```
+
 ## API
 
 ###	template(filename, data)
@@ -388,11 +398,8 @@ template.imports.$parseInt = parseInt;
     // 模板语法规则
     rules: [nativeRule, artRule],
 
-    // 数据编码处理器。为 false 则关闭编码输出功能
-    escape: escape,
-
-    // 模板内部 include 功能处理器
-    include: include,
+    // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
+    escape: true,
 
     // 模板路径转换器
     resolveFilename: resolveFilename,
@@ -424,7 +431,6 @@ template.imports.$parseInt = parseInt;
 
     // 模板根目录。Node 环境专用
     root: '/'
-
 };
 ```
 

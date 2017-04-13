@@ -54,6 +54,13 @@ module.exports = {
             // todo empty
         },
 
+        // 'escaped tag': ()=>{
+        //     render = compile('\\<%= value %>');
+        //     data = { value: 'aui' };
+        //     result = render(data);
+        //     assert.deepEqual('<%= value %>', result);
+        // },
+
         'syntax compat: art-template@v3': () => {
 
 
