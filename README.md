@@ -12,23 +12,16 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 
 [在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
 
-`NEW!` *v4.0-beta*
-
-1. 调试功能增强：定位语法错误
-2. 同时支持原生 JavaScript 语法、简约语法
-3. 兼容 [EJS](http://ejs.co) 模板语法、兼容 art-template@3.0 模板语法
-4. NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
-4. 支持定义模板的语法规则
-
 ## 特性
 
 * 针对 NodeJS 与 V8 引擎优化，渲染速度出众
-* 支持编译、运行时调试，可以定位到错误模板所在的行号
-* 兼容 EJS 模板语法
+* 支持编译、运行时调试，可定位语法错、渲染错误的模板语句
+* 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
+* NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
 * 支持 ES 严格模式环境运行
-* 支持预编译模板
-* 支持原生 JavaScript 和类似 Mustache 风格的模板语法
-* 只有 5KB 大小
+* 同时支持原生 JavaScript 语法、简约语法
+* 支持定义模板的语法规则
+* 支持在浏览器运行，仅 5KB 大小
 
 ## 安装
 
@@ -301,7 +294,8 @@ template.defaults.rules.push({
 });
 ```
 
-> 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
+> 1. 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
+> 2. 多个规则会同时生效
 
 ## 使用 `require(templatePath)`
 
@@ -362,16 +356,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 ###	.defaults
 
-模板引擎默认配置。参考 [选项](#选项)
-
-```javascript
-template.defaults.imports.$brackets = function(string) {
-    return `『${string}』`;
-};
-
-var render = template.compile('hi, <?js=$brackets(value)?>.');
-var html = render({value: 'aui'}); // => "hi, 『aui』."
-```
+模板引擎默认配置。参考 [选项](#选项)。
 
 ### .imports
 
