@@ -34,7 +34,7 @@ const nativeRule = {
 
             case 'set':
 
-                code = `var ${values.join('')};`;
+                code = `var ${values.join('')}`;
                 break;
 
             case 'if':
@@ -80,7 +80,7 @@ const nativeRule = {
 
             case '/each':
 
-                code = '});';
+                code = '})';
                 break;
 
             case 'echo':
@@ -93,7 +93,7 @@ const nativeRule = {
 
                 group = split(esTokens);
                 group.shift();
-                code = `${key}(${group.join(',')});`;
+                code = `${key}(${group.join(',')})`;
                 break;
 
             default:
