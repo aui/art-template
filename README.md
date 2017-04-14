@@ -299,10 +299,10 @@ template.defaults.rules.push({
 
 ## 使用 `require(templatePath)`
 
-引入 art-template 后，NodeJS 支持使用 `require()` 来加载 `.art` 后缀的模板文件。
+引入 `art-template/lib/extension` 后，NodeJS 支持使用 `require()` 来加载 `.art` 后缀的模板文件。
 
 ```javascript
-var template = require('art-template');
+require('art-template/lib/extension');
 var view = require('./index.art');
 var html = view(data); 
 ```
