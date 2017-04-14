@@ -18,6 +18,9 @@
         "coverage": "cat ./coverage/lcov.info | coveralls"
     },
     "main": "lib/template.js",
+    "files": [
+        "lib/"
+    ],
     "engines": {
         "node": ">= 4.0.0"
     },
