@@ -15,6 +15,7 @@ module.exports = {
     plugins: [
         new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`)
     ],
+    target: 'node',
     node: {
         fs: 'empty',
         path: 'empty'
