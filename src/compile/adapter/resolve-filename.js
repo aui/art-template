@@ -1,4 +1,3 @@
-const path = require('path');
 const detectNode = require('detect-node');
 
 /**
@@ -11,6 +10,7 @@ const detectNode = require('detect-node');
 const resolveFilename = (filename, root, base) => {
     /* istanbul ignore else  */
     if (detectNode) {
+        const path = require('path');
         const dirname = base ? path.dirname(base) : '';
         return path.resolve(root, dirname, filename);
     } else {
