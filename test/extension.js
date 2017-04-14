@@ -5,6 +5,7 @@ const defaults = template.defaults;
 const path = require('path');
 const resetBail = defaults.bail;
 const extname = defaults.extname;
+const debug = defaults.debug;
 
 
 module.exports = {
@@ -12,10 +13,14 @@ module.exports = {
         console.log('#extension');
         bindExtname('.html');
         bindExtname('.tpl');
+        defaults.debug = ()=>{
+            return ()=> '{Template Error}';
+        };
     },
 
     after: () => {
         defaults.extname = extname;
+        defaults.debug = debug;
     },
 
     'bindExtname': {

@@ -90,7 +90,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
   <h2>{{user.name}}</h2>
   <ul>
     {{each user.tags}}
-        {{$value}}
+        <li>{{$value}}</li>
     {{/each}}
   </ul>
 {{/if}}
@@ -103,13 +103,15 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
   <h2><%= user.name %></h2>
   <ul>
     <% for(var i = 0; i < user.tags.length; i++){ %>
-        <%= user.tags[i] %>
+        <li><%= user.tags[i] %></li>
     <% } %>
   </ul>
 <% } %>
 ```
 
-### 标准输出
+### 输出
+
+**标准输出**
 
 ```html
 {{value}}
@@ -119,7 +121,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <%= value %>
 ```
 
-### 原始输出
+**原始输出**
 
 ```html
 {{@value}}
@@ -129,7 +131,8 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 <%- value %>
 ```
 
-原始输出语句不会对 `HTML` 内容进行转义。
+> 1. 原始输出语句不会对 `HTML` 内容进行转义
+> 2. 输出语句支持运算表达式
 
 ### 条件
 

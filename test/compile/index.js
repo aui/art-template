@@ -349,7 +349,7 @@ module.exports = {
             const render = compile('<div>     </div>\n     <%=value%>', {
                 compressor: require('../../src/compile/adapter/compressor')
             });
-            assert.deepEqual('<div> </div> aui', render({
+            assert.deepEqual('<div></div>aui', render({
                 value: 'aui'
             }));
         },
@@ -402,19 +402,47 @@ module.exports = {
         'CompileError': {
 
             'error': () => {
-                const render = compile('<%=a b c%>');
+                let render;
+                render = compile('<%=a b c%>');
+                assert.deepEqual('{Template Error}', render({}));
+
+                render = compile('{{a b c}}');
                 assert.deepEqual('{Template Error}', render({}));
             },
 
             'throw error': () => {
+                let render;
                 try {
-                    const render = compile('<%=a b c%>', {
+                    render = compile('<%=a b c%>', {
                         bail: true
                     });
                     render({});
                 } catch (e) {
                     assert.deepEqual('CompileError', e.name);
                 }
+                assert.deepEqual(undefined, render);
+            },
+
+            'error line': ()=>{
+                const tpl = `<!--template-->
+{{if user}}
+  <h2>{{user.name}}</h2>
+  <ul>
+    {{each user.tags}}
+        <li>{{$value}} {{a b c d}}</li>
+    {{/each}}
+  </ul>
+{{/if}}`;
+                let render;
+                try {
+                    render = compile(tpl, {
+                        bail: true
+                    });
+                    render({});
+                } catch (e) {
+                    assert.deepEqual(6, e.line);
+                }
+                assert.deepEqual(undefined, render);
             },
 
             'template not found': () => {
