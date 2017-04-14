@@ -173,6 +173,7 @@ module.exports = {
             test('for(var i in d){', true);
             test('list.forEach(function(a,b){', true);
             test('list.forEach((a,b)=>{', true);
+            test('$each(user.tags,function($value,$index){;', true);
             test('}else if(a){', true);
             test('}else{', true);
             test('}', true);
@@ -228,7 +229,7 @@ module.exports = {
                     compiler.build();
                 } catch (e) {
                     assert.deepEqual('CompileError', e.name);
-                    assert.deepEqual(2, e.line);
+                    assert.deepEqual(3, e.line);
                 }
             }
         }

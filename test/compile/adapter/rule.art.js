@@ -89,6 +89,11 @@ module.exports = {
             result = ruleArt._split(esTokens);
             assert.deepEqual(['a?b:c'], result);
 
+            code = 'a ? b : c ? d : e';
+            esTokens = esTokenizer(code);
+            result = ruleArt._split(esTokens);
+            assert.deepEqual(['a?b:c?d:e'], result);
+
             code = 'a.f ? b : c';
             esTokens = esTokenizer(code);
             result = ruleArt._split(esTokens);

@@ -205,17 +205,17 @@ class Compiler {
             // <% } %>
             // <% }else{ %>
             // <% }else if(a){ %>
-            [/^\s*}.*?{?\s*$/, ''],
+            [/^\s*?}.*?{?[\s;]*?$/, ''],
 
             // <% list.forEach(function(a,b){ %>
-            [/(^.*?\(\s*function\s*\(.*?\)\s*{\s*$)/, '$1})'],
+            [/(^[\w\W]*?\s*?function\s*?\([\w\W]*?\)\s*?{[\s;]*?$)/, '$1})'],
 
             // <% list.forEach((a,b)=>{ %>
-            [/(^.*?\(\s*.*=>\s*{\s*$)/, '$1})'],
+            [/(^.*?\(\s*?[\w\W]*?=>\s*?{[\s;]*?$)/, '$1})'],
 
             // <% if(a){ %>
             // <% for(var i in d){ %>
-            [/(^.*?\(.*?\)\s*{\s*$)/, '$1}']
+            [/(^[\w\W]*?\([\w\W]*?\)\s*?{[\s;]*?$)/, '$1}']
 
         ];
 
@@ -307,8 +307,8 @@ class Compiler {
                 path: filename,
                 name: `CompileError`,
                 message: e.message,
-                line,
-                start,
+                line: line + 1,
+                start: start + 1,
                 source: source2,
                 script: renderCode,
                 stack: e.stack
