@@ -1,9 +1,6 @@
-const detectNode = require('detect-node');
 const render = require('./render');
 const compile = require('./compile');
 const defaults = require('./compile/defaults');
-const bindExtname = require('./bind-extname');
-const EXTNAME = '.art';
 
 /**
  * 模板引擎
@@ -26,9 +23,5 @@ template.render = render;
 template.compile = compile;
 template.defaults = defaults;
 template.imports = defaults.imports;
-
-if (detectNode) {
-    bindExtname(EXTNAME, require);
-}
 
 module.exports = template;

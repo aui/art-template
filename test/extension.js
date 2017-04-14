@@ -1,6 +1,7 @@
 const assert = require('assert');
-const bindExtname = require('../src/bind-extname');
-const defaults = require('../src/compile/defaults');
+const template = require('../lib/extension');
+const bindExtname = template.extension;
+const defaults = template.defaults;
 const path = require('path');
 const resetBail = defaults.bail;
 const extname = defaults.extname;
@@ -8,7 +9,7 @@ const extname = defaults.extname;
 
 module.exports = {
     before: () => {
-        console.log('#bind-extname');
+        console.log('#extension');
         bindExtname('.html');
         bindExtname('.tpl');
     },
@@ -19,18 +20,18 @@ module.exports = {
 
     'bindExtname': {
         'require .html': () => {
-            const render = require(path.join(__dirname, 'res', 'bind-extname.file.html'));
+            const render = require(path.join(__dirname, 'res', 'extension.file.html'));
             assert.deepEqual('hello world', render({}));
         },
 
         'require .tpl': () => {
-            const render = require(path.join(__dirname, 'res', 'bind-extname.file.tpl'));
+            const render = require(path.join(__dirname, 'res', 'extension.file.tpl'));
             assert.deepEqual('hello world', render({}));
         },
 
         'CompileError: bail=false': () => {
             defaults.bail = false;
-            const render = require(path.join(__dirname, 'res', 'bind-extname.compile-error.tpl'));
+            const render = require(path.join(__dirname, 'res', 'extension.compile-error.tpl'));
             assert.deepEqual('{Template Error}', render({}));
             defaults.bail = resetBail;
         },
@@ -40,7 +41,8 @@ module.exports = {
             let runder;
 
             try {
-                runder = require(path.join(__dirname, 'res', 'bind-extname.compile-error.2.tpl'));
+                runder = require('./res/extension.compile-error.2.tpl');
+                
             } catch (e) {
                 assert.deepEqual('CompileError', e.name);
             }
@@ -52,7 +54,7 @@ module.exports = {
 
         'RuntimeError: bail=false': () => {
             defaults.bail = false;
-            const render = require(path.join(__dirname, 'res', 'bind-extname.runtime-error.tpl'));
+            const render = require(path.join(__dirname, 'res', 'extension.runtime-error.tpl'));
             assert.deepEqual('{Template Error}', render({}));
             defaults.bail = resetBail;
         },
@@ -61,7 +63,7 @@ module.exports = {
         'RuntimeError: bail=true': () => {
             defaults.bail = true;
             try {
-                const render = require(path.join(__dirname, 'res', 'bind-extname.runtime-error.2.tpl'));
+                const render = require(path.join(__dirname, 'res', 'extension.runtime-error.2.tpl'));
                 render({});
             } catch (e) {
                 assert.deepEqual('RuntimeError', e.name);

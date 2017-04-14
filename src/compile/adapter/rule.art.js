@@ -1,16 +1,16 @@
 const nativeRule = {
     test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
-    use: function(match, raw, close, code) {
-
+    use: function (match, raw, close, code) {
+        
         const compiler = this;
         const options = compiler.options;
-        const tokens = compiler.getEsTokens(code);
+        const esTokens = compiler.getEsTokens(code.trim());
         const result = {};
-        const values = tokens
+        const values = esTokens
             .map(token => token.value)
             .filter(value => !/^\s+$/.test(value));
 
-
+        let group;
         let output = raw ? 'raw' : false;
         let key = close + values.shift();
 
@@ -43,6 +43,7 @@ const nativeRule = {
 
                 // value
                 // value + 1
+                // value.sub + 1
                 code = `if(${values.join('')}){`;
 
                 break;
@@ -72,21 +73,24 @@ const nativeRule = {
                 // object
                 // object value
                 // object value index
+                // object value.list index
 
                 // ... v3 compat ...
                 // object 'as' value
                 // object 'as' value index
-                if (values[1] === 'as') {
+                group = split(esTokens);
+                group.shift();
+
+                if (group[1] === 'as') {
                     upgrade('each object as value index', 'each object value index');
-                    values.splice(1, 1);
+                    group.splice(1, 1);
                 }
 
-                const object = values[0] || '$data';
-                const value = values[1] || '$value';
-                const index = values[2] || '$index';
+                const object = group[0] || '$data';
+                const value = group[1] || '$value';
+                const index = group[2] || '$index';
 
                 code = `$each(${object},function(${value},${index}){`;
-                result.variables = [`$each`, object];
 
                 break;
 
@@ -102,8 +106,7 @@ const nativeRule = {
                 // echo value value2 value3
                 // echo(value + 1, value2)
                 key = 'print';
-                tokens[0].value = key;
-                upgrade('echo value', 'print value');
+                upgrade('echo value', 'value');
 
             case 'print':
             case 'include':
@@ -113,7 +116,9 @@ const nativeRule = {
                 // include './header'
                 // include './header' context
                 // include(name + '.html', context)
-                code = `${key}(${values.join(',')});`;
+                group = split(esTokens);
+                group.shift();
+                code = `${key}(${group.join(',')});`;
                 break;
 
             default:
@@ -190,16 +195,44 @@ const nativeRule = {
         result.code = code;
         result.output = output;
 
-        if (!result.variables) {
-            // 性能优化
-            result.variables = compiler.getVariables(tokens);
-        }
-
 
         return result;
     }
 };
 
+
+
+// 按照空格分组
+const split = (esTokens) => {
+    let current = 0;
+    let lastToken = esTokens.shift();
+    const group = [
+        [lastToken]
+    ];
+
+    while (current < esTokens.length) {
+        const esToken = esTokens[current];
+        const esTokenType = esToken.type;
+
+        if (esTokenType === `whitespace` || esTokenType === `comment`) {
+            current++;
+            continue;
+        } else if (lastToken.type === 'punctuator' && lastToken.value !== ']' || esTokenType === 'punctuator') {
+            group[group.length - 1].push(esToken);
+        } else {
+            group.push([esToken]);
+        }
+
+        lastToken = esToken;
+        current++;
+    }
+
+    return group.map(g => g.map(g => g.value).join(''));
+};
+
+
+// mocha use
+nativeRule._split = split;
 
 
 module.exports = nativeRule;

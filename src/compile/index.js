@@ -52,7 +52,6 @@ const compile = (source, options = {}) => {
             };
 
             if (options.bail) {
-                debug(error)();
                 throw error;
             } else {
                 return debug(error);
@@ -78,7 +77,6 @@ const compile = (source, options = {}) => {
             }
 
             if (options.bail) {
-                debug(e)();
                 throw e;
             } else {
                 return debug(e)();
@@ -98,7 +96,6 @@ const compile = (source, options = {}) => {
 
     } catch (e) {
         if (options.bail) {
-            debug(e)()
             throw e;
         } else {
             return debug(e);

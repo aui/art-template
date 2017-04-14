@@ -33,6 +33,10 @@ module.exports = {
             test('0.99 + a + b.c', ['a', 'b']);
             test('a /*.*/. b /**/; c', ['a', 'c']);
             test('a ".b.c; d;" /*e*/ f', ['a', 'f']);
+
+            test('a[b]', ['a', 'b']);
+            test('a[b].c[d]', ['a', 'b', 'd']);
+            test('a["b"]', ['a']);
         }
     },
 

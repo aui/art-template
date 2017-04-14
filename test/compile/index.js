@@ -2,6 +2,7 @@ const assert = require('assert');
 const compile = require('../../src/compile/index');
 const tplTokenizer = require('../../src/compile/tpl-tokenizer');
 const defaults = require('../../src/compile/defaults');
+const debug = defaults.debug;
 
 let render, data, result;
 
@@ -9,6 +10,13 @@ module.exports = {
 
     before: () => {
         console.log('#compile/index');
+        defaults.debug = ()=>{
+            return ()=>'{Template Error}';
+        };
+    },
+
+    after:()=>{
+        defaults.debug = debug;
     },
 
     'rule.native': {
@@ -183,8 +191,9 @@ module.exports = {
                 assert.deepEqual(result, render(data));
             };
 
-            test(`{{print "hello" ', ' "world"}}`, {}, `hello, world`, options);
+            test(`{{print 'hello' '-' 'world'}}`, {}, `hello-world`, options);
             test(`{{value | brackets}}`, { value: '糖饼' }, '『糖饼』', options);
+            test(`{{value.name | brackets}}`, { value: {name: '糖饼'} }, '『糖饼』', options);
             test(`{{time | dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`, options);
             test(`{{time|dateFormat 'yyyy-MM-dd'}}`, { time: 1491566794863 }, `2017-04-07`, options);
             test(`{{time | dateFormat 'yyyy-MM-dd' | brackets}}`, { time: 1491566794863 }, `『2017-04-07』`, options);
@@ -202,6 +211,11 @@ module.exports = {
 
             render = compile(`{{include 'header.html'}}\ncontent: {{content}}`);
             data = { title: 'hello', content: 'world' };
+            result = render(data);
+            assert.deepEqual(`#title: hello\ncontent: world`, result);
+
+            render = compile(`{{include file.header}}\ncontent: {{content}}`);
+            data = { title: 'hello', content: 'world', file: {header: 'header.html'} };
             result = render(data);
             assert.deepEqual(`#title: hello\ncontent: world`, result);
 
@@ -243,12 +257,24 @@ module.exports = {
             data = { list: ['a', 'b', 'c'] };
             result = render(data);
             assert.deepEqual('0a1b2c', result);
+
             render = compile('{{each list val}}{{$index}}{{val}}{{/each}}');
             data = { list: ['a', 'b', 'c'] };
             result = render(data);
             assert.deepEqual('0a1b2c', result);
+
             render = compile('{{each list val key}}{{key}}{{val}}{{/each}}');
             data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+
+            render = compile('{{each   list   val    key}}{{key}}{{val}}{{/each}}');
+            data = { list: ['a', 'b', 'c'] };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
+
+            render = compile('{{each list.data val key}}{{key}}{{val}}{{/each}}');
+            data = { list: {data: ['a', 'b', 'c']} };
             result = render(data);
             assert.deepEqual('0a1b2c', result);
 
@@ -267,6 +293,16 @@ module.exports = {
         'if': () => {
             render = compile('{{if value}}hello world{{/if}}');
             data = { value: true };
+            result = render(data);
+            assert.deepEqual('hello world', result);
+
+            render = compile('{{if a.b}}hello world{{/if}}');
+            data = { a: {b: true}};
+            result = render(data);
+            assert.deepEqual('hello world', result);
+
+            render = compile('{{if a.b + 1}}hello world{{/if}}');
+            data = { a: {b: 1}};
             result = render(data);
             assert.deepEqual('hello world', result);
 

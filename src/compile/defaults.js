@@ -26,7 +26,7 @@ const defaults = {
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // 缓存控制接口（依赖 filename 字段）。为 false 则关闭缓存
+    // 缓存控制接口（依赖 filename 字段）。为 null 则关闭缓存
     cache: cache,
 
     // HTML 压缩器

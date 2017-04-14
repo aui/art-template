@@ -165,14 +165,7 @@ class Compiler {
         const compileDebug = options.compileDebug;
         const script = tplToken.script;
         const output = script.output;
-        const variables = script.variables || [];
         let code = script.code.trim();
-
-
-        if (!script.variables) {
-            const esToken = this.getEsTokens(code);
-            variables.push(...this.getVariables(esToken));
-        }
 
 
         if (output) {
@@ -180,7 +173,6 @@ class Compiler {
                 code = `$out+=${script.code}`;
             } else {
                 code = `$out+=$escape(${script.code})`;
-                variables.push(`$escape`);
             }
         }
 
@@ -191,7 +183,10 @@ class Compiler {
         }
 
 
-        variables.forEach(name => this.importContext(name));
+        const esToken = this.getEsTokens(code);
+        this.getVariables(esToken).forEach(name => this.importContext(name));
+
+
         this.scripts.push({ source, tplToken, code });
     }
 
