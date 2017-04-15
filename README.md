@@ -15,7 +15,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 ## 特性
 
 * 针对 NodeJS 与 V8 引擎优化，渲染速度出众
-* 支持编译、运行时调试，可定位语法错、渲染错误的模板语句
+* 支持编译、运行时调试，可定位语法、渲染错误的模板语句
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * NodeJS 支持 `require(templatePath)` 方式载入模板文件（默认后缀`.art`）
 * 支持 ES 严格模式环境运行
@@ -31,16 +31,25 @@ npm install art-template@4.0.0-beta --save
 
 ## 快速入门
 
-### NodeJS
+### 模板语法
 
 ```html
-<!--./tpl-user.html-->
 <% if (user) { %>
   <h2><%= user.name %></h2>
 <% } %>
 ```
 
-```javascript
+或者：
+
+```html
+{{if user}}
+  <h2>{{user.name}}</h2>
+{{/if}}
+```
+
+### NodeJS
+
+```js
 var template = require('art-template');
 var html = template(__diranme + '/tpl-user.html', {
     user: {
@@ -49,7 +58,22 @@ var html = template(__diranme + '/tpl-user.html', {
 });
 ```
 
-### 浏览器
+### Webpack
+
+安装 [art-template-loader](https://github.com/aui/art-template-loader)
+
+```js
+var render = require('./tpl-user.html');
+var html = render({
+    user: {
+        name: 'aui'
+    }
+});
+```
+
+### Web
+
+使用浏览器版本：[lib/template-web.js](./lib/template-web.js)
 
 ```html
 <script id="tpl-user" type="text/html">
@@ -58,7 +82,7 @@ var html = template(__diranme + '/tpl-user.html', {
 <% } %>
 </script>
 
-<script src="art-template/lib/template.js"></script>
+<script src="art-template/lib/template-web.js"></script>
 <script>
 var html = template('tpl-user', {
     user: {
@@ -68,9 +92,11 @@ var html = template('tpl-user', {
 </script>
 ```
 
+> [lib/template-web.js](./lib/template-web.js) 支持 [RequireJS](http://requirejs.org) 加载
+
 ### 核心方法
 
-```javascript
+```js
 // 基于模板名渲染模板
 template(filename, data);
 
@@ -199,10 +225,10 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 
 ### 过滤器
 
-```javascript
+```js
 // 向模板中导入过滤器
-template.imports.$dateFormat = function(date, format){/*[code..]*/};
-template.imports.$timestamp = function(value){return value * 1000};
+template.defaults.imports.$dateFormat = function(date, format){/*[code..]*/};
+template.defaults.imports.$timestamp = function(value){return value * 1000};
 ```
 
 ```html
@@ -218,7 +244,7 @@ template.imports.$timestamp = function(value){return value * 1000};
 ### 内置变量
 
 * `$data`  传入模板的数据 `{Object|array}`
-* `$imports`  外部导入的所有变量，等同 `template.imports` `{Object}`
+* `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
 * `print`  字符串输出函数 `{function}`
 * `include`  子模板载入函数 `{function}`
 
@@ -226,21 +252,21 @@ template.imports.$timestamp = function(value){return value * 1000};
 
 ### 注入全局变量
 
-```javascript
-template.imports.$console = console;
+```js
+template.defaults.imports.$console = console;
 ```
 
 ```html
 <% $console.log('hello world') %>
 ```
 
-模板外部所有的变量都需要使用 `template.imports` 注入、并且要在模板编译之前进行声明才能使用。
+模板外部所有的变量都需要使用 `template.defaults.imports` 注入、并且要在模板编译之前进行声明才能使用。
 
 ## 缓存
 
 缓存默认是开启的，开发环境中可以关闭它：
 
-```javascript
+```js
 template.defaults.cache = false;
 ```
 
@@ -248,7 +274,7 @@ template.defaults.cache = false;
 
 从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
 
-```javascript
+```js
 template.defaults.rules.push({
     test: /\${([\w\W]*?)}/,
     use: function(match, code) {
@@ -280,7 +306,7 @@ template.defaults.rules.push({
 <?js } ?>
 ```
 
-```javascript
+```js
 template.defaults.rules.push({
     test: /<\?js([=-]?)([\w\W]*?)\?>/,
     use: function(match, output, code) {
@@ -297,16 +323,23 @@ template.defaults.rules.push({
 });
 ```
 
-> 1. 如果你需要创造一个非 JavaScript 的语法规则，可以在 `use` 函数中使用 `this.getEsTokens(code)` 获取 `code` 的 `esTokens` 来辅助解析
-> 2. 多个规则会同时生效
-
 ## 使用 `require(templatePath)`
 
-引入 `art-template/lib/extension` 后，NodeJS 支持使用 `require()` 来加载 `.art` 后缀的模板文件。
+加载 `.art` 模板：
 
-```javascript
-var template = require('art-template/lib/extension');
+```js
+var template = require('art-template');
 var view = require('./index.art');
+var html = view(data); 
+```
+
+加载 `.ejs` 模板：
+
+```js
+var template = require('art-template');
+require.extensions['.ejs'] = template.extension;
+
+var view = require('./index.ejs');
 var html = view(data); 
 ```
 
@@ -316,7 +349,7 @@ var html = view(data);
 
 根据模板名渲染模板。
 
-```javascript
+```js
 var html = template('/welcome.html', {
     value: 'aui'
 });
@@ -330,7 +363,7 @@ var html = template('/welcome.html', {
 
 编译模板并缓存。
 
-```javascript
+```js
 // compile && cache
 template('/welcome.html', 'hi, <%=value%>.');
 
@@ -344,7 +377,7 @@ template('/welcome.html', {
 
 编译模板并返回一个渲染函数。
 
-```javascript
+```js
 var render = template.compile('hi, <%=value%>.');
 var html = render({value: 'aui'});
 ```
@@ -353,7 +386,7 @@ var html = render({value: 'aui'});
 
 编译并返回渲染结果。
 
-```javascript
+```js
 var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ```
 
@@ -361,23 +394,11 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 模板引擎默认配置。参考 [选项](#选项)。
 
-### .imports
-
-向模板中注入上下文。这是 `template.defaults.imports` 的快捷方式。
-
-```javascript
-template.imports.$parseInt = parseInt;
-```
-
-```html
-<%= $parseInt(value) %>
-```
-
 ## 选项
 
 `template.defaults`
 
-```javascript
+```js
 {
 
     // 模板名字
