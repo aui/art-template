@@ -58,6 +58,11 @@ var html = template(__diranme + '/tpl-user.html', {
 });
 ```
 
+框架支持：
+
+* Express: [express-art-template](https://github.com/aui/express-art-template)
+* Koa(开发中...)
+
 ### Webpack
 
 安装 [art-template-loader](https://github.com/aui/art-template-loader)
