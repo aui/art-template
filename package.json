@@ -2,7 +2,7 @@
   "name": "art-template",
   "description": "JavaScript Template Engine",
   "homepage": "http://aui.github.com/art-template/",
-  "version": "4.0.0-beta3",
+  "version": "4.0.0-beta4",
   "keywords": [
     "template"
   ],
@@ -12,12 +12,14 @@
     "url": "git://github.com/aui/art-template.git"
   },
   "scripts": {
-    "build": "webpack -p",
-    "dev": "webpack -w",
+    "build-node": "export BUILD_TARGET=node && webpack",
+    "build-web": "export BUILD_TARGET=web && webpack -p",
+    "build": "npm run build-node && npm run build-web",
+    "dev": "export BUILD_TARGET=node && webpack -w",
     "test": "istanbul cover node_modules/mocha/bin/_mocha -- --ui exports --colors 'test/**/*.js'",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
-  "main": "lib/template.js",
+  "main": "index.js",
   "files": [
     "lib/"
   ],

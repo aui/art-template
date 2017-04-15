@@ -26,7 +26,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 ## 安装
 
 ```
-npm install art-template@4.0.0-beta --save
+npm install art-template@4.0.0-beta4 --save
 ```
 
 ## 快速入门
