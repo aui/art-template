@@ -24,11 +24,12 @@ const compile = (source, options = {}) => {
     const debug = options.debug;
     const filename = options.filename;
     const cache = options.cache;
+    const caches = options.caches;
 
 
     // 匹配缓存
     if (cache && filename) {
-        const render = cache.get(filename);
+        const render = caches.get(filename);
         if (render) {
             return render;
         }
@@ -71,7 +72,7 @@ const compile = (source, options = {}) => {
 
             // 运行时出错以调试模式重载
             if (!options.compileDebug) {
-                options.cache = null;
+                options.cache = false;
                 options.compileDebug = true;
                 return compile(options)(data);
             }
@@ -91,7 +92,7 @@ const compile = (source, options = {}) => {
 
         // 缓存编译成功的模板
         if (cache && filename) {
-            cache.set(filename, render);
+            caches.set(filename, render);
         }
 
     } catch (e) {

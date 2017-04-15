@@ -1,4 +1,4 @@
-const cache = {
+const caches = {
     __data: Object.create(null),
 
     set: function(key, val) {
@@ -14,4 +14,4 @@ const cache = {
     }
 };
 
-module.exports = cache;
+module.exports = caches;
