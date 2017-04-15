@@ -1,10 +1,10 @@
 # CHANGELOG
 
-## v4.0.0-beta
+## v4.0.0
 
 1. 调试功能增强：支持编译阶段捕获语法错误具体行
 2. `template.config()` 方法取消，请直接读写 `template.defaults`
-3. `template.helpers` 更改为 `templatedefaults.imports`
+3. `template.helpers` 更改为 `template.defaults.imports`
 4. `template.defaults.debug` 选项可以定制输出的调试信息
 5. `template.defaults.parser` 被取消，使用更强大的 `template.defaults.rules` 代替
 6. 兼容 EJS 的模板
