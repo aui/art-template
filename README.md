@@ -400,7 +400,6 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 ```js
 {
-
     // 模板名字
     filename: null,
 
@@ -410,27 +409,8 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
     escape: true,
 
-    // 模板路径转换器
-    resolveFilename: resolveFilename,
-
-    // 缓存控制接口（依赖 filename 字段）。为 false 则关闭缓存
-    cache: cache,
-
-    // HTML 压缩器
-    compressor: null,
-
-    // 导入的模板变量
-    imports: {
-        $each: each,
-        $escape: escape,
-        $include: include
-    },
-
-    // 调试处理函数
-    debug: debug,
-
-    // 模板文件加载器
-    loader: loader,
+    // 是否开启缓存
+    cache: true,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
     compileDebug: false,
@@ -438,8 +418,30 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
+    // 模板路径转换器
+    resolveFilename: resolveFilename,
+
+    // HTML 压缩器
+    compressor: null,
+
+    // 调试处理函数
+    debug: debug,
+
+    // 模板文件加载器
+    loader: loader,
+
+    // 缓存中心适配器（依赖 filename 字段）。为 null 则关闭缓存
+    caches: caches,
+
     // 模板根目录。Node 环境专用
-    root: '/'
+    root: '/',
+
+    // 导入的模板变量
+    imports: {
+        $each: each,
+        $escape: escape,
+        $include: include
+    }
 };
 ```
 
