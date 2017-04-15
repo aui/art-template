@@ -22,6 +22,5 @@ const template = (filename, content) => {
 template.render = render;
 template.compile = compile;
 template.defaults = defaults;
-template.imports = defaults.imports;
 
 module.exports = template;

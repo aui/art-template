@@ -1,25 +1,24 @@
 const assert = require('assert');
-const template = require('../lib/extension');
-const bindExtname = template.extension;
+const template = require('../');
 const defaults = template.defaults;
 const path = require('path');
 const resetBail = defaults.bail;
-const extname = defaults.extname;
 const debug = defaults.debug;
 
 
 module.exports = {
     before: () => {
         console.log('#extension');
-        bindExtname('.html');
-        bindExtname('.tpl');
+
+        require.extensions['.html'] = template.extension;
+        require.extensions['.tpl'] = template.extension;
+
         defaults.debug = ()=>{
             return ()=> '{Template Error}';
         };
     },
 
     after: () => {
-        defaults.extname = extname;
         defaults.debug = debug;
     },
 

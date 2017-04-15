@@ -1,21 +1,30 @@
 const path = require('path');
 const webpack = require('webpack');
 const version = require('./package.json').version;
+const target = process.env.BUILD_TARGET || 'node';
+
+const name = target === 'node' ? 'template-node' : 'template-web';
+const libraryTarget = target === 'node' ? 'commonjs2' : 'umd';
 
 module.exports = {
     entry: {
-        'template': './src/index.js'
+        [name]: path.resolve(__dirname, 'src', 'index')
     },
     output: {
-        path: path.join(__dirname, 'lib'),
+        path: path.resolve(__dirname, 'lib'),
         filename: '[name].js',
         library: 'template',
-        libraryTarget: 'umd'
+        libraryTarget: libraryTarget
+
     },
     plugins: [
         new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`)
     ],
-    target: 'node',
+    target: target,
+    node: target === 'node' ? {} : {
+        fs: 'empty',
+        path: 'empty'
+    },
     module: {
         rules: [{
             test: /\.js$/,
@@ -24,7 +33,9 @@ module.exports = {
                 options: {
                     presets: ['es2015']
                 }
-            }, { loader: 'eslint-loader' }],
+            }, {
+                loader: 'eslint-loader'
+            }],
 
         }]
     }
