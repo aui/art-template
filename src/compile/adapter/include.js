@@ -2,17 +2,16 @@
  * 载入子模板
  * @param   {string}    filename
  * @param   {Object}    data
- * @param   {string}    base
- * @param   {string}    root
+ * @param   {Object}    options
  * @return  {string}
  */
-const include = (filename, data, base, root) => {
+const include = (filename, data, options) => {
     const compile = require('../index');
-    const resolveFilename = require('./resolve-filename');
-    filename = resolveFilename(filename, root, base);
-    return compile({
-        filename
-    })(data);
+    options = options.$extend({
+        filename: options.resolveFilename(filename, options.root, options.filename),
+        source: null
+    });
+    return compile(options)(data);
 };
 
 

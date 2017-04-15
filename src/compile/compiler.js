@@ -15,10 +15,9 @@ class Compiler {
      */
     constructor(options) {
 
-        const filename = options.filename;
-        const root = options.root;
         const source = options.source;
 
+        // 编译选项
         this.options = options;
 
         // 记录编译后生成的代码
@@ -32,10 +31,11 @@ class Compiler {
             $out: `""`,
             $line: `[0,0,0,""]`,
             print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
-            include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},${stringify(filename)},${stringify(root)})}`
+            include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},$imports.$options)}`
         };
 
 
+        this.options.imports.$options = options;
         this.importContext(`$out`);
 
         if (options.compileDebug) {

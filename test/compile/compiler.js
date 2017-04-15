@@ -62,7 +62,7 @@ module.exports = {
             test('$imports', {});
 
             test('print', { print: "function(){var text=''.concat.apply('',arguments);return $out+=text}" });
-            test('include', { include: "function(src,data){return $out+=$imports.$include(src,data||$data,null,\"/\")}" })
+            test('include', { include: "function(src,data){return $out+=$imports.$include(src,data||$data,$imports.$options)}" })
 
             test('$escape', { $escape: '$imports.$escape' });
             test('$include', { $include: '$imports.$include' });
