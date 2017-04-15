@@ -73,7 +73,7 @@ var html = render({
 
 ### Web
 
-使用浏览器版本：[lib/template-web.js](./lib/template-web.js)
+使用浏览器版本：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
 
 ```html
 <script id="tpl-user" type="text/html">
@@ -92,7 +92,7 @@ var html = template('tpl-user', {
 </script>
 ```
 
-> [lib/template-web.js](./lib/template-web.js) 支持 [RequireJS](http://requirejs.org) 加载
+> [lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js) 支持 [RequireJS](http://requirejs.org) 加载
 
 ### 核心方法
 
