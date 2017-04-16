@@ -39,8 +39,8 @@ const compile = (source, options = {}) => {
     // 加载外部模板
     if (!source) {
         try {
-            const target = options.resolveFilename(filename, options.root);
-            source = options.loader(target, options.extname);
+            const target = options.resolveFilename(filename, options.root, options.extname);
+            source = options.loader(target);
             options.filename = target;
             options.source = source;
         } catch (e) {

@@ -4,16 +4,10 @@
  * @param   {string}
  */
 const detectNode = require('detect-node');
-const loader = (filename, extname) => {
+const loader = (filename) => {
     /* istanbul ignore else  */
     if (detectNode) {
         const fs = require('fs');
-        const path = require('path');
-
-        if (!path.extname(filename)) {
-            filename = filename + extname;
-        }
-
         return fs.readFileSync(filename, 'utf8');
     } else {
         const elem = document.getElementById(filename);
