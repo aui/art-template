@@ -5,7 +5,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg)](https://coveralls.io/github/aui/art-template)
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 
-
 art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
@@ -277,7 +276,7 @@ template.defaults.cache = false;
 
 ## 定义语法规则
 
-从一个简单的例子说起，让模板引擎支持同时 ES6 `${name}` 模板字符串的解析：
+从一个简单的例子说起，让模板引擎支持 ES6 `${name}` 模板字符串的解析：
 
 ```js
 template.defaults.rules.push({
