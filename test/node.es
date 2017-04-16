@@ -8,7 +8,7 @@ const debuger = defaults.debuger;
 
 module.exports = {
     before: () => {
-        console.log('#extension');
+        console.log('#lib/template-node');
 
         require.extensions['.html'] = template.extension;
         require.extensions['.tpl'] = template.extension;
@@ -22,7 +22,7 @@ module.exports = {
         defaults.debuger = debuger;
     },
 
-    'bindExtname': {
+    'extension': {
 
         'require .art': () => {
             const render = require(path.join(__dirname, 'res', 'file'));
