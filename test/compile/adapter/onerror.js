@@ -1,17 +1,17 @@
 const assert = require('assert');
-const debug = require('../../../src/compile/adapter/debug');
+const debuger = require('../../../src/compile/adapter/debuger');
 
 module.exports = {
     before: () => {
-        console.log('#compile/adapter/debug');
+        console.log('#compile/adapter/debuger');
     },
-    'debug': {
+    'debuger': {
         'return function': () => {
-            assert.deepEqual('function', typeof debug({}));
+            assert.deepEqual('function', typeof debuger({}));
         },
 
         'run function': () => {
-            assert.deepEqual('{Template Error}', debug({})());
+            assert.deepEqual('{Template Error}', debuger({})());
         }
     }
 };

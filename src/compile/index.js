@@ -21,7 +21,15 @@ const compile = (source, options = {}) => {
     source = options.source;
 
 
-    const debug = options.debug;
+    // debug 模式
+    if (options.debug) {
+        options.cache = false;
+        options.bail = false;
+        options.compileDebug = true;
+    }
+
+
+    const debuger = options.debuger;
     const filename = options.filename;
     const cache = options.cache;
     const caches = options.caches;
@@ -55,7 +63,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return debug(error);
+                return debuger(error);
             }
 
         }
@@ -80,7 +88,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw e;
             } else {
-                return debug(e)();
+                return debuger(e)();
             }
 
         }
@@ -99,7 +107,7 @@ const compile = (source, options = {}) => {
         if (options.bail) {
             throw e;
         } else {
-            return debug(e);
+            return debuger(e);
         }
     }
 

@@ -26,7 +26,7 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 ## 安装
 
 ```
-npm install art-template@4.0.0-beta7 --save
+npm install art-template@4.0.0-beta8 --save
 ```
 
 ## 快速入门
@@ -423,14 +423,17 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
+    // 调试模式开关。如果为 true: {bail:false, cache:false, compileDebug:true}
+    debug: false,
+
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
     // HTML 压缩器
     compressor: null,
 
-    // 调试处理函数
-    debug: debug,
+    // 错误调试器
+    debuger: debuger,
 
     // 模板文件加载器
     loader: loader,

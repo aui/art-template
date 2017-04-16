@@ -3,7 +3,7 @@
  * @param   {Object} error 
  * @return {string}
  */
-const debug = error => {
+const debuger = error => {
 
     if (typeof console === 'object') {
         const stack = error.stack;
@@ -15,4 +15,4 @@ const debug = error => {
     return () => `{Template Error}`;
 };
 
-module.exports = debug;
+module.exports = debuger;

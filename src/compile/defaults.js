@@ -1,4 +1,4 @@
-const debug = require('./adapter/debug');
+const debuger = require('./adapter/debuger');
 const caches = require('./adapter/caches');
 const escape = require('./adapter/escape');
 const loader = require('./adapter/loader');
@@ -32,14 +32,17 @@ const defaults = {
     // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
+    // 调试模式开关。如果为 true: {bail:false, cache:false, compileDebug:true}
+    debug: false,
+
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
     // HTML 压缩器
     compressor: null,
 
-    // 调试处理函数
-    debug: debug,
+    // 错误调试器
+    debuger: debuger,
 
     // 模板文件加载器
     loader: loader,
