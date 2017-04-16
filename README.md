@@ -61,7 +61,7 @@ var html = template(__diranme + '/tpl-user.html', {
 框架支持：
 
 * Express: [express-art-template](https://github.com/aui/express-art-template)
-* Koa(开发中...)
+* Koa: [koa-art-template](https://github.com/aui/koa-art-template)
 
 ### Webpack
 
