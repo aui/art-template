@@ -40,7 +40,7 @@ const compile = (source, options = {}) => {
     if (!source) {
         try {
             const target = options.resolveFilename(filename, options.root);
-            source = options.loader(target);
+            source = options.loader(target, options.extname);
             options.filename = target;
             options.source = source;
         } catch (e) {

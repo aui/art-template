@@ -6,7 +6,7 @@
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 
 
-art-template 是一个性能出众、设计巧妙的模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
+art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
 
@@ -26,7 +26,7 @@ art-template 是一个性能出众、设计巧妙的模板引擎，无论在 Nod
 ## 安装
 
 ```
-npm install art-template@4.0.0-beta5 --save
+npm install art-template@4.0.0-beta7 --save
 ```
 
 ## 快速入门
@@ -440,6 +440,9 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
     // 模板根目录。Node 环境专用
     root: '/',
+
+    // 默认后缀名
+    extname: '.art',
 
     // 导入的模板变量
     imports: {

@@ -23,6 +23,12 @@ module.exports = {
     },
 
     'bindExtname': {
+
+        'require .art': () => {
+            const render = require(path.join(__dirname, 'res', 'file'));
+            assert.deepEqual('hello world', render({}));
+        },
+
         'require .html': () => {
             const render = require(path.join(__dirname, 'res', 'extension.file.html'));
             assert.deepEqual('hello world', render({}));

@@ -50,6 +50,9 @@ const defaults = {
     // 模板根目录。Node 环境专用
     root: '/',
 
+    // 默认后缀名
+    extname: '.art',
+
     // 导入的模板变量
     imports: {
         $each: each,

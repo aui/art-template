@@ -12,6 +12,6 @@ var extension = function (module, flnm) {
 };
 
 template.extension = extension;
-require.extensions['.art'] = extension;
+require.extensions[template.defaults.extname] = extension;
 
 module.exports = template;
