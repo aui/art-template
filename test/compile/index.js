@@ -58,25 +58,8 @@ module.exports = {
             result = render(data);
             assert.deepEqual('hello > world', result);
 
-            render = compile(`<%- print('hello > world') %>`);
-            data = {};
-            result = render(data);
-            assert.deepEqual('hello > world', result);
-
-            render = compile(`<%= print('hello > world') %>`);
-            data = {};
-            result = render(data);
-            assert.deepEqual('hello &#62; world', result);
-
             // todo empty
         },
-
-        // 'escaped tag': ()=>{
-        //     render = compile('\\<%= value %>');
-        //     data = { value: 'aui' };
-        //     result = render(data);
-        //     assert.deepEqual('<%= value %>', result);
-        // },
 
         'syntax compat: art-template@v3': () => {
 

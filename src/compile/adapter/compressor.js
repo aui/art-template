@@ -1,6 +1,7 @@
 /**
  * 压缩 HTML 输出语句
- * @param {string} source 
+ * @param  {string} source
+ * @return {string}
  */
 const compressor = source => {
     return source

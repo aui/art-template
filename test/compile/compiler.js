@@ -61,8 +61,8 @@ module.exports = {
             test('$data', {});
             test('$imports', {});
 
-            test('print', { print: "function(){var text=''.concat.apply('',arguments);return $out+=text}" });
-            test('include', { include: "function(src,data){return $out+=$imports.$include(src,data||$data,$imports.$options)}" })
+            test('print', { print: "function(){$out+=''.concat.apply('',arguments)}" });
+            test('include', { include: "function(src,data){$out+=$imports.$include(src,data||$data,$options)}" })
 
             test('$escape', { $escape: '$imports.$escape' });
             test('$include', { $include: '$imports.$include' });

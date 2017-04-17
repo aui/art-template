@@ -8,7 +8,7 @@
 const include = (filename, data, options) => {
     const compile = require('../index');
     options = options.$extend({
-        filename: options.resolveFilename(filename, options.root, options.extname, options.filename),
+        filename: options.resolveFilename(filename, options),
         source: null
     });
     return compile(options)(data);

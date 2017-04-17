@@ -4,6 +4,7 @@ const isKeyword = require('is-keyword-js');
 
 const DATA = `$data`;
 const IMPORTS = `$imports`;
+const OPTIONS = `$options`;
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
@@ -30,12 +31,11 @@ class Compiler {
         this.internal = {
             $out: `""`,
             $line: `[0,0,0,""]`,
-            print: `function(){var text=''.concat.apply('',arguments);return $out+=text}`,
-            include: `function(src,data){return $out+=$imports.$include(src,data||${DATA},$imports.$options)}`
+            print: `function(){$out+=''.concat.apply('',arguments)}`,
+            include: `function(src,data){$out+=$imports.$include(src,data||${DATA},${OPTIONS})}`
         };
 
 
-        this.options.imports.$options = options;
         this.importContext(`$out`);
 
         if (options.compileDebug) {
@@ -58,7 +58,7 @@ class Compiler {
     /**
      * 将模板代码转换成 tplToken 数组
      * @param   {string} source 
-     * @return {array}
+     * @return  {Object[]}
      */
     getTplTokens(...args){
         return tplTokenizer(...args);
@@ -69,7 +69,7 @@ class Compiler {
     /**
      * 将模板表达式转换成 esToken 数组
      * @param   {string} source 
-     * @return {array}
+     * @return  {Object[]}
      */
     getEsTokens(source) {
         return esTokenizer(source);
@@ -102,7 +102,6 @@ class Compiler {
     /**
      * 导入模板上下文
      * @param {string} name 
-     * @memberOf Compiler
      */
     importContext(name) {
 
@@ -284,7 +283,7 @@ class Compiler {
 
 
         try {
-            return new Function(IMPORTS, `return ${renderCode}`)(imports);
+            return new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
         } catch (e) {
 
             let index = 0;
