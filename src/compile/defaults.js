@@ -3,10 +3,11 @@ const caches = require('./adapter/caches');
 const escape = require('./adapter/escape');
 const loader = require('./adapter/loader');
 const include = require('./adapter/include');
-const resolveFilename = require('./adapter/resolve-filename');
 const each = require('./adapter/each');
 const nativeRule = require('./adapter/rule.native');
 const artRule = require('./adapter/rule.art');
+const resolveFilename = require('./adapter/resolve-filename');
+
 
 /** 模板编译器默认配置 */
 const defaults = {
@@ -23,17 +24,17 @@ const defaults = {
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
     escape: true,
 
+    // 是否开启调试模式。如果为 true: {bail:false, cache:false, compileDebug:true}
+    debug: false,
+
     // 是否开启缓存
     cache: true,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
     compileDebug: false,
 
-    // bail 如果为 true，编译错误与运行时错误都会抛出异常
+    // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
-
-    // 调试模式开关。如果为 true: {bail:false, cache:false, compileDebug:true}
-    debug: false,
 
     // 模板路径转换器
     resolveFilename: resolveFilename,
@@ -47,13 +48,13 @@ const defaults = {
     // 模板文件加载器
     loader: loader,
 
-    // 缓存中心适配器（依赖 filename 字段）。为 null 则关闭缓存
+    // 缓存中心适配器（依赖 filename 字段）
     caches: caches,
 
-    // 模板根目录。Node 环境专用
+    // 模板根目录。如果 filename 为全局路径，则会基于此查找模板
     root: '/',
 
-    // 默认后缀名
+    // 默认后缀名。如果没有后缀名，则会自动基于此补全
     extname: '.art',
 
     // 导入的模板变量
