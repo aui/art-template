@@ -37,6 +37,11 @@ module.exports = {
             test('a[b]', ['a', 'b']);
             test('a[b].c[d]', ['a', 'b', 'd']);
             test('a["b"]', ['a']);
+            test('a["b"].c', ['a']);
+
+            test(`var a, b, c`, ['a', 'b', 'c']);
+            test(`function a(b,c){d}`, ['a', 'b', 'c', 'd']);
+            test(`try{a}catch(b){c}`, ['a', 'b', 'c']);
         }
     },
 
