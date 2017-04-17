@@ -2,8 +2,8 @@
 
 [![NPM Version](https://img.shields.io/npm/v/art-template.svg)](https://npmjs.org/package/art-template)
 [![Node.js Version](https://img.shields.io/node/v/art-template.svg)](http://nodejs.org/download/)
-[![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg)](https://coveralls.io/github/aui/art-template)
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
+[![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg?branch=master)](https://coveralls.io/github/aui/art-template?branch=master)
 
 art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
@@ -25,7 +25,7 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 ## 安装
 
 ```
-npm install art-template@4.0.0 --save
+npm install art-template --save
 ```
 
 ## 快速入门
