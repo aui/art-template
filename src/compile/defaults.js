@@ -18,7 +18,7 @@ const defaults = {
     // 模板名字
     filename: null,
 
-    // 模板语法规则
+    // 模板语法规则列表
     rules: [nativeRule, artRule],
 
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
