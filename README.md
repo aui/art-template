@@ -37,11 +37,9 @@ npm install art-template --save
 <% if (user) { %>
   <h2><%= user.name %></h2>
 <% } %>
-```
 
-或者：
+或：
 
-```html
 {{if user}}
   <h2>{{user.name}}</h2>
 {{/if}}
@@ -116,71 +114,52 @@ template.render(source, data, options);
 
 art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表达式 `<% expression %>`。
 
-```html
-{{if user}}
-  <h2>{{user.name}}</h2>
-  <ul>
-    {{each user.tags}}
-        <li>{{$value}}</li>
-    {{/each}}
-  </ul>
-{{/if}}
-```
-
-等价：
-
-```html
-<% if (user) { %>
-  <h2><%= user.name %></h2>
-  <ul>
-    <% for(var i = 0; i < user.tags.length; i++){ %>
-        <li><%= user.tags[i] %></li>
-    <% } %>
-  </ul>
-<% } %>
-```
-
 ### 输出
 
-**标准输出**
+**1\. 标准输出**
 
 ```html
 {{value}}
-```
+{{a ? b : c}}
+{{a || b}}
+{{a + b}}
 
-```html
+or
+
 <%= value %>
+<%= a ? b : c %>
+<%= a || b %>
+<%= a + b %>
 ```
 
-**原始输出**
+特殊变量可以使用下标方式访问：
+
+```
+{{$data['user list']}}
+```
+
+**2\. 原始输出**
 
 ```html
 {{@value}}
-```
 
-```html
+or
+
 <%- value %>
 ```
 
-> 1. 原始输出语句不会对 `HTML` 内容进行转义
-> 2. 输出语句支持运算表达式
+原始输出语句不会对 `HTML` 内容进行转义
 
 ### 条件
 
 ```html
-{{if value}}
-    [...]
-{{else if value2}}
-    [...]
-{{/if}}
-```
+{{if value}} ... {{/if}}
+{{if v1}} ... {{else if v2}} ... {{/if}}
 
-```html
-<% if (value) { %>
-    [...]
-<% else if (value2) { %>
-    [...]
-<% } %>
+or
+
+<% if (value) { %> ... <% } %>
+<% if (value) { %> ... <% } else { %> ... <% } %>
 ```
 
 ### 循环
@@ -189,38 +168,40 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{each target}}
     {{$index}} {{$value}}
 {{/each}}
-```
 
-1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
-2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
+or
 
-```html
 <% for(var i = 0; i < target.length; i++){ %>
     <%= i %> <%= target[i] %>
 <% } %>
 ```
 
+1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
+2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
+
 ### 变量
 
 ```html
 {{set temp = data.sub.content}}
-```
 
-```html
-<% var temp = data.sub.content; %>
+or
+
+<% var temp = data.sub.content; %> 
 ```
 
 ### 子模板
 
 ```html
-{{include './header.art' $data}}
+{{include './header.art'}}
+{{include './header.art' data}}
+
+or
+
+<% include('./header.art') %>
+<% include('./header.art', data) %>
 ```
 
-```html
-<% include('./header.art', $data) %>
-```
-
-`include` 第二个参数默认值为 `$data`，可以自定义。
+`include` 第二个参数默认值为 `$data`。
 
 ### 布局
 
@@ -229,7 +210,9 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{block 'head'}} ... {{/block}}
 ```
 
-#### 范例：
+模板继承允许你构建一个包含你站点共同元素的基本模板“骨架”。
+
+#### 范例
 
 layout.art:
 
@@ -267,7 +250,7 @@ index.art:
 {{/block}}
 ```
 
-渲染 index.art，它会根据 layout.art 为模板输出内容。
+渲染 index.art 后，将自动应用布局骨架。
 
 ### print
 
@@ -285,9 +268,9 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 
 ```html
 {{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
-```
 
-```html
+or
+
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
 
@@ -295,12 +278,13 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 
 ### 内置变量
 
-* `$data`  传入模板的数据 `{Object|array}`
+* `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `print`  字符串输出函数 `{function}`
-* `include`  子模板载入函数 `{function}`
-
-> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['user-list']`
+* `$options`  模板编译选项 `{Object}`
+* `print`     字符串输出函数 `{function}`
+* `include`   子模板载入函数 `{function}`
+* `extend`    布局模板导入函数 `{function}`
+* `block`     模板块声明函数 `{function}`
 
 ### 注入全局变量
 
