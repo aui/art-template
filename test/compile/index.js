@@ -58,25 +58,8 @@ module.exports = {
             result = render(data);
             assert.deepEqual('hello > world', result);
 
-            render = compile(`<%- print('hello > world') %>`);
-            data = {};
-            result = render(data);
-            assert.deepEqual('hello > world', result);
-
-            render = compile(`<%= print('hello > world') %>`);
-            data = {};
-            result = render(data);
-            assert.deepEqual('hello &#62; world', result);
-
             // todo empty
         },
-
-        // 'escaped tag': ()=>{
-        //     render = compile('\\<%= value %>');
-        //     data = { value: 'aui' };
-        //     result = render(data);
-        //     assert.deepEqual('<%= value %>', result);
-        // },
 
         'syntax compat: art-template@v3': () => {
 
@@ -306,6 +289,29 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
+
+            render = compile({
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art')
+            });
+            data = {
+                parent: '<style>#example{}</style>'
+            };
+            result = render(data)
+            assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
+            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+        },
+
+
+        'layout':()=>{
+            render = compile({
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art')
+            });
+            data = {
+                parent: '<style>#example{}</style>'
+            };
+            result = render(data)
+            assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
+            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
         },
 
 
@@ -452,6 +458,14 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('😊', result);
+
+            render = compile('{{if a}}hello world{{else if b}}😊{{/if}}');
+            data = {
+                a: 0,
+                b: 0
+            };
+            result = render(data);
+            assert.deepEqual('', result);
         },
 
 
@@ -476,7 +490,7 @@ module.exports = {
             }));
         },
 
-        'syntax': () => {
+        'rules': () => {
             const source = 'hello ${name} <%=name%>';
             const options = {
                 rules: [{

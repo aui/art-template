@@ -1,0 +1,12 @@
+{{extend './layout.art'}}
+
+{{block 'title'}}My Page{{/block}}
+
+{{block 'head'}}
+    {{@parent}}
+    <link rel="stylesheet" href="custom.css">
+{{/block}}
+
+{{block 'content'}}
+<p>This is just an awesome page.</p>
+{{/block}}

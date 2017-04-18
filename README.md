@@ -9,22 +9,23 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
 
-[在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
+[在线速度测试](http://aui.github.io/art-template/example/web-test-speed/)
 
 ## 特性
 
 * 针对 V8 引擎优化，渲染速度出众
 * 支持编译、运行时调试，可定位语法、渲染错误的模板语句
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack、RequireJS
+* 支持模板包含与模板继承
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 同时支持原生 JavaScript 语法、简约语法
 * 支持定义模板的语法规则
-* 支持在浏览器运行，仅 5KB 大小
+* 浏览器版本仅 5KB 大小
 
 ## 安装
 
-```
+```shell
 npm install art-template --save
 ```
 
@@ -36,11 +37,9 @@ npm install art-template --save
 <% if (user) { %>
   <h2><%= user.name %></h2>
 <% } %>
-```
 
-或者：
+或：
 
-```html
 {{if user}}
   <h2>{{user.name}}</h2>
 {{/if}}
@@ -50,7 +49,7 @@ npm install art-template --save
 
 ```js
 var template = require('art-template');
-var html = template(__diranme + '/tpl-user.html', {
+var html = template(__diranme + '/tpl-user.art', {
     user: {
         name: 'aui'
     }
@@ -67,7 +66,7 @@ var html = template(__diranme + '/tpl-user.html', {
 安装 [art-template-loader](https://github.com/aui/art-template-loader)
 
 ```js
-var render = require('./tpl-user.html');
+var render = require('./tpl-user.art');
 var html = render({
     user: {
         name: 'aui'
@@ -115,71 +114,52 @@ template.render(source, data, options);
 
 art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表达式 `<% expression %>`。
 
-```html
-{{if user}}
-  <h2>{{user.name}}</h2>
-  <ul>
-    {{each user.tags}}
-        <li>{{$value}}</li>
-    {{/each}}
-  </ul>
-{{/if}}
-```
-
-等价：
-
-```html
-<% if (user) { %>
-  <h2><%= user.name %></h2>
-  <ul>
-    <% for(var i = 0; i < user.tags.length; i++){ %>
-        <li><%= user.tags[i] %></li>
-    <% } %>
-  </ul>
-<% } %>
-```
-
 ### 输出
 
-**标准输出**
+**1\. 标准输出**
 
 ```html
 {{value}}
-```
+{{a ? b : c}}
+{{a || b}}
+{{a + b}}
 
-```html
+or
+
 <%= value %>
+<%= a ? b : c %>
+<%= a || b %>
+<%= a + b %>
 ```
 
-**原始输出**
+特殊变量可以使用下标方式访问：
+
+```
+{{$data['user list']}}
+```
+
+**2\. 原始输出**
 
 ```html
 {{@value}}
-```
 
-```html
+or
+
 <%- value %>
 ```
 
-> 1. 原始输出语句不会对 `HTML` 内容进行转义
-> 2. 输出语句支持运算表达式
+原始输出语句不会对 `HTML` 内容进行转义
 
 ### 条件
 
 ```html
-{{if value}}
-    [...]
-{{else if value2}}
-    [...]
-{{/if}}
-```
+{{if value}} ... {{/if}}
+{{if v1}} ... {{else if v2}} ... {{/if}}
 
-```html
-<% if (value) { %>
-    [...]
-<% else if (value2) { %>
-    [...]
-<% } %>
+or
+
+<% if (value) { %> ... <% } %>
+<% if (value) { %> ... <% } else { %> ... <% } %>
 ```
 
 ### 循环
@@ -188,38 +168,89 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{each target}}
     {{$index}} {{$value}}
 {{/each}}
-```
 
-1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
-2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
+or
 
-```html
 <% for(var i = 0; i < target.length; i++){ %>
     <%= i %> <%= target[i] %>
 <% } %>
 ```
 
+1. `target` 支持 `Array` 与 `Object` 的迭代，其默认值为 `$data`
+2. `$value` 与 `$index` 可以自定义：`{{each target val key}}`
+
 ### 变量
 
 ```html
 {{set temp = data.sub.content}}
-```
 
-```html
-<% var temp = data.sub.content; %>
+or
+
+<% var temp = data.sub.content; %> 
 ```
 
 ### 子模板
 
 ```html
-{{include './header.html' $data}}
+{{include './header.art'}}
+{{include './header.art' data}}
+
+or
+
+<% include('./header.art') %>
+<% include('./header.art', data) %>
 ```
+
+`include` 第二个参数默认值为 `$data`。
+
+### 布局
 
 ```html
-<% include('./header.html', $data) %>
+{{extend './layout.art'}}
+{{block 'head'}} ... {{/block}}
 ```
 
-`include` 第二个参数默认值为 `$data`，可以自定义。
+模板继承允许你构建一个包含你站点共同元素的基本模板“骨架”。
+
+#### 范例
+
+layout.art:
+
+```html
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{block 'title'}}My Site{{/block}}</title>
+
+    {{block 'head'}}
+    <link rel="stylesheet" href="main.css">
+    {{/block}}
+</head>
+<body>
+    {{block 'content'}}{{/block}}
+</body>
+</html>
+```
+
+index.art:
+
+```html
+{{extend './layout.art'}}
+
+{{block 'title'}}My Page{{/block}}
+
+{{block 'head'}}
+    {{@parent}}
+    <link rel="stylesheet" href="custom.css">
+{{/block}}
+
+{{block 'content'}}
+<p>This is just an awesome page.</p>
+{{/block}}
+```
+
+渲染 index.art 后，将自动应用布局骨架。
 
 ### print
 
@@ -237,9 +268,9 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 
 ```html
 {{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
-```
 
-```html
+or
+
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
 
@@ -247,12 +278,13 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 
 ### 内置变量
 
-* `$data`  传入模板的数据 `{Object|array}`
+* `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `print`  字符串输出函数 `{function}`
-* `include`  子模板载入函数 `{function}`
-
-> 如果数据中有特殊 key，可以通过 `$data` 加下标的方式访问，例如 `$data['user-list']`
+* `$options`  模板编译选项 `{Object}`
+* `print`     字符串输出函数 `{function}`
+* `include`   子模板载入函数 `{function}`
+* `extend`    布局模板导入函数 `{function}`
+* `block`     模板块声明函数 `{function}`
 
 ### 注入全局变量
 
@@ -300,33 +332,6 @@ template.defaults.rules.push({
         * `'raw'` 输出原始内容
         * `false` 不输出任何内容
 
-### 示例
-
-创造一个 `<?js expression ?>` 语法模板：
-
-```html
-<?js if (user) { ?>
-  <h2><?js= user.name ?></h2>
-<?js } ?>
-```
-
-```js
-template.defaults.rules.push({
-    test: /<\?js([=-]?)([\w\W]*?)\?>/,
-    use: function(match, output, code) {
-        output = ({
-            '=': 'escape',
-            '-': 'raw',
-            '': false
-        }}[output];
-        return {
-            code: code,
-            output: output
-        }
-    }
-});
-```
-
 ## 使用 `require(templatePath)`
 
 加载 `.art` 模板：
@@ -354,7 +359,7 @@ var html = view(data);
 根据模板名渲染模板。
 
 ```js
-var html = template('/welcome.html', {
+var html = template('/welcome.art', {
     value: 'aui'
 });
 ```
@@ -369,10 +374,10 @@ var html = template('/welcome.html', {
 
 ```js
 // compile && cache
-template('/welcome.html', 'hi, <%=value%>.');
+template('/welcome.art', 'hi, <%=value%>.');
 
 // use
-template('/welcome.html', {
+template('/welcome.art', {
     value: 'aui'
 });
 ```
@@ -407,7 +412,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 模板名字
     filename: null,
 
-    // 模板语法规则
+    // 模板语法规则列表
     rules: [nativeRule, artRule],
 
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能

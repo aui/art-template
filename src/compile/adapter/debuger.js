@@ -1,7 +1,7 @@
 /**
  * 调试器
  * @param   {Object} error 
- * @return {string}
+ * @return  {string}
  */
 const debuger = error => {
 

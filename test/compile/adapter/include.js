@@ -14,22 +14,22 @@ module.exports = {
             const base = path.resolve(root, 'index.html');
             const data = {};
 
-            assert.deepEqual('hello world', include('./file.html', data, defaults.$extend({
+            assert.deepEqual('hello world', include('./file.html', data, null, defaults.$extend({
                 filename: base,
                 root: '/'
             })));
 
-            assert.deepEqual('hello world', include('./file.html', data, defaults.$extend({
+            assert.deepEqual('hello world', include('./file.html', data, null, defaults.$extend({
                 filename: base,
                 root
             })));
 
-            assert.deepEqual('hello world', include('file.html', data, defaults.$extend({
+            assert.deepEqual('hello world', include('file.html', data, null, defaults.$extend({
                 filename: base,
                 root: '/'
             })));
 
-            assert.deepEqual('hello world', include('file.html', data, defaults.$extend({
+            assert.deepEqual('hello world', include('file.html', data, null, defaults.$extend({
                 filename: base,
                 root
             })));

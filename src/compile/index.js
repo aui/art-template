@@ -46,8 +46,10 @@ const compile = (source, options = {}) => {
 
     // 加载外部模板
     if (!source) {
+        
+        const target = options.resolveFilename(filename, options);
+
         try {
-            const target = options.resolveFilename(filename, options.root, options.extname);
             source = options.loader(target);
             options.filename = target;
             options.source = source;
@@ -72,17 +74,17 @@ const compile = (source, options = {}) => {
 
     const compiler = new Compiler(options);
 
-    const render = data => {
+    const render = (data, blocks) => {
 
         try {
-            return render.source(data);
+            return render.source(data, blocks);
         } catch (e) {
 
             // 运行时出错以调试模式重载
             if (!options.compileDebug) {
                 options.cache = false;
                 options.compileDebug = true;
-                return compile(options)(data);
+                return compile(options)(data, blocks);
             }
 
             if (options.bail) {

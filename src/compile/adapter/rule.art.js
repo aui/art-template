@@ -16,7 +16,7 @@ const nativeRule = {
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
-            console.warn('Template upgrade example:',
+            console.warn('Template upgrade:',
                 `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
                 `\n`, options.filename || '');
         };
@@ -45,8 +45,10 @@ const nativeRule = {
 
             case 'else':
 
-                if (values[0] === 'if') {
-                    values.shift();
+                const indexIf = values.indexOf('if');
+                
+                if (indexIf > -1) {
+                    values.splice(0, indexIf + 1);
                     code = `}else if(${values.join('')}){`;
                 } else {
                     code = `}else{`;
@@ -90,10 +92,21 @@ const nativeRule = {
 
             case 'print':
             case 'include':
+            case 'extend':
 
                 group = split(esTokens);
                 group.shift();
                 code = `${key}(${group.join(',')})`;
+                break;
+
+            case 'block':
+
+                code = `block(${values.join('')},function(){`;
+                break;
+            
+            case '/block':
+
+                code = '})';
                 break;
 
             default:
