@@ -36,6 +36,11 @@ module.exports = {
                 closed: true
             }]);
 
+            test('=>', [{
+                type: 'punctuator',
+                value: '=>'
+            }]);
+
             test('#', [{
                 type: 'invalid',
                 value: '#'
