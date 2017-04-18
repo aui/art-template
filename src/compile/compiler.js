@@ -192,6 +192,10 @@ class Compiler {
             source = compressor(source);
         }
 
+        if (!source) {
+            return;
+        }
+
         const code = `$$out+=${stringify(source)}`;
         this.scripts.push({
             source,
