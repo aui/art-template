@@ -9,7 +9,7 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
 
-[在线速度测试](http://aui.github.io/art-template/example/test-speed/)
+[在线速度测试](http://aui.github.io/art-template/example/web-test-speed/)
 
 ## 特性
 
@@ -433,7 +433,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 模板名字
     filename: null,
 
-    // 模板语法规则
+    // 模板语法规则列表
     rules: [nativeRule, artRule],
 
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
