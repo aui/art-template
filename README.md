@@ -25,7 +25,7 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 ## 安装
 
-```
+```shell
 npm install art-template --save
 ```
 
