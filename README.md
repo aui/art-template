@@ -365,8 +365,6 @@ var html = template('/welcome.art', {
 ```
 
 > 在浏览器中，`filename` 请传入存放模板的元素 `id`
->
-> 在 NodeJS 中，`filename` 如果非绝对路径，则会根据 `options.root` 来定位模板
 
 ###	template(filename, source)
 
