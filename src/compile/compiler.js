@@ -16,8 +16,6 @@ class Compiler {
      */
     constructor(options) {
 
-        const source = options.source;
-
         // 编译选项
         this.options = options;
 
@@ -25,25 +23,66 @@ class Compiler {
         this.scripts = [];
 
         // 运行时注入的上下文
-        this.context = {};
+        this.context = [];
 
-        // 内置变量
+        // context map
+        this.CONTEXT_MAP = {};
+
+        // 外部变量名单
+        this.external = {
+            [DATA]: true,
+            [IMPORTS]: true,
+            [OPTIONS]: true
+        };
+
+        // 按需编译到模板渲染函数的内置变量
         this.internal = {
-            $out: `""`,
-            $line: `[0,0,0,""]`,
-            print: `function(){$out+=''.concat.apply('',arguments)}`,
-            include: `function(src,data){$out+=$imports.$include(src,data||${DATA},${OPTIONS})}`
+            // 字符串拼接
+            $$out: `''`,
+
+            // 调试记录 [line, start, source]
+            $$line: `[0,0,'']`,
+
+            // 所有“模板块”
+            $$block: `arguments[1]||{}`,
+
+            // 继承的布局模板的文件地址
+            $$extend: `null`,
+
+            // 导出布局模板函数
+            $$layout: `function(){return $include($$extend,${DATA},$$block,${OPTIONS})}`,
+
+            // 文本输出函数
+            print: `function(){$$out+=''.concat.apply('',arguments)}`,
+
+            // 包含子模板
+            include: `function(src,data,block){$$out+=$include(src,data||${DATA},block,${OPTIONS})}`,
+
+            // 继承布局模板
+            extend: `function(src){$$extend=src}`,
+
+            // 读写“模板块”
+            block: `function(name,callback){if($$extend){$$out='';callback();$$block[name]=$$out}else{if(typeof $$block[name]==='string'){$$out+=$$block[name]}else{callback()}}}`
+        };
+
+        // 内置函数依赖关系声明
+        this.dependencies = {
+            print: [`$$out`],
+            include: [`$$out`, `$include`, DATA, OPTIONS],
+            extend: [`$$extend`, /*[*/ `$$layout` /*]*/ ],
+            block: [`$$extend`, `$$out`, `$$block`],
+            $$layout: [`$include`, `$$extend`, DATA, `$$block`, OPTIONS]
         };
 
 
-        this.importContext(`$out`);
+        this.importContext(`$$out`);
 
         if (options.compileDebug) {
-            this.importContext(`$line`);
+            this.importContext(`$$line`);
         }
 
 
-        this.getTplTokens(source, options.rules, this).forEach(tokens => {
+        this.getTplTokens(options.source, options.rules, this).forEach(tokens => {
             if (tokens.type === tplTokenizer.TYPE_STRING) {
                 this.parseString(tokens);
             } else {
@@ -60,7 +99,7 @@ class Compiler {
      * @param   {string} source 
      * @return  {Object[]}
      */
-    getTplTokens(...args){
+    getTplTokens(...args) {
         return tplTokenizer(...args);
     }
 
@@ -107,25 +146,34 @@ class Compiler {
 
         let value = ``;
         const internal = this.internal;
+        const dependencies = this.dependencies;
+        const external = this.external;
         const context = this.context;
         const options = this.options;
         const imports = options.imports;
+        const contextMap = this.CONTEXT_MAP;
 
+        if (!has(contextMap, name) && !has(external, name) && !isKeyword(name)) {
 
-        if (has(context, name) || name === DATA || name === IMPORTS || isKeyword(name)) {
-            return;
+            if (has(internal, name)) {
+                value = internal[name];
+
+                if (has(dependencies, name)) {
+                    dependencies[name].forEach(name => this.importContext(name));
+                }
+
+            } else if (has(imports, name)) {
+                value = `${IMPORTS}.${name}`;
+            } else {
+                value = `${DATA}.${name}`;
+            }
+
+            contextMap[name] = value;
+            context.push({
+                name,
+                value
+            });
         }
-
-        if (has(internal, name)) {
-            value = internal[name];
-        } else if (has(imports, name)) {
-            value = `${IMPORTS}.${name}`;
-        } else {
-            value = `${DATA}.${name}`;
-        }
-
-
-        context[name] = value;
     }
 
 
@@ -144,8 +192,12 @@ class Compiler {
             source = compressor(source);
         }
 
-        const code = `$out+=${stringify(source)}`;
-        this.scripts.push({ source, tplToken, code });
+        const code = `$$out+=${stringify(source)}`;
+        this.scripts.push({
+            source,
+            tplToken,
+            code
+        });
     }
 
 
@@ -169,16 +221,20 @@ class Compiler {
 
         if (output) {
             if (escape === false || output === tplTokenizer.TYPE_RAW) {
-                code = `$out+=${script.code}`;
+                code = `$$out+=${script.code}`;
             } else {
-                code = `$out+=$escape(${script.code})`;
+                code = `$$out+=$escape(${script.code})`;
             }
         }
 
 
         if (compileDebug) {
             const lineData = [line, start, stringify(source)].join(',');
-            this.scripts.push({ source, tplToken, code: `$line=[${lineData}]` });
+            this.scripts.push({
+                source,
+                tplToken,
+                code: `$$line=[${lineData}]`
+            });
         }
 
 
@@ -186,7 +242,11 @@ class Compiler {
         this.getVariables(esToken).forEach(name => this.importContext(name));
 
 
-        this.scripts.push({ source, tplToken, code });
+        this.scripts.push({
+            source,
+            tplToken,
+            code
+        });
     }
 
 
@@ -251,29 +311,29 @@ class Compiler {
         const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
+        const extendMode = has(this.CONTEXT_MAP, `extend`);
 
-
-        const useStrictCode = `"use strict"`;
-        const contextCode = `var ` + Object.keys(context).map(name => `${name}=${context[name]}`).join(`,`);
-        const scriptsCode = scripts.map(script => script.code).join(`;\n`);
-        const returnCode = `return $out`;
+        const useStrictCode = `'use strict'`;
+        const contextCode = `var ` + context.map(({name,value}) => `${name}=${value}`).join(`,`);
+        const scriptsCode = scripts.map(script => script.code).join(`\n`);
+        const returnCode = extendMode ? `return $$layout()` : 'return $$out';
 
         let renderCode = [
             useStrictCode,
             contextCode,
             scriptsCode,
             returnCode
-        ].join(`;\n`);
+        ].join(`\n`);
 
 
         if (options.compileDebug) {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,
-                `name:"RuntimeError"`,
+                `name:'RuntimeError'`,
                 `message:e.message`,
-                `line:$line[0]+1`,
-                `start:$line[1]+1`,
-                `source:$line[2]`,
+                `line:$$line[0]+1`,
+                `start:$$line[1]+1`,
+                `source:$$line[2]`,
                 `stack:e.stack`
             ].join(`,`) + '}';
             renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;

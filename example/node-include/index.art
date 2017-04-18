@@ -1,0 +1,10 @@
+<%
+   include('./header.art', {
+      title: 'My Page',
+      head: parent + '<link rel="stylesheet" href="custom.css">'
+   })
+%>
+
+<p>This is just an awesome page.</p>
+
+{{include './footer.art'}}

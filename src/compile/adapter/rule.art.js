@@ -16,7 +16,7 @@ const nativeRule = {
 
         // 旧版语法升级提示
         const upgrade = (oldSyntax, newSyntax) => {
-            console.warn('Template upgrade example:',
+            console.warn('Template upgrade:',
                 `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
                 `\n`, options.filename || '');
         };
@@ -92,10 +92,21 @@ const nativeRule = {
 
             case 'print':
             case 'include':
+            case 'extend':
 
                 group = split(esTokens);
                 group.shift();
                 code = `${key}(${group.join(',')})`;
+                break;
+
+            case 'block':
+
+                code = `block(${values.join('')},function(){`;
+                break;
+            
+            case '/block':
+
+                code = '})';
                 break;
 
             default:

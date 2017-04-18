@@ -289,6 +289,29 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
+
+            render = compile({
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art')
+            });
+            data = {
+                parent: '<style>#example{}</style>'
+            };
+            result = render(data)
+            assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
+            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+        },
+
+
+        'layout':()=>{
+            render = compile({
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art')
+            });
+            data = {
+                parent: '<style>#example{}</style>'
+            };
+            result = render(data)
+            assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
+            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
         },
 
 
@@ -467,7 +490,7 @@ module.exports = {
             }));
         },
 
-        'syntax': () => {
+        'rules': () => {
             const source = 'hello ${name} <%=name%>';
             const options = {
                 rules: [{

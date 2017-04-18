@@ -3,7 +3,9 @@ const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const ruleNative = require('../../src/compile/adapter/rule.native');
 
-const compressor = ({ source }) => {
+const compressor = ({
+    source
+}) => {
     return source
         .replace(/\s+/g, ` `)
         .replace(/<!--[\w\W]*?-->/g, ``);
@@ -16,7 +18,7 @@ module.exports = {
     },
 
     'getVariables': {
-        'basic': ()=>{
+        'basic': () => {
             const test = (code, result) => {
                 const tokens = Compiler.prototype.getEsTokens(code);
                 const variables = Compiler.prototype.getVariables(tokens);
@@ -53,8 +55,8 @@ module.exports = {
                 options.source = '';
                 const compiler = new Compiler(options);
                 compiler.importContext(code);
-                result.$out = '""';
-                assert.deepEqual(result, compiler.context);
+                result.$$out = `''`;
+                assert.deepEqual(result, compiler.CONTEXT_MAP);
             };
 
             test('value', {
@@ -66,11 +68,22 @@ module.exports = {
             test('$data', {});
             test('$imports', {});
 
-            test('print', { print: "function(){$out+=''.concat.apply('',arguments)}" });
-            test('include', { include: "function(src,data){$out+=$imports.$include(src,data||$data,$options)}" })
+            test('print', {
+                print: "function(){$$out+=''.concat.apply('',arguments)}"
+            });
+            
+            test('include', {
+                $$out: `''`,
+                $include: `$imports.$include`,
+                include: "function(src,data,block){$$out+=$include(src,data||$data,block,$options)}"
+            })
 
-            test('$escape', { $escape: '$imports.$escape' });
-            test('$include', { $include: '$imports.$include' });
+            test('$escape', {
+                $escape: '$imports.$escape'
+            });
+            test('$include', {
+                $include: '$imports.$include'
+            });
 
         },
 
@@ -81,9 +94,9 @@ module.exports = {
             const compiler = new Compiler(options);
             compiler.importContext('Math');
             assert.deepEqual({
-                $out: '""',
+                $$out: `''`,
                 Math: '$imports.Math'
-            }, compiler.context);
+            }, compiler.CONTEXT_MAP);
         }
     },
 
@@ -96,13 +109,13 @@ module.exports = {
                 assert.deepEqual(result, compiler.scripts.map(script => script.code));
             };
 
-            test('hello', ['$out+="hello"']);
-            test('<%=value%>', ['$out+=$escape(value)']);
+            test('hello', ['$$out+="hello"']);
+            test('<%=value%>', ['$$out+=$escape(value)']);
 
-            test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
-            test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
+            test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
+            test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
+            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$$out+="\\nhello\\n"', '}']);
         }
     },
 
@@ -120,17 +133,25 @@ module.exports = {
             };
 
             // raw
-            test('hello', ['$out+="hello"']);
-            test('\'hello\'', ['$out+="\'hello\'"']);
-            test('"hello    world"', ['$out+="\\"hello    world\\""']);
-            test('<div>hello</div>', ['$out+="<div>hello</div>"']);
-            test('<div id="test">hello</div>', ['$out+="<div id=\\"test\\">hello</div>"']);
+            test('hello', ['$$out+="hello"']);
+            test('\'hello\'', ['$$out+="\'hello\'"']);
+            test('"hello    world"', ['$$out+="\\"hello    world\\""']);
+            test('<div>hello</div>', ['$$out+="<div>hello</div>"']);
+            test('<div id="test">hello</div>', ['$$out+="<div id=\\"test\\">hello</div>"']);
 
             // compressor
-            test('  hello  ', ['$out+=" hello "'], { compressor });
-            test('\n  hello  \n\n.', ['$out+=" hello ."'], { compressor });
-            test('"hello    world"', ['$out+="\\"hello world\\""'], { compressor });
-            test('\'hello    world\'', ['$out+="\'hello world\'"'], { compressor });
+            test('  hello  ', ['$$out+=" hello "'], {
+                compressor
+            });
+            test('\n  hello  \n\n.', ['$$out+=" hello ."'], {
+                compressor
+            });
+            test('"hello    world"', ['$$out+="\\"hello world\\""'], {
+                compressor
+            });
+            test('\'hello    world\'', ['$$out+="\'hello world\'"'], {
+                compressor
+            });
         },
 
         'parseExpression': () => {
@@ -146,15 +167,19 @@ module.exports = {
             };
 
             // v3 compat
-            test('<%=value%>', ['$out+=$escape(value)']);
-            test('<%=#value%>', ['$out+=value']);
+            test('<%=value%>', ['$$out+=$escape(value)']);
+            test('<%=#value%>', ['$$out+=value']);
 
             // v4
-            test('<%-value%>', ['$out+=value']);
-            test('<%- value %>', ['$out+= value']);
+            test('<%-value%>', ['$$out+=value']);
+            test('<%- value %>', ['$$out+= value']);
 
-            test('<%=value%>', ['$out+=value'], { escape: false });
-            test('<%-value%>', ['$out+=value'], { escape: false });
+            test('<%=value%>', ['$$out+=value'], {
+                escape: false
+            });
+            test('<%-value%>', ['$$out+=value'], {
+                escape: false
+            });
 
             test('<%if (value) {%>', ['if (value) {']);
             test('<% if (value) { %>', [' if (value) { ']);
@@ -205,19 +230,19 @@ module.exports = {
                 assert.deepEqual(result, compiler.scripts.map(script => script.code));
             };
 
-            test('hello', ['$out+="hello"']);
-            test('<%=value%>', ['$out+=$escape(value)']);
-            test('hello <%=value%>.', ['$out+="hello "', '$out+=$escape(value)', '$out+="."']);
-            test('<%-value%>', ['$out+=value']);
-            test('hello <%-value%>.', ['$out+="hello "', '$out+=value', '$out+="."']);
+            test('hello', ['$$out+="hello"']);
+            test('<%=value%>', ['$$out+=$escape(value)']);
+            test('hello <%=value%>.', ['$$out+="hello "', '$$out+=$escape(value)', '$$out+="."']);
+            test('<%-value%>', ['$$out+=value']);
+            test('hello <%-value%>.', ['$$out+="hello "', '$$out+=value', '$$out+="."']);
 
-            test('hello<%=value%>', ['$out+="hello"', '$out+=$escape(value)']);
-            test('hello\n<%=value%>', ['$out+="hello\\n"', '$out+=$escape(value)']);
+            test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
+            test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$out+="\\nhello\\n"', '}']);
+            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$$out+="\\nhello\\n"', '}']);
 
             // compileDebug
-            test('<%-value%>', ['$line=[0,0,\"<%-value%>\"]', '$out+=value'], {
+            test('<%-value%>', ['$$line=[0,0,\"<%-value%>\"]', '$$out+=value'], {
                 compileDebug: true
             });
             // CompileError
