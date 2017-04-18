@@ -9,18 +9,19 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
 
-[在线速度测试](http://aui.github.io/art-template/docs/test-speed/)
+[在线速度测试](http://aui.github.io/art-template/example/test-speed/)
 
 ## 特性
 
 * 针对 V8 引擎优化，渲染速度出众
 * 支持编译、运行时调试，可定位语法、渲染错误的模板语句
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack、RequireJS
+* 支持模板包含与模板继承
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 同时支持原生 JavaScript 语法、简约语法
 * 支持定义模板的语法规则
-* 支持在浏览器运行，仅 5KB 大小
+* 浏览器版本仅 5KB 大小
 
 ## 安装
 
@@ -50,7 +51,7 @@ npm install art-template --save
 
 ```js
 var template = require('art-template');
-var html = template(__diranme + '/tpl-user.html', {
+var html = template(__diranme + '/tpl-user.art', {
     user: {
         name: 'aui'
     }
@@ -67,7 +68,7 @@ var html = template(__diranme + '/tpl-user.html', {
 安装 [art-template-loader](https://github.com/aui/art-template-loader)
 
 ```js
-var render = require('./tpl-user.html');
+var render = require('./tpl-user.art');
 var html = render({
     user: {
         name: 'aui'
@@ -212,14 +213,66 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 ### 子模板
 
 ```html
-{{include './header.html' $data}}
+{{include './header.art' $data}}
 ```
 
 ```html
-<% include('./header.html', $data) %>
+<% include('./header.art', $data) %>
 ```
 
 `include` 第二个参数默认值为 `$data`，可以自定义。
+
+### 布局
+
+```html
+{{extend './layout.art'}}
+{{block 'head'}} ... {{/block}}
+```
+
+```html
+<% extend('./layout.art') %>
+<% block('head', function(){ %> ... <% }) %>
+```
+
+#### 范例：
+
+layout.art:
+
+```html
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{block 'title'}}My Site{{/block}}</title>
+
+    {{block 'head'}}
+    <link rel="stylesheet" href="main.css">
+    {{/block}}
+</head>
+<body>
+    {{block 'content'}}{{/block}}
+</body>
+</html>
+```
+
+index.art:
+
+```html
+{{extend './layout.art'}}
+
+{{block 'title'}}My Page{{/block}}
+
+{{block 'head'}}
+    {{@parent}}
+    <link rel="stylesheet" href="custom.css">
+{{/block}}
+
+{{block 'content'}}
+<p>This is just an awesome page.</p>
+{{/block}}
+```
+
+渲染 index.art，它会根据 layout.art 为模板输出内容。
 
 ### print
 
@@ -300,33 +353,6 @@ template.defaults.rules.push({
         * `'raw'` 输出原始内容
         * `false` 不输出任何内容
 
-### 示例
-
-创造一个 `<?js expression ?>` 语法模板：
-
-```html
-<?js if (user) { ?>
-  <h2><?js= user.name ?></h2>
-<?js } ?>
-```
-
-```js
-template.defaults.rules.push({
-    test: /<\?js([=-]?)([\w\W]*?)\?>/,
-    use: function(match, output, code) {
-        output = ({
-            '=': 'escape',
-            '-': 'raw',
-            '': false
-        }}[output];
-        return {
-            code: code,
-            output: output
-        }
-    }
-});
-```
-
 ## 使用 `require(templatePath)`
 
 加载 `.art` 模板：
@@ -354,7 +380,7 @@ var html = view(data);
 根据模板名渲染模板。
 
 ```js
-var html = template('/welcome.html', {
+var html = template('/welcome.art', {
     value: 'aui'
 });
 ```
@@ -369,10 +395,10 @@ var html = template('/welcome.html', {
 
 ```js
 // compile && cache
-template('/welcome.html', 'hi, <%=value%>.');
+template('/welcome.art', 'hi, <%=value%>.');
 
 // use
-template('/welcome.html', {
+template('/welcome.art', {
     value: 'aui'
 });
 ```
