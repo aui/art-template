@@ -229,11 +229,6 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{block 'head'}} ... {{/block}}
 ```
 
-```html
-<% extend('./layout.art') %>
-<% block('head', function(){ %> ... <% }) %>
-```
-
 #### 范例：
 
 layout.art:
