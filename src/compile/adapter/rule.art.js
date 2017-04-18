@@ -45,8 +45,10 @@ const nativeRule = {
 
             case 'else':
 
-                if (values[0] === 'if') {
-                    values.shift();
+                const indexIf = values.indexOf('if');
+                
+                if (indexIf > -1) {
+                    values.splice(0, indexIf + 1);
                     code = `}else if(${values.join('')}){`;
                 } else {
                     code = `}else{`;

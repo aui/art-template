@@ -435,6 +435,14 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('😊', result);
+
+            render = compile('{{if a}}hello world{{else if b}}😊{{/if}}');
+            data = {
+                a: 0,
+                b: 0
+            };
+            result = render(data);
+            assert.deepEqual('', result);
         },
 
 
