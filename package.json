@@ -2,7 +2,7 @@
   "name": "art-template",
   "description": "JavaScript Template Engine",
   "homepage": "http://aui.github.com/art-template/",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "keywords": [
     "template"
   ],
@@ -12,12 +12,10 @@
     "url": "git://github.com/aui/art-template.git"
   },
   "scripts": {
-    "build-node": "export BUILD_TARGET=node && webpack",
-    "build-web": "export BUILD_TARGET=web && webpack -p",
-    "build": "npm run build-node && npm run build-web",
+    "build": "webpack",
     "dev": "export BUILD_TARGET=node && webpack -w",
     "test-node": "mocha --ui exports test/node.es",
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --ui exports --colors 'test/**/*.js' && npm run test-node",
+    "test": "export NODE_ENV='production' && istanbul cover node_modules/mocha/bin/_mocha -- --ui exports --colors 'test/**/*.js' && npm run test-node",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "main": "index.js",
@@ -29,6 +27,7 @@
   },
   "dependencies": {
     "detect-node": "^2.0.3",
+    "html-minifier": "^3.4.3",
     "is-keyword-js": "^1.0.3",
     "js-tokens": "^3.0.1"
   },

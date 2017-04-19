@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.2.0
+
+1. 支持 HTML、CSS、JS 压缩（`minimize: true`）。同时废弃 `compressor` 字段
+2. 修复配置 `debuger` 拼写错误，`debuger` 更名为 `onerror`
+3. 将模板全局变量 `$options` 私有化
+
 ## v4.1.0
 
 1. 支持 layout

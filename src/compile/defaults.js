@@ -1,11 +1,13 @@
-const debuger = require('./adapter/debuger');
+const detectNode = require('detect-node');
+const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
 const escape = require('./adapter/escape');
 const loader = require('./adapter/loader');
 const include = require('./adapter/include');
 const each = require('./adapter/each');
-const nativeRule = require('./adapter/rule.native');
 const artRule = require('./adapter/rule.art');
+const nativeRule = require('./adapter/rule.native');
+const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
 
 
@@ -24,26 +26,29 @@ const defaults = {
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
     escape: true,
 
-    // 是否开启调试模式。如果为 true: {bail:false, cache:false, compileDebug:true}
-    debug: false,
-
-    // 是否开启缓存
-    cache: true,
-
-    // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
-    compileDebug: false,
+    // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
+    debug: detectNode ? process.env.NODE_ENV !== 'production' : false,
 
     // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
+    // 是否开启缓存
+    cache: true,
+
+    // 是否开启压缩。它会运行 htmlMinifier，将页面 HTML、CSS、CSS 进行压缩输出
+    minimize: true,
+
+    // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
+    compileDebug: false,
+
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // HTML 压缩器
-    compressor: null,
+    // HTML 压缩器。lib/template-web.js 没有导入压缩器
+    htmlMinifier: htmlMinifier,
 
     // 错误调试器
-    debuger: debuger,
+    onerror: onerror,
 
     // 模板文件加载器
     loader: loader,
