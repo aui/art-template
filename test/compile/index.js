@@ -510,17 +510,26 @@ module.exports = {
             'Not compressed "pre"': () => {
                 let render;
 
-                render = compile('<pre>\n\n\n</pre>', {
+                render = compile('<pre>\n\n\n</pre>{{value}}', {
                     minimize: true
                 });
-                assert.deepEqual('<pre>\n\n\n</pre>', render({}));
+                assert.deepEqual('<pre>\n\n\n</pre>aui', render({value: 'aui'}));
 
+                // TODO
                 // render = compile('<pre>\n<span></span>\n<%=value%></pre>', {
                 //     minimize: true
                 // });
                 // assert.deepEqual('<pre>\n<span></span>\naui</pre>', render({
                 //     value: 'aui'
                 // }));
+            },
+            'Not compressed "textarea"': () => {
+                let render;
+
+                render = compile('<textarea>\n\n\n</textarea>{{value}}', {
+                    minimize: true
+                });
+                assert.deepEqual('<textarea>\n\n\n</textarea>aui', render({value: 'aui'}));
             }
         },
 
