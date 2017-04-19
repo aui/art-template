@@ -25,6 +25,7 @@ const compile = (source, options = {}) => {
     if (options.debug) {
         options.cache = false;
         options.bail = false;
+        options.minimize = false;
         options.compileDebug = true;
     }
 

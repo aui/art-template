@@ -17,17 +17,12 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 * 支持编译、运行时调试，可定位语法、渲染错误的模板语句
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack、RequireJS
 * 支持模板包含与模板继承
+* 支持 HTML、CSS、JS 压缩
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 同时支持原生 JavaScript 语法、简约语法
 * 支持定义模板的语法规则
 * 浏览器版本仅 5KB 大小
-
-## 安装
-
-```shell
-npm install art-template --save
-```
 
 ## 快速入门
 
@@ -56,27 +51,11 @@ var html = template(__diranme + '/tpl-user.art', {
 });
 ```
 
-框架支持：
-
-* Express: [express-art-template](https://github.com/aui/express-art-template)
-* Koa: [koa-art-template](https://github.com/aui/koa-art-template)
-
-### Webpack
-
-安装 [art-template-loader](https://github.com/aui/art-template-loader)
-
-```js
-var render = require('./tpl-user.art');
-var html = render({
-    user: {
-        name: 'aui'
-    }
-});
-```
-
 ### Web
 
-使用浏览器版本：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
+1\. 使用浏览器版本：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
+
+2\. 在页面中存放模板：
 
 ```html
 <script id="tpl-user" type="text/html">
@@ -84,18 +63,17 @@ var html = render({
   <h2><%= user.name %></h2>
 <% } %>
 </script>
+```
 
-<script src="art-template/lib/template-web.js"></script>
-<script>
+3\. 渲染模板：
+
+```js
 var html = template('tpl-user', {
     user: {
         name: 'aui'
     }
 });
-</script>
 ```
-
-> [lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js) 支持 [RequireJS](http://requirejs.org) 加载
 
 ### 核心方法
 
@@ -110,6 +88,24 @@ template.compile(source, options);
 template.render(source, data, options);
 ```
 
+## 安装
+
+```shell
+npm install art-template --save
+```
+
+## Express
+
+[express-art-template](https://github.com/aui/express-art-template)
+
+## Koa
+
+[koa-art-template](https://github.com/aui/koa-art-template)
+
+## Webpack
+
+[art-template-loader](https://github.com/aui/art-template-loader)
+
 ## 语法
 
 art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表达式 `<% expression %>`。
@@ -120,6 +116,8 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 
 ```html
 {{value}}
+{{data.key}}
+{{data['key']}}
 {{a ? b : c}}
 {{a || b}}
 {{a + b}}
@@ -127,12 +125,14 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 or
 
 <%= value %>
+<%= data.key %>
+<%= data['key'] %>
 <%= a ? b : c %>
 <%= a || b %>
 <%= a + b %>
 ```
 
-特殊变量可以使用下标方式访问：
+模板一级特殊变量可以使用 `$data` 加下标的方式访问：
 
 ```
 {{$data['user list']}}
@@ -261,10 +261,12 @@ index.art:
 ### 过滤器
 
 ```js
-// 向模板中导入过滤器
+// 向模板中导入全局变量
 template.defaults.imports.$dateFormat = function(date, format){/*[code..]*/};
 template.defaults.imports.$timestamp = function(value){return value * 1000};
 ```
+
+因为 `imports` 定义的全局变量的优先级会比普通模板变量高，所以建议命名使用 `$` 前缀。 
 
 ```html
 {{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
@@ -274,13 +276,32 @@ or
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
 
+`{{value | filter}}` 过滤器语法类似管道操作符，它的上一个输出作为下一个输入。
+
+## 调试
+
+设置 `template.defaults.debug=true` 后，它会设置如下选项：
+
+```json
+{
+    "bail": false,
+    "cache": false,
+    "minimize": false,
+    "compileDebug": true
+}
+```
+
+默认配置：
+
+* Node 环境，`debug: process.env.NODE_ENV !== 'production'`
+* 浏览器环境，`debug: false`
+
 ## 全局变量
 
-### 内置变量
+### 内置变量清单
 
 * `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `$options`  模板编译选项 `{Object}`
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
 * `extend`    布局模板导入函数 `{function}`
@@ -297,14 +318,6 @@ template.defaults.imports.$console = console;
 ```
 
 模板外部所有的变量都需要使用 `template.defaults.imports` 注入、并且要在模板编译之前进行声明才能使用。
-
-## 缓存
-
-缓存默认是开启的，开发环境中可以关闭它：
-
-```js
-template.defaults.cache = false;
-```
 
 ## 定义语法规则
 
@@ -416,26 +429,29 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
     escape: true,
 
-    // 是否开启调试模式。如果为 true: {bail:false, cache:false, compileDebug:true}
-    debug: false,
-
-    // 是否开启缓存
-    cache: true,
-
-    // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
-    compileDebug: false,
+    // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
+    debug: detectNode ? process.env.NODE_ENV !== 'production' : false,
 
     // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
+    // 是否开启缓存
+    cache: true,
+
+    // 是否开启压缩。它会运行 htmlMinifier，将页面 HTML、CSS、CSS 进行压缩输出
+    minimize: true,
+
+    // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
+    compileDebug: false,
+
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // HTML 压缩器
-    compressor: null,
+    // HTML 压缩器。lib/template-web.js 没有导入压缩器
+    htmlMinifier: htmlMinifier,
 
     // 错误调试器
-    debuger: debuger,
+    onerror: onerror,
 
     // 模板文件加载器
     loader: loader,
@@ -461,7 +477,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ## 兼容性
 
 1. NodeJS v1.0+
-2. IE9+（小于 IE9 需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 支持）
+2. IE9+（art-template@4 基于 ES5，小于 IE9 的浏览器需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 才可运行）
 
 ## 授权协议
 

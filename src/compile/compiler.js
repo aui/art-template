@@ -16,6 +16,13 @@ class Compiler {
      */
     constructor(options) {
 
+
+        let source = options.source;
+        const minimize = options.minimize;
+        const htmlMinifier = options.htmlMinifier;
+        const ignoreCustomFragments = options.rules.map(rule => rule.test);
+
+
         // 编译选项
         this.options = options;
 
@@ -82,7 +89,14 @@ class Compiler {
         }
 
 
-        this.getTplTokens(options.source, options.rules, this).forEach(tokens => {
+        if (minimize) {
+            try {
+                source = htmlMinifier(source, ignoreCustomFragments);
+            } catch(error){}
+        }
+
+
+        this.getTplTokens(source, options.rules, this).forEach(tokens => {
             if (tokens.type === tplTokenizer.TYPE_STRING) {
                 this.parseString(tokens);
             } else {
@@ -185,12 +199,6 @@ class Compiler {
     parseString(tplToken) {
 
         let source = tplToken.value;
-        const options = this.options;
-        const compressor = options.compressor;
-
-        if (compressor) {
-            source = compressor(source);
-        }
 
         if (!source) {
             return;
@@ -318,7 +326,10 @@ class Compiler {
         const extendMode = has(this.CONTEXT_MAP, `extend`);
 
         const useStrictCode = `'use strict'`;
-        const contextCode = `var ` + context.map(({name,value}) => `${name}=${value}`).join(`,`);
+        const contextCode = `var ` + context.map(({
+            name,
+            value
+        }) => `${name}=${value}`).join(`,`);
         const scriptsCode = scripts.map(script => script.code).join(`\n`);
         const returnCode = extendMode ? `return $$layout()` : 'return $$out';
 

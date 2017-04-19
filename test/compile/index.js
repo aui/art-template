@@ -249,10 +249,13 @@ module.exports = {
         'include': () => {
             compile('#title: {{title}}', {
                 root: '/',
-                filename: '/header.html'
+                filename: '/header.html',
+                minimize: false
             });
 
-            render = compile(`{{include 'header.html'}}\ncontent: {{content}}`);
+            render = compile(`{{include 'header.html'}}\ncontent: {{content}}`, {
+                minimize: false
+            });
             data = {
                 title: 'hello',
                 content: 'world'
@@ -260,7 +263,9 @@ module.exports = {
             result = render(data);
             assert.deepEqual(`#title: hello\ncontent: world`, result);
 
-            render = compile(`{{include file.header}}\ncontent: {{content}}`);
+            render = compile(`{{include file.header}}\ncontent: {{content}}`, {
+                minimize: false
+            });
             data = {
                 title: 'hello',
                 content: 'world',
@@ -271,7 +276,9 @@ module.exports = {
             result = render(data);
             assert.deepEqual(`#title: hello\ncontent: world`, result);
 
-            render = compile(`{{include './header.html'}}\ncontent: {{content}}`);
+            render = compile(`{{include './header.html'}}\ncontent: {{content}}`, {
+                minimize: false
+            });
             data = {
                 title: 'hello',
                 content: 'world'
@@ -279,7 +286,9 @@ module.exports = {
             result = render(data);
             assert.deepEqual(`#title: hello\ncontent: world`, result);
 
-            render = compile(`{{include 'header.html' sub}}\ncontent: {{content}}`);
+            render = compile(`{{include 'header.html' sub}}\ncontent: {{content}}`, {
+                minimize: false
+            });
             data = {
                 title: 'hello',
                 content: 'world',
@@ -302,7 +311,7 @@ module.exports = {
         },
 
 
-        'layout':()=>{
+        'layout': () => {
             render = compile({
                 filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art')
             });
@@ -481,13 +490,38 @@ module.exports = {
 
 
     'options': {
-        'compressor': () => {
-            const render = compile('<div>     </div>\n     <%=value%>', {
-                compressor: require('../../src/compile/adapter/compressor')
-            });
-            assert.deepEqual('<div></div>aui', render({
-                value: 'aui'
-            }));
+        'minimize': {
+            'basic': () => {
+                const render = compile('<div>     </div>\n     <%=value%>', {
+                    minimize: true
+                });
+                assert.deepEqual('<div></div> aui', render({
+                    value: 'aui'
+                }));
+            },
+            'Do not compress unclosed tags': () => {
+                const render = compile('<div>x</div>   <a href="{{url}}">link</a>   <div', {
+                    minimize: true
+                });
+                assert.deepEqual('<div>x</div>   <a href="###">link</a>   <div', render({
+                    url: '###'
+                }));
+            },
+            'Not compressed "pre"': () => {
+                let render;
+
+                render = compile('<pre>\n\n\n</pre>', {
+                    minimize: true
+                });
+                assert.deepEqual('<pre>\n\n\n</pre>', render({}));
+
+                // render = compile('<pre>\n<span></span>\n<%=value%></pre>', {
+                //     minimize: true
+                // });
+                // assert.deepEqual('<pre>\n<span></span>\naui</pre>', render({
+                //     value: 'aui'
+                // }));
+            }
         },
 
         'rules': () => {
@@ -589,7 +623,8 @@ module.exports = {
                 let render;
                 try {
                     render = compile(tpl, {
-                        bail: true
+                        bail: true,
+                        minimize: false
                     });
                     render({});
                 } catch (e) {
