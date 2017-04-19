@@ -15,14 +15,14 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 * 针对 V8 引擎优化，渲染速度出众
 * 支持编译、运行时调试，可定位语法、渲染错误的模板语句
-* 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack、RequireJS
+* 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
 * 支持模板包含与模板继承
-* 支持 HTML、CSS、JS 压缩
+* 支持压缩输出页面中的 HTML、CSS、JS 代码
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 同时支持原生 JavaScript 语法、简约语法
 * 支持定义模板的语法规则
-* 浏览器版本仅 5KB 大小
+* 浏览器版本仅 6KB 大小
 
 ## 快速入门
 
