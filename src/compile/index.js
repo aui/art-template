@@ -29,7 +29,7 @@ const compile = (source, options = {}) => {
     }
 
 
-    const debuger = options.debuger;
+    const onerror = options.onerror;
     const filename = options.filename;
     const cache = options.cache;
     const caches = options.caches;
@@ -65,7 +65,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return debuger(error);
+                return onerror(error);
             }
 
         }
@@ -78,7 +78,7 @@ const compile = (source, options = {}) => {
 
         try {
             return render.source(data, blocks);
-        } catch (e) {
+        } catch (error) {
 
             // 运行时出错以调试模式重载
             if (!options.compileDebug) {
@@ -88,9 +88,9 @@ const compile = (source, options = {}) => {
             }
 
             if (options.bail) {
-                throw e;
+                throw error;
             } else {
-                return debuger(e)();
+                return onerror(error)();
             }
 
         }
@@ -105,11 +105,11 @@ const compile = (source, options = {}) => {
             caches.set(filename, render);
         }
 
-    } catch (e) {
+    } catch (error) {
         if (options.bail) {
-            throw e;
+            throw error;
         } else {
-            return debuger(e);
+            return onerror(error);
         }
     }
 

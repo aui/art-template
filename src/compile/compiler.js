@@ -4,7 +4,7 @@ const isKeyword = require('is-keyword-js');
 
 const DATA = `$data`;
 const IMPORTS = `$imports`;
-const OPTIONS = `$options`;
+const OPTIONS = `$$options`;
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
@@ -50,13 +50,13 @@ class Compiler {
             $$extend: `null`,
 
             // 导出布局模板函数
-            $$layout: `function(){return $include($$extend,${DATA},$$block,${OPTIONS})}`,
+            $$layout: `function(){return $imports.$include($$extend,${DATA},$$block,${OPTIONS})}`,
 
             // 文本输出函数
             print: `function(){$$out+=''.concat.apply('',arguments)}`,
 
             // 包含子模板
-            include: `function(src,data,block){$$out+=$include(src,data||${DATA},block,${OPTIONS})}`,
+            include: `function(src,data,block){$$out+=$imports.$include(src,data||${DATA},block,${OPTIONS})}`,
 
             // 继承布局模板
             extend: `function(src){$$extend=src}`,
@@ -68,10 +68,10 @@ class Compiler {
         // 内置函数依赖关系声明
         this.dependencies = {
             print: [`$$out`],
-            include: [`$$out`, `$include`, DATA, OPTIONS],
+            include: [`$$out`, `$imports`, DATA, OPTIONS],
             extend: [`$$extend`, /*[*/ `$$layout` /*]*/ ],
             block: [`$$extend`, `$$out`, `$$block`],
-            $$layout: [`$include`, `$$extend`, DATA, `$$block`, OPTIONS]
+            $$layout: [`$imports`, `$$extend`, DATA, `$$block`, OPTIONS]
         };
 
 

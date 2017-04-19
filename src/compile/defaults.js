@@ -1,4 +1,4 @@
-const debuger = require('./adapter/debuger');
+const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
 const escape = require('./adapter/escape');
 const loader = require('./adapter/loader');
@@ -43,7 +43,7 @@ const defaults = {
     compressor: null,
 
     // 错误调试器
-    debuger: debuger,
+    onerror: onerror,
 
     // 模板文件加载器
     loader: loader,

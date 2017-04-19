@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.1.1
+
+1. 修复配置 `debuger` 拼写错误，`debuger` 更名为 `onerror`
+2. 将模板全局变量 `$options` 私有化
+
 ## v4.1.0
 
 1. 支持 layout

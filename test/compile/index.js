@@ -2,7 +2,7 @@ const assert = require('assert');
 const compile = require('../../src/compile/index');
 const tplTokenizer = require('../../src/compile/tpl-tokenizer');
 const defaults = require('../../src/compile/defaults');
-const debuger = defaults.debuger;
+const onerror = defaults.onerror;
 const path = require('path');
 
 let render, data, result;
@@ -11,13 +11,13 @@ module.exports = {
 
     before: () => {
         console.log('#compile/index');
-        defaults.debuger = () => {
+        defaults.onerror = () => {
             return () => '{Template Error}';
         };
     },
 
     after: () => {
-        defaults.debuger = debuger;
+        defaults.onerror = onerror;
     },
 
     'rule.native': {

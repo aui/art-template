@@ -74,8 +74,7 @@ module.exports = {
             
             test('include', {
                 $$out: `''`,
-                $include: `$imports.$include`,
-                include: "function(src,data,block){$$out+=$include(src,data||$data,block,$options)}"
+                include: "function(src,data,block){$$out+=$imports.$include(src,data||$data,block,$$options)}"
             })
 
             test('$escape', {
