@@ -3,7 +3,7 @@ const template = require('../');
 const defaults = template.defaults;
 const path = require('path');
 const resetBail = defaults.bail;
-const debuger = defaults.debuger;
+const onerror = defaults.onerror;
 
 
 module.exports = {
@@ -13,13 +13,13 @@ module.exports = {
         require.extensions['.html'] = template.extension;
         require.extensions['.tpl'] = template.extension;
 
-        defaults.debuger = ()=>{
+        defaults.onerror = ()=>{
             return ()=> '{Template Error}';
         };
     },
 
     after: () => {
-        defaults.debuger = debuger;
+        defaults.onerror = onerror;
     },
 
     'extension': {

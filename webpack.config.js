@@ -1,42 +1,65 @@
 const path = require('path');
 const webpack = require('webpack');
-const version = require('./package.json').version;
-const target = process.env.BUILD_TARGET || 'node';
+const packageInfo = require('./package.json');
+const version = packageInfo.version;
+const dependencies = Object.keys(packageInfo.dependencies || {});
+const peerDependencies = Object.keys(packageInfo.peerDependencies || {});
+const modules = dependencies.concat(...peerDependencies);
 
-const name = target === 'node' ? 'template-node' : 'template-web';
-const libraryTarget = target === 'node' ? 'commonjs2' : 'umd';
+const entry = path.resolve(__dirname, 'src', 'index');
+const dist = path.resolve(__dirname, 'lib');
+const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
+const rules = [{
+    test: /\.js$/,
+    use: [{
+        loader: 'babel-loader',
+        options: {
+            presets: ['es2015']
+        }
+    }, {
+        loader: 'eslint-loader'
+    }],
 
-module.exports = {
+}];
+
+
+module.exports = [{
+    target: 'node',
     entry: {
-        [name]: path.resolve(__dirname, 'src', 'index')
+        'template-node': entry
     },
     output: {
-        path: path.resolve(__dirname, 'lib'),
+        path: dist,
         filename: '[name].js',
         library: 'template',
-        libraryTarget: libraryTarget
-
+        libraryTarget: 'commonjs2'
     },
-    plugins: [
-        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`)
-    ],
-    target: target,
-    node: target === 'node' ? {} : {
-        fs: 'empty',
-        path: 'empty'
-    },
+    externals: modules,
+    plugins: [banner],
     module: {
-        rules: [{
-            test: /\.js$/,
-            use: [{
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2015']
-                }
-            }, {
-                loader: 'eslint-loader'
-            }],
-
-        }]
+        rules
     }
-};
+}, {
+    target: 'web',
+    entry: {
+        'template-web': entry
+    },
+    output: {
+        path: dist,
+        filename: '[name].js',
+        library: 'template',
+        libraryTarget: 'umd'
+    },
+    node: {
+        'fs': 'empty',
+        'path': 'empty',
+        'process': false
+    },
+    externals: {
+        'html-minifier': 'htmlMinifier'
+    },
+    plugins: [banner, new webpack.optimize.UglifyJsPlugin()],
+    module: {
+        rules
+    }
+}];

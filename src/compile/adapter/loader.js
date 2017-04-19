@@ -1,9 +1,10 @@
+const detectNode = require('detect-node');
+
 /**
  * 读取模板内容（同步方法）
  * @param   {string}    模板名
  * @param   {string}
  */
-const detectNode = require('detect-node');
 const loader = (filename) => {
     /* istanbul ignore else  */
     if (detectNode) {

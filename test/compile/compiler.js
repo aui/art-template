@@ -3,7 +3,7 @@ const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const ruleNative = require('../../src/compile/adapter/rule.native');
 
-const compressor = ({
+const htmlMinifier = ({
     source
 }) => {
     return source
@@ -74,8 +74,7 @@ module.exports = {
             
             test('include', {
                 $$out: `''`,
-                $include: `$imports.$include`,
-                include: "function(src,data,block){$$out+=$include(src,data||$data,block,$options)}"
+                include: "function(src,data,block){$$out+=$imports.$include(src,data||$data,block,$$options)}"
             })
 
             test('$escape', {
@@ -104,6 +103,7 @@ module.exports = {
         basic: () => {
             const test = (code, result, options) => {
                 options = defaults.$extend(options);
+                options.minimize = false;
                 options.source = code;
                 const compiler = new Compiler(options);
                 assert.deepEqual(result, compiler.scripts.map(script => script.code));
@@ -139,18 +139,18 @@ module.exports = {
             test('<div>hello</div>', ['$$out+="<div>hello</div>"']);
             test('<div id="test">hello</div>', ['$$out+="<div id=\\"test\\">hello</div>"']);
 
-            // compressor
+            // htmlMinifier
             test('  hello  ', ['$$out+=" hello "'], {
-                compressor
+                htmlMinifier
             });
             test('\n  hello  \n\n.', ['$$out+=" hello ."'], {
-                compressor
+                htmlMinifier
             });
             test('"hello    world"', ['$$out+="\\"hello world\\""'], {
-                compressor
+                htmlMinifier
             });
             test('\'hello    world\'', ['$$out+="\'hello world\'"'], {
-                compressor
+                htmlMinifier
             });
         },
 
@@ -184,7 +184,7 @@ module.exports = {
             test('<%if (value) {%>', ['if (value) {']);
             test('<% if (value) { %>', [' if (value) { ']);
             test('<%    if ( value ) {    %>', ['    if ( value ) {    '], {
-                compressor
+                htmlMinifier
             });
         }
     },
@@ -224,6 +224,7 @@ module.exports = {
         basic: () => {
             const test = (code, result, options) => {
                 options = defaults.$extend(options);
+                options.minimize = false;
                 options.source = code;
                 const compiler = new Compiler(options);
                 compiler.build();
@@ -252,6 +253,7 @@ module.exports = {
         'CompileError': {
             'throw': () => {
                 const options = Object.create(defaults);
+                options.minimize = false;
                 options.source = 'hello\n\n<% a b c d %>';
                 const compiler = new Compiler(options);
 
