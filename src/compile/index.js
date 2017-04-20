@@ -123,6 +123,6 @@ const compile = (source, options = {}) => {
     return render;
 };
 
-
+compile.Compiler = Compiler;
 
 module.exports = compile;

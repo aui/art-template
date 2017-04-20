@@ -2,9 +2,20 @@ const esTokenizer = require('./es-tokenizer');
 const tplTokenizer = require('./tpl-tokenizer');
 const isKeyword = require('is-keyword-js');
 
-const DATA = `$data`;
-const IMPORTS = `$imports`;
-const OPTIONS = `$$options`;
+const DATA= `$data`;
+const IMPORTS= `$imports`;
+const PRINT= `print`;
+const INCLUDE= `include`;
+const EXTEND= `extend`;
+const BLOCK= `block`;
+const OPTIONS= `$$options`;
+const OUT= `$$out`;
+const LINE= `$$line`;
+const BLOCKS= `$$blocks`;
+const FROM= `$$from`;
+const LAYOUT= `$$layout`;
+const ESCAPE = `$escape`;
+
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
 
@@ -44,47 +55,47 @@ class Compiler {
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
             // 字符串拼接
-            $$out: `''`,
+            [OUT]: `''`,
 
             // 调试记录 [line, start, source]
-            $$line: `[0,0,'']`,
+            [LINE]: `[0,0,'']`,
 
             // 所有“模板块”
-            $$block: `arguments[1]||{}`,
+            [BLOCKS]: `arguments[1]||{}`,
 
             // 继承的布局模板的文件地址
-            $$extend: `null`,
+            [FROM]: `null`,
 
             // 导出布局模板函数
-            $$layout: `function(){return $imports.$include($$extend,${DATA},$$block,${OPTIONS})}`,
+            [LAYOUT]: `function(){return ${IMPORTS}.$include(${FROM},${DATA},${BLOCKS},${OPTIONS})}`,
 
             // 文本输出函数
-            print: `function(){$$out+=''.concat.apply('',arguments)}`,
+            [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
 
             // 包含子模板
-            include: `function(src,data,block){$$out+=$imports.$include(src,data||${DATA},block,${OPTIONS})}`,
+            [INCLUDE]: `function(src,data,block){${OUT}+=${IMPORTS}.$include(src,data||${DATA},block,${OPTIONS})}`,
 
             // 继承布局模板
-            extend: `function(src){$$extend=src}`,
+            [EXTEND]: `function(from){${FROM}=from}`,
 
             // 读写“模板块”
-            block: `function(name,callback){if($$extend){$$out='';callback();$$block[name]=$$out}else{if(typeof $$block[name]==='string'){$$out+=$$block[name]}else{callback()}}}`
+            [BLOCK]: `function(name,callback){if(${FROM}){${OUT}='';callback();${BLOCKS}[name]=${OUT}}else{if(typeof ${BLOCKS}[name]==='string'){${OUT}+=${BLOCKS}[name]}else{callback()}}}`
         };
 
         // 内置函数依赖关系声明
         this.dependencies = {
-            print: [`$$out`],
-            include: [`$$out`, `$imports`, DATA, OPTIONS],
-            extend: [`$$extend`, /*[*/ `$$layout` /*]*/ ],
-            block: [`$$extend`, `$$out`, `$$block`],
-            $$layout: [`$imports`, `$$extend`, DATA, `$$block`, OPTIONS]
+            [PRINT]: [OUT],
+            [INCLUDE]: [OUT, IMPORTS, DATA, OPTIONS],
+            [EXTEND]: [FROM, /*[*/ LAYOUT /*]*/ ],
+            [BLOCK]: [FROM, OUT, BLOCKS],
+            [LAYOUT]: [IMPORTS, FROM, DATA, BLOCKS, OPTIONS]
         };
 
 
-        this.importContext(`$$out`);
+        this.importContext(OUT);
 
         if (options.compileDebug) {
-            this.importContext(`$$line`);
+            this.importContext(LINE);
         }
 
 
@@ -203,7 +214,7 @@ class Compiler {
             return;
         }
 
-        const code = `$$out+=${stringify(source)}`;
+        const code = `${OUT}+=${stringify(source)}`;
         this.scripts.push({
             source,
             tplToken,
@@ -232,9 +243,9 @@ class Compiler {
 
         if (output) {
             if (escape === false || output === tplTokenizer.TYPE_RAW) {
-                code = `$$out+=${script.code}`;
+                code = `${OUT}+=${script.code}`;
             } else {
-                code = `$$out+=$escape(${script.code})`;
+                code = `${OUT}+=${ESCAPE}(${script.code})`;
             }
         }
 
@@ -244,7 +255,7 @@ class Compiler {
             this.scripts.push({
                 source,
                 tplToken,
-                code: `$$line=[${lineData}]`
+                code: `${LINE}=[${lineData}]`
             });
         }
 
@@ -322,7 +333,7 @@ class Compiler {
         const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
-        const extendMode = has(this.CONTEXT_MAP, `extend`);
+        const extendMode = has(this.CONTEXT_MAP, EXTEND);
 
         const useStrictCode = `'use strict'`;
         const contextCode = `var ` + context.map(({
@@ -330,7 +341,7 @@ class Compiler {
             value
         }) => `${name}=${value}`).join(`,`);
         const scriptsCode = scripts.map(script => script.code).join(`\n`);
-        const returnCode = extendMode ? `return $$layout()` : 'return $$out';
+        const returnCode = extendMode ? `return ${LAYOUT}()` : `return ${OUT}`;
 
         let renderCode = [
             useStrictCode,
@@ -344,13 +355,13 @@ class Compiler {
             const throwCode = '{' + [
                 `path:${stringify(filename)}`,
                 `name:'RuntimeError'`,
-                `message:e.message`,
-                `line:$$line[0]+1`,
-                `start:$$line[1]+1`,
-                `source:$$line[2]`,
-                `stack:e.stack`
+                `message:error.message`,
+                `line:${LINE}[0]+1`,
+                `start:${LINE}[1]+1`,
+                `source:${LINE}[2]`,
+                `stack:error.stack`
             ].join(`,`) + '}';
-            renderCode = `try{${renderCode}}catch(e){throw ${throwCode}}`;
+            renderCode = `try{${renderCode}}catch(error){throw ${throwCode}}`;
         }
 
         renderCode = `function(${DATA}){\n${renderCode}\n}`;
@@ -391,6 +402,25 @@ class Compiler {
     }
 };
 
+
+/**
+ * 模板内置常量
+ */
+Compiler.CONSTS = {
+    DATA,
+    IMPORTS,
+    PRINT,
+    INCLUDE,
+    EXTEND,
+    BLOCK,
+    OPTIONS,
+    OUT,
+    LINE,
+    BLOCKS,
+    FROM,
+    LAYOUT,
+    ESCAPE
+};
 
 
 module.exports = Compiler;
