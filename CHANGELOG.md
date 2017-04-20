@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.2.1
+
+1. 适配器 `loader`、`onerror`、`htmlMinifier` 第二个参数接收 `options`
+
 ## v4.2.0
 
 1. 支持 HTML、CSS、JS 压缩（`minimize: true`）。同时废弃 `compressor` 字段

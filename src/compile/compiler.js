@@ -20,7 +20,6 @@ class Compiler {
         let source = options.source;
         const minimize = options.minimize;
         const htmlMinifier = options.htmlMinifier;
-        const ignoreCustomFragments = options.rules.map(rule => rule.test);
 
 
         // 编译选项
@@ -91,7 +90,7 @@ class Compiler {
 
         if (minimize) {
             try {
-                source = htmlMinifier(source, ignoreCustomFragments);
+                source = htmlMinifier(source, options);
             } catch(error){}
         }
 

@@ -51,7 +51,7 @@ const compile = (source, options = {}) => {
         const target = options.resolveFilename(filename, options);
 
         try {
-            source = options.loader(target);
+            source = options.loader(target, options);
             options.filename = target;
             options.source = source;
         } catch (e) {
@@ -66,7 +66,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error);
+                return onerror(error, options);
             }
 
         }
@@ -91,7 +91,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error)();
+                return onerror(error, options)();
             }
 
         }
@@ -110,7 +110,7 @@ const compile = (source, options = {}) => {
         if (options.bail) {
             throw error;
         } else {
-            return onerror(error);
+            return onerror(error, options);
         }
     }
 

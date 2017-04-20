@@ -3,20 +3,22 @@ const detectNode = require('detect-node');
 /**
  * HTML 压缩器 
  * @param  {string}     source
- * @param  {RegExp[]}   ignoreCustomFragments
+ * @param  {Object}     options
  * @return {string}
  */
-const htmlMinifier = (source, ignoreCustomFragments = []) => {
+const htmlMinifier = (source, options) => {
     if (detectNode) {
+        
         const htmlMinifier = require('html-minifier').minify;
-        const options = {
+        const ignoreCustomFragments = options.rules.map(rule => rule.test);
+        const setting = {
             collapseWhitespace: true,
             minifyCSS: true,
             minifyJS: true,
             ignoreCustomFragments
         };
         
-        return htmlMinifier(source, options);
+        return htmlMinifier(source, setting);
     } else {
         return source;
     }

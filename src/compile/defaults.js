@@ -44,7 +44,7 @@ const defaults = {
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // HTML 压缩器。lib/template-web.js 没有导入压缩器
+    // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
     // 错误调试器
