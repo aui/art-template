@@ -29,13 +29,14 @@ const defaults = {
     // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
     debug: detectNode ? process.env.NODE_ENV !== 'production' : false,
 
-    // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
+    // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
     // 是否开启缓存
     cache: true,
 
     // 是否开启压缩。它会运行 htmlMinifier，将页面 HTML、CSS、CSS 进行压缩输出
+    // 如果模板包含没有闭合的 HTML 标签，请不要打开 minimize，否则可能被 htmlMinifier 修复或过滤
     minimize: true,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
@@ -44,7 +45,7 @@ const defaults = {
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // HTML 压缩器。lib/template-web.js 没有导入压缩器
+    // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
     // 错误调试器

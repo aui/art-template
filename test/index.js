@@ -27,7 +27,8 @@ module.exports = {
         'include': ()=>{
             defaults.root = path.join(__dirname, 'res');
             const html = template('index/index.html', {name: 'aui'});
-            assert.deepEqual('hello aui hello 糖饼', html);
+            assert.deepEqual(true, html.indexOf('aui') !== -1);
+            assert.deepEqual(true, html.indexOf('糖饼') !== -1);
             defaults.root = root;
         },
 

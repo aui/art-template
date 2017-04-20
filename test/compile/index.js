@@ -300,27 +300,30 @@ module.exports = {
             assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
 
             render = compile({
-                filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art')
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art'),
+                minimize: true
             });
             data = {
-                parent: '<style>#example{}</style>'
+                title: 'My Page'
             };
             result = render(data)
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
-            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+            assert.equal(true, result.indexOf('</head>') > -1);
+            assert.equal(false, /<\/html>.+/.test(result));
         },
 
 
         'layout': () => {
             render = compile({
-                filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art')
+                filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art'),
+                minimize: true
             });
             data = {
-                parent: '<style>#example{}</style>'
+                title: 'My Page'
             };
-            result = render(data)
+            result = render(data);
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
-            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+            assert.equal(true, result.indexOf('</head>') > -1);
         },
 
 

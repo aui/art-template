@@ -1,9 +1,10 @@
 /**
  * 调试器
- * @param   {Object} error 
- * @return  {string}
+ * @param   {Object}    error
+ * @param   {?Object}   options
+ * @return  {function}
  */
-const onerror = error => {
+const onerror = (error/*, options*/) => {
 
     if (typeof console === 'object') {
         const stack = error.stack;

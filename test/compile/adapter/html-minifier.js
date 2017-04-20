@@ -9,36 +9,48 @@ module.exports = {
 
     'html-minifier': {
         'text': () => {
-            const result = htmlMinifier('hello world');
+            const result = htmlMinifier('hello world', {
+                rules: []
+            });
             assert.equal('hello world', result);
         },
 
         'tag': () => {
             let result;
-            result = htmlMinifier('<div></div>   <a></a>');
+            result = htmlMinifier('<div></div>   <a></a>', {
+                rules: []
+            });
             assert.equal('<div></div><a></a>', result);
 
-            result = htmlMinifier('hello   <div>world</div>');
+            result = htmlMinifier('hello   <div>world</div>', {
+                rules: []
+            });
             assert.equal('hello<div>world</div>', result);
         },
 
         'script': () => {
-            const result = htmlMinifier('<script>var x = "     ";</script>');
+            const result = htmlMinifier('<script>var x = "     ";</script>', {
+                rules: []
+            });
             assert.equal('<script>var x="     "</script>', result);
         },
 
         'html fragment': () => {
             let result;
 
-            result = htmlMinifier('hello   <div>world');
+            result = htmlMinifier('hello   <div>world', {
+                rules: []
+            });
             assert.equal('hello<div>world</div>', result);
         },
 
         'throw error': () => {
             let result = null;
             try {
-                result = htmlMinifier('<div ');
-            } catch(e) {}
+                result = htmlMinifier('<div ', {
+                    rules: []
+                });
+            } catch (e) {}
             assert.equal(null, result);
         }
     }
