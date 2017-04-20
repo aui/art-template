@@ -303,11 +303,11 @@ module.exports = {
                 filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art')
             });
             data = {
-                parent: '<style>#example{}</style>'
+                title: 'My Page'
             };
             result = render(data)
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
-            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+            assert.equal(true, result.indexOf('</head>') > -1);
         },
 
 
@@ -316,11 +316,11 @@ module.exports = {
                 filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art')
             });
             data = {
-                parent: '<style>#example{}</style>'
+                title: 'My Page'
             };
             result = render(data)
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
-            assert.equal(true, result.indexOf('<style>#example{}</style>') > -1);
+            assert.equal(true, result.indexOf('</head>') > -1);
         },
 
 

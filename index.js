@@ -42,15 +42,18 @@ template.precompile = function (source, options) {
         options.source = source;
     }
 
-    var defaults = template.defaults.$extend({
+    var setting = {
         imports: 'art-template/lib/template-imports',
         bail: true,
         cache: false,
         debug: false
-    });
+    };
+    
+    for (var name in options) {
+        setting[name] = options[name];
+    }
 
-
-    options = defaults.$extend(options);
+    options = setting;
     source = options.source;
 
     if (typeof options.filename !== 'string') {

@@ -1,9 +1,8 @@
 {{extend './layout.art'}}
 
-{{block 'title'}}My Page{{/block}}
+{{block 'title'}}{{title}}{{/block}}
 
 {{block 'head'}}
-    {{@parent}}
     <link rel="stylesheet" href="custom.css">
 {{/block}}
 

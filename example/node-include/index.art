@@ -1,7 +1,7 @@
 <%
    include('./header.art', {
-      title: 'My Page',
-      head: parent + '<link rel="stylesheet" href="custom.css">'
+      title: title,
+      head: '<link rel="stylesheet" href="custom.css">'
    })
 %>
 
