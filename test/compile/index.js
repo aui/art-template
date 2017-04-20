@@ -321,7 +321,7 @@ module.exports = {
             data = {
                 title: 'My Page'
             };
-            result = render(data)
+            result = render(data);
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
             assert.equal(true, result.indexOf('</head>') > -1);
         },
