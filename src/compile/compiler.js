@@ -1,20 +1,47 @@
+const isKeyword = require('is-keyword-js');
 const esTokenizer = require('./es-tokenizer');
 const tplTokenizer = require('./tpl-tokenizer');
-const isKeyword = require('is-keyword-js');
 
+
+/** 传递给模板的数据引用 */
 const DATA= `$data`;
+
+/** 外部导入的所有全局变量引用 */
 const IMPORTS= `$imports`;
-const PRINT= `print`;
-const INCLUDE= `include`;
-const EXTEND= `extend`;
-const BLOCK= `block`;
-const OPTIONS= `$$options`;
-const OUT= `$$out`;
-const LINE= `$$line`;
-const BLOCKS= `$$blocks`;
-const FROM= `$$from`;
-const LAYOUT= `$$layout`;
+
+/**  $imports.$escape */
 const ESCAPE = `$escape`;
+
+/** 文本输出函数 */
+const PRINT= `print`;
+
+/** 包含子模板函数 */
+const INCLUDE= `include`;
+
+/** 继承布局模板函数 */
+const EXTEND= `extend`;
+
+/** “模板块”读写函数 */
+const BLOCK= `block`;
+
+/** 字符串拼接变量 */
+const OUT= `$$out`;
+
+/** 运行时逐行调试记录变量 [line, start, source] */
+const LINE= `$$line`;
+
+/** 所有“模板块”变量 */
+const BLOCKS= `$$blocks`;
+
+/** 继承的布局模板的文件地址变量 */
+const FROM= `$$from`;
+
+/** 导出布局模板函数 */
+const LAYOUT= `$$layout`;
+
+/** 编译设置变量 */
+const OPTIONS= `$$options`;
+
 
 const has = (object, key) => object.hasOwnProperty(key);
 const stringify = JSON.stringify;
@@ -54,31 +81,15 @@ class Compiler {
 
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
-            // 字符串拼接
+            
             [OUT]: `''`,
-
-            // 调试记录 [line, start, source]
             [LINE]: `[0,0,'']`,
-
-            // 所有“模板块”
             [BLOCKS]: `arguments[1]||{}`,
-
-            // 继承的布局模板的文件地址
             [FROM]: `null`,
-
-            // 导出布局模板函数
             [LAYOUT]: `function(){return ${IMPORTS}.$include(${FROM},${DATA},${BLOCKS},${OPTIONS})}`,
-
-            // 文本输出函数
             [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
-
-            // 包含子模板
             [INCLUDE]: `function(src,data,block){${OUT}+=${IMPORTS}.$include(src,data||${DATA},block,${OPTIONS})}`,
-
-            // 继承布局模板
             [EXTEND]: `function(from){${FROM}=from}`,
-
-            // 读写“模板块”
             [BLOCK]: `function(name,callback){if(${FROM}){${OUT}='';callback();${BLOCKS}[name]=${OUT}}else{if(typeof ${BLOCKS}[name]==='string'){${OUT}+=${BLOCKS}[name]}else{callback()}}}`
         };
 

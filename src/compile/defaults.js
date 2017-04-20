@@ -29,7 +29,7 @@ const defaults = {
     // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
     debug: detectNode ? process.env.NODE_ENV !== 'production' : false,
 
-    // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
+    // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
     // 是否开启缓存
