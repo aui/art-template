@@ -5,7 +5,7 @@
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg?branch=master)](https://coveralls.io/github/aui/art-template?branch=master)
 
-art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
+art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
 ![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
 
@@ -13,11 +13,11 @@ art-template 是一个性能出众模板引擎，无论在 NodeJS 还是在浏�
 
 ## 特性
 
-* 针对 V8 引擎优化，渲染速度出众
+* 基于编译优化，拥有极高的渲染性能
 * 支持编译、运行时调试，可定位语法、渲染错误的模板语句
+* 支持**高性能**压缩页面中的 HTML、CSS、JS 代码
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
 * 支持模板包含与模板继承
-* 支持压缩输出页面中的 HTML、CSS、JS 代码
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 同时支持原生 JavaScript 语法、简约语法

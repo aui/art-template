@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.3.0
+
+1. NodeJS: 支持预编译 `template.precompile()`
+2. 修复不完整 HTML 与 `include()` 一起使用，导致 `htmlMinifier` 输出不正常的问题
+
 ## v4.2.1
 
 1. 适配器 `loader`、`onerror`、`htmlMinifier` 第二个参数接收 `options`
