@@ -18,10 +18,10 @@ const htmlMinifier = (source, options) => {
             ignoreCustomFragments
         };
         
-        return htmlMinifier(source, setting);
-    } else {
-        return source;
+        source = htmlMinifier(source, setting);
     }
+
+    return source;
 };
 
 module.exports = htmlMinifier;

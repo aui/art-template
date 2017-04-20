@@ -10,10 +10,7 @@ const include = (filename, data, blocks, options) => {
     const compile = require('../index');
     options = options.$extend({
         filename: options.resolveFilename(filename, options),
-        source: null,
-        // include() 大部分都是代码片段，
-        // 这很可能会被 htmlMinifier 过滤掉
-        minimize: false
+        source: null
     });
     return compile(options)(data, blocks);
 };

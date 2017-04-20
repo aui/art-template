@@ -48,7 +48,7 @@ template.precompile = function (source, options) {
         cache: false,
         debug: false
     };
-    
+
     for (var name in options) {
         setting[name] = options[name];
     }
