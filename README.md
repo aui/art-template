@@ -238,10 +238,9 @@ index.art:
 ```html
 {{extend './layout.art'}}
 
-{{block 'title'}}My Page{{/block}}
+{{block 'title'}}{{title}}{{/block}}
 
 {{block 'head'}}
-    {{@parent}}
     <link rel="stylesheet" href="custom.css">
 {{/block}}
 
@@ -278,6 +277,25 @@ or
 
 `{{value | filter}}` 过滤器语法类似管道操作符，它的上一个输出作为下一个输入。
 
+## 压缩 HTML、CSS、JS
+
+```js
+template.defaults.minimize = true;
+```
+
+art-template 内建的压缩功能是在编译阶完成的，因此拥有极高的性能。但也有一个限制，它不能正常处理未闭合的 HTML 标签，因此使用 `include` 语句载入模板片段的时候请小心，请**避免**书写下面这样的模板片段：
+
+```html
+<body>
+```
+或：
+
+```html
+</body></html>
+```
+
+开启 `minimize` 后，上面的模板可能会出现意外的嵌套。
+
 ## 调试
 
 设置 `template.defaults.debug=true` 后，它会设置如下选项：
@@ -291,10 +309,10 @@ or
 }
 ```
 
-默认配置：
+`debug` 默认配置：
 
-* Node 环境，`debug: process.env.NODE_ENV !== 'production'`
-* 浏览器环境，`debug: false`
+* Node 环境 = `process.env.NODE_ENV !== 'production'`
+* 浏览器环境 = `false`
 
 ## 全局变量
 
@@ -432,13 +450,14 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
     debug: detectNode ? process.env.NODE_ENV !== 'production' : false,
 
-    // 是否容错。如果为 true，编译错误与运行时错误都会抛出异常
+    // bail 如果为 true，编译错误与运行时错误都会抛出异常
     bail: false,
 
     // 是否开启缓存
     cache: true,
 
     // 是否开启压缩。它会运行 htmlMinifier，将页面 HTML、CSS、CSS 进行压缩输出
+    // 模板 include 语句引入的子模板不会生效
     minimize: true,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
@@ -447,7 +466,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 模板路径转换器
     resolveFilename: resolveFilename,
 
-    // HTML 压缩器。lib/template-web.js 没有导入压缩器
+    // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
     // 错误调试器

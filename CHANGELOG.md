@@ -2,8 +2,7 @@
 
 ## v4.3.0
 
-1. NodeJS: 支持预编译 `template.precompile()`
-2. 修复不完整 HTML 与 `include()` 一起使用，导致 `htmlMinifier` 输出不正常的问题
+1. NodeJS: 支持预编译 API
 
 ## v4.2.1
 
