@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.3.1
+
+1. 修复预编译 API 默认配置 `imports` 错误问题
+
 ## v4.3.0
 
 1. NodeJS: 支持预编译 API

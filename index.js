@@ -5,8 +5,9 @@ var estraverse = require('estraverse');
 
 var template = require('./lib/template-node.js');
 var templatePath = require.resolve('./lib/template-node.js');
-var imports = 'var template=require(' + JSON.stringify(templatePath) + ')';
+var importsPath = require.resolve('./lib/template-imports');
 var CONSTS = template.compile.Compiler.CONSTS;
+
 
 
 
@@ -18,6 +19,7 @@ var CONSTS = template.compile.Compiler.CONSTS;
  */
 template.extension = function (module, flnm) {
     var filename = flnm || module.filename;
+    var imports = 'var template=require(' + JSON.stringify(templatePath) + ')';
     var options = JSON.stringify({
         filename: filename
     });
@@ -42,8 +44,13 @@ template.precompile = function (source, options) {
         options.source = source;
     }
 
+    if (typeof options.filename !== 'string') {
+        throw Error('template.precompile(): "options.filename" required');
+    }
+
+    // defaults
     var setting = {
-        imports: 'art-template/lib/template-imports',
+        imports: importsPath,
         bail: true,
         cache: false,
         debug: false
@@ -55,18 +62,18 @@ template.precompile = function (source, options) {
 
     options = setting;
     source = options.source;
+    var imports = options.imports;
+    var LOCAL_MODULE = /^\.+\//;
 
-    if (typeof options.filename !== 'string') {
-        throw Error('template.precompile(): "options.filename" required');
-    }
-
-    if (typeof options.imports !== 'string') {
+    if (typeof imports !== 'string') {
         throw Error('template.precompile(): "options.imports" is a file. Example:\n' +
             'options: { imports: require.resolve("art-template/lib/template-imports") }\n');
     }
 
-    var importsPath = path.relative(path.dirname(options.filename), options.imports);
-    options.imports = require(options.imports);
+    var isLocalModule = LOCAL_MODULE.test(imports);
+    var tplImportsPath = isLocalModule ? imports : path.relative(path.dirname(options.filename), imports);
+
+    options.imports = require(imports);
 
     var render = template.compile(source, options).toString();
     var ast = acorn.parse('(' + render + ')');
@@ -131,7 +138,7 @@ template.precompile = function (source, options) {
                         };
 
                         // 处理全局模板路径
-                        if (options.root && filenameNode.type === 'Literal' && /^[^\.]/.test(filenameNode.value)) {
+                        if (options.root && filenameNode.type === 'Literal' && !LOCAL_MODULE.test(filenameNode.value)) {
                             filenameNode.value = './' + path.relative(options.root, filenameNode.value).replace(/^\.\//, '');
                             delete filenameNode.raw;
                         }
@@ -166,8 +173,8 @@ template.precompile = function (source, options) {
         }
     });
 
-    render = escodegen.generate(ast);
-    render = 'var ' + CONSTS.IMPORTS + ' = require(' + JSON.stringify(importsPath) + ');\n' + 'module.exports = ' + render;
+    render = escodegen.generate(ast).replace(/^\(|\)[;\s]*?$/g, '');
+    render = 'var ' + CONSTS.IMPORTS + ' = require(' + JSON.stringify(tplImportsPath) + ');\n' + 'module.exports = ' + render + ';';
 
     return render;
 };
