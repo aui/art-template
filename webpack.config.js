@@ -9,7 +9,7 @@ const modules = dependencies.concat(...peerDependencies);
 const entry = path.resolve(__dirname, 'src', 'index');
 const dist = path.resolve(__dirname, 'lib');
 const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
-const rules = [{
+const rule = {
     test: /\.js$/,
     use: [{
         loader: 'babel-loader',
@@ -20,7 +20,7 @@ const rules = [{
         loader: 'eslint-loader'
     }],
 
-}];
+};
 
 
 module.exports = [{
@@ -37,7 +37,7 @@ module.exports = [{
     externals: modules,
     plugins: [banner],
     module: {
-        rules
+        rules: [rule]
     }
 }, {
     target: 'web',
@@ -55,11 +55,13 @@ module.exports = [{
         'path': 'empty',
         'process': false
     },
-    externals: {
-        'html-minifier': 'htmlMinifier'
+    resolve: {
+        alias: {
+            'html-minifier': 'node-noop'
+        }
     },
     plugins: [banner, new webpack.optimize.UglifyJsPlugin()],
     module: {
-        rules
+        rules: [rule]
     }
 }];

@@ -30,6 +30,12 @@ const compile = (source, options = {}) => {
     }
 
 
+    // 转换成绝对路径
+    if (options.filename) {
+        options.filename = options.resolveFilename(options.filename, options);
+    }
+
+
     const onerror = options.onerror;
     const filename = options.filename;
     const cache = options.cache;
@@ -48,11 +54,8 @@ const compile = (source, options = {}) => {
     // 加载外部模板
     if (!source) {
         
-        const target = options.resolveFilename(filename, options);
-
         try {
-            source = options.loader(target, options);
-            options.filename = target;
+            source = options.loader(filename, options);
             options.source = source;
         } catch (e) {
 
