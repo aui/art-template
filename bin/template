@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-const path = require('path');
-const filename = process.argv[2];
-const template = require('../');
-const runder = template.precompile({
-    filename: path.resolve(process.cwd(), filename)
-});
-process.stdout.write(runder);

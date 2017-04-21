@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.3.2
+
+1. 修复 web 版本无法被 requirejs 加载问题
+
 ## v4.3.1
 
 1. 修复预编译 API 默认配置 `imports` 错误问题
