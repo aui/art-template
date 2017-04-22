@@ -57,10 +57,10 @@ const defaults = {
     // 缓存中心适配器（依赖 filename 字段）
     caches: caches,
 
-    // 模板根目录。如果 filename 为全局路径，则会基于此查找模板
+    // 模板根目录。如果 filename 字段不是本地路径，则在 root 查找模板
     root: '/',
 
-    // 默认后缀名。如果没有后缀名，则会自动基于此补全
+    // 默认后缀名。如果没有后缀名，则会自动添加 extname
     extname: '.art',
 
     // 导入的模板变量
