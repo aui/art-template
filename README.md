@@ -13,15 +13,15 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 
 ## 特性
 
-* 基于编译优化，拥有极高的渲染性能
-* 支持编译、运行时调试，可定位语法、渲染错误的模板语句
-* 支持**高性能**压缩页面中的 HTML、CSS、JS 代码
+* 拥有接近 JavaScript 渲染极限的的性能
+* 调试友好：语法、运行时错误精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
+* 支持压缩输出页面中的 HTML、CSS、JS 代码
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
 * 支持模板包含与模板继承
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
-* 同时支持原生 JavaScript 语法、简约语法
-* 支持定义模板的语法规则
+* 支持原生 JavaScript 语法与简约语法混合书写
+* 支持自定义模板的语法解析规则
 * 浏览器版本仅 6KB 大小
 
 ## 快速入门
@@ -503,3 +503,9 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ## 授权协议
 
 [MIT](./LICENSE)
+
+## 赞助
+
+<img width="256" src="https://cloud.githubusercontent.com/assets/1791748/25306225/7f218e50-27bb-11e7-8dc2-30b2a923e6e9.png" alt="微信支付" />
+
+赞助 art-template 一杯咖啡 :-)
