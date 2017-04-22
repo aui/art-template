@@ -4,43 +4,43 @@ const tplTokenizer = require('./tpl-tokenizer');
 
 
 /** 传递给模板的数据引用 */
-const DATA= `$data`;
+const DATA = `$data`;
 
 /** 外部导入的所有全局变量引用 */
-const IMPORTS= `$imports`;
+const IMPORTS = `$imports`;
 
 /**  $imports.$escape */
 const ESCAPE = `$escape`;
 
 /** 文本输出函数 */
-const PRINT= `print`;
+const PRINT = `print`;
 
 /** 包含子模板函数 */
-const INCLUDE= `include`;
+const INCLUDE = `include`;
 
 /** 继承布局模板函数 */
-const EXTEND= `extend`;
+const EXTEND = `extend`;
 
 /** “模板块”读写函数 */
-const BLOCK= `block`;
+const BLOCK = `block`;
 
 /** 字符串拼接变量 */
-const OUT= `$$out`;
+const OUT = `$$out`;
 
 /** 运行时逐行调试记录变量 [line, start, source] */
-const LINE= `$$line`;
+const LINE = `$$line`;
 
 /** 所有“模板块”变量 */
-const BLOCKS= `$$blocks`;
+const BLOCKS = `$$blocks`;
 
 /** 继承的布局模板的文件地址变量 */
-const FROM= `$$from`;
+const FROM = `$$from`;
 
 /** 导出布局模板函数 */
-const LAYOUT= `$$layout`;
+const LAYOUT = `$$layout`;
 
 /** 编译设置变量 */
-const OPTIONS= `$$options`;
+const OPTIONS = `$$options`;
 
 
 const has = (object, key) => object.hasOwnProperty(key);
@@ -63,11 +63,14 @@ class Compiler {
         // 编译选项
         this.options = options;
 
-        // 记录编译后生成的代码
-        this.scripts = [];
+        // 所有语句堆栈
+        this.stacks = [];
 
         // 运行时注入的上下文
         this.context = [];
+
+        // 模板语句编译后的代码
+        this.scripts = [];
 
         // context map
         this.CONTEXT_MAP = {};
@@ -81,7 +84,7 @@ class Compiler {
 
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
-            
+
             [OUT]: `''`,
             [LINE]: `[0,0,'']`,
             [BLOCKS]: `arguments[1]||{}`,
@@ -113,7 +116,7 @@ class Compiler {
         if (minimize) {
             try {
                 source = htmlMinifier(source, options);
-            } catch(error){}
+            } catch (error) {}
         }
 
 
@@ -243,10 +246,6 @@ class Compiler {
 
 
         const source = tplToken.value;
-        const line = tplToken.line;
-        const start = tplToken.start;
-        const options = this.options;
-        const compileDebug = options.compileDebug;
         const script = tplToken.script;
         const output = script.output;
         let code = script.code.trim();
@@ -258,16 +257,6 @@ class Compiler {
             } else {
                 code = `${OUT}+=${ESCAPE}(${script.code})`;
             }
-        }
-
-
-        if (compileDebug) {
-            const lineData = [line, start, stringify(source)].join(',');
-            this.scripts.push({
-                source,
-                tplToken,
-                code: `${LINE}=[${lineData}]`
-            });
         }
 
 
@@ -341,29 +330,51 @@ class Compiler {
         const options = this.options;
         const context = this.context;
         const scripts = this.scripts;
+        const stacks = this.stacks;
         const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
+        const map = [];
         const extendMode = has(this.CONTEXT_MAP, EXTEND);
 
-        const useStrictCode = `'use strict'`;
-        const contextCode = `var ` + context.map(({
+        const toMap = (line, script) => {
+            map.push({
+                generated: {
+                    line,
+                    start: 0
+                },
+                original: {
+                    line: script.tplToken.line,
+                    start: script.tplToken.start
+                }
+            });
+            return script.code;
+        };
+
+        stacks.push(`function(${DATA}){`);
+        stacks.push(`'use strict'`);
+        stacks.push(`var ` + context.map(({
             name,
             value
-        }) => `${name}=${value}`).join(`,`);
-        const scriptsCode = scripts.map(script => script.code).join(`\n`);
-        const returnCode = extendMode ? `return ${LAYOUT}()` : `return ${OUT}`;
-
-        let renderCode = [
-            useStrictCode,
-            contextCode,
-            scriptsCode,
-            returnCode
-        ].join(`\n`);
+        }) => `${name}=${value}`).join(`,`));
 
 
         if (options.compileDebug) {
-            const throwCode = '{' + [
+
+            stacks.push(`try{`);
+
+            scripts.forEach(script => {
+                stacks.push(`${LINE}=[${[
+                    script.tplToken.line,
+                    script.tplToken.start,
+                    stringify(script.source)
+                ].join(',')}]`);
+                stacks.push(toMap(stacks.length, script));
+            });
+
+            stacks.push(`}catch(error){`);
+
+            stacks.push('throw {' + [
                 `path:${stringify(filename)}`,
                 `name:'RuntimeError'`,
                 `message:error.message`,
@@ -371,15 +382,27 @@ class Compiler {
                 `start:${LINE}[1]+1`,
                 `source:${LINE}[2]`,
                 `stack:error.stack`
-            ].join(`,`) + '}';
-            renderCode = `try{${renderCode}}catch(error){throw ${throwCode}}`;
+            ].join(`,`) + '}');
+
+            stacks.push(`}`);
+
+        } else {
+            scripts.forEach(script => {
+                stacks.push(toMap(stacks.length, script));
+            });
         }
 
-        renderCode = `function(${DATA}){\n${renderCode}\n}`;
 
+        stacks.push(extendMode ? `return ${LAYOUT}()` : `return ${OUT}`);
+        stacks.push(`}`);
+
+
+        const renderCode = stacks.join(`\n`);
 
         try {
-            return new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
+            const result = new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
+            result.map = map;
+            return result;
         } catch (e) {
 
             let index = 0;

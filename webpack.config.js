@@ -8,18 +8,26 @@ const modules = dependencies.concat(...peerDependencies);
 
 const entry = path.resolve(__dirname, 'src', 'index');
 const dist = path.resolve(__dirname, 'lib');
+const filename = '[name].js';
+const library = 'template';
 const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
+const optimize = process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin() : () => {};
 const rule = {
     test: /\.js$/,
     use: [{
         loader: 'babel-loader',
         options: {
-            presets: ['es2015']
+            presets: [
+                ['es2015', {
+                    'loose': true
+                }]
+            ]
         }
     }, {
+        loader: 'es3ify-loader'
+    }, {
         loader: 'eslint-loader'
-    }],
-
+    }]
 };
 
 
@@ -30,8 +38,8 @@ module.exports = [{
     },
     output: {
         path: dist,
-        filename: '[name].js',
-        library: 'template',
+        filename,
+        library,
         libraryTarget: 'commonjs2'
     },
     externals: modules,
@@ -46,8 +54,8 @@ module.exports = [{
     },
     output: {
         path: dist,
-        filename: '[name].js',
-        library: 'template',
+        filename,
+        library,
         libraryTarget: 'umd'
     },
     node: {
@@ -60,7 +68,7 @@ module.exports = [{
             'html-minifier': 'node-noop'
         }
     },
-    plugins: [banner, new webpack.optimize.UglifyJsPlugin()],
+    plugins: [banner, optimize],
     module: {
         rules: [rule]
     }
