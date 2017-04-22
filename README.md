@@ -44,7 +44,7 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 
 ```js
 var template = require('art-template');
-var html = template(__diranme + '/tpl-user.art', {
+var html = template(__dirname + '/tpl-user.art', {
     user: {
         name: 'aui'
     }
