@@ -24,6 +24,8 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 * 支持自定义模板的语法解析规则
 * 浏览器版本仅 6KB 大小
 
+[art-template@4 新特性详细介绍](https://github.com/aui/art-template/issues/369)
+
 ## 快速入门
 
 ### 模板语法
@@ -459,7 +461,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     cache: true,
 
     // 是否开启压缩。它会运行 htmlMinifier，将页面 HTML、CSS、CSS 进行压缩输出
-    // 模板 include 语句引入的子模板不会生效
+    // 如果模板包含没有闭合的 HTML 标签，请不要打开 minimize，否则可能被 htmlMinifier 修复或过滤
     minimize: true,
 
     // 是否编译调试版。编译为调试版本可以在运行时进行 DEBUG
@@ -480,10 +482,10 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 缓存中心适配器（依赖 filename 字段）
     caches: caches,
 
-    // 模板根目录。如果 filename 为全局路径，则会基于此查找模板
+    // 模板根目录。如果 filename 字段不是本地路径，则在 root 查找模板
     root: '/',
 
-    // 默认后缀名。如果没有后缀名，则会自动基于此补全
+    // 默认后缀名。如果没有后缀名，则会自动添加 extname
     extname: '.art',
 
     // 导入的模板变量
