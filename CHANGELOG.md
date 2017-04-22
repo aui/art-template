@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.4.0
+
+1. 预编译 API 支持输出 sourceMap
+
 ## v4.3.2
 
 1. 修复 web 版本无法被 requirejs 加载问题

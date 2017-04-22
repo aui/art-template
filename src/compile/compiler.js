@@ -334,7 +334,22 @@ class Compiler {
         const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
+        const map = [];
         const extendMode = has(this.CONTEXT_MAP, EXTEND);
+
+        const toMap = (line, script) => {
+            map.push({
+                generated: {
+                    line,
+                    start: 0
+                },
+                original: {
+                    line: script.tplToken.line,
+                    start: script.tplToken.start
+                }
+            });
+            return script.code;
+        };
 
         stacks.push(`function(${DATA}){`);
         stacks.push(`'use strict'`);
@@ -354,7 +369,7 @@ class Compiler {
                     script.tplToken.start,
                     stringify(script.source)
                 ].join(',')}]`);
-                stacks.push(script.code);
+                stacks.push(toMap(stacks.length, script));
             });
 
             stacks.push(`}catch(error){`);
@@ -372,7 +387,9 @@ class Compiler {
             stacks.push(`}`);
 
         } else {
-            stacks.push(...scripts.map(script => script.code));
+            scripts.forEach(script => {
+                stacks.push(toMap(stacks.length, script));
+            });
         }
 
 
@@ -383,7 +400,9 @@ class Compiler {
         const renderCode = stacks.join(`\n`);
 
         try {
-            return new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
+            const result = new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
+            result.map = map;
+            return result;
         } catch (e) {
 
             let index = 0;

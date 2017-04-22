@@ -23,7 +23,7 @@
     "lib/"
   ],
   "engines": {
-    "node": ">= 4.0.0"
+    "node": ">= 1.0.0"
   },
   "dependencies": {
     "acorn": "^5.0.3",
@@ -31,7 +31,9 @@
     "escodegen": "^1.8.1",
     "estraverse": "^4.2.0",
     "html-minifier": "^3.4.3",
-    "is-keyword-js": "^1.0.3"
+    "is-keyword-js": "^1.0.3",
+    "merge-source-map": "^1.0.3",
+    "source-map": "^0.5.6"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",

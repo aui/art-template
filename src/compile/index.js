@@ -81,7 +81,7 @@ const compile = (source, options = {}) => {
     const render = (data, blocks) => {
 
         try {
-            return render.source(data, blocks);
+            return render.original(data, blocks);
         } catch (error) {
 
             // 运行时出错以调试模式重载
@@ -102,7 +102,8 @@ const compile = (source, options = {}) => {
 
 
     try {
-        render.source = compiler.build();
+        render.original = compiler.build();
+        render.map = render.original.map;
 
         // 缓存编译成功的模板
         if (cache && filename) {
@@ -119,7 +120,7 @@ const compile = (source, options = {}) => {
 
 
     render.toString = function() {
-        return render.source.toString();
+        return render.original.toString();
     };
 
 

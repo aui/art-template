@@ -498,7 +498,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ## 兼容性
 
 1. NodeJS v1.0+
-2. IE9+（art-template@4 基于 ES5，小于 IE9 的浏览器需要 [es5-shim](https://github.com/es-shims/es5-shim) 和 [JSON](https://github.com/douglascrockford/JSON-js) 才可运行）
+2. IE9+
 
 ## 授权协议
 
