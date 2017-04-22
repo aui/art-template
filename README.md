@@ -44,7 +44,7 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 
 ```js
 var template = require('art-template');
-var html = template(__diranme + '/tpl-user.art', {
+var html = template(__dirname + '/tpl-user.art', {
     user: {
         name: 'aui'
     }
@@ -503,9 +503,12 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ## 授权协议
 
 [MIT](./LICENSE)
+<<<<<<< HEAD
 
 ## 赞助
 
 <img width="256" src="https://cloud.githubusercontent.com/assets/1791748/25306225/7f218e50-27bb-11e7-8dc2-30b2a923e6e9.png" alt="微信支付" />
 
 赞助 art-template 一杯咖啡 :-)
+=======
+>>>>>>> aeda91d2791004ed81e67ef2180f658dc5d840b1
