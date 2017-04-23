@@ -106,7 +106,7 @@ const compile = (source, options = {}) => {
 
     try {
         render.original = compiler.build();
-        render.map = render.original.map;
+        render.mappings = render.original.mappings;
 
         // 缓存编译成功的模板
         if (cache && filename) {

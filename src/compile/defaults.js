@@ -17,7 +17,7 @@ const defaults = {
     // 模板内容。如果没有此字段，则会根据 filename 来加载模板内容
     source: null,
 
-    // 模板名字
+    // 模板名
     filename: null,
 
     // 模板语法规则列表

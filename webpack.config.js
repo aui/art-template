@@ -17,11 +17,7 @@ const rule = {
     use: [{
         loader: 'babel-loader',
         options: {
-            presets: [
-                ['es2015', {
-                    'loose': true
-                }]
-            ]
+            presets: ['es2015']
         }
     }, {
         loader: 'es3ify-loader'
