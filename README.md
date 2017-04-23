@@ -500,7 +500,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 ## 兼容性
 
 1. NodeJS v1.0+
-2. IE9+（低版本浏览器兼容还需要等一段时间才能完成）
+2. IE8+（IE8 需要 [es5-shim](https://github.com/es-shims/es5-shim)，[示例](./example/web-ie-compatible/index.html)）
 
 ## 授权协议
 

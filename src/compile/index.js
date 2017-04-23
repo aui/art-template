@@ -83,12 +83,26 @@ const compile = (source, options = {}) => {
 
     }
 
+    let fn;
     const compiler = new Compiler(options);
+
+
+    try {
+        fn = compiler.build();
+    } catch (error) {
+        error = new TemplateError(error);
+        if (options.bail) {
+            throw error;
+        } else {
+            return debugRender(error, options);
+        }
+    }
+
 
     const render = (data, blocks) => {
 
         try {
-            return render.original(data, blocks);
+            return fn(data, blocks);
         } catch (error) {
 
             // 运行时出错以调试模式重载
@@ -109,30 +123,12 @@ const compile = (source, options = {}) => {
         }
     };
 
+    render.mappings = fn.mappings;
+    render.toString = () => fn.toString();
 
-    try {
-        render.original = compiler.build();
-        render.mappings = render.original.mappings;
-
-        // 缓存编译成功的模板
-        if (cache && filename) {
-            caches.set(filename, render);
-        }
-
-    } catch (error) {
-        error = new TemplateError(error);
-        if (options.bail) {
-            throw error;
-        } else {
-            return debugRender(error, options);
-        }
+    if (cache && filename) {
+        caches.set(filename, render);
     }
-
-
-    render.toString = function () {
-        return render.original.toString();
-    };
-
 
     return render;
 };

@@ -11,16 +11,27 @@ const dist = path.resolve(__dirname, 'lib');
 const filename = '[name].js';
 const library = 'template';
 const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
-const optimize = process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin() : () => {};
+const optimize = process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
+    compress: {
+        screw_ie8: false
+    },
+    mangleProperties: {
+        screw_ie8: false
+    },
+    mangle: {
+        screw_ie8: false
+    },
+    output: {
+        screw_ie8: false
+    }
+}) : () => {};
 const rule = {
     test: /\.js$/,
     use: [{
         loader: 'babel-loader',
         options: {
-            presets: ['es2015']
+            presets: ['es2015-loose']
         }
-    }, {
-        loader: 'es3ify-loader'
     }, {
         loader: 'eslint-loader'
     }]
