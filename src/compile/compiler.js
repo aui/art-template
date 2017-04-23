@@ -398,7 +398,7 @@ class Compiler {
                 `path:${stringify(filename)}`,
                 `message:error.message`,
                 `line:${LINE}[0]+1`,
-                `start:${LINE}[1]+1`,
+                `column:${LINE}[1]+1`,
                 `source:${LINE}[2]`,
                 `stack:error.stack`
             ].join(`,`) + '}');
@@ -446,7 +446,7 @@ class Compiler {
                 path: filename,
                 message: error.message,
                 line: line + 1,
-                start: start + 1,
+                column: start + 1,
                 source: source2,
                 script: renderCode,
                 stack: error.stack

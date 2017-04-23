@@ -3,6 +3,13 @@ const defaults = require('./defaults');
 const TemplateError = require('./template-error');
 
 
+const debugRender = (error, options) => {
+    options.onerror(error, options);
+    const render = () => `{Template Error}`;
+    render.mappings = [];
+    return render;
+};
+
 
 /**
  * 编译模版
@@ -38,7 +45,6 @@ const compile = (source, options = {}) => {
     }
 
 
-    const onerror = options.onerror;
     const filename = options.filename;
     const cache = options.cache;
     const caches = options.caches;
@@ -55,7 +61,7 @@ const compile = (source, options = {}) => {
 
     // 加载外部模板
     if (!source) {
-        
+
         try {
             source = options.loader(filename, options);
             options.source = source;
@@ -70,7 +76,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error, options);
+                return debugRender(error, options);
             }
 
         }
@@ -97,7 +103,7 @@ const compile = (source, options = {}) => {
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error, options)();
+                return debugRender(error, options)();
             }
 
         }
@@ -118,12 +124,12 @@ const compile = (source, options = {}) => {
         if (options.bail) {
             throw error;
         } else {
-            return onerror(error, options);
+            return debugRender(error, options);
         }
     }
 
 
-    render.toString = function() {
+    render.toString = function () {
         return render.original.toString();
     };
 
