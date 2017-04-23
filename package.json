@@ -2,7 +2,7 @@
   "name": "art-template",
   "description": "JavaScript Template Engine",
   "homepage": "http://aui.github.com/art-template/",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "keywords": [
     "template"
   ],
@@ -38,9 +38,9 @@
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.1",
-    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015-loose": "^8.0.0",
     "coveralls": "^2.13.0",
-    "es3ify-loader": "^0.2.0",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "istanbul": "^0.4.5",
