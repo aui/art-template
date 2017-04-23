@@ -13,7 +13,7 @@ module.exports = {
             };
 
             test(['header.html', {
-                root: '/'
+                root: '/',
             }], '/header.html');
 
             test(['header.html', {
@@ -24,13 +24,13 @@ module.exports = {
                 root: '/Root',
                 extname: '.art',
                 filename: '/Root/base/index.html'
-            }], '/Root/base/header.html');
+            }], '/Root/header.html');
 
             test(['header.html', {
                 root: '/Root',
                 extname: '.art',
                 filename: '/Web/base/index.html'
-            }], '/Web/base/header.html');
+            }], '/Root/header.html');
 
             test(['./header.html', {
                 root: '/'
