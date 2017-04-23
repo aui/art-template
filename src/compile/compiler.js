@@ -375,8 +375,8 @@ class Compiler {
             stacks.push(`}catch(error){`);
 
             stacks.push('throw {' + [
-                `path:${stringify(filename)}`,
                 `name:'RuntimeError'`,
+                `path:${stringify(filename)}`,
                 `message:error.message`,
                 `line:${LINE}[0]+1`,
                 `start:${LINE}[1]+1`,
@@ -403,7 +403,7 @@ class Compiler {
             const result = new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
             result.map = map;
             return result;
-        } catch (e) {
+        } catch (error) {
 
             let index = 0;
             let line = 0;
@@ -422,14 +422,14 @@ class Compiler {
             };
 
             throw {
-                path: filename,
                 name: `CompileError`,
-                message: e.message,
+                path: filename,
+                message: error.message,
                 line: line + 1,
                 start: start + 1,
                 source: source2,
                 script: renderCode,
-                stack: e.stack
+                stack: error.stack
             };
         }
 

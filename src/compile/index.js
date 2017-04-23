@@ -1,5 +1,7 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
+const TemplateError = require('./template-error');
+
 
 
 /**
@@ -59,12 +61,11 @@ const compile = (source, options = {}) => {
             options.source = source;
         } catch (e) {
 
-            const error = {
-                path: filename,
+            const error = new TemplateError({
                 name: 'CompileError',
                 message: `template not found: ${e.message}`,
                 stack: e.stack
-            };
+            });
 
             if (options.bail) {
                 throw error;
@@ -91,6 +92,8 @@ const compile = (source, options = {}) => {
                 return compile(options)(data, blocks);
             }
 
+            error = new TemplateError(error);
+
             if (options.bail) {
                 throw error;
             } else {
@@ -111,6 +114,7 @@ const compile = (source, options = {}) => {
         }
 
     } catch (error) {
+        error = new TemplateError(error);
         if (options.bail) {
             throw error;
         } else {
