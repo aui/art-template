@@ -1,4 +1,3 @@
-const isKeyword = require('is-keyword-js');
 const esTokenizer = require('./es-tokenizer');
 const tplTokenizer = require('./tpl-tokenizer');
 
@@ -190,7 +189,7 @@ class Compiler {
         const imports = options.imports;
         const contextMap = this.CONTEXT_MAP;
 
-        if (!has(contextMap, name) && !has(external, name) && !isKeyword(name)) {
+        if (!has(contextMap, name) && !has(external, name)) {
 
             if (has(internal, name)) {
                 value = internal[name];

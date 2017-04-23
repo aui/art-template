@@ -63,8 +63,8 @@ module.exports = {
                 value: '$data.value'
             });
 
-            test('if', {});
-            test('for', {});
+            //test('if', {});
+            //test('for', {});
             test('$data', {});
             test('$imports', {});
 
