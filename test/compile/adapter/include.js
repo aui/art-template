@@ -24,15 +24,6 @@ module.exports = {
                 root
             })));
 
-            assert.deepEqual('hello world', include('file.html', data, null, defaults.$extend({
-                filename: base,
-                root: '/'
-            })));
-
-            assert.deepEqual('hello world', include('file.html', data, null, defaults.$extend({
-                filename: base,
-                root
-            })));
         }
     }
 };

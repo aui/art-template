@@ -54,7 +54,8 @@ module.exports = {
                 runder = require('./res/extension.compile-error.2.tpl');
                 
             } catch (e) {
-                assert.deepEqual('CompileError', e.name);
+                assert.deepEqual('TemplateError', e.name);
+                assert.deepEqual(true, e.message.indexOf('CompileError') !== -1);
             }
 
             assert.deepEqual('undefined', typeof runder);
@@ -76,7 +77,8 @@ module.exports = {
                 const render = require(path.join(__dirname, 'res', 'extension.runtime-error.2.tpl'));
                 render({});
             } catch (e) {
-                assert.deepEqual('RuntimeError', e.name);
+                assert.deepEqual('TemplateError', e.name);
+                assert.deepEqual(true, e.message.indexOf('RuntimeError') !== -1);
             }
             defaults.bail = resetBail;
         }

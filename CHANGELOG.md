@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.4.1
+
+1. 修正 `root` 配置的行为，如果 filename 为全局模块路径，会直接根据 `root` 来定位
+2. 修复多行模板逻辑表达式下 sourceMap 行号记录不准确的 BUG
+3. 标准化错误处理
+
 ## v4.4.0
 
 1. 预编译 API 支持输出 sourceMap

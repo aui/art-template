@@ -1,4 +1,3 @@
-const isKeyword = require('is-keyword-js');
 const esTokenizer = require('./es-tokenizer');
 const tplTokenizer = require('./tpl-tokenizer');
 
@@ -84,7 +83,6 @@ class Compiler {
 
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
-
             [OUT]: `''`,
             [LINE]: `[0,0,'']`,
             [BLOCKS]: `arguments[1]||{}`,
@@ -191,7 +189,7 @@ class Compiler {
         const imports = options.imports;
         const contextMap = this.CONTEXT_MAP;
 
-        if (!has(contextMap, name) && !has(external, name) && !isKeyword(name)) {
+        if (!has(contextMap, name) && !has(external, name)) {
 
             if (has(internal, name)) {
                 value = internal[name];
@@ -248,7 +246,7 @@ class Compiler {
         const source = tplToken.value;
         const script = tplToken.script;
         const output = script.output;
-        let code = script.code.trim();
+        let code = script.code;
 
 
         if (output) {
@@ -334,22 +332,37 @@ class Compiler {
         const source = options.source;
         const filename = options.filename;
         const imports = options.imports;
-        const map = [];
+        const mappings = [];
         const extendMode = has(this.CONTEXT_MAP, EXTEND);
 
-        const toMap = (line, script) => {
-            map.push({
+        let offsetLine = 0;
+
+        // Create SourceMap: mapping
+        const mapping = (code, {
+            line,
+            start
+        }) => {
+            const node = {
                 generated: {
-                    line,
-                    start: 0
+                    line: stacks.length + offsetLine + 1,
+                    column: 1
                 },
                 original: {
-                    line: script.tplToken.line,
-                    start: script.tplToken.start
+                    line: line + 1,
+                    column: start + 1
                 }
-            });
-            return script.code;
+            };
+
+            offsetLine += code.split(/\n/).length - 1;
+            return node;
         };
+
+
+        // Trim code
+        const trim = code => {
+            return code.replace(/^[\t ]+|[\t ]$/g, '');
+        };
+
 
         stacks.push(`function(${DATA}){`);
         stacks.push(`'use strict'`);
@@ -364,22 +377,27 @@ class Compiler {
             stacks.push(`try{`);
 
             scripts.forEach(script => {
-                stacks.push(`${LINE}=[${[
-                    script.tplToken.line,
-                    script.tplToken.start,
-                    stringify(script.source)
-                ].join(',')}]`);
-                stacks.push(toMap(stacks.length, script));
+
+                if (script.tplToken.type === tplTokenizer.TYPE_EXPRESSION) {
+                    stacks.push(`${LINE}=[${[
+                        script.tplToken.line,
+                        script.tplToken.start,
+                        stringify(script.source)
+                    ].join(',')}]`);
+                }
+
+                mappings.push(mapping(script.code, script.tplToken));
+                stacks.push(trim(script.code));
             });
 
             stacks.push(`}catch(error){`);
 
             stacks.push('throw {' + [
-                `path:${stringify(filename)}`,
                 `name:'RuntimeError'`,
+                `path:${stringify(filename)}`,
                 `message:error.message`,
                 `line:${LINE}[0]+1`,
-                `start:${LINE}[1]+1`,
+                `column:${LINE}[1]+1`,
                 `source:${LINE}[2]`,
                 `stack:error.stack`
             ].join(`,`) + '}');
@@ -388,7 +406,8 @@ class Compiler {
 
         } else {
             scripts.forEach(script => {
-                stacks.push(toMap(stacks.length, script));
+                mappings.push(mapping(script.code, script.tplToken));
+                stacks.push(trim(script.code));
             });
         }
 
@@ -401,9 +420,9 @@ class Compiler {
 
         try {
             const result = new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
-            result.map = map;
+            result.mappings = mappings;
             return result;
-        } catch (e) {
+        } catch (error) {
 
             let index = 0;
             let line = 0;
@@ -422,14 +441,14 @@ class Compiler {
             };
 
             throw {
-                path: filename,
                 name: `CompileError`,
-                message: e.message,
+                path: filename,
+                message: error.message,
                 line: line + 1,
-                start: start + 1,
+                column: start + 1,
                 source: source2,
                 script: renderCode,
-                stack: e.stack
+                stack: error.stack
             };
         }
 

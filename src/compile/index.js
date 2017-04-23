@@ -1,5 +1,14 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
+const TemplateError = require('./template-error');
+
+
+const debugRender = (error, options) => {
+    options.onerror(error, options);
+    const render = () => `{Template Error}`;
+    render.mappings = [];
+    return render;
+};
 
 
 /**
@@ -36,7 +45,6 @@ const compile = (source, options = {}) => {
     }
 
 
-    const onerror = options.onerror;
     const filename = options.filename;
     const cache = options.cache;
     const caches = options.caches;
@@ -53,23 +61,22 @@ const compile = (source, options = {}) => {
 
     // 加载外部模板
     if (!source) {
-        
+
         try {
             source = options.loader(filename, options);
             options.source = source;
         } catch (e) {
 
-            const error = {
-                path: filename,
+            const error = new TemplateError({
                 name: 'CompileError',
                 message: `template not found: ${e.message}`,
                 stack: e.stack
-            };
+            });
 
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error, options);
+                return debugRender(error, options);
             }
 
         }
@@ -91,10 +98,12 @@ const compile = (source, options = {}) => {
                 return compile(options)(data, blocks);
             }
 
+            error = new TemplateError(error);
+
             if (options.bail) {
                 throw error;
             } else {
-                return onerror(error, options)();
+                return debugRender(error, options)();
             }
 
         }
@@ -103,7 +112,7 @@ const compile = (source, options = {}) => {
 
     try {
         render.original = compiler.build();
-        render.map = render.original.map;
+        render.mappings = render.original.mappings;
 
         // 缓存编译成功的模板
         if (cache && filename) {
@@ -111,15 +120,16 @@ const compile = (source, options = {}) => {
         }
 
     } catch (error) {
+        error = new TemplateError(error);
         if (options.bail) {
             throw error;
         } else {
-            return onerror(error, options);
+            return debugRender(error, options);
         }
     }
 
 
-    render.toString = function() {
+    render.toString = function () {
         return render.original.toString();
     };
 

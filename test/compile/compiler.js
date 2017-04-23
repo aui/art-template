@@ -63,15 +63,15 @@ module.exports = {
                 value: '$data.value'
             });
 
-            test('if', {});
-            test('for', {});
+            //test('if', {});
+            //test('for', {});
             test('$data', {});
             test('$imports', {});
 
             test('print', {
                 print: "function(){$$out+=''.concat.apply('',arguments)}"
             });
-            
+
             test('include', {
                 $$out: `''`,
                 include: "function(src,data,block){$$out+=$imports.$include(src,data||$data,block,$$options)}"
@@ -115,7 +115,7 @@ module.exports = {
             test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
             test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$$out+="\\nhello\\n"', '}']);
+            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$$out+="\\nhello\\n"', ' } ']);
         }
     },
 
@@ -189,7 +189,6 @@ module.exports = {
         }
     },
 
-
     'checkExpression': {
         'basic': () => {
             const test = (code, result, options) => {
@@ -220,6 +219,111 @@ module.exports = {
         }
     },
 
+    'mappings': {
+        basic: () => {
+            const test = (source, result) => {
+                const options = defaults.$extend({
+                    source,
+                    minimize: false
+                });
+                const compiler = new Compiler(options);
+                const render = compiler.build();
+                const mappings = render.mappings;
+                assert.deepEqual(result, mappings);
+            };
+
+            test(`{{value}}`, [{
+                generated: {
+                    line: 4,
+                    column: 1
+                },
+                original: {
+                    line: 1,
+                    column: 1
+                }
+            }]);
+
+            test(`abc{{value}}`, [{
+                generated: {
+                    line: 4,
+                    column: 1
+                },
+                original: {
+                    line: 1,
+                    column: 1
+                }
+            }, {
+                generated: {
+                    line: 5,
+                    column: 1
+                },
+                original: {
+                    line: 1,
+                    column: 4
+                }
+            }]);
+
+            test(`abc\n{{value}}`, [{
+                generated: {
+                    line: 4,
+                    column: 1
+                },
+                original: {
+                    line: 1,
+                    column: 1
+                }
+            }, {
+                generated: {
+                    line: 5,
+                    column: 1
+                },
+                original: {
+                    line: 2,
+                    column: 1
+                }
+            }]);
+
+
+            test(`abc\n<%\n print('s') \n eeee(2) %>\n{{a}}`, [{
+                generated: {
+                    line: 4,
+                    column: 1
+                },
+                original: {
+                    line: 1,
+                    column: 1
+                }
+            }, {
+                generated: {
+                    line: 5,
+                    column: 1
+                },
+                original: {
+                    line: 2,
+                    column: 1
+                }
+            }, {
+                generated: {
+                    line: 8,
+                    column: 1
+                },
+                original: {
+                    line: 4,
+                    column: 12
+                }
+            }, {
+                generated: {
+                    line: 9,
+                    column: 1
+                },
+                original: {
+                    line: 5,
+                    column: 1
+                }
+            }]);
+        }
+    },
+
     'build': {
         basic: () => {
             const test = (code, result, options) => {
@@ -240,7 +344,7 @@ module.exports = {
             test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
             test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
 
-            test('<% if (value) { %>\nhello\n<% } %>', ['if (value) {', '$$out+="\\nhello\\n"', '}']);
+            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$$out+="\\nhello\\n"', ' } ']);
 
             // compileDebug
             test('<%-value%>', ['$$out+=value'], {
