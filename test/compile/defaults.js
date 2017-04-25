@@ -30,15 +30,6 @@ module.exports = {
             assert.deepEqual(null, options.rules[0]);
             assert.deepEqual(rules[1], options.rules[1]);
             assert.deepEqual(length, rules.length);
-
-            // const rules = defaults.rules;
-            // const length = rules.length;
-            // const options = defaults.$extend({
-            //     rules: []
-            // });
-
-            // assert.deepEqual(0, options.rules.length);
-            // assert.deepEqual(length, rules.length);
         }
     }
 };

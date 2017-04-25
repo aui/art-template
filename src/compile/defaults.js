@@ -23,14 +23,25 @@ const toType = value => {
  * @return {Object}
  */
 function extend(options) {
-    const copy = Object.create(this);
+    let copy = Object.create(this);
 
     for (let name in options) {
+
+        let object;
         const value = options[name];
         const type = toType(value);
 
-        if (type === 'Array' || type === 'Object') {
-            copy[name] = extend.call(copy[name], value);
+        if (type === 'Object') {
+            object = Object.create(copy[name]);
+        } else if (type === 'Array') {
+            object = [].concat(copy[name]);
+        }
+
+        if (object) {
+            for (let index in value) {
+                object[index] = value[index];
+            }
+            copy[name] = object;
         } else {
             copy[name] = value;
         }
