@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.4.3
+
+1. 支持对 `options.imports` 的深拷贝 [#1](https://github.com/aui/express-art-template/issues/1)
+
 ## v4.4.2
 
 1. 兼容 IE8
