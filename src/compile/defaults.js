@@ -11,6 +11,33 @@ const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
 
 
+const toString = Object.prototype.toString;
+const isObject = value => {
+    return value !== null && toString.call(value).slice(8, -1) === 'Object';
+};
+
+
+/**
+ * 继承默认配置
+ * @param   {Object}    options
+ * @return {Object}
+ */
+function extend(options) {
+    const copy = Object.create(this);
+
+    for (let name in options) {
+        let value = options[name];
+        if (isObject(value)) {
+            copy[name] = extend.call(copy[name], value);
+        } else {
+            copy[name] = value;
+        }
+    }
+
+    return copy;
+};
+
+
 /** 模板编译器默认配置 */
 const defaults = {
 
@@ -73,20 +100,5 @@ const defaults = {
 };
 
 
-/**
- * 继承默认配置
- * @param   {Object}    options
- * @return {Object}
- */
-defaults.$extend = function(options) {
-    const copy = Object.create(this);
-
-    for (let name in options) {
-        copy[name] = options[name]
-    }
-
-    return copy;
-};
-
-
+defaults.$extend = extend;
 module.exports = defaults;
