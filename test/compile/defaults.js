@@ -21,24 +21,24 @@ module.exports = {
         },
 
         'rules': () => {
-            // const rules = defaults.rules;
-            // const length = rules.length;
-            // const options = defaults.$extend({
-            //     rules: [null]
-            // });
-
-            // assert.deepEqual(null, options.rules[2]);
-            // assert.deepEqual(rules[0], options.rules[0]);
-            // assert.deepEqual(length, rules.length);
-
             const rules = defaults.rules;
             const length = rules.length;
             const options = defaults.$extend({
-                rules: []
+                rules: [null]
             });
 
-            assert.deepEqual(0, options.rules.length);
+            assert.deepEqual(null, options.rules[0]);
+            assert.deepEqual(rules[1], options.rules[1]);
             assert.deepEqual(length, rules.length);
+
+            // const rules = defaults.rules;
+            // const length = rules.length;
+            // const options = defaults.$extend({
+            //     rules: []
+            // });
+
+            // assert.deepEqual(0, options.rules.length);
+            // assert.deepEqual(length, rules.length);
         }
     }
 };

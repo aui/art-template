@@ -3,6 +3,7 @@
 ## v4.4.3
 
 1. 支持对 `options.imports` 的深拷贝 [#1](https://github.com/aui/express-art-template/issues/1)
+2. 支持对 `options.rules` 的覆盖
 
 ## v4.4.2
 
