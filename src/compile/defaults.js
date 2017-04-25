@@ -1,3 +1,4 @@
+const extend = require('extend');
 const detectNode = require('detect-node');
 const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
@@ -9,7 +10,6 @@ const artRule = require('./adapter/rule.art');
 const nativeRule = require('./adapter/rule.native');
 const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
-
 
 /** 模板编译器默认配置 */
 const defaults = {
@@ -75,17 +75,18 @@ const defaults = {
 
 /**
  * 继承默认配置
+ * @param   {Boolean}   deep
  * @param   {Object}    options
  * @return {Object}
  */
-defaults.$extend = function(options) {
+defaults.$extend = function(deep, options) {
+    if (typeof deep !== 'boolean') {
+        options = deep;
+        deep = false;
+    }
     const copy = Object.create(this);
 
-    for (let name in options) {
-        copy[name] = options[name]
-    }
-
-    return copy;
+    return extend(deep, copy, options);
 };
 
 
