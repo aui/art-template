@@ -1,6 +1,7 @@
 # art-template
 
 [![NPM Version](https://img.shields.io/npm/v/art-template.svg)](https://npmjs.org/package/art-template)
+[![NPM Downloads](http://img.shields.io/npm/dm/art-template.svg)](https://npmjs.org/package/art-template)
 [![Node.js Version](https://img.shields.io/node/v/art-template.svg)](http://nodejs.org/download/)
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg?branch=master)](https://coveralls.io/github/aui/art-template?branch=master)
@@ -14,7 +15,7 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 ## 特性
 
 * 拥有接近 JavaScript 渲染极限的的性能
-* 调试友好：语法、运行时错误精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
+* 调试友好：语法、运行时错误日志精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
 * 支持压缩输出页面中的 HTML、CSS、JS 代码
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
 * 支持模板包含与模板继承
@@ -508,4 +509,4 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 <img width="256" src="https://cloud.githubusercontent.com/assets/1791748/25306225/7f218e50-27bb-11e7-8dc2-30b2a923e6e9.png" alt="微信支付" />
 
-赞助 art-template 一杯咖啡 :-)
+如果你因 art-template 受益，不妨请我喝杯咖啡 :-)
