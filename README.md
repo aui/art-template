@@ -347,7 +347,20 @@ template.defaults.imports.$console = console;
 
 模板外部所有的变量都需要使用 `template.defaults.imports` 注入、并且要在模板编译之前进行声明才能使用。
 
-## 定义语法规则
+## 语法规则
+
+### 修改界定符
+
+art-template 默认的 `{{}}` 与 `<%%>` 模板逻辑语句界定符支持修改：
+
+```js
+// 原生语法的界定符规则
+template.defaults.rules[0].test = /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/;
+// art 语法的界定符规则
+template.defaults.rules[1].test = /{{\s*([@#]?)(\/?)([\w\W]*?)\s*}}/;
+```
+
+### 添加语法
 
 从一个简单的例子说起，让模板引擎支持 ES6 `${name}` 模板字符串的解析：
 
@@ -372,6 +385,8 @@ template.defaults.rules.push({
         * `'escape'` 编码后进行输出
         * `'raw'` 输出原始内容
         * `false` 不输出任何内容
+
+值得一提的是，语法规则对渲染速度没有影响，模板引擎编译器会帮你优化渲染性能。
 
 ## 使用 `require(templatePath)`
 
