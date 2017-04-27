@@ -18,7 +18,7 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 * 调试友好：语法、运行时错误日志精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
 * 支持压缩输出页面中的 HTML、CSS、JS 代码
 * 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
-* 支持模板包含与模板继承
+* 支持模板继承与子模板
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
 * 支持 ES 严格模式环境运行
 * 支持原生 JavaScript 语法与简约语法混合书写
@@ -192,25 +192,16 @@ or
 <% var temp = data.sub.content; %> 
 ```
 
-### 子模板
-
-```html
-{{include './header.art'}}
-{{include './header.art' data}}
-
-or
-
-<% include('./header.art') %>
-<% include('./header.art', data) %>
-```
-
-`include` 第二个参数默认值为 `$data`。
-
-### 布局
+### 模板继承
 
 ```html
 {{extend './layout.art'}}
 {{block 'head'}} ... {{/block}}
+
+or
+
+<% extend('./layout.art') %>
+<% block('head', function(){ %> ... <% }) %>
 ```
 
 模板继承允许你构建一个包含你站点共同元素的基本模板“骨架”。
@@ -253,6 +244,20 @@ index.art:
 ```
 
 渲染 index.art 后，将自动应用布局骨架。
+
+### 子模板
+
+```html
+{{include './header.art'}}
+{{include './header.art' data}}
+
+or
+
+<% include('./header.art') %>
+<% include('./header.art', data) %>
+```
+
+`include` 第二个参数默认值为 `$data`。
 
 ### print
 
@@ -299,7 +304,7 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 </body></html>
 ```
 
-使用 [布局](#布局) 代替 `include` 可以避免这样的问题出现。
+使用 [模板继承](#模板继承) 代替 `include` 可以避免这样的问题出现。
 
 ## 调试
 
@@ -327,7 +332,7 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
-* `extend`    布局模板导入函数 `{function}`
+* `extend`    模板继承模板导入函数 `{function}`
 * `block`     模板块声明函数 `{function}`
 
 ### 注入全局变量
@@ -443,13 +448,14 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 ```js
 {
-    // 模板名字
+    // 模板名
     filename: null,
 
     // 模板语法规则列表
     rules: [nativeRule, artRule],
 
-    // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
+    // 是否开启对模板输出语句自动编码功能。为 false 则关闭编码输出功能
+    // escape 可以防范 XSS 攻击
     escape: true,
 
     // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
@@ -474,7 +480,7 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
-    // 错误调试器
+    // 错误事件。仅在 bail 为 false 时生效
     onerror: onerror,
 
     // 模板文件加载器

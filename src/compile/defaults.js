@@ -29,7 +29,8 @@ const defaults = {
     // 模板语法规则列表
     rules: [nativeRule, artRule],
 
-    // 是否支持对模板输出语句进行编码。为 false 则关闭编码输出功能
+    // 是否开启对模板输出语句自动编码功能。为 false 则关闭编码输出功能
+    // escape 可以防范 XSS 攻击
     escape: true,
 
     // 是否开启调试模式。如果为 true: {bail:false, cache:false, minimize:false, compileDebug:true}
@@ -54,7 +55,7 @@ const defaults = {
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
-    // 错误调试器
+    // 错误事件。仅在 bail 为 false 时生效
     onerror: onerror,
 
     // 模板文件加载器
