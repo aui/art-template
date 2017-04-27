@@ -408,6 +408,8 @@ var view = require('./index.ejs');
 var html = view(data); 
 ```
 
+需要注意的是：此功能仅对 NodeJS 生效，如果要在浏览器中使用模板文件渲染功能，请使用 Webpack [art-template-loader](https://github.com/aui/art-template-loader)。
+
 ## API
 
 ###	template(filename, data)
