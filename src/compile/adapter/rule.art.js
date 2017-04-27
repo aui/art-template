@@ -1,5 +1,5 @@
 const nativeRule = {
-    test: /{{([@#]?)(\/?)([\w\W]*?)}}/,
+    test: /{{\s*([@#]?)(\/?)([\w\W]*?)\s*}}/,
     use: function (match, raw, close, code) {
 
         const compiler = this;

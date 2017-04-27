@@ -17,40 +17,6 @@ const toType = value => {
 };
 
 
-/**
- * 继承默认配置
- * @param   {Object}    options
- * @return {Object}
- */
-function extend(options) {
-    let copy = Object.create(this);
-
-    for (let name in options) {
-
-        let object;
-        const value = options[name];
-        const type = toType(value);
-
-        if (type === 'Object') {
-            object = Object.create(copy[name]);
-        } else if (type === 'Array') {
-            object = [].concat(copy[name]);
-        }
-
-        if (object) {
-            for (let index in value) {
-                object[index] = value[index];
-            }
-            copy[name] = object;
-        } else {
-            copy[name] = value;
-        }
-    }
-
-    return copy;
-};
-
-
 /** 模板编译器默认配置 */
 const defaults = {
 
@@ -112,6 +78,38 @@ const defaults = {
 
 };
 
+/**
+ * 继承默认配置
+ * @param   {Object}    options
+ * @return {Object}
+ */
+defaults.$extend = function (options) {
+    let copy = Object.create(this);
 
-defaults.$extend = extend;
+    for (let name in options) {
+
+        let object;
+        const value = options[name];
+        const type = toType(value);
+
+        if (type === 'Object') {
+            object = Object.create(copy[name]);
+        } else if (type === 'Array') {
+            object = [].concat(copy[name]);
+        }
+
+        if (object) {
+            for (let index in value) {
+                object[index] = value[index];
+            }
+            copy[name] = object;
+        } else {
+            copy[name] = value;
+        }
+    }
+
+    return copy;
+};
+
+
 module.exports = defaults;
