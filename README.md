@@ -125,7 +125,7 @@ art-template 同时支持 `{{expression}}` 简约语法与任意 JavaScript 表�
 {{a || b}}
 {{a + b}}
 
-or
+或
 
 <%= value %>
 <%= data.key %>
@@ -146,7 +146,7 @@ or
 ```html
 {{@value}}
 
-or
+或
 
 <%- value %>
 ```
@@ -159,7 +159,7 @@ or
 {{if value}} ... {{/if}}
 {{if v1}} ... {{else if v2}} ... {{/if}}
 
-or
+或
 
 <% if (value) { %> ... <% } %>
 <% if (value) { %> ... <% } else { %> ... <% } %>
@@ -172,7 +172,7 @@ or
     {{$index}} {{$value}}
 {{/each}}
 
-or
+或
 
 <% for(var i = 0; i < target.length; i++){ %>
     <%= i %> <%= target[i] %>
@@ -187,7 +187,7 @@ or
 ```html
 {{set temp = data.sub.content}}
 
-or
+或
 
 <% var temp = data.sub.content; %> 
 ```
@@ -198,7 +198,7 @@ or
 {{extend './layout.art'}}
 {{block 'head'}} ... {{/block}}
 
-or
+或
 
 <% extend('./layout.art') %>
 <% block('head', function(){ %> ... <% }) %>
@@ -251,7 +251,7 @@ index.art:
 {{include './header.art'}}
 {{include './header.art' data}}
 
-or
+或
 
 <% include('./header.art') %>
 <% include('./header.art', data) %>
@@ -278,7 +278,7 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 ```html
 {{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
 
-or
+或
 
 <%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
 ```
