@@ -13,9 +13,7 @@ const library = 'template';
 const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
 const optimize = process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
     compress: {
-        screw_ie8: false
-    },
-    mangleProperties: {
+        warnings: false,
         screw_ie8: false
     },
     mangle: {

@@ -405,6 +405,16 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('0a1b2c', result);
+
+            // 空格兼容
+            render = compile('{{ each list.data val key }}{{key}}{{val}}{{ /each }}');
+            data = {
+                list: {
+                    data: ['a', 'b', 'c']
+                }
+            };
+            result = render(data);
+            assert.deepEqual('0a1b2c', result);
         },
 
 

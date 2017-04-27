@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.5.1
+
+1. 修复 `{{/if}}` 语句不支持头尾空格的问题
+2. 修复 NodeJS 版本兼容问题 [#393](https://github.com/aui/art-template/issues/393)
+
 ## v4.5.0
 
 1. 支持对 `options.imports` 的深拷贝 [#1](https://github.com/aui/express-art-template/issues/1)
