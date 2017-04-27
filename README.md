@@ -347,7 +347,7 @@ template.defaults.imports.$console = console;
 
 模板外部所有的变量都需要使用 `template.defaults.imports` 注入、并且要在模板编译之前进行声明才能使用。
 
-## 语法规则
+## 配置语法规则
 
 ### 修改界定符
 
