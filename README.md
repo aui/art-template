@@ -351,7 +351,7 @@ template.defaults.imports.$console = console;
 
 ### 修改界定符
 
-art-template 默认的 `{{}}` 与 `<%%>` 模板逻辑语句界定符支持修改：
+art-template 支持修改默认模板界定符 `{{}}` 与 `<%%>`：
 
 ```js
 // 原生语法的界定符规则
