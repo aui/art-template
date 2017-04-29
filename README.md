@@ -330,6 +330,7 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 
 * `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
+* `$escape`   编码 HTML 内容 `{function}` 
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
 * `extend`    模板继承模板导入函数 `{function}`
