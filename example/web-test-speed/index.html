@@ -128,7 +128,7 @@
             {
                 name: 'Handlebars',
                 tester: function () {
-                    var id = config.escape ? 'Handlebars' : 'Handlebars-raw';
+                    var id = config.escape ? 'handlebars' : 'handlebars-raw';
                     var source = document.getElementById(id).innerHTML;
                     var fn = Handlebars.compile(source);
                     var html = '';
@@ -142,7 +142,7 @@
             {
                 name: 'Mustache',
                 tester: function () {
-                    var id = config.escape ? 'Mustache' : 'Mustache-raw';
+                    var id = config.escape ? 'mustache' : 'mustache-raw';
                     var source = document.getElementById(id).innerHTML;
                     var html = '';
                     for (var i = 0; i < config.calls; i++) {
@@ -322,6 +322,7 @@
 </ul>
 </script>
 
+<!-- pug -->
 <script id="pug" type="text/tmpl">
 ul
     -for (var i = 0, l = list.length; i < l; i ++) {
@@ -353,7 +354,7 @@ ul
 </script>
 
 <!--Mustache -->
-<script id="Mustache" type="text/tmpl">
+<script id="mustache" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{user}} / Web Site: {{site}}</li>
@@ -361,7 +362,7 @@ ul
 </ul>
 </script>
 
-<script id="Mustache-raw" type="text/tmpl">
+<script id="mustache-raw" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
@@ -370,7 +371,7 @@ ul
 </script>
 
 <!--Handlebars  -->
-<script id="Handlebars" type="text/tmpl">
+<script id="handlebars" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{user}} / Web Site: {{site}}</li>
@@ -378,7 +379,7 @@ ul
 </ul>
 </script>
 
-<script id="Handlebars-raw" type="text/tmpl">
+<script id="handlebars-raw" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
