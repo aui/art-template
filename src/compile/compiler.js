@@ -117,7 +117,7 @@ class Compiler {
             } catch (error) {}
         }
 
-
+        this.source = source;
         this.getTplTokens(source, options.rules, this).forEach(tokens => {
             if (tokens.type === tplTokenizer.TYPE_STRING) {
                 this.parseString(tokens);
@@ -329,7 +329,7 @@ class Compiler {
         const context = this.context;
         const scripts = this.scripts;
         const stacks = this.stacks;
-        const source = options.source;
+        const source = this.source;
         const filename = options.filename;
         const imports = options.imports;
         const mappings = [];
@@ -421,6 +421,7 @@ class Compiler {
         try {
             const result = new Function(IMPORTS, OPTIONS, `return ${renderCode}`)(imports, options);
             result.mappings = mappings;
+            result.sourcesContent = [source];
             return result;
         } catch (error) {
 
