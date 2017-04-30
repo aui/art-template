@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.6.0
+
+1. `$escape()` 函数提高 4 倍性能
+2. 支持输出 sourceMap: sourcesContent
+
 ## v4.5.1
 
 1. 修复 `{{/if}}` 语句不支持头尾空格的问题

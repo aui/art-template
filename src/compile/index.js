@@ -7,6 +7,7 @@ const debugRender = (error, options) => {
     options.onerror(error, options);
     const render = () => `{Template Error}`;
     render.mappings = [];
+    render.sourcesContent = [];
     return render;
 };
 
@@ -31,6 +32,7 @@ const compile = (source, options = {}) => {
 
 
     // debug 模式
+    /* istanbul ignore if */
     if (options.debug) {
         options.cache = false;
         options.bail = false;

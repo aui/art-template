@@ -8,9 +8,9 @@
 
 art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
-![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
+[![chart](https://cloud.githubusercontent.com/assets/1791748/25561182/52b7c176-2d98-11e7-8270-da1aca0a80e4.png)](https://aui.github.io/art-template/example/web-test-speed/)
 
-[在线速度测试](http://aui.github.io/art-template/example/web-test-speed/)
+[在线速度测试](https://aui.github.io/art-template/example/web-test-speed/)
 
 ## 特性
 
@@ -330,6 +330,7 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 
 * `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
+* `$escape`   编码 HTML 内容 `{function}` 
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
 * `extend`    模板继承模板导入函数 `{function}`
@@ -356,8 +357,15 @@ art-template 支持修改默认模板界定符 `{{}}` 与 `<%%>`：
 ```js
 // 原生语法的界定符规则
 template.defaults.rules[0].test = /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/;
-// art 语法的界定符规则
-template.defaults.rules[1].test = /{{\s*([@#]?)(\/?)([\w\W]*?)\s*}}/;
+// 简洁语法的界定符规则
+template.defaults.rules[1].test = /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/;
+```
+
+它们是一个正则表达式，你可以只修改界定符部分。例如修改 `<%%>` 为 `{%%}`：
+
+```js
+var rule = template.defaults.rules[0];
+rule.test = new RegExp(rules.test.source.replace('<%', '{%').replace('%>', '%}'));
 ```
 
 ### 添加语法

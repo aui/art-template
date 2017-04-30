@@ -12,20 +12,35 @@
     <script src="js/ejs.min.js"></script>
     <script src="js/handlebars.js"></script>
     <script src="js/mustache.min.js"></script>
-    <script src="js/tmpl.js"></script>
     <script src="js/pug.min.js"></script>
 
     <script>
-        // 数据量
-        var length = 64;
-        // 渲染次数
-        var number = 2048;
+        var config = {
+            // 列表条数
+            length: 20,
+            // 渲染次数
+            calls: 2048,
+            // 是否编码
+            escape: true
+        };
 
+        if (location.search) {
+            var param = decodeURIComponent(location.search);
+            param = param.replace(/.*\btest=({[^}]*}).*?/, '$1');
+            try {
+                config = JSON.parse(param);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+
+        // 制造测试数据
         var data = {
             list: []
         };
 
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < config.length; i++) {
             data.list.push({
                 index: i,
                 user: '<strong style="color:red">糖饼</strong>',
@@ -36,16 +51,22 @@
         };
 
 
+        Highcharts.setOptions({
+            colors: ['#EF6F65', '#F3AB63', '#F8D56F', '#99DD7A', '#74BBF3', '#CB93E0', '#A2A2A4', '#E1AC65', '#6AF9C4']
+        });
+
+
         // 待测试的引擎列表
         var testList = [
 
             {
                 name: 'art-template',
                 tester: function () {
-                    var source = document.getElementById('template').innerHTML;
+                    var id = config.escape ? 'template' : 'template-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var fn = template.compile(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -53,12 +74,13 @@
             },
 
             {
-                name: 'art-template(fast mode)',
+                name: 'art-template / fast mode',
                 tester: function () {
-                    var source = document.getElementById('template-fast-mode').innerHTML;
+                    var id = config.escape ? 'template-fast-mode' : 'template-fast-mode-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var fn = template.compile(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -68,10 +90,11 @@
             {
                 name: 'doT',
                 tester: function () {
-                    var source = document.getElementById('doT').innerHTML;
+                    id = config.escape ? 'dot' : 'dot-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var fn = doT.template(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -81,10 +104,11 @@
             {
                 name: 'ejs',
                 tester: function () {
-                    var source = document.getElementById('template').innerHTML;
+                    var id = config.escape ? 'template' : 'template-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var fn = ejs.compile(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -94,11 +118,12 @@
             {
                 name: 'Jade / pug',
                 tester: function () {
-                    var source = document.getElementById('pug').innerHTML;
+                    var id = config.escape ? 'pug' : 'pug-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var pug = require('pug');
                     var fn = pug.compile(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -108,10 +133,11 @@
             {
                 name: 'Handlebars',
                 tester: function () {
-                    var source = document.getElementById('Handlebars').innerHTML;
+                    var id = config.escape ? 'handlebars' : 'handlebars-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var fn = Handlebars.compile(source);
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = fn(data);
                     }
                     return html;
@@ -121,33 +147,24 @@
             {
                 name: 'Mustache',
                 tester: function () {
-                    var source = document.getElementById('Mustache').innerHTML;
+                    var id = config.escape ? 'mustache' : 'mustache-raw';
+                    var source = document.getElementById(id).innerHTML;
                     var html = '';
-                    for (var i = 0; i < number; i++) {
+                    for (var i = 0; i < config.calls; i++) {
                         html = Mustache.to_html(source, data);
                     }
                     return html;
                 }
-            },
-
-            {
-                name: 'tmpl',
-                tester: function () {
-                    var source = document.getElementById('tmpl').innerHTML;
-                    var fn = tmpl(source);
-                    var html = '';
-                    for (var i = 0; i < number; i++) {
-                        html = fn(data);
-                    }
-                    return html;
-                }
             }
-
         ];
 
 
 
-        var runTest = function () {
+        var runTest = function (callback) {
+            
+            var list = testList.filter(function(test) {
+                return !config.escape || test.supportEscape !== false;
+            });
 
             var Timer = function () {
                 this.startTime = +new Date;
@@ -160,11 +177,12 @@
             var colors = Highcharts.getOptions().colors;
             var categories = [];
 
-            for (var i = 0; i < testList.length; i++) {
-                categories.push(testList[i].name);
+            for (var i = 0; i < list.length; i++) {
+                categories.push(list[i].name);
             }
 
             var chart = new Highcharts.Chart({
+
                 chart: {
                     renderTo: 'container',
                     height: categories.length * 40,
@@ -176,18 +194,12 @@
                 },
 
                 subtitle: {
-                    text: length + ' item × ' + number + ' calls'
+                    text: config.length + ' list × ' + config.calls + ' calls'
                 },
 
                 xAxis: {
                     categories: categories,
-                    labels: {
-                        align: 'right',
-                        style: {
-                            fontSize: '12px',
-                            fontFamily: 'Verdana, sans-serif'
-                        }
-                    }
+                    labels: {}
                 },
 
                 yAxis: {
@@ -220,7 +232,7 @@
                                 return this.y + 'ms';
                             }
                         }
-                    }
+                    },
                 },
                 series: [{
                     data: []
@@ -246,14 +258,15 @@
                 });
 
 
-                if (!testList.length) {
+                if (!list.length) {
                     log('done');
+                    callback();
                     return;
                 }
 
-                target = testList.shift();
+                target = list.shift();
 
-                log('runing.. ' + target.name);
+                log('run: ' + target.name);
 
                 setTimeout(function () {
                     tester(target);
@@ -261,16 +274,31 @@
 
             };
 
-            var target = testList.shift();
-            log('runing.. ' + target.name);
+            var target = list.shift();
+            log('run: ' + target.name);
             tester(target);
 
         };
+
+        var restart = function(key, value) {
+            config[key] = value;
+            var data = JSON.stringify(config);
+            data = encodeURIComponent(data);
+            location.search = 'test=' + data;
+        }
     </script>
 
 
 <!-- art-template || ejs || lodash-template || underscore-template -->
 <script id="template" type="text/tmpl">
+<ul>
+    <% for (var i = 0, l = list.length; i < l; i ++) { %>
+        <li>User: <%= list[i].user %> / Web Site: <%= list[i].site %></li>
+    <% } %>
+</ul>
+</script>
+
+<script id="template-raw" type="text/tmpl">
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
         <li>User: <%- list[i].user %> / Web Site: <%- list[i].site %></li>
@@ -281,29 +309,43 @@
 <script id="template-fast-mode" type="text/tmpl">
 <ul>
     <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
+        <li>User: <%= $data.list[i].user %> / Web Site: <%= $data.list[i].site %></li>
+    <% } %>
+</ul>
+</script>
+
+<script id="template-fast-mode-raw" type="text/tmpl">
+<ul>
+    <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
         <li>User: <%- $data.list[i].user %> / Web Site: <%- $data.list[i].site %></li>
     <% } %>
 </ul>
 </script>
 
+<!-- pug -->
 <script id="pug" type="text/tmpl">
+ul
+    -for (var i = 0, l = list.length; i < l; i ++) {
+        li User: #{list[i].user} / Web Site: #{list[i].site}
+    -}
+</script>
+
+<script id="pug-raw" type="text/tmpl">
 ul
     -for (var i = 0, l = list.length; i < l; i ++) {
         li User: !{list[i].user} / Web Site: !{list[i].site}
     -}
 </script>
 
-<!-- tmpl -->
-<script id="tmpl" type="text/tmpl">
+<!-- doT -->
+<script id="dot" type="text/tmpl">
 <ul>
-    <% for (var i = 0, l = list.length; i < l; i ++) { %>
-        <li>User: <%=list[i].user%> / Web Site: <%=list[i].site%></li>
-    <% } %>
+    {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
+        <li>User: {{!it.list[i].user}} / Web Site: {{!it.list[i].site}}</li>
+    {{ } }}
 </ul>
 </script>
-
-<!-- doT -->
-<script id="doT" type="text/tmpl">
+<script id="dot-raw" type="text/tmpl">
 <ul>
     {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
         <li>User: {{=it.list[i].user}} / Web Site: {{=it.list[i].site}}</li>
@@ -312,7 +354,15 @@ ul
 </script>
 
 <!--Mustache -->
-<script id="Mustache" type="text/tmpl">
+<script id="mustache" type="text/tmpl">
+<ul>
+    {{#list}}
+        <li>User: {{user}} / Web Site: {{site}}</li>
+    {{/list}}
+</ul>
+</script>
+
+<script id="mustache-raw" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
@@ -321,7 +371,15 @@ ul
 </script>
 
 <!--Handlebars  -->
-<script id="Handlebars" type="text/tmpl">
+<script id="handlebars" type="text/tmpl">
+<ul>
+    {{#list}}
+        <li>User: {{user}} / Web Site: {{site}}</li>
+    {{/list}}
+</ul>
+</script>
+
+<script id="handlebars-raw" type="text/tmpl">
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
@@ -329,22 +387,73 @@ ul
 </ul>
 </script>
 
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+    }
+    #app input[type=number] {
+        max-width: 4em;
+    }
+    #app ul {
+        padding-left: 0;
+    }
+</style>
 </head>
 
 <body>
+
+<div id="app"></div>
+<script id="body" type="text/tmpl">
     <h1>Template Engine Rendering Speed Test</h1>
-    <p><strong><script>document.write(length);</script></strong> item × <strong><script>document.write(number)</script></strong>        calls. options = {escape:false, cache:true}</p>
-    <p><button id="button-test" onclick="this.disabled=true;runTest()" style="padding: 5px;">Run Test&raquo;</button>
-        <span
-            id="log" style="font-size:12px">
-            <script>
-                for (var i = 0; i < testList.length; i++) {
-                    document.write(testList[i].name + '; ')
-                }
-            </script>
-            </span>
+    <p>
+        <label>list:  <input type="number" value="{{length}}" onchange="restart('length', this.value)"></label>
+        <strong>×</strong>
+        <label>calls: <input type="number" value="{{calls}}" onchange="restart('calls', this.value)"></label>
+        <label>escape: <input type="checkbox" {{if escape}}checked{{/if}} onchange="restart('escape', this.checked)"></label>
     </p>
-    <div id="container" style="min-width: 400px; margin: 0 auto"></div>
+    <p>
+        <button id="button-start">Run Test&raquo;</button>
+        <button id="button-restart" style="display:none">Restart</button>
+        <span id="log">
+            
+        </span>
+    </p>
+    <div id="container" style="min-width: 400px; margin: 0 auto">
+        <ul>
+        <%
+            testList.forEach(function(test){
+                if (!escape || test.supportEscape !== false) {
+                    print('<li>', $escape(test.name), '</li>');
+                }
+            });
+        %>
+        </ul>
+    </div>
+</script>
+
+<script>
+    (function() {
+        var data = Object.create(config);
+        data.testList = testList;
+        document.getElementById('app').innerHTML = template('body', data);
+
+        document.getElementById('button-start').onclick = function() {
+            var elem = this;
+            this.disabled=true;
+            runTest(function() {
+                elem.style.display = 'none';
+                document.getElementById('button-restart').style.display = '';
+            });
+        };
+
+        document.getElementById('button-restart').onclick = function() {
+            location.reload();
+        };
+    })();
+</script>
 </body>
 
 </html>
