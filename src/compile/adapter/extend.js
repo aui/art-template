@@ -22,7 +22,7 @@ const extend = function (target, defaults = this) {
     const type = toType(target);
 
     if (type === 'Undefined') {
-        target = defaults;
+        target = extend(defaults);
     } else if (type === 'Object') {
         object = Object.create(defaults || {});
     } else if (type === 'Array') {
