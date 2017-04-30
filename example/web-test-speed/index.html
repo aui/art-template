@@ -51,6 +51,11 @@
         };
 
 
+        Highcharts.setOptions({
+            colors: ['#EF6F65', '#F3AB63', '#F8D56F', '#99DD7A', '#74BBF3', '#CB93E0', '#A2A2A4', '#E1AC65', '#6AF9C4']
+        });
+
+
         // 待测试的引擎列表
         var testList = [
 
@@ -177,6 +182,7 @@
             }
 
             var chart = new Highcharts.Chart({
+
                 chart: {
                     renderTo: 'container',
                     height: categories.length * 40,
@@ -193,13 +199,7 @@
 
                 xAxis: {
                     categories: categories,
-                    labels: {
-                        align: 'right',
-                        style: {
-                            fontSize: '12px',
-                            fontFamily: 'Verdana, sans-serif'
-                        }
-                    }
+                    labels: {}
                 },
 
                 yAxis: {
@@ -232,7 +232,7 @@
                                 return this.y + 'ms';
                             }
                         }
-                    }
+                    },
                 },
                 series: [{
                     data: []

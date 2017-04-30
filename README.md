@@ -8,9 +8,9 @@
 
 art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
-![chart](https://cloud.githubusercontent.com/assets/1791748/24965783/aa044388-1fd7-11e7-9d45-43b0e7ff5d86.png)
+[![chart](https://cloud.githubusercontent.com/assets/1791748/25561182/52b7c176-2d98-11e7-8270-da1aca0a80e4.png)](https://aui.github.io/art-template/example/web-test-speed/)
 
-[在线速度测试](http://aui.github.io/art-template/example/web-test-speed/)
+[在线速度测试](https://aui.github.io/art-template/example/web-test-speed/)
 
 ## 特性
 
