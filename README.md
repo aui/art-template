@@ -361,11 +361,11 @@ template.defaults.rules[0].test = /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/;
 template.defaults.rules[1].test = /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/;
 ```
 
-它们是一个正则表达式，你可以只修改界定符部分。例如修改 `<%` `%>` 为 `{%` `%}`：
+它们是一个正则表达式，你可以只修改界定符部分。例如修改 `<%` `%>` 为 `<?` `?>`：
 
 ```js
 var rule = template.defaults.rules[0];
-rule.test = new RegExp(rules.test.source.replace('<%', '{%').replace('%>', '%}'));
+rule.test = new RegExp(rules.test.source.replace('<%', '<?').replace('%>', '?>'));
 ```
 
 ### 添加语法
