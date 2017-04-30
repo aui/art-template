@@ -90,9 +90,9 @@ const defaults = {
 /**
  * 继承默认配置
  * @param   {Object}    options
- * @return {Object}
+ * @return  {Object}
  */
-defaults.$extend = extend;
+defaults.$extend = (options = {}) => extend(options, defaults);
 
 
 module.exports = defaults;
