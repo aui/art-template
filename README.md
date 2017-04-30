@@ -357,8 +357,15 @@ art-template 支持修改默认模板界定符 `{{}}` 与 `<%%>`：
 ```js
 // 原生语法的界定符规则
 template.defaults.rules[0].test = /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/;
-// art 语法的界定符规则
-template.defaults.rules[1].test = /{{\s*([@#]?)(\/?)([\w\W]*?)\s*}}/;
+// 简洁语法的界定符规则
+template.defaults.rules[1].test = /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/;
+```
+
+它们是一个正则表达式，你可以只修改界定符部分。例如修改 `<%%>` 为 `{%%}`：
+
+```js
+var rule = template.defaults.rules[0];
+rule.test = new RegExp(rules.test.source.replace('<%', '{%').replace('%>', '%}'));
 ```
 
 ### 添加语法
