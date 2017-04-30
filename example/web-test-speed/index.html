@@ -182,8 +182,10 @@
             }
 
             var chart = new Highcharts.Chart({
-
                 chart: {
+                    animation: {
+                        duration: 150
+                    },
                     renderTo: 'container',
                     height: categories.length * 40,
                     type: 'bar'
@@ -394,6 +396,13 @@ ul
         line-height: 1.5;
         word-wrap: break-word;
     }
+    #app .header {
+        padding: 10px 20px;
+        background: #eee;
+    }
+    #app .header .item {
+        margin-bottom: 5px;
+    }
     #app input[type=number] {
         max-width: 4em;
     }
@@ -408,19 +417,22 @@ ul
 <div id="app"></div>
 <script id="body" type="text/tmpl">
     <h1>Template Engine Rendering Speed Test</h1>
-    <p>
-        <label>list:  <input type="number" value="{{length}}" onchange="restart('length', this.value)"></label>
-        <strong>×</strong>
-        <label>calls: <input type="number" value="{{calls}}" onchange="restart('calls', this.value)"></label>
-        <label>escape: <input type="checkbox" {{if escape}}checked{{/if}} onchange="restart('escape', this.checked)"></label>
-    </p>
-    <p>
-        <button id="button-start">Run Test&raquo;</button>
-        <button id="button-restart" style="display:none">Restart</button>
-        <span id="log">
-            
-        </span>
-    </p>
+    <div class="header">
+        <div class="item">
+            <label><input type="number" value="{{length}}" onchange="restart('length', this.value)"> list</label>
+            <strong>×</strong>
+            <label><input type="number" value="{{calls}}" onchange="restart('calls', this.value)"> calls</label>
+            <label><input type="checkbox" {{if escape}}checked{{/if}} onchange="restart('escape', this.checked)"> escape</label>
+            <label><input type="checkbox" checked disabled> cache</label>
+        </div>
+        <div class="item">
+            <button id="button-start">Run Test&raquo;</button>
+            <button id="button-restart" style="display:none">Restart</button>
+            <span id="log">
+                
+            </span>
+        </div>
+    </div>
     <div id="container" style="min-width: 400px; margin: 0 auto">
         <ul>
         <%
