@@ -1,13 +1,12 @@
 // 将目标转成字符
 const toString = value => {
     if (typeof value !== 'string') {
-        if (typeof value === 'function') {
-            value = toString(value.call(value));
-        } else if (value === null) {
+        if (value === undefined || value === null) {
             value = '';
+        } else if (typeof value === 'function') {
+            value = toString(value.call(value));
         } else {
-            // number | array | object | undefined
-            value = JSON.stringify(value) || '';
+            value = JSON.stringify(value);
         }
     }
 
