@@ -538,6 +538,8 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 
 [MIT](./LICENSE)
 
-<img width="256" src="https://cloud.githubusercontent.com/assets/1791748/25306225/7f218e50-27bb-11e7-8dc2-30b2a923e6e9.png" alt="微信支付" />
+------------------
 
-如果你因 art-template 受益，不妨请我喝杯咖啡 :-)
+<img width="128" src="https://cloud.githubusercontent.com/assets/1791748/25561320/09c9d6d0-2d9c-11e7-8689-1109f3f88f41.png" alt="微信支付" />
+
+赞助 art-template 持续优化
