@@ -93,21 +93,29 @@ template.render(source, data, options);
 
 ## 安装
 
+### Npm
+
 ```shell
 npm install art-template --save
 ```
 
-## Express
+### 浏览器
 
-[express-art-template](https://github.com/aui/express-art-template)
+下载：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
 
-## Koa
+浏览器版本没有文件加载、HTML 压缩的特性。
 
-[koa-art-template](https://github.com/aui/koa-art-template)
+### Express
 
-## Webpack
+主页：[express-art-template](https://github.com/aui/express-art-template)
 
-[art-template-loader](https://github.com/aui/art-template-loader)
+### Koa
+
+主页：[koa-art-template](https://github.com/aui/koa-art-template)
+
+### Webpack
+
+主页：[art-template-loader](https://github.com/aui/art-template-loader)
 
 ## 语法
 
