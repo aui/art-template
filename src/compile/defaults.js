@@ -50,7 +50,7 @@ const defaults = {
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
-    // HTML 压缩器配置
+    // HTML 压缩器配置。参见 https://github.com/kangax/html-minifier
     htmlMinifierOptions: {
         collapseWhitespace: true,
         minifyCSS: true,
