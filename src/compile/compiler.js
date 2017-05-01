@@ -186,10 +186,11 @@ class Compiler {
         const external = this.external;
         const context = this.context;
         const options = this.options;
+        const ignore = options.ignore;
         const imports = options.imports;
         const contextMap = this.CONTEXT_MAP;
 
-        if (!has(contextMap, name) && !has(external, name)) {
+        if (!has(contextMap, name) && !has(external, name) && ignore.indexOf(name) < 0) {
 
             if (has(internal, name)) {
                 value = internal[name];

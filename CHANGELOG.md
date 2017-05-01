@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.7.0
+
+1. 增加 `ignore` 配置，可以让模板编译器忽略指定的变量初始化
+2. 增加 `htmlMinifierOptions` 配置，可对  [htmlMinifie](https://github.com/kangax/html-minifier) 压缩器进行配置
+
 ## v4.6.0
 
 1. `$escape()` 函数提高 4 倍性能

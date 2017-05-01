@@ -1,4 +1,5 @@
 const detectNode = require('detect-node');
+const extend = require('./adapter/extend');
 const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
 const escape = require('./adapter/escape');
@@ -9,12 +10,6 @@ const artRule = require('./adapter/rule.art');
 const nativeRule = require('./adapter/rule.native');
 const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
-
-
-const toString = Object.prototype.toString;
-const toType = value => {
-    return value === null ? 'Null' : toString.call(value).slice(8, -1);
-};
 
 
 /** 模板编译器默认配置 */
@@ -55,6 +50,15 @@ const defaults = {
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
+    // HTML 压缩器配置
+    htmlMinifierOptions: {
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        // 运行时自动合并：rules.map(rule => rule.test)
+        ignoreCustomFragments: []
+    },
+
     // 错误事件。仅在 bail 为 false 时生效
     onerror: onerror,
 
@@ -70,6 +74,9 @@ const defaults = {
     // 默认后缀名。如果没有后缀名，则会自动添加 extname
     extname: '.art',
 
+    // 忽略的变量。指定模板编译器忽略对指定的变量预先声明
+    ignore: [],
+
     // 导入的模板变量
     imports: {
         $each: each,
@@ -79,38 +86,13 @@ const defaults = {
 
 };
 
+
 /**
  * 继承默认配置
  * @param   {Object}    options
- * @return {Object}
+ * @return  {Object}
  */
-defaults.$extend = function (options) {
-    let copy = Object.create(this);
-
-    for (let name in options) {
-
-        let object;
-        const value = options[name];
-        const type = toType(value);
-
-        if (type === 'Object') {
-            object = Object.create(copy[name]);
-        } else if (type === 'Array') {
-            object = [].concat(copy[name]);
-        }
-
-        if (object) {
-            for (let index in value) {
-                object[index] = value[index];
-            }
-            copy[name] = object;
-        } else {
-            copy[name] = value;
-        }
-    }
-
-    return copy;
-};
+defaults.$extend = (options = {}) => extend(options, defaults);
 
 
 module.exports = defaults;

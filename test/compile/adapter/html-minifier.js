@@ -1,6 +1,12 @@
 const assert = require('assert');
 const htmlMinifier = require('../../../src/compile/adapter/html-minifier');
-
+const rules = [];
+const htmlMinifierOptions = {
+    collapseWhitespace: true,
+    minifyCSS: true,
+    minifyJS: true,
+    ignoreCustomFragments: []
+};
 
 module.exports = {
     before: () => {
@@ -10,7 +16,8 @@ module.exports = {
     'html-minifier': {
         'text': () => {
             const result = htmlMinifier('hello world', {
-                rules: []
+                rules,
+                htmlMinifierOptions
             });
             assert.equal('hello world', result);
         },
@@ -18,19 +25,22 @@ module.exports = {
         'tag': () => {
             let result;
             result = htmlMinifier('<div></div>   <a></a>', {
-                rules: []
+                rules,
+                htmlMinifierOptions
             });
             assert.equal('<div></div><a></a>', result);
 
             result = htmlMinifier('hello   <div>world</div>', {
-                rules: []
+                rules,
+                htmlMinifierOptions
             });
             assert.equal('hello<div>world</div>', result);
         },
 
         'script': () => {
             const result = htmlMinifier('<script>var x = "     ";</script>', {
-                rules: []
+                rules,
+                htmlMinifierOptions
             });
             assert.equal('<script>var x="     "</script>', result);
         },
@@ -39,7 +49,8 @@ module.exports = {
             let result;
 
             result = htmlMinifier('hello   <div>world', {
-                rules: []
+                rules,
+                htmlMinifierOptions
             });
             assert.equal('hello<div>world</div>', result);
         },
@@ -48,7 +59,8 @@ module.exports = {
             let result = null;
             try {
                 result = htmlMinifier('<div ', {
-                    rules: []
+                    rules,
+                    htmlMinifierOptions
                 });
             } catch (e) {}
             assert.equal(null, result);

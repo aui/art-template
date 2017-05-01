@@ -10,15 +10,10 @@ const htmlMinifier = (source, options) => {
     if (detectNode) {
         
         const htmlMinifier = require('html-minifier').minify;
+        const htmlMinifierOptions = options.htmlMinifierOptions;
         const ignoreCustomFragments = options.rules.map(rule => rule.test);
-        const setting = {
-            collapseWhitespace: true,
-            minifyCSS: true,
-            minifyJS: true,
-            ignoreCustomFragments
-        };
-        
-        source = htmlMinifier(source, setting);
+        htmlMinifierOptions.ignoreCustomFragments.push(...ignoreCustomFragments);
+        source = htmlMinifier(source, htmlMinifierOptions);
     }
 
     return source;
