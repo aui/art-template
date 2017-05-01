@@ -299,9 +299,7 @@ template.defaults.imports.$timestamp = function(value){return value * 1000};
 template.defaults.minimize = true;
 ```
 
-art-template 的页面压缩功能是在编译阶段实现的，因此完全不影响渲染速度，并且能够加快网络传输速度。但也有一个限制，它不能正常处理未闭合的 HTML 标签，因此使用 `include` 语句载入模板片段的时候请小心。
-
-请避免书写这样的模板：
+art-template 的页面压缩功能是在编译阶段实现的，因此完全不影响渲染速度，并且能够加快网络传输速度。但也有一个限制，它会尝试“优化”未闭合的 HTML 标签，因此使用 `include` 语句载入模板片段请避免书写这样没有正确闭合的模板：
 
 ```html
 <body>

@@ -60,7 +60,7 @@
 
 1. 支持 layout
 2. 修复 `{{if else value}}` 语句 BUG
-3. 修复多个 `include` 语句的 BUG
+3. 修复多个 `include` 语句共存导致路径的 BUG
 
 ## v4.0.0
 
