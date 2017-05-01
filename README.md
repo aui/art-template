@@ -505,6 +505,15 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
 
+    // HTML 压缩器配置
+    htmlMinifierOptions: {
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        // 运行时自动合并：rules.map(rule => rule.test)
+        ignoreCustomFragments: []
+    },
+
     // 错误事件。仅在 bail 为 false 时生效
     onerror: onerror,
 
@@ -520,13 +529,16 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 默认后缀名。如果没有后缀名，则会自动添加 extname
     extname: '.art',
 
+    // 忽略的变量。指定模板编译器忽略对指定的变量预先声明
+    ignore: [],
+
     // 导入的模板变量
     imports: {
         $each: each,
         $escape: escape,
         $include: include
     }
-};
+}
 ```
 
 ## 兼容性
