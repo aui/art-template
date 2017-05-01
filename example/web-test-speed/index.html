@@ -13,6 +13,7 @@
     <script src="js/handlebars.js"></script>
     <script src="js/mustache.min.js"></script>
     <script src="js/pug.min.js"></script>
+    <script src="js/swig.min.js"></script>
 
     <script>
         var config = {
@@ -155,6 +156,21 @@
                     }
                     return html;
                 }
+            },
+
+            {
+                name: 'swig',
+                tester: function () {
+                    var id = config.escape ? 'swig' : 'swig-raw';
+                    var source = document.getElementById(id).innerHTML;
+                    var fn = swig.compile(source);
+                    var html = '';
+                    for (var i = 0; i < config.calls; i++) {
+                        html = fn(data);
+                    }
+                    return html;
+                }
+                    
             }
         ];
 
@@ -386,6 +402,23 @@ ul
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
     {{/list}}
+</ul>
+</script>
+
+<!--swig  -->
+<script id="swig" type="text/tmpl">
+<ul>
+    {% for key, value in list %}
+        <li>User: {{value.user}} / Web Site: {{value.site}}</li>
+    {% endfor %}
+</ul>
+</script>
+
+<script id="swig-raw" type="text/tmpl">
+<ul>
+    {% for key, value in list %}
+        {% autoescape false %}<li>User: {{value.user}} / Web Site: {{value.site}}</li>{% endautoescape %}
+    {% endfor %}
 </ul>
 </script>
 
