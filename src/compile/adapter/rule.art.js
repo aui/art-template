@@ -1,4 +1,4 @@
-const nativeRule = {
+const artRule = {
     test: /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/,
     use: function (match, raw, close, code) {
 
@@ -46,7 +46,7 @@ const nativeRule = {
             case 'else':
 
                 const indexIf = values.indexOf('if');
-                
+
                 if (indexIf > -1) {
                     values.splice(0, indexIf + 1);
                     code = `}else if(${values.join('')}){`;
@@ -63,7 +63,7 @@ const nativeRule = {
 
             case 'each':
 
-                group = split(esTokens);
+                group = artRule._split(esTokens);
                 group.shift();
 
                 if (group[1] === 'as') {
@@ -94,7 +94,7 @@ const nativeRule = {
             case 'include':
             case 'extend':
 
-                group = split(esTokens);
+                group = artRule._split(esTokens);
                 group.shift();
                 code = `${key}(${group.join(',')})`;
                 break;
@@ -103,7 +103,7 @@ const nativeRule = {
 
                 code = `block(${values.join('')},function(){`;
                 break;
-            
+
             case '/block':
 
                 code = '})';
@@ -149,7 +149,7 @@ const nativeRule = {
                     // ... v3 compat ...
                     upgrade('filterName value', 'value | filterName');
 
-                    group = split(esTokens);
+                    group = artRule._split(esTokens);
                     group.shift();
 
                     code = `${key}(${group.join(',')})`;
@@ -174,43 +174,37 @@ const nativeRule = {
 
 
         return result;
-    }
-};
+    },
 
+    // 根据语义以空格进行切割
+    _split: (esTokens) => {
+        let current = 0;
+        let lastToken = esTokens.shift();
+        const group = [
+            [lastToken]
+        ];
 
+        while (current < esTokens.length) {
+            const esToken = esTokens[current];
+            const esTokenType = esToken.type;
 
-// 按照空格分组
-const split = (esTokens) => {
-    let current = 0;
-    let lastToken = esTokens.shift();
-    const group = [
-        [lastToken]
-    ];
+            if (esTokenType !== `whitespace` && esTokenType !== `comment`) {
 
-    while (current < esTokens.length) {
-        const esToken = esTokens[current];
-        const esTokenType = esToken.type;
+                if (lastToken.type === `punctuator` && lastToken.value !== `]` || esTokenType === `punctuator`) {
+                    group[group.length - 1].push(esToken);
+                } else {
+                    group.push([esToken]);
+                }
 
-        if (esTokenType !== `whitespace` && esTokenType !== `comment`) {
-
-            if (lastToken.type === `punctuator` && lastToken.value !== `]` || esTokenType === `punctuator`) {
-                group[group.length - 1].push(esToken);
-            } else {
-                group.push([esToken]);
+                lastToken = esToken;
             }
 
-            lastToken = esToken;
+            current++;
         }
 
-        current++;
+        return group.map(g => g.map(g => g.value).join(``));
     }
-
-    return group.map(g => g.map(g => g.value).join(``));
 };
 
 
-// mocha use
-nativeRule._split = split;
-
-
-module.exports = nativeRule;
+module.exports = artRule;
