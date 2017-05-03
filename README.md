@@ -336,23 +336,23 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 
 * `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `$escape`   编码 HTML 内容 `{function}` 
+* `$escape`   编码 HTML 内容 `{function}`
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
 * `extend`    模板继承模板导入函数 `{function}`
 * `block`     模板块声明函数 `{function}`
 
-### 注入全局变量
+### 注入外部变量
+
+模板外部所有的变量都需要添加到 `template.defaults.imports` 后，模板才能使用。
 
 ```js
-template.defaults.imports.$console = console;
+template.defaults.imports.console = console;
 ```
 
 ```html
-<% $console.log('hello world') %>
+<% $imports.console.log('hello world') %>
 ```
-
-模板外部所有的变量都需要使用 `template.defaults.imports` 注入、并且要在模板编译之前进行声明才能使用。
 
 ## 配置语法规则
 

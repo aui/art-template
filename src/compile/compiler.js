@@ -198,7 +198,9 @@ class Compiler {
                 if (has(dependencies, name)) {
                     dependencies[name].forEach(name => this.importContext(name));
                 }
-
+            
+            // imports 继承了 Global，但是继承的属性不分配到顶级变量中
+            // 模板中需要通过 $imports.${name} 的方式访问它们
             } else if (has(imports, name)) {
                 value = `${IMPORTS}.${name}`;
             } else {

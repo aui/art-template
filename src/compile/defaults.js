@@ -78,11 +78,11 @@ const defaults = {
     ignore: [],
 
     // 导入的模板变量
-    imports: {
+    imports: extend({
         $each: each,
         $escape: escape,
         $include: include
-    }
+    }, detectNode ? global : window)
 
 };
 

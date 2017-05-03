@@ -11,13 +11,13 @@ module.exports = {
             const imports = defaults.imports;
             const options = defaults.$extend({
                 imports: {
-                    console
+                    test: 1
                 }
             });
 
-            assert.deepEqual(console, options.imports.console);
+            assert.deepEqual(1, options.imports.test);
             assert.deepEqual(imports.$escape, options.imports.$escape);
-            assert.deepEqual(undefined, imports.console);
+            assert.deepEqual(undefined, imports.test);
         },
 
         'rules': () => {
