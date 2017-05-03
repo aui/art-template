@@ -1,7 +1,7 @@
 const assert = require('assert');
-const Compiler = require('../../src/compile/compiler');
-const defaults = require('../../src/compile/defaults');
-const ruleNative = require('../../src/compile/adapter/rule.native');
+const Compiler = require('../../lib/compile/compiler');
+const defaults = require('../../lib/compile/defaults');
+const ruleNative = require('../../lib/compile/adapter/rule.native');
 
 const htmlMinifier = ({
     source

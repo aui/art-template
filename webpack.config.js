@@ -2,65 +2,17 @@ const path = require('path');
 const webpack = require('webpack');
 const packageInfo = require('./package.json');
 const version = packageInfo.version;
-const dependencies = Object.keys(packageInfo.dependencies || {});
-const peerDependencies = Object.keys(packageInfo.peerDependencies || {});
-const modules = dependencies.concat(...peerDependencies);
-
-const entry = path.resolve(__dirname, 'src', 'index');
-const dist = path.resolve(__dirname, 'lib');
-const filename = '[name].js';
-const library = 'template';
-const banner = new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`);
-const optimize = process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
-    compress: {
-        warnings: false,
-        screw_ie8: false
-    },
-    mangle: {
-        screw_ie8: false
-    },
-    output: {
-        screw_ie8: false
-    }
-}) : () => {};
-const rule = {
-    test: /\.js$/,
-    use: [{
-        loader: 'babel-loader',
-        options: {
-            presets: ['es2015-loose']
-        }
-    }, {
-        loader: 'eslint-loader'
-    }]
-};
 
 
-module.exports = [{
-    target: 'node',
-    entry: {
-        'template-node': entry
-    },
-    output: {
-        path: dist,
-        filename,
-        library,
-        libraryTarget: 'commonjs2'
-    },
-    externals: modules,
-    plugins: [banner],
-    module: {
-        rules: [rule]
-    }
-}, {
+module.exports = {
     target: 'web',
     entry: {
-        'template-web': entry
+        'template-web': path.resolve(__dirname, 'lib', 'index')
     },
     output: {
-        path: dist,
-        filename,
-        library,
+        path: path.resolve(__dirname, 'lib'),
+        filename: '[name].js',
+        library: 'template',
         libraryTarget: 'umd'
     },
     node: {
@@ -73,8 +25,27 @@ module.exports = [{
             'html-minifier': 'node-noop'
         }
     },
-    plugins: [banner, optimize],
     module: {
-        rules: [rule]
-    }
-}];
+        rules: [{
+            test: /\.js$/,
+            use: [{
+                loader: 'eslint-loader'
+            }]
+        }]
+    },
+    plugins: [
+        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`),
+        process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false,
+                screw_ie8: false
+            },
+            mangle: {
+                screw_ie8: false
+            },
+            output: {
+                screw_ie8: false
+            }
+        }) : () => {}
+    ]
+};
