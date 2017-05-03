@@ -1,3 +1,6 @@
+/**
+ * 简洁模板语法规则
+ */
 const artRule = {
     test: /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/,
     use: function (match, raw, close, code) {
@@ -15,7 +18,7 @@ const artRule = {
 
 
         // 旧版语法升级提示
-        const upgrade = (oldSyntax, newSyntax) => {
+        const warn = (oldSyntax, newSyntax) => {
             console.warn('Template upgrade:',
                 `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
                 `\n`, options.filename || '');
@@ -25,7 +28,7 @@ const artRule = {
 
         // v3 compat: #value
         if (raw === '#') {
-            upgrade('#value', '@value');
+            warn('#value', '@value');
         }
 
 
@@ -68,7 +71,7 @@ const artRule = {
 
                 if (group[1] === 'as') {
                     // ... v3 compat ...
-                    upgrade('each object as value index', 'each object value index');
+                    warn('each object as value index', 'each object value index');
                     group.splice(1, 1);
                 }
 
@@ -88,7 +91,7 @@ const artRule = {
             case 'echo':
 
                 key = 'print';
-                upgrade('echo value', 'value');
+                warn('echo value', 'value');
 
             case 'print':
             case 'include':
@@ -140,14 +143,14 @@ const artRule = {
                     group.reduce((accumulator, filter) => {
                         const name = filter.shift();
                         filter.unshift(accumulator);
-                        return code = `${name}(${filter.join(',')})`;
+                        return code = `$imports.${name}(${filter.join(',')})`;
                     }, target);
 
 
                 } else if (options.imports[key]) {
 
                     // ... v3 compat ...
-                    upgrade('filterName value', 'value | filterName');
+                    warn('filterName value', 'value | filterName');
 
                     group = artRule._split(esTokens);
                     group.shift();

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.8.0
+
+1. 过滤器支持在运行时注入 (#4)(https://github.com/aui/art-template-loader/issues/4)
+
 ## v4.7.0
 
 1. 增加 `ignore` 配置，可以让模板编译器忽略指定的变量初始化
