@@ -277,18 +277,18 @@ index.art:
 
 ```js
 // 向模板中导入全局变量
-template.defaults.imports.$dateFormat = function(date, format){/*[code..]*/};
-template.defaults.imports.$timestamp = function(value){return value * 1000};
+template.defaults.imports.dateFormat = function(date, format){/*[code..]*/};
+template.defaults.imports.timestamp = function(value){return value * 1000};
 ```
 
-因为 `imports` 定义的全局变量的优先级会比普通模板变量高，所以建议命名使用 `$` 前缀。 
-
 ```html
-{{date | $timestamp | $dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+{{date | timestamp | dateFormat 'yyyy-MM-dd hh:mm:ss'}}
+{{3.14 | parseFloat}}
 
 或
 
-<%= $dateFormat($timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
+<%= $imports.dateFormat($imports.timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
+{{3.14 | parseFloat}}
 ```
 
 `{{value | filter}}` 过滤器语法类似管道操作符，它的上一个输出作为下一个输入。
@@ -336,7 +336,6 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 
 * `$data`     传入模板的数据 `{Object|array}`
 * `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `$escape`   编码 HTML 内容 `{function}`
 * `print`     字符串输出函数 `{function}`
 * `include`   子模板载入函数 `{function}`
 * `extend`    模板继承模板导入函数 `{function}`
@@ -478,7 +477,6 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
 `template.defaults`
 
 ```js
-{
     // 模板名
     filename: null,
 
@@ -535,16 +533,11 @@ var html = template.render('hi, <%=value%>.', {value: 'aui'});
     // 默认后缀名。如果没有后缀名，则会自动添加 extname
     extname: '.art',
 
-    // 忽略的变量。指定模板编译器忽略对指定的变量预先声明
+    // 忽略的变量。被模板编译器忽略的模板变量列表
     ignore: [],
 
     // 导入的模板变量
-    imports: {
-        $each: each,
-        $escape: escape,
-        $include: include
-    }
-}
+    imports: runtime
 ```
 
 ## 兼容性

@@ -1,3 +1,5 @@
+/*! art-template@runtime | https://github.com/aui/art-template */
+
 const detectNode = require('detect-node');
 const each = require('./adapter/each');
 const escape = require('./adapter/escape');
