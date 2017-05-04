@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.8.1
+
+1. 修复低版本 NodeJS 报错问题
+
 ## v4.8.0
 
 1. 过滤器支持在运行时注入 [#4](https://github.com/aui/art-template-loader/issues/4)
