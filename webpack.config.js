@@ -33,8 +33,9 @@ module.exports = {
             }]
         }]
     },
+    devtool: 'source-map',
     plugins: [
-        new webpack.BannerPlugin(`art-template@${version} | https://github.com/aui/art-template`),
+        new webpack.BannerPlugin(`art-template@${version} for browser | https://github.com/aui/art-template`),
         process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false,
