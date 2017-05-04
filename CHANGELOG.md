@@ -2,7 +2,7 @@
 
 ## v4.8.0
 
-1. 过滤器支持在运行时注入 (#4)(https://github.com/aui/art-template-loader/issues/4)
+1. 过滤器支持在运行时注入 [#4](https://github.com/aui/art-template-loader/issues/4)
 2. 过滤器语法可以直接使用全局对象，无需特别声明。例如 `{{url | encodeURIComponent}}`
 
 ## v4.7.0
