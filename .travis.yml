@@ -11,7 +11,7 @@ install:
   - npm install
 script:
   - npm run build
-  - node_modules/mocha/bin/_mocha --ui exports --colors 'test/**/*.js'
+  - export NODE_ENV=production && node_modules/mocha/bin/_mocha --ui exports --colors 'test/**/*.js'
   - npm test
 after_success:
   - npm run coverage
