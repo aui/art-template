@@ -7,11 +7,11 @@ cache:
 branches:
   only:
   - master
-  - 4.0.0
 install:
   - npm install
 script:
   - npm run build
+  - node_modules/mocha/bin/_mocha --ui exports --colors 'test/**/*.js'
   - npm test
 after_success:
   - npm run coverage
