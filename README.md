@@ -283,12 +283,10 @@ template.defaults.imports.timestamp = function(value){return value * 1000};
 
 ```html
 {{date | timestamp | dateFormat 'yyyy-MM-dd hh:mm:ss'}}
-{{3.14 | parseFloat}}
 
 或
 
 <%= $imports.dateFormat($imports.timestamp(date), 'yyyy-MM-dd hh:mm:ss') %>
-{{3.14 | parseFloat}}
 ```
 
 `{{value | filter}}` 过滤器语法类似管道操作符，它的上一个输出作为下一个输入。
