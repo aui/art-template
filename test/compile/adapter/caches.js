@@ -1,5 +1,5 @@
 const assert = require('assert');
-const caches = require('../../../src/compile/adapter/caches');
+const caches = require('../../../lib/compile/adapter/caches');
 
 
 module.exports = {

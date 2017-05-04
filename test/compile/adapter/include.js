@@ -1,6 +1,6 @@
 const assert = require('assert');
-const include = require('../../../src/compile/adapter/include');
-const defaults = require('../../../src/compile/defaults');
+const include = require('../../../lib/compile/adapter/include');
+const defaults = require('../../../lib/compile/defaults');
 const path = require('path');
 
 

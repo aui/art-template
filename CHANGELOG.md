@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.8.0
+
+1. 过滤器支持在运行时注入 (#4)(https://github.com/aui/art-template-loader/issues/4)
+2. 过滤器语法可以直接使用全局对象，无需特别声明。例如 `{{url | encodeURIComponent}}`
+
 ## v4.7.0
 
 1. 增加 `ignore` 配置，可以让模板编译器忽略指定的变量初始化
@@ -60,7 +65,7 @@
 
 1. 支持 layout
 2. 修复 `{{if else value}}` 语句 BUG
-3. 修复多个 `include` 语句的 BUG
+3. 修复多个 `include` 语句共存导致路径的 BUG
 
 ## v4.0.0
 

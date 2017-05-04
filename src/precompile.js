@@ -1,22 +1,22 @@
-'use strict';
+const path = require('path');
+const acorn = require('acorn');
+const escodegen = require('escodegen');
+const estraverse = require('estraverse');
+const sourceMap = require('source-map');
+const mergeSourceMap = require('merge-source-map');
+const compile = require('./compile');
+const defaults = require('./defaults');
+const runtimePath = require.resolve('./runtime');
 
-var path = require('path');
-var acorn = require('acorn');
-var escodegen = require('escodegen');
-var estraverse = require('estraverse');
-var sourceMap = require('source-map');
-var mergeSourceMap = require('merge-source-map');
-var compile = require('./compile');
-var defaults = require('./defaults');
-var runtimePath = require.resolve('./runtime');
+const CONSTS = compile.Compiler.CONSTS;
+const LOCAL_MODULE = /^\.+\//;
 
-var CONSTS = compile.Compiler.CONSTS;
-var LOCAL_MODULE = /^\.+\//;
+
 
 // 获取默认设置
-var getDefaults = function getDefaults(options) {
+const getDefaults = options => {
     // new defaults
-    var setting = {
+    const setting = {
         imports: runtimePath,
         bail: true,
         cache: false,
@@ -26,20 +26,22 @@ var getDefaults = function getDefaults(options) {
         sourceRoot: options.sourceRoot
     };
 
-    for (var name in options) {
+    for (let name in options) {
         setting[name] = options[name];
     }
 
     return defaults.$extend(setting);
 };
 
+
+
 // 转换外部模板文件引入语句的 filename 参数节点
 // 所有绝对路径都转换成相对路径
-var convertFilenameNode = function convertFilenameNode(node, options) {
+const convertFilenameNode = (node, options) => {
     if (node.type === 'Literal') {
-        var resolvePath = options.resolveFilename(node.value, options);
-        var dirname = path.dirname(options.filename);
-        var relativePath = path.relative(dirname, resolvePath);
+        const resolvePath = options.resolveFilename(node.value, options);
+        const dirname = path.dirname(options.filename);
+        const relativePath = path.relative(dirname, resolvePath);
 
         if (LOCAL_MODULE.test(relativePath)) {
             node.value = relativePath;
@@ -53,18 +55,20 @@ var convertFilenameNode = function convertFilenameNode(node, options) {
     return node;
 };
 
-// 获取原始渲染函数的 sourceMap
-var getOldSourceMap = function getOldSourceMap(mappings, _ref) {
-    var sourceRoot = _ref.sourceRoot,
-        source = _ref.source,
-        file = _ref.file;
 
-    var oldSourceMap = new sourceMap.SourceMapGenerator({
-        file: file,
-        sourceRoot: sourceRoot
+
+// 获取原始渲染函数的 sourceMap
+const getOldSourceMap = (mappings, {
+    sourceRoot,
+    source,
+    file
+}) => {
+    const oldSourceMap = new sourceMap.SourceMapGenerator({
+        file,
+        sourceRoot
     });
 
-    mappings.forEach(function (mapping) {
+    mappings.forEach(mapping => {
         mapping.source = source;
         oldSourceMap.addMapping(mapping);
     });
@@ -72,13 +76,15 @@ var getOldSourceMap = function getOldSourceMap(mappings, _ref) {
     return oldSourceMap.toJSON();
 };
 
+
+
 /**
  * 预编译模版，将模板编译成 javascript 代码
  * 使用静态分析，将模板内部之间依赖转换成 `require()`
  * @param  {Object}       options  编译选项
  * @return {Object}
  */
-var precompile = function precompile(options) {
+const precompile = options => {
     options = options || {};
 
     if (typeof options.filename !== 'string') {
@@ -87,35 +93,44 @@ var precompile = function precompile(options) {
 
     options = getDefaults(options);
 
-    var code = null;
-    var sourceMap = null;
-    var ast = null;
-    var imports = options.imports;
-    var functions = [CONSTS.INCLUDE, CONSTS.EXTEND, CONSTS.LAYOUT];
+
+    let code = null;
+    let sourceMap = null;
+    let ast = null;
+    const imports = options.imports;
+    const functions = [CONSTS.INCLUDE, CONSTS.EXTEND, CONSTS.LAYOUT];
 
     if (typeof imports !== 'string') {
-        throw Error('template.precompile(): "options.imports" is a file. Example:\n' + 'options: { imports: require.resolve("art-template/lib/runtime") }\n');
+        throw Error('template.precompile(): "options.imports" is a file. Example:\n' +
+            'options: { imports: require.resolve("art-template/lib/runtime") }\n');
     } else {
         options.imports = require(imports);
     }
 
-    var isLocalModule = LOCAL_MODULE.test(imports);
-    var tplImportsPath = isLocalModule ? imports : path.relative(path.dirname(options.filename), imports);
-    var fn = compile(options);
+
+    const isLocalModule = LOCAL_MODULE.test(imports);
+    const tplImportsPath = isLocalModule ? imports : path.relative(path.dirname(options.filename), imports);
+    const fn = compile(options);
+
 
     code = '(' + fn.toString() + ')';
     ast = acorn.parse(code, {
         locations: options.sourceMap
     });
 
-    var extendNode = null;
-    var enter = function enter(node) {
-        if (node.type === 'VariableDeclarator' && functions.indexOf(node.id.name) !== -1) {
+
+    let extendNode = null;
+    const enter = function (node) {
+        if (node.type === 'VariableDeclarator' &&
+            functions.indexOf(node.id.name) !== -1) {
 
             this.remove();
-        } else if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && functions.indexOf(node.callee.name) !== -1) {
 
-            var replaceNode = void 0;
+        } else if (node.type === 'CallExpression' &&
+            node.callee.type === 'Identifier' &&
+            functions.indexOf(node.callee.name) !== -1) {
+
+            let replaceNode;
             switch (node.callee.name) {
 
                 case CONSTS.EXTEND:
@@ -145,12 +160,14 @@ var precompile = function precompile(options) {
                             "arguments": [extendNode]
                         },
                         "arguments": [{
-                            "type": "Identifier",
-                            "name": CONSTS.DATA
-                        }, {
-                            "type": "Identifier",
-                            "name": CONSTS.BLOCKS
-                        }]
+                                "type": "Identifier",
+                                "name": CONSTS.DATA
+                            },
+                            {
+                                "type": "Identifier",
+                                "name": CONSTS.BLOCKS
+                            }
+                        ]
                     };
                     break;
 
@@ -189,16 +206,18 @@ var precompile = function precompile(options) {
         }
     };
 
+
     ast = estraverse.replace(ast, {
         enter: enter
     });
 
+
     if (options.sourceMap) {
 
-        var sourceRoot = options.sourceRoot;
-        var source = path.relative(sourceRoot, options.filename);
-        var file = path.basename(source);
-        var gen = escodegen.generate(ast, {
+        const sourceRoot = options.sourceRoot;
+        const source = path.relative(sourceRoot, options.filename);
+        const file = path.basename(source);
+        const gen = escodegen.generate(ast, {
             sourceMap: source,
             file: file,
             sourceMapRoot: sourceRoot,
@@ -206,30 +225,34 @@ var precompile = function precompile(options) {
         });
         code = gen.code;
 
-        var newSourceMap = gen.map.toJSON();
-        var oldSourceMap = getOldSourceMap(fn.mappings, {
-            sourceRoot: sourceRoot,
-            source: source,
-            file: file
+        const newSourceMap = gen.map.toJSON();
+        const oldSourceMap = getOldSourceMap(fn.mappings, {
+            sourceRoot,
+            source,
+            file
         });
         sourceMap = mergeSourceMap(oldSourceMap, newSourceMap);
         sourceMap.file = file;
         sourceMap.sourcesContent = fn.sourcesContent;
+
     } else {
         code = escodegen.generate(ast);
     }
 
+
     code = code.replace(/^\(|\)[;\s]*?$/g, '');
-    code = 'var ' + CONSTS.IMPORTS + ' = require(' + JSON.stringify(tplImportsPath) + ');\n' + 'module.exports = ' + code + ';';
+    code = 'var ' + CONSTS.IMPORTS + ' = require(' + JSON.stringify(tplImportsPath) + ');\n' +
+        'module.exports = ' + code + ';';
 
     return {
-        code: code,
-        ast: ast,
-        sourceMap: sourceMap,
-        toString: function toString() {
+        code,
+        ast,
+        sourceMap,
+        toString: function () {
             return code;
         }
     };
 };
+
 
 module.exports = precompile;

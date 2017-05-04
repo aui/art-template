@@ -11,7 +11,7 @@ branches:
 install:
   - npm install
 script:
-  - npm test
   - npm run build
+  - npm test
 after_success:
   - npm run coverage

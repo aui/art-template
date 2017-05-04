@@ -1,5 +1,5 @@
 const assert = require('assert');
-const escape = require('../../../src/compile/adapter/escape');
+const escape = require('../../../lib/compile/adapter/escape');
 
 module.exports = {
     before: () => {

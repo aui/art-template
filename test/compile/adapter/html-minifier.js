@@ -1,5 +1,5 @@
 const assert = require('assert');
-const htmlMinifier = require('../../../src/compile/adapter/html-minifier');
+const htmlMinifier = require('../../../lib/compile/adapter/html-minifier');
 const rules = [];
 const htmlMinifierOptions = {
     collapseWhitespace: true,

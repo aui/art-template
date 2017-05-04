@@ -8,7 +8,7 @@ const onerror = defaults.onerror;
 
 module.exports = {
     before: () => {
-        console.log('#lib/template-node');
+        console.log('#node');
 
         require.extensions['.html'] = template.extension;
         require.extensions['.tpl'] = template.extension;

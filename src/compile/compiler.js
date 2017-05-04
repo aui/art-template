@@ -198,7 +198,8 @@ class Compiler {
                 if (has(dependencies, name)) {
                     dependencies[name].forEach(name => this.importContext(name));
                 }
-
+            
+            // imports 继承了 Global，但是继承的属性不分配到顶级变量中，避免占用了模板内部的变量名称
             } else if (has(imports, name)) {
                 value = `${IMPORTS}.${name}`;
             } else {
@@ -285,17 +286,17 @@ class Compiler {
             // <% } %>
             // <% }else{ %>
             // <% }else if(a){ %>
-            [/^\s*?}.*?{?[\s;]*?$/, ''],
+            [/^\s*}[\w\W]*?{?[\s;]*$/, ''],
 
             // <% list.forEach(function(a,b){ %>
-            [/(^[\w\W]*?\s*?function\s*?\([\w\W]*?\)\s*?{[\s;]*?$)/, '$1})'],
+            [/(^[\w\W]*?\s*function\s*\([\w\W]*?\)\s*{[\s;]*$)/, '$1})'],
 
             // <% list.forEach((a,b)=>{ %>
-            [/(^.*?\(\s*?[\w\W]*?=>\s*?{[\s;]*?$)/, '$1})'],
+            [/(^.*?\(\s*[\w\W]*?=>\s*{[\s;]*$)/, '$1})'],
 
             // <% if(a){ %>
             // <% for(var i in d){ %>
-            [/(^[\w\W]*?\([\w\W]*?\)\s*?{[\s;]*?$)/, '$1}']
+            [/(^[\w\W]*?\([\w\W]*?\)\s*{[\s;]*$)/, '$1}']
 
         ];
 

@@ -1,6 +1,6 @@
 const assert = require('assert');
-const template = require('../src/index');
-const defaults = require('../src/compile/defaults');
+const template = require('../lib/index');
+const defaults = require('../lib/compile/defaults');
 const path = require('path');
 
 const root = defaults.root;

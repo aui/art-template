@@ -1,5 +1,5 @@
 const assert = require('assert');
-const tplTokenizer = require('../../src/compile/tpl-tokenizer');
+const tplTokenizer = require('../../lib/compile/tpl-tokenizer');
 
 module.exports = {
     before: () => {
