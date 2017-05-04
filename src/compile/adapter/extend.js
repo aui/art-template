@@ -6,7 +6,7 @@ const toType = value => {
 
 
 /**
- * 继承
+ * 快速继承默认配置
  * @param   {Object}    options
  * @param   {?Object}   defaults
  * @return  {Object}
@@ -23,13 +23,14 @@ const extend = function (target, defaults) {
 
     if (object) {
         for (let index in target) {
-            object[index] = extend(target[index], object[index]);
+            if (target.hasOwnProperty(index)) {
+                object[index] = extend(target[index], object[index]);
+            }
         }
         return object;
     } else {
         return target;
     }
 };
-
 
 module.exports = extend;

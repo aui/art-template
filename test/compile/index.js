@@ -237,6 +237,7 @@ module.exports = {
             test(`{{time * 1000 | dateFormat 'yyyy-MM-dd'}}`, {
                 time: 1491566794
             }, `2017-04-07`, options);
+            test(`{{3.14 | parseInt}}`, {}, `3`, options);
             test(`{{time | dateFormat:'yyyy-MM-dd'}}`, {
                 time: 1491566794863
             }, `2017-04-07`, options); // ... v3 compat ...
