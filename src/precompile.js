@@ -84,8 +84,7 @@ const getOldSourceMap = (mappings, {
  * @param  {Object}       options  编译选项
  * @return {Object}
  */
-const precompile = options => {
-    options = options || {};
+const precompile = (options = {}) => {
 
     if (typeof options.filename !== 'string') {
         throw Error('template.precompile(): "options.filename" required');
@@ -173,8 +172,8 @@ const precompile = options => {
 
                 case CONSTS.INCLUDE:
 
-                    var filenameNode = convertFilenameNode(node.arguments[0], options);
-                    var dataNode = node.arguments[1] || {
+                    const filenameNode = convertFilenameNode(node.arguments[0], options);
+                    const dataNode = node.arguments[1] || {
                         "type": "Identifier",
                         "name": CONSTS.DATA
                     };
@@ -248,9 +247,7 @@ const precompile = options => {
         code,
         ast,
         sourceMap,
-        toString: function () {
-            return code;
-        }
+        toString: () => code
     };
 };
 

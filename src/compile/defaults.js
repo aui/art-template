@@ -86,7 +86,9 @@ const defaults = {
  * @param   {Object}    options
  * @return  {Object}
  */
-defaults.$extend = (options = {}) => extend(options, defaults);
+defaults.$extend = function (options) {
+    return extend(options || {}, this);
+};
 
 
 // 载入子模板的方法
