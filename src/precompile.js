@@ -148,9 +148,12 @@ const precompile = (options = {}) => {
 
                 case CONSTS.INCLUDE:
 
-                    const filename = node.arguments[0].shift();
+                    const filename = node.arguments.shift();
                     const filenameNode = convertFilenameNode(filename, options);
-                    const argsNode = node.arguments;
+                    const paramNodes = node.arguments.length ? node.arguments : [{
+                        "type": "Identifier",
+                        "name": CONSTS.DATA
+                    }];
 
                     replaceNode = {
                         "type": "AssignmentExpression",
@@ -169,7 +172,7 @@ const precompile = (options = {}) => {
                                 },
                                 "arguments": [filenameNode]
                             },
-                            "arguments": [argsNode]
+                            "arguments": paramNodes
                         }
                     };
                     break;
