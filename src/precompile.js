@@ -146,37 +146,11 @@ const precompile = (options = {}) => {
                     };
                     break;
 
-                case CONSTS.LAYOUT:
-
-                    replaceNode = {
-                        "type": "CallExpression",
-                        "callee": {
-                            "type": "CallExpression",
-                            "callee": {
-                                "type": "Identifier",
-                                "name": "require"
-                            },
-                            "arguments": [extendNode]
-                        },
-                        "arguments": [{
-                                "type": "Identifier",
-                                "name": CONSTS.DATA
-                            },
-                            {
-                                "type": "Identifier",
-                                "name": CONSTS.BLOCKS
-                            }
-                        ]
-                    };
-                    break;
-
                 case CONSTS.INCLUDE:
 
-                    const filenameNode = convertFilenameNode(node.arguments[0], options);
-                    const dataNode = node.arguments[1] || {
-                        "type": "Identifier",
-                        "name": CONSTS.DATA
-                    };
+                    const filename = node.arguments[0].shift();
+                    const filenameNode = convertFilenameNode(filename, options);
+                    const argsNode = node.arguments;
 
                     replaceNode = {
                         "type": "AssignmentExpression",
@@ -195,7 +169,7 @@ const precompile = (options = {}) => {
                                 },
                                 "arguments": [filenameNode]
                             },
-                            "arguments": [dataNode]
+                            "arguments": [argsNode]
                         }
                     };
                     break;

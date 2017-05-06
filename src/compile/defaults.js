@@ -4,7 +4,6 @@ const extend = require('./adapter/extend');
 const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
 const loader = require('./adapter/loader');
-const include = require('./adapter/include');
 const artRule = require('./adapter/rule.art');
 const nativeRule = require('./adapter/rule.native');
 const htmlMinifier = require('./adapter/html-minifier');
@@ -89,10 +88,6 @@ const defaults = {
 defaults.$extend = function (options) {
     return extend(options || {}, this);
 };
-
-
-// 载入子模板的方法
-runtime.$include = include;
 
 
 module.exports = defaults;

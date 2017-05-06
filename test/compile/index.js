@@ -255,7 +255,8 @@ module.exports = {
             });
 
             render = compile(`{{include 'header.html'}}\ncontent: {{content}}`, {
-                minimize: false
+                minimize: false,
+                bail: true
             });
             data = {
                 title: 'hello',
