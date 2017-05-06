@@ -369,6 +369,7 @@ class Compiler {
 
         stacks.push(`function(${DATA}){`);
         stacks.push(`'use strict'`);
+        stacks.push(`${DATA}=${DATA}||{}`);
         stacks.push(`var ` + context.map(({
             name,
             value

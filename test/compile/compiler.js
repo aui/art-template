@@ -250,7 +250,7 @@ module.exports = {
 
             test(`{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -261,7 +261,7 @@ module.exports = {
 
             test(`abc{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -270,7 +270,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -281,7 +281,7 @@ module.exports = {
 
             test(`abc\n{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -290,7 +290,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -302,7 +302,7 @@ module.exports = {
 
             test(`abc\n<%\n print('s') \n eeee(2) %>\n{{a}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -311,7 +311,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -320,7 +320,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 8,
+                    line: 9,
                     column: 1
                 },
                 original: {
@@ -329,7 +329,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 9,
+                    line: 10,
                     column: 1
                 },
                 original: {
