@@ -281,6 +281,8 @@ class Compiler {
     checkExpression(script) {
 
         // 没有闭合的块级模板语句规则
+        // 基于正则规则来补全语法不能保证 100% 准确，
+        // 但是在绝大多数情况下足以满足辅助开发调试的需要
         const rules = [
 
             // <% } %>
@@ -288,11 +290,10 @@ class Compiler {
             // <% }else if(a){ %>
             [/^\s*}[\w\W]*?{?[\s;]*$/, ''],
 
-            // <% list.forEach(function(a,b){ %>
-            [/(^[\w\W]*?\s*function\s*\([\w\W]*?\)\s*{[\s;]*$)/, '$1})'],
-
-            // <% list.forEach((a,b)=>{ %>
-            [/(^.*?\(\s*[\w\W]*?=>\s*{[\s;]*$)/, '$1})'],
+            // <% fn(c,function(a,b){ %>
+            // <% fn(c, a=>{ %>
+            // <% fn(c,(a,b)=>{ %>
+            [/(^[\w\W]*?\([\w\W]*?(?:=>|\([\w\W]*?\))\s*{[\s;]*$)/, '$1})'],
 
             // <% if(a){ %>
             // <% for(var i in d){ %>
