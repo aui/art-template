@@ -40,6 +40,11 @@ const compile = (source, options = {}) => {
     }
 
 
+    if (options.compileDebug) {
+        options.minimize = false;
+    }
+
+
     // 转换成绝对路径
     if (options.filename) {
         options.filename = options.resolveFilename(options.filename, options);

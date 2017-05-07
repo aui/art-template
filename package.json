@@ -15,7 +15,6 @@
     "build": "npm run build-lib && npm run build-web",
     "build-lib": "rm -rf lib && babel src --out-dir lib --presets=es2015-loose",
     "build-web": "export NODE_ENV=production && webpack",
-    "build-docs": "cp -rf lib/template-web.js docs/lib && node docs/build/index.js",
     "dev": "babel src --watch --out-dir lib --presets=es2015-loose",
     "test": "export NODE_ENV=production && istanbul cover node_modules/mocha/bin/_mocha -- --ui exports --colors 'test/**/*.js'",
     "coverage": "cat ./coverage/lcov.info | coveralls"
@@ -47,7 +46,6 @@
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "istanbul": "^0.4.5",
-    "markdown-it": "^8.3.1",
     "mocha": "^3.2.0",
     "node-noop": "^1.0.0",
     "webpack": "^2.3.2"
