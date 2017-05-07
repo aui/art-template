@@ -35,9 +35,6 @@ const BLOCKS = `$$blocks`;
 /** 继承的布局模板的文件地址变量 */
 const FROM = `$$from`;
 
-/** 导出布局模板函数 */
-const LAYOUT = `$$layout`;
-
 /** 编译设置变量 */
 const OPTIONS = `$$options`;
 
@@ -87,9 +84,8 @@ class Compiler {
             [LINE]: `[0,0,'']`,
             [BLOCKS]: `arguments[1]||{}`,
             [FROM]: `null`,
-            [LAYOUT]: `function(){return ${IMPORTS}.$include(${FROM},${DATA},${BLOCKS},${OPTIONS})}`,
             [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
-            [INCLUDE]: `function(src,data,block){${OUT}+=${IMPORTS}.$include(src,data||${DATA},block,${OPTIONS})}`,
+            [INCLUDE]: `function(src,data){${OUT}+=${OPTIONS}.include(src,data||${DATA},arguments[2]||${BLOCKS},${OPTIONS})}`,
             [EXTEND]: `function(from){${FROM}=from}`,
             [BLOCK]: `function(name,callback){if(${FROM}){${OUT}='';callback();${BLOCKS}[name]=${OUT}}else{if(typeof ${BLOCKS}[name]==='string'){${OUT}+=${BLOCKS}[name]}else{callback()}}}`
         };
@@ -97,10 +93,9 @@ class Compiler {
         // 内置函数依赖关系声明
         this.dependencies = {
             [PRINT]: [OUT],
-            [INCLUDE]: [OUT, IMPORTS, DATA, OPTIONS],
-            [EXTEND]: [FROM, /*[*/ LAYOUT /*]*/ ],
-            [BLOCK]: [FROM, OUT, BLOCKS],
-            [LAYOUT]: [IMPORTS, FROM, DATA, BLOCKS, OPTIONS]
+            [INCLUDE]: [OUT, OPTIONS, DATA, BLOCKS],
+            [EXTEND]: [FROM, /*[*/ INCLUDE /*]*/ ],
+            [BLOCK]: [FROM, OUT, BLOCKS]
         };
 
 
@@ -198,8 +193,8 @@ class Compiler {
                 if (has(dependencies, name)) {
                     dependencies[name].forEach(name => this.importContext(name));
                 }
-            
-            // imports 继承了 Global，但是继承的属性不分配到顶级变量中，避免占用了模板内部的变量名称
+
+                // imports 继承了 Global，但是继承的属性不分配到顶级变量中，避免占用了模板内部的变量名称
             } else if (has(imports, name)) {
                 value = `${IMPORTS}.${name}`;
             } else {
@@ -281,6 +276,8 @@ class Compiler {
     checkExpression(script) {
 
         // 没有闭合的块级模板语句规则
+        // 基于正则规则来补全语法不能保证 100% 准确，
+        // 但是在绝大多数情况下足以满足辅助开发调试的需要
         const rules = [
 
             // <% } %>
@@ -288,11 +285,10 @@ class Compiler {
             // <% }else if(a){ %>
             [/^\s*}[\w\W]*?{?[\s;]*$/, ''],
 
-            // <% list.forEach(function(a,b){ %>
-            [/(^[\w\W]*?\s*function\s*\([\w\W]*?\)\s*{[\s;]*$)/, '$1})'],
-
-            // <% list.forEach((a,b)=>{ %>
-            [/(^.*?\(\s*[\w\W]*?=>\s*{[\s;]*$)/, '$1})'],
+            // <% fn(c,function(a,b){ %>
+            // <% fn(c, a=>{ %>
+            // <% fn(c,(a,b)=>{ %>
+            [/(^[\w\W]*?\([\w\W]*?(?:=>|\([\w\W]*?\))\s*{[\s;]*$)/, '$1})'],
 
             // <% if(a){ %>
             // <% for(var i in d){ %>
@@ -368,6 +364,7 @@ class Compiler {
 
         stacks.push(`function(${DATA}){`);
         stacks.push(`'use strict'`);
+        stacks.push(`${DATA}=${DATA}||{}`);
         stacks.push(`var ` + context.map(({
             name,
             value
@@ -414,7 +411,12 @@ class Compiler {
         }
 
 
-        stacks.push(extendMode ? `return ${LAYOUT}()` : `return ${OUT}`);
+        if (extendMode) {
+            stacks.push(`${OUT}=''`);
+            stacks.push(`${INCLUDE}(${FROM},${DATA},${BLOCKS})`);
+        }
+
+        stacks.push(`return ${OUT}`);
         stacks.push(`}`);
 
 
@@ -474,7 +476,6 @@ Compiler.CONSTS = {
     LINE,
     BLOCKS,
     FROM,
-    LAYOUT,
     ESCAPE
 };
 

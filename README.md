@@ -8,7 +8,7 @@
 
 art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
 
-[![chart](https://cloud.githubusercontent.com/assets/1791748/25561182/52b7c176-2d98-11e7-8270-da1aca0a80e4.png)](https://aui.github.io/art-template/example/web-test-speed/)
+[![chart](https://cloud.githubusercontent.com/assets/1791748/25769656/13d09cb2-3252-11e7-9b31-b91110908bce.png)](https://aui.github.io/art-template/example/web-test-speed/)
 
 [在线速度测试](https://aui.github.io/art-template/example/web-test-speed/)
 
@@ -17,11 +17,11 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 * 拥有接近 JavaScript 渲染极限的的性能
 * 调试友好：语法、运行时错误日志精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
 * 支持压缩输出页面中的 HTML、CSS、JS 代码
-* 支持 NodeJS 与 浏览器。支持 Express、Koa、Webpack
+* 支持 Express、Koa、Webpack
 * 支持模板继承与子模板
 * 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
-* 支持 ES 严格模式环境运行
-* 支持原生 JavaScript 语法与简约语法混合书写
+* 模板编译后的代码支持在严格模式下运行
+* 支持 JavaScript 语句与模板语法混合书写
 * 支持自定义模板的语法解析规则
 * 浏览器版本仅 6KB 大小
 
@@ -32,15 +32,15 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 ### 模板语法
 
 ```html
-<% if (user) { %>
-  <h2><%= user.name %></h2>
-<% } %>
-
-或：
-
 {{if user}}
   <h2>{{user.name}}</h2>
 {{/if}}
+
+或：
+
+<% if (user) { %>
+  <h2><%= user.name %></h2>
+<% } %>
 ```
 
 ### NodeJS
@@ -54,21 +54,16 @@ var html = template(__dirname + '/tpl-user.art', {
 });
 ```
 
-### Web
-
-1\. 使用浏览器版本：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
-
-2\. 在页面中存放模板：
+### 浏览器
 
 ```html
+<script src="lib/template-web.js"></script>
 <script id="tpl-user" type="text/html">
-<% if (user) { %>
-  <h2><%= user.name %></h2>
-<% } %>
+{{if user}}
+  <h2>{{user.name}}</h2>
+{{/if}}
 </script>
 ```
-
-3\. 渲染模板：
 
 ```js
 var html = template('tpl-user', {
@@ -102,8 +97,6 @@ npm install art-template --save
 ### 浏览器
 
 下载：[lib/template-web.js](https://raw.githubusercontent.com/aui/art-template/master/lib/template-web.js)
-
-浏览器版本没有文件加载、HTML 压缩的特性。
 
 ### Express
 
@@ -276,7 +269,7 @@ index.art:
 ### 过滤器
 
 ```js
-// 向模板中导入全局变量
+// 向模板中导入变量
 template.defaults.imports.dateFormat = function(date, format){/*[code..]*/};
 template.defaults.imports.timestamp = function(value){return value * 1000};
 ```
@@ -297,7 +290,7 @@ template.defaults.imports.timestamp = function(value){return value * 1000};
 template.defaults.minimize = true;
 ```
 
-art-template 的页面压缩功能是在编译阶段实现的，因此完全不影响渲染速度，并且能够加快网络传输速度。但也有一个限制，它会尝试“优化”未闭合的 HTML 标签，因此使用 `include` 语句载入模板片段请避免书写这样没有正确闭合的模板：
+art-template 的页面压缩功能是在编译阶段实现的，因此完全不影响渲染速度，并且能够加快网络传输速度。但也有一个限制，它会尝试“优化”未闭合的 HTML 标签，因此请避免书写这样没有正确闭合的模板：
 
 ```html
 <body>
@@ -308,11 +301,11 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 </body></html>
 ```
 
-使用 [模板继承](#模板继承) 代替 `include` 可以避免这样的问题出现。
+使用子模板载入网页头与底公共部分的时候很容易出现此问题，解决方案是使用 [模板继承](#模板继承) 代替子模板。
 
 ## 调试
 
-设置 `template.defaults.debug=true` 后，它会设置如下选项：
+设置 `template.defaults.debug=true` 后，它会设置如下 [选项](#选项)：
 
 ```json
 {
@@ -330,32 +323,32 @@ art-template 的页面压缩功能是在编译阶段实现的，因此完全不�
 
 ## 全局变量
 
+模板通过 `$imports` 可以访问到模板外部的全局变量。
+
 ### 内置变量清单
 
-* `$data`     传入模板的数据 `{Object|array}`
-* `$imports`  外部导入的所有变量，等同 `template.defaults.imports` `{Object}`
-* `print`     字符串输出函数 `{function}`
-* `include`   子模板载入函数 `{function}`
-* `extend`    模板继承模板导入函数 `{function}`
-* `block`     模板块声明函数 `{function}`
+* `$data`     传入模板的数据
+* `$imports`  外部导入的变量以及全局变量
+* `print`     字符串输出函数
+* `include`   子模板载入函数
+* `extend`    模板继承模板导入函数
+* `block`     模板块声明函数
 
-### 注入外部变量
-
-模板外部所有的变量都需要添加到 `template.defaults.imports` 后，模板才能使用。
+### 导入变量
 
 ```js
-template.defaults.imports.console = console;
+template.defaults.imports.log = console.log;
 ```
 
 ```html
-<% $imports.console.log('hello world') %>
+<% $imports.log('hello world') %>
 ```
 
 ## 配置语法规则
 
 ### 修改界定符
 
-art-template 支持修改默认模板界定符 `{{}}` 与 `<%%>`：
+art-template 支持修改默认模板界定符 `{{` `}}` 与 `<%` `%>`：
 
 ```js
 // 原生语法的界定符规则

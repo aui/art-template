@@ -84,8 +84,7 @@ const getOldSourceMap = (mappings, {
  * @param  {Object}       options  编译选项
  * @return {Object}
  */
-const precompile = options => {
-    options = options || {};
+const precompile = (options = {}) => {
 
     if (typeof options.filename !== 'string') {
         throw Error('template.precompile(): "options.filename" required');
@@ -143,41 +142,22 @@ const precompile = options => {
                             "type": "Identifier",
                             "name": CONSTS.FROM
                         },
-                        "right": extendNode
+                        "right": {
+                            "type": "Literal",
+                            "value": true
+                        }
                     };
-                    break;
 
-                case CONSTS.LAYOUT:
-
-                    replaceNode = {
-                        "type": "CallExpression",
-                        "callee": {
-                            "type": "CallExpression",
-                            "callee": {
-                                "type": "Identifier",
-                                "name": "require"
-                            },
-                            "arguments": [extendNode]
-                        },
-                        "arguments": [{
-                                "type": "Identifier",
-                                "name": CONSTS.DATA
-                            },
-                            {
-                                "type": "Identifier",
-                                "name": CONSTS.BLOCKS
-                            }
-                        ]
-                    };
                     break;
 
                 case CONSTS.INCLUDE:
 
-                    var filenameNode = convertFilenameNode(node.arguments[0], options);
-                    var dataNode = node.arguments[1] || {
+                    const filename = node.arguments.shift();
+                    const filenameNode = filename.name === CONSTS.FROM ? extendNode : convertFilenameNode(filename, options);
+                    const paramNodes = node.arguments.length ? node.arguments : [{
                         "type": "Identifier",
                         "name": CONSTS.DATA
-                    };
+                    }];
 
                     replaceNode = {
                         "type": "AssignmentExpression",
@@ -196,7 +176,7 @@ const precompile = options => {
                                 },
                                 "arguments": [filenameNode]
                             },
-                            "arguments": [dataNode]
+                            "arguments": paramNodes
                         }
                     };
                     break;
@@ -248,9 +228,7 @@ const precompile = options => {
         code,
         ast,
         sourceMap,
-        toString: function () {
-            return code;
-        }
+        toString: () => code
     };
 };
 

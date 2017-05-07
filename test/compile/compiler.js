@@ -68,20 +68,8 @@ module.exports = {
             test('$data', {});
             test('$imports', {});
 
-            test('print', {
-                print: "function(){$$out+=''.concat.apply('',arguments)}"
-            });
-
-            test('include', {
-                $$out: `''`,
-                include: "function(src,data,block){$$out+=$imports.$include(src,data||$data,block,$$options)}"
-            })
-
             test('$escape', {
                 $escape: '$imports.$escape'
-            });
-            test('$include', {
-                $include: '$imports.$include'
             });
 
         },
@@ -200,22 +188,38 @@ module.exports = {
 
             test('if(a){', true);
             test('for(var i in d){', true);
-            test('list.forEach(function(a,b){', true);
-            test('list.forEach((a,b)=>{', true);
+            test('fn(function(a,b){', true);
+            test('fn  (  function  (  a,  b  )  {  ', true);
+            test('fn(1,function(a,b){', true);
+            test('fn  (  1,  function  (  a,  b  )  {  ', true);
+            test('fn(function(){', true);
+            test('fn  (  function  (  )  {  ', true);
+            test('fn(1,function(){', true);
+            test('fn  (  1,  function  (  )  {  ', true);
+            test('fn((a,b)=>{', true);
+            test('fn  (  (  a  ,  b  )  =>  {  ', true);
+            test('fn(1,(a,b)=>{', true);
+            test('fn  (  1,  (  a  ,  b  )  =>  {  ', true);
+            test('fn(()=>{', true);
+            test('fn  (  (  )  =>  {  ', true);
+            test('fn(1,()=>{', true);
+            test('fn  (  1  ,  (  )  =>  {  ', true);
             test('$each(user.tags,function($value,$index){;', true);
             test('}else if(a){', true);
             test('}else{', true);
             test('}', true);
 
+            //test('(a,b)=>{', true);
+
             test('if(a){}', true);
             test('for(var i in d){}', true);
-            test('list.forEach(function(a,b){})', true);
-            test('list.forEach((a,b)=>{})', true);
+            test('fn(function(a,b){})', true);
+            test('fn((a,b)=>{})', true);
 
             test('@if(a){', false);
             test('@for(var i in d){', false);
-            test('@list.forEach(function(a,b){', false);
-            test('@list.forEach((a,b)=>{', false);
+            test('@fn(function(a,b){', false);
+            test('@fn((a,b)=>{', false);
         }
     },
 
@@ -234,7 +238,7 @@ module.exports = {
 
             test(`{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -245,7 +249,7 @@ module.exports = {
 
             test(`abc{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -254,7 +258,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -265,7 +269,7 @@ module.exports = {
 
             test(`abc\n{{value}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -274,7 +278,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -286,7 +290,7 @@ module.exports = {
 
             test(`abc\n<%\n print('s') \n eeee(2) %>\n{{a}}`, [{
                 generated: {
-                    line: 4,
+                    line: 5,
                     column: 1
                 },
                 original: {
@@ -295,7 +299,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 5,
+                    line: 6,
                     column: 1
                 },
                 original: {
@@ -304,7 +308,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 8,
+                    line: 9,
                     column: 1
                 },
                 original: {
@@ -313,7 +317,7 @@ module.exports = {
                 }
             }, {
                 generated: {
-                    line: 9,
+                    line: 10,
                     column: 1
                 },
                 original: {

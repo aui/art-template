@@ -1,6 +1,6 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
-const TemplateError = require('./template-error');
+const TemplateError = require('./error');
 
 
 const debugRender = (error, options) => {
@@ -30,7 +30,6 @@ const compile = (source, options = {}) => {
     options = defaults.$extend(options);
     source = options.source;
 
-
     // debug 模式
     /* istanbul ignore if */
     if (options.debug) {
@@ -38,6 +37,11 @@ const compile = (source, options = {}) => {
         options.bail = false;
         options.minimize = false;
         options.compileDebug = true;
+    }
+
+
+    if (options.compileDebug) {
+        options.minimize = false;
     }
 
 

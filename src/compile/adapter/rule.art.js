@@ -20,7 +20,7 @@ const artRule = {
         // 旧版语法升级提示
         const warn = (oldSyntax, newSyntax) => {
             console.warn('Template upgrade:',
-                `{{${oldSyntax}}}`, `>>>`, `{{${newSyntax}}}`,
+                `{{${oldSyntax}}}`, `->`, `{{${newSyntax}}}`,
                 `\n`, options.filename || '');
         };
 
