@@ -207,13 +207,11 @@
                     type: 'bar'
                 },
 
-                title: {
-                    text: 'Template Engine Rendering Speed Test'
-                },
+                title: false,
 
-                subtitle: {
-                    text: config.length + ' list × ' + config.calls + ' calls'
-                },
+                // subtitle: {
+                //     text: config.length + ' list × ' + config.calls + ' calls'
+                // },
 
                 xAxis: {
                     categories: categories,
@@ -428,6 +426,9 @@ ul
         font-size: 16px;
         line-height: 1.5;
         word-wrap: break-word;
+    }
+    #app h1 {
+        text-align: center;
     }
     #app .header {
         padding: 10px 20px;

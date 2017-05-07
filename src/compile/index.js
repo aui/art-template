@@ -130,6 +130,7 @@ const compile = (source, options = {}) => {
     };
 
     render.mappings = fn.mappings;
+    render.sourcesContent = fn.sourcesContent;
     render.toString = () => fn.toString();
 
     if (cache && filename) {
