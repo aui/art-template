@@ -1,6 +1,7 @@
 const detectNode = require('detect-node');
 const runtime = require('./runtime');
 const extend = require('./adapter/extend');
+const include = require('./adapter/include');
 const onerror = require('./adapter/onerror');
 const caches = require('./adapter/caches');
 const loader = require('./adapter/loader');
@@ -10,7 +11,7 @@ const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
 
 /** 模板编译器默认配置 */
-const defaults = {
+const settings = {
 
     // 模板内容。如果没有此字段，则会根据 filename 来加载模板内容
     source: null,
@@ -43,6 +44,9 @@ const defaults = {
 
     // 模板路径转换器
     resolveFilename: resolveFilename,
+
+    // 子模板编译适配器
+    include: include,
 
     // HTML 压缩器。仅在 NodeJS 环境下有效
     htmlMinifier: htmlMinifier,
@@ -80,14 +84,12 @@ const defaults = {
 };
 
 
-/**
- * 继承默认配置
- * @param   {Object}    options
- * @return  {Object}
- */
-defaults.$extend = function (options) {
-    return extend(options || {}, this);
+function Defaults() {
+    this.$extend = function (options) {
+        options = options || {};
+        return extend(options, options instanceof Defaults ? options : this);
+    }
 };
+Defaults.prototype = settings;
 
-
-module.exports = defaults;
+module.exports = new Defaults();

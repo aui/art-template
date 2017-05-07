@@ -142,14 +142,18 @@ const precompile = (options = {}) => {
                             "type": "Identifier",
                             "name": CONSTS.FROM
                         },
-                        "right": extendNode
+                        "right": {
+                            "type": "Literal",
+                            "value": true
+                        }
                     };
+
                     break;
 
                 case CONSTS.INCLUDE:
 
                     const filename = node.arguments.shift();
-                    const filenameNode = convertFilenameNode(filename, options);
+                    const filenameNode = filename.name === CONSTS.FROM ? extendNode : convertFilenameNode(filename, options);
                     const paramNodes = node.arguments.length ? node.arguments : [{
                         "type": "Identifier",
                         "name": CONSTS.DATA

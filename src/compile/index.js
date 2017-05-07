@@ -1,6 +1,6 @@
 const Compiler = require('./compiler');
 const defaults = require('./defaults');
-const TemplateError = require('./template-error');
+const TemplateError = require('./error');
 
 
 const debugRender = (error, options) => {
@@ -29,8 +29,6 @@ const compile = (source, options = {}) => {
     // 合并默认配置
     options = defaults.$extend(options);
     source = options.source;
-    options.$$compile = compile;
-
 
     // debug 模式
     /* istanbul ignore if */

@@ -85,7 +85,7 @@ class Compiler {
             [BLOCKS]: `arguments[1]||{}`,
             [FROM]: `null`,
             [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
-            [INCLUDE]: `function(src,data,blocks){${OUT}+=${OPTIONS}.$$compile(${OPTIONS}.$extend({filename:${OPTIONS}.resolveFilename(src,${OPTIONS}),source:null}))(data||${DATA},blocks||${BLOCKS})}`,
+            [INCLUDE]: `function(src,data){${OUT}+=${OPTIONS}.include(src,data||${DATA},arguments[2]||${BLOCKS},${OPTIONS})}`,
             [EXTEND]: `function(from){${FROM}=from}`,
             [BLOCK]: `function(name,callback){if(${FROM}){${OUT}='';callback();${BLOCKS}[name]=${OUT}}else{if(typeof ${BLOCKS}[name]==='string'){${OUT}+=${BLOCKS}[name]}else{callback()}}}`
         };

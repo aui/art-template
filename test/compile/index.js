@@ -318,7 +318,8 @@ module.exports = {
         'layout': () => {
             render = compile({
                 filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art'),
-                minimize: true
+                minimize: true,
+                bail: true
             });
             data = {
                 title: 'My Page'
@@ -528,7 +529,9 @@ module.exports = {
                 render = compile('<pre>\n\n\n</pre>{{value}}', {
                     minimize: true
                 });
-                assert.deepEqual('<pre>\n\n\n</pre>aui', render({value: 'aui'}));
+                assert.deepEqual('<pre>\n\n\n</pre>aui', render({
+                    value: 'aui'
+                }));
 
                 // TODO
                 // render = compile('<pre>\n<span></span>\n<%=value%></pre>', {
@@ -544,7 +547,9 @@ module.exports = {
                 render = compile('<textarea>\n\n\n</textarea>{{value}}', {
                     minimize: true
                 });
-                assert.deepEqual('<textarea>\n\n\n</textarea>aui', render({value: 'aui'}));
+                assert.deepEqual('<textarea>\n\n\n</textarea>aui', render({
+                    value: 'aui'
+                }));
             }
         },
 
@@ -583,6 +588,37 @@ module.exports = {
             });
             html = render({});
             assert.deepEqual('hello world', html);
+        },
+
+        'include: extend options': () => {
+            let render, html;
+
+            render = compile({
+                bail: true,
+                filename: path.resolve(__dirname, '..', 'res', 'extend-options', 'file'),
+                rules: [{
+                    test: /\${([\w\W]*?)}/,
+                    use: function (match, code) {
+                        return {
+                            code: code,
+                            output: false
+                        }
+                    }
+                }]
+            });
+            html = render({
+                value: 'hello world'
+            });
+            assert.deepEqual('hello world', html);
+
+            render = compile({
+                bail: true,
+                filename: path.resolve(__dirname, '..', 'res', 'extend-options', 'file2')
+            });
+            html = render({
+                value: 'hello world'
+            });
+            assert.deepEqual('${value}hello world', html);
         }
     },
 
@@ -636,28 +672,28 @@ module.exports = {
                 assert.deepEqual(undefined, render);
             },
 
-//             'error line': () => {
-//                 const tpl = `<!--template-->
-// {{if user}}
-//   <h2>{{user.name}}</h2>
-//   <ul>
-//     {{each user.tags}}
-//         <li>{{$value}} {{a b c d}}</li>
-//     {{/each}}
-//   </ul>
-// {{/if}}`;
-//                 let render;
-//                 try {
-//                     render = compile(tpl, {
-//                         bail: true,
-//                         minimize: false
-//                     });
-//                     render({});
-//                 } catch (e) {
-//                     assert.deepEqual(6, e.line);
-//                 }
-//                 assert.deepEqual(undefined, render);
-//             },
+            //             'error line': () => {
+            //                 const tpl = `<!--template-->
+            // {{if user}}
+            //   <h2>{{user.name}}</h2>
+            //   <ul>
+            //     {{each user.tags}}
+            //         <li>{{$value}} {{a b c d}}</li>
+            //     {{/each}}
+            //   </ul>
+            // {{/if}}`;
+            //                 let render;
+            //                 try {
+            //                     render = compile(tpl, {
+            //                         bail: true,
+            //                         minimize: false
+            //                     });
+            //                     render({});
+            //                 } catch (e) {
+            //                     assert.deepEqual(6, e.line);
+            //                 }
+            //                 assert.deepEqual(undefined, render);
+            //             },
 
             'template not found': () => {
                 const render = compile({
