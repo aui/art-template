@@ -632,7 +632,9 @@ module.exports = {
             },
 
             'throw error': () => {
+                const filename = '/test.html';
                 const render = compile({
+                    filename,
                     source: '<%=a.b.c%>',
                     bail: true
                 });
@@ -641,7 +643,7 @@ module.exports = {
                     render({});
                 } catch (e) {
                     assert.deepEqual('TemplateError', e.name);
-                    assert.deepEqual(true, e.message.indexOf('RuntimeError') !== -1);
+                    assert.deepEqual(true, e.message.indexOf(filename) !== -1);
                 }
             }
         },
@@ -667,7 +669,6 @@ module.exports = {
                     render({});
                 } catch (e) {
                     assert.deepEqual('TemplateError', e.name);
-                    assert.deepEqual(true, e.message.indexOf('CompileError') !== -1);
                 }
                 assert.deepEqual(undefined, render);
             },
@@ -709,7 +710,7 @@ module.exports = {
                         bail: true
                     });
                 } catch (e) {
-                    assert.deepEqual(true, e.message.indexOf('CompileError') !== -1);
+                    assert.deepEqual(true, e.message.indexOf('template not found') !== -1);
                 }
             }
         }

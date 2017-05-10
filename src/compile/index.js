@@ -75,6 +75,7 @@ const compile = (source, options = {}) => {
 
             const error = new TemplateError({
                 name: 'CompileError',
+                path: filename,
                 message: `template not found: ${e.message}`,
                 stack: e.stack
             });
