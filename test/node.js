@@ -49,13 +49,14 @@ module.exports = {
         'CompileError: bail=true': () => {
             defaults.bail = true;
             let runder;
+            const filename = path.join(__dirname, './res/extension.compile-error.2.tpl');
 
             try {
-                runder = require('./res/extension.compile-error.2.tpl');
+                runder = require(filename);
                 
             } catch (e) {
                 assert.deepEqual('TemplateError', e.name);
-                assert.deepEqual(true, e.message.indexOf('CompileError') !== -1);
+                assert.deepEqual(true, e.message.indexOf(filename) !== -1);
             }
 
             assert.deepEqual('undefined', typeof runder);
@@ -73,12 +74,13 @@ module.exports = {
 
         'RuntimeError: bail=true': () => {
             defaults.bail = true;
+            const filename = path.join(__dirname, 'res', 'extension.runtime-error.2.tpl');
             try {
-                const render = require(path.join(__dirname, 'res', 'extension.runtime-error.2.tpl'));
+                const render = require(filename);
                 render({});
             } catch (e) {
                 assert.deepEqual('TemplateError', e.name);
-                assert.deepEqual(true, e.message.indexOf('RuntimeError') !== -1);
+                assert.deepEqual(true, e.message.indexOf(filename) !== -1);
             }
             defaults.bail = resetBail;
         }

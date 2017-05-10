@@ -75,6 +75,7 @@ const compile = (source, options = {}) => {
 
             const error = new TemplateError({
                 name: 'CompileError',
+                path: filename,
                 message: `template not found: ${e.message}`,
                 stack: e.stack
             });
@@ -130,6 +131,7 @@ const compile = (source, options = {}) => {
     };
 
     render.mappings = fn.mappings;
+    render.sourcesContent = fn.sourcesContent;
     render.toString = () => fn.toString();
 
     if (cache && filename) {

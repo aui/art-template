@@ -81,7 +81,7 @@ class Compiler {
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
             [OUT]: `''`,
-            [LINE]: `[0,0,'']`,
+            [LINE]: `[0,0]`,
             [BLOCKS]: `arguments[1]||{}`,
             [FROM]: `null`,
             [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
@@ -380,8 +380,7 @@ class Compiler {
                 if (script.tplToken.type === tplTokenizer.TYPE_EXPRESSION) {
                     stacks.push(`${LINE}=[${[
                         script.tplToken.line,
-                        script.tplToken.start,
-                        stringify(script.source)
+                        script.tplToken.start
                     ].join(',')}]`);
                 }
 
@@ -397,7 +396,7 @@ class Compiler {
                 `message:error.message`,
                 `line:${LINE}[0]+1`,
                 `column:${LINE}[1]+1`,
-                `source:${LINE}[2]`,
+                `source:${stringify(source)}`,
                 `stack:error.stack`
             ].join(`,`) + '}');
 
@@ -432,12 +431,10 @@ class Compiler {
             let index = 0;
             let line = 0;
             let start = 0;
-            let source2 = source;
 
             while (index < scripts.length) {
                 const current = scripts[index];
                 if (!this.checkExpression(current.code)) {
-                    source2 = current.source;
                     line = current.tplToken.line;
                     start = current.tplToken.start;
                     break;
@@ -451,8 +448,8 @@ class Compiler {
                 message: error.message,
                 line: line + 1,
                 column: start + 1,
-                source: source2,
-                script: renderCode,
+                source,
+                generated: renderCode,
                 stack: error.stack
             };
         }
