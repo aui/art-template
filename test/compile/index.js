@@ -619,6 +619,19 @@ module.exports = {
                 value: 'hello world'
             });
             assert.deepEqual('${value}hello world', html);
+        },
+
+        'imports': () => {
+            const render = compile('<%= $imports.stringify(value) %>', {
+                bail: true,
+                imports: {
+                    stringify: JSON.stringify,
+                    log: console.log
+                }
+            });
+            assert.deepEqual('&#34;hello&#34;', render({
+                value: 'hello'
+            }));
         }
     },
 
