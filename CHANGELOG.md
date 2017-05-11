@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.9.1
+
+1. 修复模板内部 `$escape` 与 `$each` 变量可能没有定义的问题 [#3](https://github.com/aui/express-art-template/issues/3) [#1](https://github.com/aui/express-art-template/issues/1)
+
 ## v4.9.0
 
 1. 增强调试功能：日志输出错误行号以及上下文

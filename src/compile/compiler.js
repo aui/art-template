@@ -11,6 +11,9 @@ const IMPORTS = `$imports`;
 /**  $imports.$escape */
 const ESCAPE = `$escape`;
 
+/**  $imports.$each */
+const EACH = `$each`;
+
 /** 文本输出函数 */
 const PRINT = `print`;
 
@@ -71,12 +74,8 @@ class Compiler {
         // context map
         this.CONTEXT_MAP = {};
 
-        // 外部变量名单
-        this.external = {
-            [DATA]: true,
-            [IMPORTS]: true,
-            [OPTIONS]: true
-        };
+        // 忽略的变量名单
+        this.ignore = [DATA, IMPORTS, OPTIONS, ...options.ignore];
 
         // 按需编译到模板渲染函数的内置变量
         this.internal = {
@@ -111,6 +110,7 @@ class Compiler {
                 source = htmlMinifier(source, options);
             } catch (error) {}
         }
+
 
         this.source = source;
         this.getTplTokens(source, options.rules, this).forEach(tokens => {
@@ -178,14 +178,13 @@ class Compiler {
         let value = ``;
         const internal = this.internal;
         const dependencies = this.dependencies;
-        const external = this.external;
+        const ignore = this.ignore;
         const context = this.context;
         const options = this.options;
-        const ignore = options.ignore;
         const imports = options.imports;
         const contextMap = this.CONTEXT_MAP;
 
-        if (!has(contextMap, name) && !has(external, name) && ignore.indexOf(name) < 0) {
+        if (!has(contextMap, name) && ignore.indexOf(name) === -1) {
 
             if (has(internal, name)) {
                 value = internal[name];
@@ -195,7 +194,7 @@ class Compiler {
                 }
 
                 // imports 继承了 Global，但是继承的属性不分配到顶级变量中，避免占用了模板内部的变量名称
-            } else if (has(imports, name)) {
+            } else if (name === ESCAPE || name === EACH || has(imports, name)) {
                 value = `${IMPORTS}.${name}`;
             } else {
                 value = `${DATA}.${name}`;
@@ -473,7 +472,8 @@ Compiler.CONSTS = {
     LINE,
     BLOCKS,
     FROM,
-    ESCAPE
+    ESCAPE,
+    EACH
 };
 
 
