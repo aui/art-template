@@ -10,7 +10,7 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 
 文档：<https://aui.github.io/art-template/>
 
-[![chart](https://cloud.githubusercontent.com/assets/1791748/25769656/13d09cb2-3252-11e7-9b31-b91110908bce.png)](https://aui.github.io/art-template/example/web-test-speed/)
+[![chart](http://localhost:4000/art-template/images/chart@2x.png)](https://aui.github.io/art-template/rendering-test/)
 
 ## 特性
 
