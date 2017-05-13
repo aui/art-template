@@ -10,9 +10,10 @@ art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是�
 
 文档：<https://aui.github.io/art-template/>
 
+## 特性
+
 [![chart](https://aui.github.io/art-template/images/chart@2x.png)](https://aui.github.io/art-template/rendering-test/)
 
-## 特性
 
 * 拥有接近 JavaScript 渲染极限的的性能
 * 调试友好：语法、运行时错误日志精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
