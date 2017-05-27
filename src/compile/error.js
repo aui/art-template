@@ -1,22 +1,20 @@
 /**
  * 模板错误处理类
+ * @param   {Object}    options
  */
-
-function TemplateError(error) {
-    const that = Error.call(this, error.message);
-    that.name = 'TemplateError';
-    that.message = debugMessage(error);
-
-    if (Error.captureStackTrace) {
-        Error.captureStackTrace(that, that.constructor);
+class TemplateError extends Error {
+    constructor(options) {
+        super(options.message);
+        this.name = 'TemplateError';
+        this.message = formatMessage(options);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
     }
-    return that;
 };
 
-TemplateError.prototype = Object.create(Error.prototype);
-TemplateError.prototype.constructor = TemplateError;
-
-function debugMessage({
+function formatMessage({
+    name,
     source,
     path,
     line,
@@ -42,7 +40,7 @@ function debugMessage({
     // Alter exception message
     return `${path || 'anonymous'}:${line}:${column}\n` +
         `${context}\n\n` +
-        `${message}`
+        `${name}: ${message}`
 }
 
 
