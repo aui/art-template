@@ -61,6 +61,19 @@ module.exports = {
             // todo empty
         },
 
+        'block': () => {
+
+            render = compile('<% block(function(){ %>hello <%= value %>.<% }) %>', {
+                bail: true
+            });
+            data = {
+                value: 'aui'
+            };
+            result = render(data);
+            assert.deepEqual('hello aui.', result);
+
+        },
+
         'syntax compat: art-template@v3': () => {
 
 
