@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.10.0
+
+1. 修复 EJS `<%- include(src) %>` 语句兼容问题
+
+
 ## v4.9.1
 
 1. 修复模板内部 `$escape` 与 `$each` 变量可能没有定义的问题 [#3](https://github.com/aui/express-art-template/issues/3) [#1](https://github.com/aui/express-art-template/issues/1)
