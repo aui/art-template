@@ -19,9 +19,8 @@ const artRule = {
 
         // 旧版语法升级提示
         const warn = (oldSyntax, newSyntax) => {
-            console.warn('Template upgrade:',
-                `{{${oldSyntax}}}`, `->`, `{{${newSyntax}}}`,
-                `\n`, options.filename || '');
+            console.warn(`${options.filename || 'anonymous'}:${match.line + 1}:${match.start + 1}\n` +
+                `Template upgrade: {{${oldSyntax}}} -> {{${newSyntax}}}`);
         };
 
 
@@ -146,17 +145,6 @@ const artRule = {
                         return code = `$imports.${name}(${filter.join(',')})`;
                     }, target);
 
-
-                } else if (options.imports[key]) {
-
-                    // ... v3 compat ...
-                    warn('filterName value', 'value | filterName');
-
-                    group = artRule._split(esTokens);
-                    group.shift();
-
-                    code = `${key}(${group.join(',')})`;
-                    output = 'raw';
 
                 } else {
                     code = `${key}${values.join('')}`;
