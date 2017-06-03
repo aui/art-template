@@ -254,9 +254,6 @@ module.exports = {
             test(`{{time | dateFormat:'yyyy-MM-dd'}}`, {
                 time: 1491566794863
             }, `2017-04-07`, options); // ... v3 compat ...
-            test(`{{brackets value}}`, {
-                value: '糖饼'
-            }, '『糖饼』', options); // ... v3 compat ...
         },
 
 
