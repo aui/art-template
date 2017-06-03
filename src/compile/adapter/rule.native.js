@@ -3,7 +3,7 @@
  */
 const nativeRule = {
     test: /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/,
-    use: (match, comment, output, code) => {
+    use: (match, comment, output, code/*, trimMode*/) => {
 
         output = ({
             '-': 'raw',
@@ -21,7 +21,7 @@ const nativeRule = {
         }
 
         // ejs compat: trims following newline
-        // if (trtimMode) {}
+        // if (trimMode) {}
 
         return {
             code,
