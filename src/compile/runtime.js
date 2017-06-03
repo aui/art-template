@@ -2,10 +2,40 @@
 
 const detectNode = require('detect-node');
 const runtime = Object.create(detectNode ? global : window);
+const ESCAPE_REG = /["&'<>]/;
+
+
+
+/**
+ * 编码模板输出的内容
+ * @param  {any}        content
+ * @return {string}
+ */
+runtime.$escape = content => xmlEscape(toString(content));
+
+
+
+/**
+ * 迭代器，支持数组与对象
+ * @param {array|Object} data 
+ * @param {function}     callback 
+ */
+runtime.$each = (data, callback) => {
+    if (Array.isArray(data)) {
+        for (let i = 0, len = data.length; i < len; i++) {
+            callback(data[i], i);
+        }
+    } else {
+        for (let i in data) {
+            callback(data[i], i);
+        }
+    }
+};
+
 
 
 // 将目标转成字符
-const toString = value => {
+function toString(value) {
     if (typeof value !== 'string') {
         if (value === undefined || value === null) {
             value = '';
@@ -21,8 +51,7 @@ const toString = value => {
 
 
 // 编码 HTML 内容
-const ESCAPE_REG = /["&'<>]/;
-const xmlEscape = content => {
+function xmlEscape(content) {
     const html = '' + content;
     const regexResult = ESCAPE_REG.exec(html);
     if (!regexResult) {
@@ -68,33 +97,5 @@ const xmlEscape = content => {
     }
 };
 
-
-/**
- * 编码模板输出的内容
- * @param  {any}        content
- * @return {string}
- */
-const escape = content => xmlEscape(toString(content));
-
-
-/**
- * 迭代器，支持数组与对象
- * @param {array|Object} data 
- * @param {function}     callback 
- */
-const each = (data, callback) => {
-    if (Array.isArray(data)) {
-        for (let i = 0, len = data.length; i < len; i++) {
-            callback(data[i], i, data);
-        }
-    } else {
-        for (let i in data) {
-            callback(data[i], i);
-        }
-    }
-};
-
-runtime.$each = each;
-runtime.$escape = escape;
 
 module.exports = runtime;

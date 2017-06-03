@@ -3,6 +3,16 @@ const TYPE_EXPRESSION = 'expression';
 const TYPE_RAW = 'raw';
 const TYPE_ESCAPE = 'escape';
 
+function Match(content, line, start, end) {
+    this.content = content;
+    this.line = line;
+    this.start = start;
+    this.end = end;
+};
+
+Match.prototype.toString = function(){
+    return this.content;
+};
 
 
 /**
@@ -12,7 +22,7 @@ const TYPE_ESCAPE = 'escape';
  * @param {Object}      context
  * @return {Object[]}
  */
-const tplTokenizer = (source, rules, context) => {
+const tplTokenizer = (source, rules, context = {}) => {
 
     const tokens = [{
         type: TYPE_STRING,
@@ -82,6 +92,7 @@ const tplTokenizer = (source, rules, context) => {
 
                 } else {
 
+                    values[0] = new Match(values[0], line, start, end);
                     const script = rule.use.apply(context, values);
                     token.script = script;
                     substitute.push(token);

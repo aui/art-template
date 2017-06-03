@@ -35,6 +35,9 @@ const LINE = `$$line`;
 /** 所有“模板块”变量 */
 const BLOCKS = `$$blocks`;
 
+/** 截取模版输出“流”的函数 */
+const SLICE = `$$slice`;
+
 /** 继承的布局模板的文件地址变量 */
 const FROM = `$$from`;
 
@@ -83,10 +86,11 @@ class Compiler {
             [LINE]: `[0,0]`,
             [BLOCKS]: `arguments[1]||{}`,
             [FROM]: `null`,
-            [PRINT]: `function(){${OUT}+=''.concat.apply('',arguments)}`,
-            [INCLUDE]: `function(src,data){${OUT}+=${OPTIONS}.include(src,data||${DATA},arguments[2]||${BLOCKS},${OPTIONS})}`,
+            [PRINT]: `function(){var s=''.concat.apply('',arguments);${OUT}+=s;return s}`,
+            [INCLUDE]: `function(src,data){var s=${OPTIONS}.include(src,data||${DATA},arguments[2]||${BLOCKS},${OPTIONS});${OUT}+=s;return s}`,
             [EXTEND]: `function(from){${FROM}=from}`,
-            [BLOCK]: `function(name,callback){if(${FROM}){${OUT}='';callback();${BLOCKS}[name]=${OUT}}else{if(typeof ${BLOCKS}[name]==='string'){${OUT}+=${BLOCKS}[name]}else{callback()}}}`
+            [SLICE]: `function(c,p,s){p=${OUT};${OUT}='';c();s=${OUT};${OUT}=p+s;return s}`,
+            [BLOCK]: `function(){var a=arguments,s;if(typeof a[0]==='function'){return ${SLICE}(a[0])}else if(${FROM}){${BLOCKS}[a[0]]=${SLICE}(a[1])}else{s=${BLOCKS}[a[0]];if(typeof s==='string'){${OUT}+=s}else{s=${SLICE}(a[1])}return s}}`
         };
 
         // 内置函数依赖关系声明
@@ -94,7 +98,7 @@ class Compiler {
             [PRINT]: [OUT],
             [INCLUDE]: [OUT, OPTIONS, DATA, BLOCKS],
             [EXTEND]: [FROM, /*[*/ INCLUDE /*]*/ ],
-            [BLOCK]: [FROM, OUT, BLOCKS]
+            [BLOCK]: [SLICE, FROM, OUT, BLOCKS]
         };
 
 
@@ -471,6 +475,7 @@ Compiler.CONSTS = {
     OUT,
     LINE,
     BLOCKS,
+    SLICE,
     FROM,
     ESCAPE,
     EACH
