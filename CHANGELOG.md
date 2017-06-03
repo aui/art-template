@@ -2,8 +2,8 @@
 
 ## v4.10.0
 
-1. 修复 EJS `<%- include(src) %>` 语句兼容问题
-
+1. 修复标准语法的 BUG [#408](https://github.com/aui/art-template/issues/408)，并且不再兼容 v3 的辅助方法调用：`{{helper args}}`
+2. 修复 EJS `<%- include(src) %>` 语句兼容问题
 
 ## v4.9.1
 
