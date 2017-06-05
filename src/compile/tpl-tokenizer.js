@@ -4,15 +4,12 @@ const TYPE_RAW = 'raw';
 const TYPE_ESCAPE = 'escape';
 
 function Match(content, line, start, end) {
-    this.content = content;
-    this.line = line;
-    this.start = start;
-    this.end = end;
-};
-
-Match.prototype.toString = function(){
-    return this.content;
-};
+    const match = new String(content);
+    match.line = line;
+    match.start = start;
+    match.end = end;
+    return match;
+}
 
 
 /**

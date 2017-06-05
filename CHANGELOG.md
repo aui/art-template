@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.10.1
+
+1.  `rule.use` 函数第一个传入数据类型由“类 `String` ”对象改为真正的 `String` 对象
+
 ## v4.10.0
 
 1. 修复标准语法的 BUG [#408](https://github.com/aui/art-template/issues/408)，并且不再兼容 v3 的辅助方法调用：`{{helper args}}`
