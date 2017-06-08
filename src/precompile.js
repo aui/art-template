@@ -97,7 +97,7 @@ const precompile = (options = {}) => {
     let sourceMap = null;
     let ast = null;
     const imports = options.imports;
-    const functions = [CONSTS.INCLUDE, CONSTS.EXTEND, CONSTS.LAYOUT];
+    const functions = [CONSTS.INCLUDE, CONSTS.EXTEND];
 
     if (typeof imports !== 'string') {
         throw Error('template.precompile(): "options.imports" is a file. Example:\n' +
@@ -123,7 +123,46 @@ const precompile = (options = {}) => {
         if (node.type === 'VariableDeclarator' &&
             functions.indexOf(node.id.name) !== -1) {
 
-            this.remove();
+            // TODO 对变量覆盖进行抛错
+            if (node.id.name === CONSTS.INCLUDE) {
+                node["init"] = {
+                    "type": "FunctionExpression",
+                    "params": [{
+                        "type": "Identifier",
+                        "name": "content"
+                    }],
+                    "body": {
+                        "type": "BlockStatement",
+                        "body": [{
+                                "type": "ExpressionStatement",
+                                "expression": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "+=",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": CONSTS.OUT
+                                    },
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "content"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "ReturnStatement",
+                                "argument": {
+                                    "type": "Identifier",
+                                    "name": CONSTS.OUT
+                                }
+                            }
+                        ]
+                    }
+                };
+                return node;
+
+            } else {
+                this.remove();
+            }
 
         } else if (node.type === 'CallExpression' &&
             node.callee.type === 'Identifier' &&
@@ -159,26 +198,20 @@ const precompile = (options = {}) => {
                         "name": CONSTS.DATA
                     }];
 
-                    replaceNode = {
-                        "type": "AssignmentExpression",
-                        "operator": "+=",
-                        "left": {
-                            "type": "Identifier",
-                            "name": CONSTS.OUT
-                        },
-                        "right": {
+                    replaceNode = node;
+                    replaceNode["arguments"] = [{
+                        "type": "CallExpression",
+                        "callee": {
                             "type": "CallExpression",
                             "callee": {
-                                "type": "CallExpression",
-                                "callee": {
-                                    "type": "Identifier",
-                                    "name": "require"
-                                },
-                                "arguments": [filenameNode]
+                                "type": "Identifier",
+                                "name": "require"
                             },
-                            "arguments": paramNodes
-                        }
-                    };
+                            "arguments": [filenameNode]
+                        },
+                        "arguments": paramNodes
+                    }]
+
                     break;
             }
 
