@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.10.2
+
+1. 修复与 art-template-loader 兼容问题 [#9](https://github.com/aui/art-template-loader/issues/9)
+
 ## v4.10.1
 
 1.  `rule.use` 函数第一个传入数据类型由“类 `String` ”对象改为真正的 `String` 对象
