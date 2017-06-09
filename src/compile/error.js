@@ -19,6 +19,7 @@ function formatMessage({
     path,
     line,
     column,
+    generated,
     message
 }) {
 
@@ -40,7 +41,8 @@ function formatMessage({
     // Alter exception message
     return `${path || 'anonymous'}:${line}:${column}\n` +
         `${context}\n\n` +
-        `${name}: ${message}`
+        `${name}: ${message}` +
+        (generated ? `\n   generated: ${generated}` : '')
 }
 
 
