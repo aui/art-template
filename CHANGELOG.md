@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## v4.11.0
+
+1. `include` 支持使用函数表达式 `{{include(file, {list[]})}}` [#414](https://github.com/aui/art-template/issues/414)
+
 ## v4.10.2
 
-1. 修复与 art-template-loader 兼容问题 [#9](https://github.com/aui/art-template-loader/issues/9)
+1. 修复与 art-template-loader 兼容问题 [art-template-loader#9](https://github.com/aui/art-template-loader/issues/9)
 
 ## v4.10.1
 
