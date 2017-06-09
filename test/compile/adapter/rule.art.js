@@ -42,7 +42,12 @@ module.exports = {
             code = 'a["b"] c';
             esTokens = esTokenizer(code);
             result = ruleArt._split(esTokens);
-            assert.deepEqual(['a["b"]', 'c'], result); 
+            assert.deepEqual(['a["b"]', 'c'], result);
+
+            code = 'a["b"][c] c';
+            esTokens = esTokenizer(code);
+            result = ruleArt._split(esTokens);
+            assert.deepEqual(['a["b"][c]', 'c'], result); 
 
             code = 'a[" b "] c';
             esTokens = esTokenizer(code);
@@ -69,11 +74,6 @@ module.exports = {
             result = ruleArt._split(esTokens);
             assert.deepEqual(['a/b', 'c'], result);
 
-            code = '++ a c';
-            esTokens = esTokenizer(code);
-            result = ruleArt._split(esTokens);
-            assert.deepEqual(['++a', 'c'], result);
-
             code = 'a + b + c';
             esTokens = esTokenizer(code);
             result = ruleArt._split(esTokens);
@@ -99,7 +99,7 @@ module.exports = {
             result = ruleArt._split(esTokens);
             assert.deepEqual(['a.f?b:c'], result);
 
-            code = 'a. f ? b : c';
+            code = 'a . f ? b : c';
             esTokens = esTokenizer(code);
             result = ruleArt._split(esTokens);
             assert.deepEqual(['a.f?b:c'], result);
@@ -123,6 +123,11 @@ module.exports = {
             esTokens = esTokenizer(code);
             result = ruleArt._split(esTokens);
             assert.deepEqual(['(a+b)/c[a]'], result);
+
+            code = '++ a c';
+            esTokens = esTokenizer(code);
+            result = ruleArt._split(esTokens);
+            assert.deepEqual(['++a', 'c'], result);            
 
         }
     }
