@@ -2,7 +2,7 @@
 
 ## v4.11.0
 
-1. `include` 支持使用函数表达式 `{{include(file, {list[]})}}` [#414](https://github.com/aui/art-template/issues/414)
+1. `include`、`extend` 支持使用函数表达式。例如 `{{include(file, {list[]})}}` [#414](https://github.com/aui/art-template/issues/414)
 
 ## v4.10.2
 
