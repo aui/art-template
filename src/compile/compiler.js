@@ -246,6 +246,7 @@ class Compiler {
         const source = tplToken.value;
         const script = tplToken.script;
         const output = script.output;
+        const escape = this.options.escape;
         let code = script.code;
 
 

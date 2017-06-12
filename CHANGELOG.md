@@ -3,6 +3,7 @@
 ## v4.11.0
 
 1. `include`、`extend` 支持使用函数表达式。例如 `{{include(file, {list[]})}}` [#414](https://github.com/aui/art-template/issues/414)
+2. 修复 `options.escape=false` 不生效的 BUG
 
 ## v4.10.2
 
