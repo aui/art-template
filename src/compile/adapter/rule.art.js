@@ -87,20 +87,6 @@ const artRule = {
                 code = '})';
                 break;
 
-            case 'echo':
-
-                key = 'print';
-                warn('echo value', 'value');
-
-            case 'print':
-            case 'include':
-            case 'extend':
-
-                group = artRule._split(esTokens);
-                group.shift();
-                code = `${key}(${group.join(',')})`;
-                break;
-
             case 'block':
 
                 code = `block(${values.join('')},function(){`;
@@ -111,6 +97,21 @@ const artRule = {
                 code = '})';
                 break;
 
+            case 'echo':
+                key = 'print';
+                warn('echo value', 'value');
+            case 'print':
+            case 'include':
+            case 'extend':
+
+                if (values.join('').trim().indexOf('(') !== 0) {
+                    // 执行函数省略 `()` 与 `,`
+                    group = artRule._split(esTokens);
+                    group.shift();
+                    code = `${key}(${group.join(',')})`;
+                    break;
+                }
+
             default:
 
                 if (values.indexOf('|') !== -1) {
@@ -120,6 +121,8 @@ const artRule = {
                     let target = key;
                     const group = [];
                     const v3split = ':'; // ... v3 compat ...
+
+                    // TODO: typeof value | filterName
                     const list = values.filter(value => !/^\s+$/.test(value));
 
                     // 找到要过滤的目标表达式
@@ -150,11 +153,7 @@ const artRule = {
                     code = `${key}${values.join('')}`;
                 }
 
-
-                if (!output) {
-                    output = 'escape';
-                }
-
+                output = output || 'escape';
 
                 break;
         }
@@ -167,8 +166,9 @@ const artRule = {
         return result;
     },
 
-    // 根据语义以空格进行切割
-    _split: (esTokens) => {
+
+    // 将多个 javascript 表达式按空格分组
+    _split: esTokens => {
         let current = 0;
         let lastToken = esTokens.shift();
         const group = [

@@ -311,6 +311,17 @@ module.exports = {
             result = render(data);
             assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
 
+            render = compile(`{{@include('header.html', {title: '糖饼'})}}\ncontent: {{content}}`, {
+                bail: true,
+                minimize: false
+            });
+            data = {
+                title: 'hello',
+                content: 'world'
+            };
+            result = render(data);
+            assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
+
             render = compile({
                 filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art'),
                 minimize: true

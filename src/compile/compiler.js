@@ -246,6 +246,7 @@ class Compiler {
         const source = tplToken.value;
         const script = tplToken.script;
         const output = script.output;
+        const escape = this.options.escape;
         let code = script.code;
 
 
@@ -434,12 +435,14 @@ class Compiler {
             let index = 0;
             let line = 0;
             let start = 0;
+            let generated;
 
             while (index < scripts.length) {
                 const current = scripts[index];
                 if (!this.checkExpression(current.code)) {
                     line = current.tplToken.line;
                     start = current.tplToken.start;
+                    generated = current.code;
                     break;
                 }
                 index++;
@@ -452,7 +455,7 @@ class Compiler {
                 line: line + 1,
                 column: start + 1,
                 source,
-                generated: renderCode,
+                generated,
                 stack: error.stack
             };
         }
