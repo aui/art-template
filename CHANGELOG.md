@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.12.0
+
+1. `bail` 默认为 `true`
+
 ## v4.11.0
 
 1. `include`、`extend` 支持使用函数表达式。例如 `{{include(file, {list[]})}}` [#414](https://github.com/aui/art-template/issues/414)

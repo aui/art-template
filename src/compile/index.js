@@ -32,9 +32,8 @@ const compile = (source, options = {}) => {
 
     // debug 模式
     /* istanbul ignore if */
-    if (options.debug) {
+    if (options.debug === true) {
         options.cache = false;
-        options.bail = false;
         options.minimize = false;
         options.compileDebug = true;
     }

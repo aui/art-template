@@ -2,7 +2,7 @@
   "name": "art-template",
   "description": "JavaScript Template Engine",
   "homepage": "http://aui.github.com/art-template/",
-  "version": "4.11.0",
+  "version": "4.12.0",
   "keywords": [
     "template"
   ],
@@ -48,7 +48,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "node-noop": "^1.0.0",
-    "webpack": "^2.3.2"
+    "webpack": "^3.0.0"
   },
   "license": "MIT"
 }
