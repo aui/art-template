@@ -112,12 +112,22 @@ module.exports = {
                 code: `include('header',data)`,
                 output: false
             }, callRule(`{{include 'header' data}}`));
+
+            assert.deepEqual({
+                code: `include('header',data)`,
+                output: 'escape'
+            }, callRule(`{{include('header',data)}}`));
         },
         'extend': ()=> {
             assert.deepEqual({
                 code: `extend('header')`,
                 output: false
             }, callRule(`{{extend 'header'}}`));
+
+            assert.deepEqual({
+                code: `extend('header')`,
+                output: 'escape'
+            }, callRule(`{{extend('header')}}`));
         }
     },
 
