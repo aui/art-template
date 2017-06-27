@@ -3,6 +3,7 @@
 ## v4.12.0
 
 1. `bail` 默认为 `true`
+2. 修复 filter 不支持 javascript 表达式的问题 [#430](https://github.com/aui/art-template/issues/430)
 
 ## v4.11.0
 

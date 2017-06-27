@@ -661,7 +661,9 @@ module.exports = {
     'errors': {
         'RuntimeError': {
             'error': () => {
-                const render = compile('<%=a.b.c%>');
+                const render = compile('<%=a.b.c%>', {
+                    bail: false
+                });
                 assert.deepEqual('{Template Error}', render({}));
             },
 
@@ -687,10 +689,14 @@ module.exports = {
 
             'error': () => {
                 let render;
-                render = compile('<%=a b c%>');
+                render = compile('<%=a b c%>', {
+                    bail: false
+                });
                 assert.deepEqual('{Template Error}', render({}));
 
-                render = compile('{{a b c}}');
+                render = compile('{{a b c}}', {
+                    bail: false
+                });
                 assert.deepEqual('{Template Error}', render({}));
             },
 
@@ -732,7 +738,8 @@ module.exports = {
 
             'template not found': () => {
                 const render = compile({
-                    filename: '/404.html'
+                    filename: '/404.html',
+                    bail: false
                 });
                 assert.deepEqual('{Template Error}', render({}));
             },
