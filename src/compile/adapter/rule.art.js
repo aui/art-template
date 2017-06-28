@@ -2,12 +2,12 @@
  * 简洁模板语法规则
  */
 const artRule = {
-    test: /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/,
+    test: /{{([@#]?)[ \t]*(\/?)([\w\W]*?)[ \t]*}}/,
     use: function (match, raw, close, code) {
 
         const compiler = this;
         const options = compiler.options;
-        const esTokens = compiler.getEsTokens(code.trim());
+        const esTokens = compiler.getEsTokens(code);
         const values = esTokens.map(token => token.value);
         const result = {};
 
@@ -89,7 +89,9 @@ const artRule = {
 
             case 'block':
 
-                code = `block(${values.join('').trim()},function(){`;
+                group = artRule._split(esTokens);
+                group.shift();
+                code = `block(${group.join(',').trim()},function(){`;
                 break;
 
             case '/block':
@@ -116,7 +118,6 @@ const artRule = {
 
                 if (~values.indexOf('|')) {
 
-                    // 解析过滤器
                     const v3split = ':'; // ... v3 compat ...
 
                     // 将过滤器解析成二维数组
@@ -162,7 +163,7 @@ const artRule = {
 
 
     // 将多个 javascript 表达式拆分成组
-    // 支持基本运算、三元表达式、取值、运行函数
+    // 支持基本运算、三元表达式、取值、运行函数，不支持 `typeof value` 操作
     // 只支持 string、number、boolean、null、undefined 这几种类型声明，不支持 function、object、array
     _split: esTokens => {
 

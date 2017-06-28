@@ -2,7 +2,7 @@
  * 原生模板语法规则
  */
 const nativeRule = {
-    test: /<%(#?)((?:==|=#|[=-])?)([\w\W]*?)(-?)%>/,
+    test: /<%(#?)((?:==|=#|[=-])?)[ \t]*([\w\W]*?)[ \t]*(-?)%>/,
     use: (match, comment, output, code/*, trimMode*/) => {
 
         output = ({
@@ -16,7 +16,7 @@ const nativeRule = {
 
         // ejs compat: comment tag
         if (comment) {
-            code = `/*${match}*/`;
+            code = `/*${code}*/`;
             output = false;
         }
 
