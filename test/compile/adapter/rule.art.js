@@ -27,43 +27,96 @@ module.exports = {
             }, callRule(`{{set a = b}}`));
 
             assert.deepEqual({
+                code: 'var a = b',
+                output: false
+            }, callRule(`{{ set a = b }}`));
+
+            // 多个声明
+            assert.deepEqual({
                 code: 'var a = b, c = 1',
                 output: false
             }, callRule(`{{set a = b, c = 1}}`));
         },
         'if': () => {
+            // 布尔
             assert.deepEqual({
                 code: 'if(value){',
                 output: false
             }, callRule(`{{if value}}`));
 
             assert.deepEqual({
+                code: 'if(value){',
+                output: false
+            }, callRule(`{{ if value }}`));
+
+            // 算术
+            assert.deepEqual({
                 code: 'if(a + b === 4){',
                 output: false
             }, callRule(`{{if a + b === 4}}`));
+
+            // 优先级
+            assert.deepEqual({
+                code: 'if((a + b) * c){',
+                output: false
+            }, callRule(`{{if (a + b) * c}}`));
         },
         'else if': () => {
+            // 布尔
             assert.deepEqual({
                 code: '}else if(value){',
                 output: false
             }, callRule(`{{else if value}}`));
 
             assert.deepEqual({
+                code: '}else if(value){',
+                output: false
+            }, callRule(`{{ else if value }}`));
+
+            // 算术
+            assert.deepEqual({
                 code: '}else if(a + b === 4){',
                 output: false
             }, callRule(`{{else if a + b === 4}}`));
+
+            // 优先级
+            assert.deepEqual({
+                code: '}else if((a + b) * c){',
+                output: false
+            }, callRule(`{{else if (a + b) * c}}`));
+        },
+        'else': () => {
+            assert.deepEqual({
+                code: '}else{',
+                output: false
+            }, callRule(`{{else}}`));
+    
+            assert.deepEqual({
+                code: '}else{',
+                output: false
+            }, callRule(`{{ else }}`));
         },
         '/if': () => {
             assert.deepEqual({
                 code: '}',
                 output: false
             }, callRule(`{{/if}}`));
+
+            assert.deepEqual({
+                code: '}',
+                output: false
+            }, callRule(`{{ /if }}`));
         },
         'each': () => {
             assert.deepEqual({
                 code: '$each($data,function($value,$index){',
                 output: false
             }, callRule(`{{each}}`));
+
+            assert.deepEqual({
+                code: '$each($data,function($value,$index){',
+                output: false
+            }, callRule(`{{ each }}`));
 
             assert.deepEqual({
                 code: '$each(list,function($value,$index){',
@@ -80,11 +133,18 @@ module.exports = {
                 output: false
             }, callRule(`{{each list val key}}`));
 
+            // 表达式
+            assert.deepEqual({
+                code: '$each(list[a].b,function(val,key){',
+                output: false
+            }, callRule(`{{each list[a].b val key}}`));
+
+            // 兼容 v3 as 语法
             assert.deepEqual({
                 code: '$each(list,function(val,key){',
                 output: false
             }, callRule(`{{each list as val key}}`));
-
+            
             assert.deepEqual({
                 code: `$each(list['var'].a,function(val,key){`,
                 output: false
@@ -95,12 +155,22 @@ module.exports = {
                 code: '})',
                 output: false
             }, callRule(`{{/each}}`));
+
+            assert.deepEqual({
+                code: '})',
+                output: false
+            }, callRule(`{{ /each }}`));
         },
         'block': () => {
             assert.deepEqual({
                 code: `block('header',function(){`,
                 output: false
             }, callRule(`{{block 'header'}}`));
+
+            assert.deepEqual({
+                code: `block('header',function(){`,
+                output: false
+            }, callRule(`{{ block 'header' }}`));
         },
         'include': ()=> {
             assert.deepEqual({
@@ -109,10 +179,16 @@ module.exports = {
             }, callRule(`{{include 'header'}}`));
 
             assert.deepEqual({
+                code: `include('header')`,
+                output: false
+            }, callRule(`{{ include 'header' }}`));
+
+            assert.deepEqual({
                 code: `include('header',data)`,
                 output: false
             }, callRule(`{{include 'header' data}}`));
 
+            // 当作函数调用
             assert.deepEqual({
                 code: `include('header',data)`,
                 output: 'escape'
@@ -126,6 +202,12 @@ module.exports = {
 
             assert.deepEqual({
                 code: `extend('header')`,
+                output: false
+            }, callRule(`{{ extend 'header' }}`));
+
+            // 当作函数调用
+            assert.deepEqual({
+                code: `extend('header')`,
                 output: 'escape'
             }, callRule(`{{extend('header')}}`));
         }
@@ -137,6 +219,11 @@ module.exports = {
                 code: 'value',
                 output: 'escape'
             }, callRule(`{{value}}`));
+
+            assert.deepEqual({
+                code: 'value',
+                output: 'escape'
+            }, callRule(`{{ value }}`));
 
             assert.deepEqual({
                 code: 'typeof value',
@@ -163,6 +250,11 @@ module.exports = {
                 code: 'value',
                 output: 'raw'
             }, callRule(`{{@value}}`));
+
+            assert.deepEqual({
+                code: 'value',
+                output: 'raw'
+            }, callRule(`{{@ value }}`));
         },
         'filter': () => {
 
@@ -170,6 +262,11 @@ module.exports = {
                 code: `$imports.c($imports.b(a))`,
                 output: 'escape'
             }, callRule(`{{a | b | c}}`));
+
+            assert.deepEqual({
+                code: `$imports.c($imports.b(a))`,
+                output: 'escape'
+            }, callRule(`{{ a | b | c }}`));
 
             assert.deepEqual({
                 code: `$imports.c($imports.b(a(9+9,54)))`,

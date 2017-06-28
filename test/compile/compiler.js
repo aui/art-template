@@ -102,8 +102,6 @@ module.exports = {
 
             test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
             test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
-
-            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$$out+="\\nhello\\n"', ' } ']);
         }
     },
 
@@ -329,34 +327,6 @@ module.exports = {
     },
 
     'build': {
-        basic: () => {
-            const test = (code, result, options) => {
-                options = defaults.$extend(options);
-                options.minimize = false;
-                options.source = code;
-                const compiler = new Compiler(options);
-                compiler.build();
-                assert.deepEqual(result, compiler.scripts.map(script => script.code));
-            };
-
-            test('hello', ['$$out+="hello"']);
-            test('<%=value%>', ['$$out+=$escape(value)']);
-            test('hello <%=value%>.', ['$$out+="hello "', '$$out+=$escape(value)', '$$out+="."']);
-            test('<%-value%>', ['$$out+=value']);
-            test('hello <%-value%>.', ['$$out+="hello "', '$$out+=value', '$$out+="."']);
-
-            test('hello<%=value%>', ['$$out+="hello"', '$$out+=$escape(value)']);
-            test('hello\n<%=value%>', ['$$out+="hello\\n"', '$$out+=$escape(value)']);
-
-            test('<% if (value) { %>\nhello\n<% } %>', [' if (value) { ', '$$out+="\\nhello\\n"', ' } ']);
-
-            // compileDebug
-            test('<%-value%>', ['$$out+=value'], {
-                compileDebug: true
-            });
-            // CompileError
-        },
-
 
         'CompileError': {
             'throw': () => {
