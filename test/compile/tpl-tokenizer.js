@@ -2,10 +2,6 @@ const assert = require('assert');
 const tplTokenizer = require('../../lib/compile/tpl-tokenizer');
 
 module.exports = {
-    before: () => {
-        console.log('#compile/tpl-tokens');
-    },
-
     'type & value': {
 
         [tplTokenizer.TYPE_STRING]: () => {

@@ -2,10 +2,6 @@ const assert = require('assert');
 const runtime = require('../../lib/compile/runtime');
 
 module.exports = {
-    before: () => {
-        console.log('#compile/runtime');
-    },
-
     'escape': {
         'basic': () => {
             const test = (content, result) => {

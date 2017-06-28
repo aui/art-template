@@ -9,9 +9,6 @@ const htmlMinifierOptions = {
 };
 
 module.exports = {
-    before: () => {
-        console.log('#compile/adapter/html-minifier');
-    },
 
     'html-minifier': {
         'text': () => {

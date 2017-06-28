@@ -2,12 +2,12 @@
  * 简洁模板语法规则
  */
 const artRule = {
-    test: /{{[ \t]*([@#]?)(\/?)([\w\W]*?)[ \t]*}}/,
+    test: /{{([@#]?)[ \t]*(\/?)([\w\W]*?)[ \t]*}}/,
     use: function (match, raw, close, code) {
 
         const compiler = this;
         const options = compiler.options;
-        const esTokens = compiler.getEsTokens(code.trim());
+        const esTokens = compiler.getEsTokens(code);
         const values = esTokens.map(token => token.value);
         const result = {};
 
@@ -36,12 +36,12 @@ const artRule = {
 
             case 'set':
 
-                code = `var ${values.join('')}`;
+                code = `var ${values.join('').trim()}`;
                 break;
 
             case 'if':
 
-                code = `if(${values.join('')}){`;
+                code = `if(${values.join('').trim()}){`;
 
                 break;
 
@@ -49,9 +49,9 @@ const artRule = {
 
                 const indexIf = values.indexOf('if');
 
-                if (indexIf > -1) {
+                if (~indexIf) {
                     values.splice(0, indexIf + 1);
-                    code = `}else if(${values.join('')}){`;
+                    code = `}else if(${values.join('').trim()}){`;
                 } else {
                     code = `}else{`;
                 }
@@ -89,7 +89,9 @@ const artRule = {
 
             case 'block':
 
-                code = `block(${values.join('')},function(){`;
+                group = artRule._split(esTokens);
+                group.shift();
+                code = `block(${group.join(',').trim()},function(){`;
                 break;
 
             case '/block':
@@ -114,43 +116,36 @@ const artRule = {
 
             default:
 
-                if (values.indexOf('|') !== -1) {
+                if (~values.indexOf('|')) {
 
-                    // 解析过滤器
-
-                    let target = key;
-                    const group = [];
                     const v3split = ':'; // ... v3 compat ...
 
-                    // TODO: typeof value | filterName
-                    const list = values.filter(value => !/^\s+$/.test(value));
-
-                    // 找到要过滤的目标表达式
-                    while (list[0] !== '|') target += list.shift();
-
-
                     // 将过滤器解析成二维数组
-                    list.filter(v => {
-                        return v !== v3split;
-                    }).forEach(value => {
+                    const group = esTokens.reduce((group, token) => {
+                        const {value} = token;
                         if (value === '|') {
                             group.push([]);
-                        } else {
-                            group[group.length - 1].push(value);
+                        } else if (/^\S+$/.test(value)) {
+                            if (!group.length) {
+                                group.push([]);
+                            }
+                            if (value === v3split && group[group.length - 1].length === 1) {
+                                warn('value | filter: argv', 'value | filter argv');
+                            } else {
+                                group[group.length - 1].push(token);
+                            }
                         }
-                    });
-
+                        return group;
+                    }, []).map(g => artRule._split(g));
 
                     // 将过滤器管道化
-                    group.reduce((accumulator, filter) => {
+                    code = group.reduce((accumulator, filter) => {
                         const name = filter.shift();
                         filter.unshift(accumulator);
-                        return code = `$imports.${name}(${filter.join(',')})`;
-                    }, target);
+                        return `$imports.${name}(${filter.join(',')})`;
+                    }, group.shift().join(` `).trim());
 
 
-                } else {
-                    code = `${key}${values.join('')}`;
                 }
 
                 output = output || 'escape';
@@ -167,28 +162,35 @@ const artRule = {
     },
 
 
-    // 将多个 javascript 表达式按空格分组
+    // 将多个 javascript 表达式拆分成组
+    // 支持基本运算、三元表达式、取值、运行函数，不支持 `typeof value` 操作
+    // 只支持 string、number、boolean、null、undefined 这几种类型声明，不支持 function、object、array
     _split: esTokens => {
+
+        esTokens = esTokens.filter(({
+            type
+        }) => {
+            return type !== `whitespace` && type !== `comment`;
+        });
+
         let current = 0;
         let lastToken = esTokens.shift();
+        const punctuator = `punctuator`;
+        const close = /\]|\)/;
         const group = [
             [lastToken]
         ];
 
         while (current < esTokens.length) {
             const esToken = esTokens[current];
-            const esTokenType = esToken.type;
 
-            if (esTokenType !== `whitespace` && esTokenType !== `comment`) {
-
-                if (lastToken.type === `punctuator` && lastToken.value !== `]` || esTokenType === `punctuator`) {
-                    group[group.length - 1].push(esToken);
-                } else {
-                    group.push([esToken]);
-                }
-
-                lastToken = esToken;
+            if (esToken.type === punctuator || lastToken.type === punctuator && !close.test(lastToken.value)) {
+                group[group.length - 1].push(esToken);
+            } else {
+                group.push([esToken]);
             }
+
+            lastToken = esToken;
 
             current++;
         }

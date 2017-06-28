@@ -2,10 +2,6 @@ const assert = require('assert');
 const resolveFilename = require('../../../lib/compile/adapter/resolve-filename');
 
 module.exports = {
-    before: () => {
-        console.log('#compile/adapter/resolve-filename');
-    },
-
     'resolveFilename': {
         'basic': () => {
             const test = (args, result) => {
