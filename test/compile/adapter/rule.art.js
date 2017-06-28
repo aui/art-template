@@ -15,10 +15,6 @@ const callRule = code => {
 }
 
 module.exports = {
-    before: () => {
-        console.log('#compile/adapter/rule.art');
-    },
-
     syntax: {
         'set': () => {
             assert.deepEqual({

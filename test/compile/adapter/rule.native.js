@@ -16,10 +16,6 @@ const callRule = code => {
 
 
 module.exports = {
-    before: () => {
-        console.log('#compile/adapter/rule.native');
-    },
-
     'syntax': {
         basic: () => {
             assert.deepEqual({

@@ -3,11 +3,6 @@ const esTokenizer = require('../../lib/compile/es-tokenizer');
 
 
 module.exports = {
-
-    before: () => {
-        console.log('#compile/es-tokenizer');
-    },
-
     'parser': {
         'basic': () => {
             const test = (code, result) => {

@@ -10,7 +10,6 @@ let render, data, result;
 module.exports = {
 
     before: () => {
-        console.log('#compile/index');
         defaults.onerror = () => {
             return () => '{Template Error}';
         };

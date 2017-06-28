@@ -3,10 +3,6 @@ const caches = require('../../../lib/compile/adapter/caches');
 
 
 module.exports = {
-    before: () => {
-        console.log('#compile/adapter/caches');
-    },
-
     'caches': {
         'set value': () => {
             caches.set('test', 'hello');

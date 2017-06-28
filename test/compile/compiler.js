@@ -13,10 +13,6 @@ const htmlMinifier = ({
 
 
 module.exports = {
-    before: () => {
-        console.log('#compile/index');
-    },
-
     'getVariables': {
         'basic': () => {
             const test = (code, result) => {

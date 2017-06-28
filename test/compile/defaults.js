@@ -1,11 +1,6 @@
 const assert = require('assert');
 const defaults = require('../../lib/compile/defaults');
 module.exports = {
-
-    before: () => {
-        console.log('#compile/defaults');
-    },
-
     'defaults': {
         'imports': () => {
             const imports = defaults.imports;
