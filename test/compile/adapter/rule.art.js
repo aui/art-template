@@ -14,6 +14,7 @@ const callRule = code => {
     return ruleArt.use.apply(compiler, list);
 }
 
+
 module.exports = {
     syntax: {
         'set': () => {
@@ -303,7 +304,14 @@ module.exports = {
                 code: `$imports.dateFormat(time||Date.now(),'yyyy-MM-dd')`,
                 output: 'escape'
             }, callRule(`{{time || Date.now() | dateFormat 'yyyy-MM-dd'}}`));
-        }
+
+            assert.deepEqual({
+                code: `$imports.dateFormat(item.add_time*1000,'yyyy-MM-dd hh:mm:ss')`,
+                output: 'escape'
+            }, callRule(`{{item.add_time*1000 | dateFormat 'yyyy-MM-dd hh:mm:ss'}}`));
+        },
+
+
     },
 
     'rule.art': {
@@ -437,6 +445,10 @@ module.exports = {
             result = ruleArt._split(esTokens);
             assert.deepEqual(['++a', 'c'], result);
 
+            code = `dateFormat 'yyyy-MM-dd hh:mm:ss'`;
+            esTokens = esTokenizer(code);
+            result = ruleArt._split(esTokens);
+            assert.deepEqual(['dateFormat', `'yyyy-MM-dd hh:mm:ss'`], result);
         }
     }
 };

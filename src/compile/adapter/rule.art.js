@@ -122,10 +122,10 @@ const artRule = {
 
                     // 将过滤器解析成二维数组
                     const group = esTokens.reduce((group, token) => {
-                        const {value} = token;
+                        const {value, type} = token;
                         if (value === '|') {
                             group.push([]);
-                        } else if (/^\S+$/.test(value)) {
+                        } else if (type !== `whitespace` && type !== `comment`) {
                             if (!group.length) {
                                 group.push([]);
                             }
@@ -138,13 +138,14 @@ const artRule = {
                         return group;
                     }, []).map(g => artRule._split(g));
 
+
                     // 将过滤器管道化
                     code = group.reduce((accumulator, filter) => {
                         const name = filter.shift();
                         filter.unshift(accumulator);
+                        
                         return `$imports.${name}(${filter.join(',')})`;
                     }, group.shift().join(` `).trim());
-
 
                 }
 
