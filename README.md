@@ -6,34 +6,28 @@
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg?branch=master)](https://coveralls.io/github/aui/art-template?branch=master)
 
-art-template 是一个渲染性能出众模板引擎，无论在 NodeJS 还是在浏览器中都可以运行。
+art-template is a simple and superfast templating engine that optimizes template rendering speed by scope pre-declared technique, hence achieving runtime performance which is close to the limits of JavaScript. At the same time, it supports both NodeJS and browser. [speed test online](https://aui.github.io/art-template/rendering-test/).
 
-文档：<https://aui.github.io/art-template/>
-
-## 特性
+art-template 是一个简约、超快的模板引擎。它采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。[在线速度测试](https://aui.github.io/art-template/rendering-test/)。
 
 [![chart](https://aui.github.io/art-template/images/chart@2x.png)](https://aui.github.io/art-template/rendering-test/)
 
+## Feature
 
-* 拥有接近 JavaScript 渲染极限的的性能
-* 调试友好：语法、运行时错误日志精确到模板所在行；支持支持在模板文件上打断点（Webpack Loader）
-* 支持压缩输出页面中的 HTML、CSS、JS 代码
-* 支持 Express、Koa、Webpack
-* 支持模板继承与子模板
-* 兼容 [EJS](http://ejs.co)、[Underscore](http://underscorejs.org/#template)、[LoDash](https://lodash.com/docs/#template) 模板语法
-* 模板编译后的代码支持在严格模式下运行
-* 支持 JavaScript 语句与模板语法混合书写
-* 支持自定义模板的语法解析规则
-* 浏览器版本仅 6KB 大小
+1. performance is close to the JavaScript rendering limits
+2. debugging friendly. Syntax errors or runtime errors will be positioned accurately at which line of template. Support setting breakpoint in templating files (Webpack Loader)
+3. support Express, Koa, Webpack
+4. support template inheritance and sub template
+5. browser version is only 6KB
 
-[art-template@4 新特性介绍](https://github.com/aui/art-template/issues/369)
+## 特性
 
-## 授权协议
+1. 拥有接近 JavaScript 渲染极限的的性能
+2. 调试友好：语法、运行时错误日志精确到模板所在行；支持在模板文件上打断点（Webpack Loader）
+5. 支持 Express、Koa、Webpack
+6. 支持模板继承与子模板
+7. 浏览器版本仅 6KB 大小
+
+-----------------
 
 [MIT](./LICENSE)
-
-------------------
-
-<img width="128" src="https://cloud.githubusercontent.com/assets/1791748/25561320/09c9d6d0-2d9c-11e7-8689-1109f3f88f41.png" alt="微信支付" />
-
-赞助 art-template
