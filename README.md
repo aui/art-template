@@ -6,6 +6,8 @@
 [![Travis-ci](https://travis-ci.org/aui/art-template.svg?branch=master)](https://travis-ci.org/aui/art-template)
 [![Coverage Status](https://coveralls.io/repos/github/aui/art-template/badge.svg?branch=master)](https://coveralls.io/github/aui/art-template?branch=master)
 
+[English](https://aui.github.io/art-template/) | [中文](https://aui.github.io/art-template/zh-cn/index.html)
+
 art-template is a simple and superfast templating engine that optimizes template rendering speed by scope pre-declared technique, hence achieving runtime performance which is close to the limits of JavaScript. At the same time, it supports both NodeJS and browser. [speed test online](https://aui.github.io/art-template/rendering-test/).
 
 art-template 是一个简约、超快的模板引擎。它采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。[在线速度测试](https://aui.github.io/art-template/rendering-test/)。
@@ -30,4 +32,4 @@ art-template 是一个简约、超快的模板引擎。它采用作用域预声�
 
 -----------------
 
-[捐助我(微信支付)](https://cloud.githubusercontent.com/assets/1791748/25561320/09c9d6d0-2d9c-11e7-8689-1109f3f88f41.png)
+[捐助我](https://cloud.githubusercontent.com/assets/1791748/25561320/09c9d6d0-2d9c-11e7-8689-1109f3f88f41.png)(微信支付)
