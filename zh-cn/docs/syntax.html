@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="page-docs">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8">
+  <title>语法 - art-template</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://aui.github.io/zh-cn/docs/syntax.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang="" href="http://aui.github.io/art-template/docs/syntax.html">
+    
+      <link rel="alternative" hreflang="" href="http://aui.github.io/art-template/docs/syntax.html">
+    
+  
+  <!-- Icon -->
+  <!--<link rel="apple-touch-icon" sizes="57x57" href="/art-template/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/art-template/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/art-template/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/art-template/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/art-template/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/art-template/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/art-template/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/art-template/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/art-template/icon/mstile-144x144.png">
+  -->
+  <!-- CSS -->
+  <!-- build:css build/css/art.css -->
+  <link rel="stylesheet" href="/art-template/css/art.css">
+  <!-- endbuild -->
+  <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+  <!-- RSS -->
+  <link rel="alternate" href="/art-template/atom.xml" title="art-template">
+  <!-- Open Graph -->
+  <meta name="description" content="art-template 支持标准语法与原始语法。标准语法可以让模板易读写，而原始语法拥有强大的逻辑表达能力。 标准语法支持基本模板语法以及基本 JavaScript 表达式；原始语法支持任意 JavaScript 语句，这和 EJS 一样。 输出标准语法 &amp;#123;&amp;#123;value&amp;#125;&amp;#125;&amp;#123;&amp;#123;data.key&amp;#125;&amp;#125;&amp;#123;&amp;#12">
+<meta property="og:type" content="website">
+<meta property="og:title" content="语法">
+<meta property="og:url" content="http://aui.github.io/zh-cn/docs/syntax.html">
+<meta property="og:site_name" content="art-template">
+<meta property="og:description" content="art-template 支持标准语法与原始语法。标准语法可以让模板易读写，而原始语法拥有强大的逻辑表达能力。 标准语法支持基本模板语法以及基本 JavaScript 表达式；原始语法支持任意 JavaScript 语句，这和 EJS 一样。 输出标准语法 &amp;#123;&amp;#123;value&amp;#125;&amp;#125;&amp;#123;&amp;#123;data.key&amp;#125;&amp;#125;&amp;#123;&amp;#12">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2017-10-11T08:04:27.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="语法">
+<meta name="twitter:description" content="art-template 支持标准语法与原始语法。标准语法可以让模板易读写，而原始语法拥有强大的逻辑表达能力。 标准语法支持基本模板语法以及基本 JavaScript 表达式；原始语法支持任意 JavaScript 语句，这和 EJS 一样。 输出标准语法 &amp;#123;&amp;#123;value&amp;#125;&amp;#125;&amp;#123;&amp;#123;data.key&amp;#125;&amp;#125;&amp;#123;&amp;#12">
+  <!-- Google Analytics -->
+  
+  <!-- Github Button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+    <h1 id="logo-wrap">
+      <a href="/art-template/zh-cn" id="logo">art-template</a>
+    </h1>
+    <div id="lang-select-wrap">
+      <label id="lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></label>
+      <select id="lang-select" data-root="/art-template/" data-lang="zh-cn" data-canonical="docs/syntax.html">
+        
+          <option value="en">English</option>
+        
+          <option value="zh-cn" selected>简体中文</option>
+        
+      </select>
+    </div>
+    <nav id="main-nav">
+      <div id="search-input-wrap">
+        <div id="search-input-icon">
+          <i class="fa fa-search"></i>
+        </div>
+        <input type="search" id="search-input">
+      </div>
+      <a href="/art-template/zh-cn/docs/" class="main-nav-link current">Docs</a><a href="/art-template/webpack/" class="main-nav-link ">Webpack</a><a href="/art-template/express/" class="main-nav-link ">Express</a><a href="/art-template/koa/" class="main-nav-link ">Koa</a>
+      <!--<a href="https://github.com/aui/art-template" class="main-nav-link"><i class="fa fa-github-alt"></i></a>-->
+    </nav>
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+</header>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper">
+    <div id="content-inner">
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article">
+            <div class="inner">
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">语法</h1>
+              </header>
+              <div class="article-content" itemprop="articleBody">
+                <p>art-template 支持标准语法与原始语法。标准语法可以让模板易读写，而原始语法拥有强大的逻辑表达能力。</p>
+<p>标准语法支持基本模板语法以及基本 JavaScript 表达式；原始语法支持任意 JavaScript 语句，这和 EJS 一样。</p>
+<h2 id="输出" class="article-heading"><a href="#输出" class="headerlink" title="输出"></a>输出<a class="article-anchor" href="#输出" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;value&#125;&#125;</div><div class="line">&#123;&#123;data.key&#125;&#125;</div><div class="line">&#123;&#123;data['key']&#125;&#125;</div><div class="line">&#123;&#123;a ? b : c&#125;&#125;</div><div class="line">&#123;&#123;a || b&#125;&#125;</div><div class="line">&#123;&#123;a + b&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">value</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">data.key</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">data</span>['<span class="attr">key</span>'] %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> ? <span class="attr">b</span> <span class="attr">:</span> <span class="attr">c</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> || <span class="attr">b</span> %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> + <span class="attr">b</span> %&gt;</span></div></pre></td></tr></table></figure>
+<p>模板一级特殊变量可以使用 <code>$data</code> 加下标的方式访问：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;$data['user list']&#125;&#125;</div></pre></td></tr></table></figure>
+<h2 id="原文输出" class="article-heading"><a href="#原文输出" class="headerlink" title="原文输出"></a>原文输出<a class="article-anchor" href="#原文输出" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;@value&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%-</span> <span class="attr">value</span> %&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>原文输出语句不会对 <code>HTML</code> 内容进行转义处理，可能存在安全风险，请谨慎使用。</p>
+</blockquote>
+<h2 id="条件" class="article-heading"><a href="#条件" class="headerlink" title="条件"></a>条件<a class="article-anchor" href="#条件" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;if value&#125;&#125; ... &#123;&#123;/if&#125;&#125;</div><div class="line">&#123;&#123;if v1&#125;&#125; ... &#123;&#123;else if v2&#125;&#125; ... &#123;&#123;/if&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">value</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">v1</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; <span class="attr">else</span> <span class="attr">if</span> (<span class="attr">v2</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="循环" class="article-heading"><a href="#循环" class="headerlink" title="循环"></a>循环<a class="article-anchor" href="#循环" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;each target&#125;&#125;</div><div class="line">    &#123;&#123;$index&#125;&#125; &#123;&#123;$value&#125;&#125;</div><div class="line">&#123;&#123;/each&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&lt;% for(var i = 0; i &lt; target.length; i++)&#123; %&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">%=</span> <span class="attr">i</span> %&gt;</span> <span class="tag">&lt;<span class="name">%=</span> <span class="attr">target</span>[<span class="attr">i</span>] %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></div></pre></td></tr></table></figure>
+<ol>
+<li><code>target</code> 支持 <code>array</code> 与 <code>object</code> 的迭代，其默认值为 <code>$data</code>。</li>
+<li><code>$value</code> 与 <code>$index</code> 可以自定义：<code>{{each target val key}}</code>。</li>
+</ol>
+<h2 id="变量" class="article-heading"><a href="#变量" class="headerlink" title="变量"></a>变量<a class="article-anchor" href="#变量" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;set temp = data.sub.content&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">var</span> <span class="attr">temp</span> = <span class="string">data.sub.content;</span> %&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="模板继承" class="article-heading"><a href="#模板继承" class="headerlink" title="模板继承"></a>模板继承<a class="article-anchor" href="#模板继承" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;extend './layout.art'&#125;&#125;</div><div class="line">&#123;&#123;block 'head'&#125;&#125; ... &#123;&#123;/block&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">extend</span>('<span class="attr">.</span>/<span class="attr">layout.art</span>') %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">block</span>('<span class="attr">head</span>', <span class="attr">function</span>()&#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125;) %&gt;</span></div></pre></td></tr></table></figure>
+<p>模板继承允许你构建一个包含你站点共同元素的基本模板“骨架”。范例：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="comment">&lt;!--layout.art--&gt;</span></div><div class="line"><span class="meta">&lt;!doctype html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>&#123;&#123;block 'title'&#125;&#125;My Site&#123;&#123;/block&#125;&#125;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"></div><div class="line">    &#123;&#123;block 'head'&#125;&#125;</div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"main.css"</span>&gt;</span></div><div class="line">    &#123;&#123;/block&#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    &#123;&#123;block 'content'&#125;&#125;&#123;&#123;/block&#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="comment">&lt;!--index.art--&gt;</span></div><div class="line">&#123;&#123;extend './layout.art'&#125;&#125;</div><div class="line"></div><div class="line">&#123;&#123;block 'title'&#125;&#125;&#123;&#123;title&#125;&#125;&#123;&#123;/block&#125;&#125;</div><div class="line"></div><div class="line">&#123;&#123;block 'head'&#125;&#125;</div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"custom.css"</span>&gt;</span></div><div class="line">&#123;&#123;/block&#125;&#125;</div><div class="line"></div><div class="line">&#123;&#123;block 'content'&#125;&#125;</div><div class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>This is just an awesome page.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">&#123;&#123;/block&#125;&#125;</div></pre></td></tr></table></figure>
+<p>渲染 index.art 后，将自动应用布局骨架。</p>
+<h2 id="子模板" class="article-heading"><a href="#子模板" class="headerlink" title="子模板"></a>子模板<a class="article-anchor" href="#子模板" aria-hidden="true"></a></h2><p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;include './header.art'&#125;&#125;</div><div class="line">&#123;&#123;include './header.art' data&#125;&#125;</div></pre></td></tr></table></figure>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">include</span>('<span class="attr">.</span>/<span class="attr">header.art</span>') %&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">include</span>('<span class="attr">.</span>/<span class="attr">header.art</span>', <span class="attr">data</span>) %&gt;</span></div></pre></td></tr></table></figure>
+<ol>
+<li><code>data</code> 数默认值为 <code>$data</code>；标准语法不支持声明 <code>object</code> 与 <code>array</code>，只支持引用变量，而原始语法不受限制。</li>
+<li>art-template 内建 HTML 压缩器，请避免书写 HTML 非正常闭合的子模板，否则开启压缩后标签可能会被意外“优化。</li>
+</ol>
+<h2 id="过滤器" class="article-heading"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器<a class="article-anchor" href="#过滤器" aria-hidden="true"></a></h2><p><strong>注册过滤器</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line">template.defaults.imports.dateFormat = <span class="function"><span class="keyword">function</span>(<span class="params">date, format</span>)</span>&#123;<span class="comment">/*[code..]*/</span>&#125;;</div><div class="line">template.defaults.imports.timestamp = <span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;<span class="keyword">return</span> value * <span class="number">1000</span>&#125;;</div></pre></td></tr></table></figure>
+<p>过滤器函数第一个参数接受目标值。</p>
+<p><strong>标准语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line">&#123;&#123;date | timestamp | dateFormat 'yyyy-MM-dd hh:mm:ss'&#125;&#125;</div></pre></td></tr></table></figure>
+<p><code>{{value | filter}}</code> 过滤器语法类似管道操作符，它的上一个输出作为下一个输入。</p>
+<p><strong>原始语法</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%=</span> $<span class="attr">imports.dateFormat</span>($<span class="attr">imports.timestamp</span>(<span class="attr">date</span>), '<span class="attr">yyyy-MM-dd</span> <span class="attr">hh:mm:ss</span>') %&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果想修改 <code>{{</code> <code>}}</code> 与 <code>&lt;%</code> <code>%&gt;</code>，请参考 <a href="rules.html">解析规则</a>。</p>
+</blockquote>
+
+              </div>
+              <footer class="article-footer">
+                <a href="https://github.com/aui/art-template-docs/edit/master/source/zh-cn/docs/syntax.md" class="article-edit-link">改进本文</a>.
+                (<time class="article-footer-updated" datetime="2017-10-11T08:04:27.359Z" itemprop="dateModified">上次更新：2017-10-11</time>)
+                <a href="installation.html" class="article-footer-prev" title="sidebar.docs.installation"><i class="fa fa-chevron-left"></i><span>上一页</span></a><a href="debug.html" class="article-footer-next" title="sidebar.docs.debug"><span>下一页</span><i class="fa fa-chevron-right"></i></a>
+              </footer>
+              
+            </div>
+          </div>
+        </div>
+      </article>
+      <aside id="sidebar" role="navigation">
+  <div class="inner"><ul class="sidebar"><li><a data-scroll href="/art-template/zh-cn/docs/index.html" class="sidebar-link">介绍</a></li><li><a data-scroll href="/art-template/zh-cn/docs/installation.html" class="sidebar-link">安装</a></li><li><a data-scroll href="/art-template/zh-cn/docs/syntax.html" class="sidebar-link current">语法</a><ol class="sidebar-sub"><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#输出"><span class="sidebar-sub-text">输出</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#原文输出"><span class="sidebar-sub-text">原文输出</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#条件"><span class="sidebar-sub-text">条件</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#循环"><span class="sidebar-sub-text">循环</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#变量"><span class="sidebar-sub-text">变量</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#模板继承"><span class="sidebar-sub-text">模板继承</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#子模板"><span class="sidebar-sub-text">子模板</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/docs/syntax.html#过滤器"><span class="sidebar-sub-text">过滤器</span></a></li></ol></li><li><a data-scroll href="/art-template/zh-cn/docs/debug.html" class="sidebar-link">调试</a></li><li><a data-scroll href="/art-template/zh-cn/docs/imports.html" class="sidebar-link">模板变量</a></li><li><a data-scroll href="/art-template/zh-cn/docs/rules.html" class="sidebar-link">解析规则</a></li><li><a data-scroll href="/art-template/zh-cn/docs/minimize.html" class="sidebar-link">压缩页面</a></li><li><a data-scroll href="/art-template/zh-cn/docs/options.html" class="sidebar-link">选项</a></li><li><a data-scroll href="/art-template/zh-cn/docs/api.html" class="sidebar-link">API</a></li></ul></div>
+</aside>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="wrapper">
+  <div class="inner">
+    <div id="footer-copyright">
+      &copy; 2017 aui<br>
+      Documentation licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.
+    </div>
+    <div id="footer-links">
+      <a href="http://weibo.com/planeart" class="footer-link" target="_blank"><i class="fa fa-weibo"></i></a>
+      
+      <a href="https://github.com/aui/art-template" class="footer-link" target="_blank"><i class="fa fa-github-alt"></i></a>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <nav id="mobile-nav-list">
+      <a href="/art-template/zh-cn/docs/" class="mobile-nav-link current">Docs</a><a href="/art-template/webpack/" class="mobile-nav-link ">Webpack</a><a href="/art-template/express/" class="mobile-nav-link ">Express</a><a href="/art-template/koa/" class="mobile-nav-link ">Koa</a>
+    </nav>
+    
+      <ul class="mobile-nav"><li><a data-scroll href="/art-template/zh-cn/docs/index.html" class="mobile-nav-link">介绍</a></li><li><a data-scroll href="/art-template/zh-cn/docs/installation.html" class="mobile-nav-link">安装</a></li><li><a data-scroll href="/art-template/zh-cn/docs/syntax.html" class="mobile-nav-link current">语法</a><ol class="mobile-nav-sub"><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#输出"><span class="mobile-nav-sub-text">输出</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#原文输出"><span class="mobile-nav-sub-text">原文输出</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#条件"><span class="mobile-nav-sub-text">条件</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#循环"><span class="mobile-nav-sub-text">循环</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#变量"><span class="mobile-nav-sub-text">变量</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#模板继承"><span class="mobile-nav-sub-text">模板继承</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#子模板"><span class="mobile-nav-sub-text">子模板</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/docs/syntax.html#过滤器"><span class="mobile-nav-sub-text">过滤器</span></a></li></ol></li><li><a data-scroll href="/art-template/zh-cn/docs/debug.html" class="mobile-nav-link">调试</a></li><li><a data-scroll href="/art-template/zh-cn/docs/imports.html" class="mobile-nav-link">模板变量</a></li><li><a data-scroll href="/art-template/zh-cn/docs/rules.html" class="mobile-nav-link">解析规则</a></li><li><a data-scroll href="/art-template/zh-cn/docs/minimize.html" class="mobile-nav-link">压缩页面</a></li><li><a data-scroll href="/art-template/zh-cn/docs/options.html" class="mobile-nav-link">选项</a></li><li><a data-scroll href="/art-template/zh-cn/docs/api.html" class="mobile-nav-link">API</a></li></ul>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></span>
+    <select id="mobile-lang-select" data-canonical="">
+      
+        <option value="en">English</option>
+      
+        <option value="zh-cn" selected>简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+  <!-- Scripts -->
+<!-- build:js build/js/main.js -->
+<script src="/art-template/js/lang_select.js"></script>
+<script src="/art-template/js/scrollingelement.js"></script>
+<script src="/art-template/js/mobile_nav.js"></script>
+<!-- endbuild -->
+<script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
+
+<!-- Algolia -->
+
+
+</body>
+</html>

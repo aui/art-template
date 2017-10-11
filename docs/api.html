@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" id="page-docs">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8">
+  <title>API - art-template</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://aui.github.io/docs/api.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang="" href="http://aui.github.io/art-template/docs/api.html">
+    
+      <link rel="alternative" hreflang="" href="http://aui.github.io/art-template/docs/api.html">
+    
+  
+  <!-- Icon -->
+  <!--<link rel="apple-touch-icon" sizes="57x57" href="/art-template/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/art-template/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/art-template/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/art-template/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/art-template/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/art-template/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/art-template/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/art-template/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/art-template/icon/mstile-144x144.png">
+  -->
+  <!-- CSS -->
+  <!-- build:css build/css/art.css -->
+  <link rel="stylesheet" href="/art-template/css/art.css">
+  <!-- endbuild -->
+  <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+  <!-- RSS -->
+  <link rel="alternate" href="/art-template/atom.xml" title="art-template">
+  <!-- Open Graph -->
+  <meta name="description" content="template(filename, content)Render templates according to template name.  Parameters： {string} filename {Object,string} content   Return： if content is Object，render template and return string if conte">
+<meta property="og:type" content="website">
+<meta property="og:title" content="API">
+<meta property="og:url" content="http://aui.github.io/docs/api.html">
+<meta property="og:site_name" content="art-template">
+<meta property="og:description" content="template(filename, content)Render templates according to template name.  Parameters： {string} filename {Object,string} content   Return： if content is Object，render template and return string if conte">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-10-11T08:04:27.351Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="API">
+<meta name="twitter:description" content="template(filename, content)Render templates according to template name.  Parameters： {string} filename {Object,string} content   Return： if content is Object，render template and return string if conte">
+  <!-- Google Analytics -->
+  
+  <!-- Github Button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+    <h1 id="logo-wrap">
+      <a href="/art-template/" id="logo">art-template</a>
+    </h1>
+    <div id="lang-select-wrap">
+      <label id="lang-select-label"><i class="fa fa-globe"></i><span>English</span></label>
+      <select id="lang-select" data-root="/art-template/" data-lang="en" data-canonical="docs/api.html">
+        
+          <option value="en" selected>English</option>
+        
+          <option value="zh-cn">简体中文</option>
+        
+      </select>
+    </div>
+    <nav id="main-nav">
+      <div id="search-input-wrap">
+        <div id="search-input-icon">
+          <i class="fa fa-search"></i>
+        </div>
+        <input type="search" id="search-input">
+      </div>
+      <a href="/art-template/docs/" class="main-nav-link current">Docs</a><a href="/art-template/webpack/" class="main-nav-link ">Webpack</a><a href="/art-template/express/" class="main-nav-link ">Express</a><a href="/art-template/koa/" class="main-nav-link ">Koa</a>
+      <!--<a href="https://github.com/aui/art-template" class="main-nav-link"><i class="fa fa-github-alt"></i></a>-->
+    </nav>
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+</header>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper">
+    <div id="content-inner">
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article">
+            <div class="inner">
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">API</h1>
+              </header>
+              <div class="article-content" itemprop="articleBody">
+                <h2 id="template-filename-content" class="article-heading"><a href="#template-filename-content" class="headerlink" title="template(filename, content)"></a>template(filename, content)<a class="article-anchor" href="#template-filename-content" aria-hidden="true"></a></h2><p>Render templates according to template name.</p>
+<ul>
+<li><strong>Parameters</strong>：<ul>
+<li><code>{string} filename</code></li>
+<li><code>{Object,string} content</code></li>
+</ul>
+</li>
+<li><strong>Return</strong>：<ul>
+<li>if <code>content</code> is <code>Object</code>，render template and return <code>string</code></li>
+<li>if <code>content</code> is <code>string</code>，compile template and return <code>function</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> html = template(<span class="string">'/welcome.art'</span>, &#123;</div><div class="line">    value: <span class="string">'aui'</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>browser version can not load external file. <code>filename</code> is the element <code>id</code> of template</p>
+</blockquote>
+<p><strong>Examples</strong></p>
+<p>Compile templates and cache it.</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// compile &amp;&amp; cache</span></div><div class="line">template(<span class="string">'/welcome.art'</span>, <span class="string">'hi, &lt;%=value%&gt;.'</span>);</div><div class="line"></div><div class="line"><span class="comment">// use</span></div><div class="line">template(<span class="string">'/welcome.art'</span>, &#123;</div><div class="line">    value: <span class="string">'aui'</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="compile-source-options" class="article-heading"><a href="#compile-source-options" class="headerlink" title=".compile(source, options)"></a>.compile(source, options)<a class="article-anchor" href="#compile-source-options" aria-hidden="true"></a></h2><p>Compile templates and return a rendering function.</p>
+<ul>
+<li><strong>Parameters</strong>：<ul>
+<li><code>{string} source</code></li>
+<li><code>{Object} options</code></li>
+</ul>
+</li>
+<li><strong>Return</strong>：<code>{function}</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> render = template.compile(<span class="string">'hi, &lt;%=value%&gt;.'</span>);</div><div class="line"><span class="keyword">var</span> html = render(&#123;<span class="attr">value</span>: <span class="string">'aui'</span>&#125;);</div></pre></td></tr></table></figure>
+<h2 id="render-source-data-options" class="article-heading"><a href="#render-source-data-options" class="headerlink" title=".render(source, data, options)"></a>.render(source, data, options)<a class="article-anchor" href="#render-source-data-options" aria-hidden="true"></a></h2><p>Compile and return rendering results.</p>
+<ul>
+<li><strong>Parameters</strong>：<ul>
+<li><code>{string} source</code></li>
+<li><code>{Object} options</code></li>
+</ul>
+</li>
+<li><strong>Return</strong>：<code>{string}</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> html = template.render(<span class="string">'hi, &lt;%=value%&gt;.'</span>, &#123;<span class="attr">value</span>: <span class="string">'aui'</span>&#125;);</div></pre></td></tr></table></figure>
+<h2 id="defaults" class="article-heading"><a href="#defaults" class="headerlink" title=".defaults"></a>.defaults<a class="article-anchor" href="#defaults" aria-hidden="true"></a></h2><p>Default configuration of template engine. Refer to <a href="./options.html">Options</a>.</p>
+<ul>
+<li><strong>Type</strong>：<code>{Object}</code></li>
+</ul>
+<h2 id="extension" class="article-heading"><a href="#extension" class="headerlink" title=".extension"></a>.extension<a class="article-anchor" href="#extension" aria-hidden="true"></a></h2><p>Template rendering function registering for NodeJS <code>require.extensions</code>.</p>
+<ul>
+<li><strong>Type</strong>：<code>{function}</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<p>Load <code>.ejs</code> templates:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> template = <span class="built_in">require</span>(<span class="string">'art-template'</span>);</div><div class="line"><span class="built_in">require</span>.extensions[<span class="string">'.ejs'</span>] = template.extension;</div><div class="line"></div><div class="line"><span class="keyword">var</span> view = <span class="built_in">require</span>(<span class="string">'./index.ejs'</span>);</div><div class="line"><span class="keyword">var</span> html = view(data);</div></pre></td></tr></table></figure>
+<p><code>.art</code> is registered by default and you can use it directly:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> template = <span class="built_in">require</span>(<span class="string">'art-template'</span>);</div><div class="line"><span class="keyword">var</span> view = <span class="built_in">require</span>(<span class="string">'./index.art'</span>);</div><div class="line"><span class="keyword">var</span> html = view(data);</div></pre></td></tr></table></figure>
+<p>It should be noted that this functionality only works for NodeJS. If you want to use template rendering functionality, please use Webpack <a href="../webpack">art-template-loader</a>.</p>
+
+              </div>
+              <footer class="article-footer">
+                <a href="https://github.com/aui/art-template-docs/edit/master/source/docs/api.md" class="article-edit-link">Improve this doc</a>.
+                (<time class="article-footer-updated" datetime="2017-10-11T08:04:27.351Z" itemprop="dateModified">Last updated: 2017-10-11</time>)
+                <a href="options.html" class="article-footer-prev" title="sidebar.docs.options"><i class="fa fa-chevron-left"></i><span>Prev</span></a>
+              </footer>
+              
+            </div>
+          </div>
+        </div>
+      </article>
+      <aside id="sidebar" role="navigation">
+  <div class="inner"><ul class="sidebar"><li><a data-scroll href="/art-template/docs/index.html" class="sidebar-link">Introduction</a></li><li><a data-scroll href="/art-template/docs/installation.html" class="sidebar-link">Installation</a></li><li><a data-scroll href="/art-template/docs/syntax.html" class="sidebar-link">Syntax</a></li><li><a data-scroll href="/art-template/docs/debug.html" class="sidebar-link">Debug</a></li><li><a data-scroll href="/art-template/docs/imports.html" class="sidebar-link">Template variable</a></li><li><a data-scroll href="/art-template/docs/rules.html" class="sidebar-link">Parsing rules</a></li><li><a data-scroll href="/art-template/docs/minimize.html" class="sidebar-link">Minimize</a></li><li><a data-scroll href="/art-template/docs/options.html" class="sidebar-link">Options</a></li><li><a data-scroll href="/art-template/docs/api.html" class="sidebar-link current">API</a><ol class="sidebar-sub"><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/api.html#template-filename-content"><span class="sidebar-sub-text">template(filename, content)</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/api.html#compile-source-options"><span class="sidebar-sub-text">.compile(source, options)</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/api.html#render-source-data-options"><span class="sidebar-sub-text">.render(source, data, options)</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/api.html#defaults"><span class="sidebar-sub-text">.defaults</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/api.html#extension"><span class="sidebar-sub-text">.extension</span></a></li></ol></li></ul></div>
+</aside>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="wrapper">
+  <div class="inner">
+    <div id="footer-copyright">
+      &copy; 2017 aui<br>
+      Documentation licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.
+    </div>
+    <div id="footer-links">
+      <a href="http://weibo.com/planeart" class="footer-link" target="_blank"><i class="fa fa-weibo"></i></a>
+      
+      <a href="https://github.com/aui/art-template" class="footer-link" target="_blank"><i class="fa fa-github-alt"></i></a>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <nav id="mobile-nav-list">
+      <a href="/art-template/docs/" class="mobile-nav-link current">Docs</a><a href="/art-template/webpack/" class="mobile-nav-link ">Webpack</a><a href="/art-template/express/" class="mobile-nav-link ">Express</a><a href="/art-template/koa/" class="mobile-nav-link ">Koa</a>
+    </nav>
+    
+      <ul class="mobile-nav"><li><a data-scroll href="/art-template/docs/index.html" class="mobile-nav-link">Introduction</a></li><li><a data-scroll href="/art-template/docs/installation.html" class="mobile-nav-link">Installation</a></li><li><a data-scroll href="/art-template/docs/syntax.html" class="mobile-nav-link">Syntax</a></li><li><a data-scroll href="/art-template/docs/debug.html" class="mobile-nav-link">Debug</a></li><li><a data-scroll href="/art-template/docs/imports.html" class="mobile-nav-link">Template variable</a></li><li><a data-scroll href="/art-template/docs/rules.html" class="mobile-nav-link">Parsing rules</a></li><li><a data-scroll href="/art-template/docs/minimize.html" class="mobile-nav-link">Minimize</a></li><li><a data-scroll href="/art-template/docs/options.html" class="mobile-nav-link">Options</a></li><li><a data-scroll href="/art-template/docs/api.html" class="mobile-nav-link current">API</a><ol class="mobile-nav-sub"><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/api.html#template-filename-content"><span class="mobile-nav-sub-text">template(filename, content)</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/api.html#compile-source-options"><span class="mobile-nav-sub-text">.compile(source, options)</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/api.html#render-source-data-options"><span class="mobile-nav-sub-text">.render(source, data, options)</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/api.html#defaults"><span class="mobile-nav-sub-text">.defaults</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/api.html#extension"><span class="mobile-nav-sub-text">.extension</span></a></li></ol></li></ul>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>English</span></span>
+    <select id="mobile-lang-select" data-canonical="">
+      
+        <option value="en" selected>English</option>
+      
+        <option value="zh-cn">简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+  <!-- Scripts -->
+<!-- build:js build/js/main.js -->
+<script src="/art-template/js/lang_select.js"></script>
+<script src="/art-template/js/scrollingelement.js"></script>
+<script src="/art-template/js/mobile_nav.js"></script>
+<!-- endbuild -->
+<script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
+
+<!-- Algolia -->
+
+
+</body>
+</html>
