@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.12.2
+
+1. 修复 [#483](https://github.com/aui/art-template/issues/483)
+
 ## v4.12.1
 
 1. 修复过滤器不能使用包含空的格字符串参数的问题
