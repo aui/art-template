@@ -45,7 +45,7 @@ const FROM = `$$from`;
 const OPTIONS = `$$options`;
 
 
-const has = (object, key) => object.hasOwnProperty(key);
+const has = (object, key) => Object.hasOwnProperty.call(object, key);
 const stringify = JSON.stringify;
 
 class Compiler {

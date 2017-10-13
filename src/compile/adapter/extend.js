@@ -23,7 +23,7 @@ const extend = function (target, defaults) {
 
     if (object) {
         for (let index in target) {
-            if (target.hasOwnProperty(index)) {
+            if (Object.hasOwnProperty.call(target, index)) {
                 object[index] = extend(target[index], object[index]);
             }
         }
