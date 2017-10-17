@@ -96,6 +96,15 @@ templateList['swig-raw'] = `
     {% endfor %}
 </ul>`;
 
+templateList['powjs'] = `
+<ul do="window.esc=v" each="v.list">
+    <li>User: {{v.user}} / Web Site: {{v.site}}</li>
+</ul>`;
+
+templateList['powjs-raw'] = `
+<ul do="window.raw=v" each="v.list">
+    <li html="'User: '+v.user+' / Web Site: '+v.site"></li>
+</ul>`;
 
 /*-----------------*/
 
@@ -246,6 +255,21 @@ var testList = [
             var html = '';
             for (var i = 0; i < config.calls; i++) {
                 html = fn(data);
+            }
+            return html;
+        }
+
+    },
+
+    {
+        name: 'powjs',
+        tester: function () {
+            var id = config.escape ? 'powjs' : 'powjs-raw';
+            var source = templateList[id];
+            var pow = PowJS(source);
+            var html = '';
+            for (var i = 0; i < config.calls; i++) {
+                html = pow.render(data).node();
             }
             return html;
         }
