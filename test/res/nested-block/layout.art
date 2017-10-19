@@ -1,0 +1,2 @@
+{{extend './base-layout.art'}}
+{{block 'content'}}{{block 'inner'}}default{{/block}}{{/block}}

@@ -1,0 +1,2 @@
+{{extend './layout.art'}}
+{{block 'inner'}}{{hello}}{{/block}}
