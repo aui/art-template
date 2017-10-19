@@ -395,9 +395,6 @@ class Compiler {
             value
         }) => `${name}=${value}`).join(`,`));
 
-        // for compile code debug
-        // stacks.push(`debugger;`);
-
         if (options.compileDebug) {
 
             stacks.push(`try{`);
