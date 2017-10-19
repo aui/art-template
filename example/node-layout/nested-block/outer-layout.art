@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>{{block 'title'}}{{title}}{{/block}}</title>
+</head>
+<body>
+    {{block 'content-1'}}{{/block}}
+    {{block 'content-2'}}{{/block}}
+</body>
+</html>

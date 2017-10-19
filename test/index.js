@@ -36,6 +36,20 @@ module.exports = {
             template('/index.html', 'hi, <%=value%>.');
             const html = template('/index.html', { value: 'aui' });
             assert.deepEqual('hi, aui.', html);
+        },
+
+        'nestedBlockUseActualValue': () => {
+            defaults.root = path.join(__dirname, 'res');
+            const html = template('nested-block/index.art', {hello : 'hello'});
+            assert.deepEqual('hello', html);
+            defaults.root = root;
+        },
+
+        'nestedBlockUseDefaultValue': () => {
+            defaults.root = path.join(__dirname, 'res');
+            const html = template('nested-block/default.art', {});
+            assert.deepEqual('default', html);
+            defaults.root = root;
         }
     }
 };

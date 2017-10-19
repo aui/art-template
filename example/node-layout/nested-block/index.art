@@ -1,0 +1,5 @@
+{{extend './inner-layout.art'}}
+
+{{block 'content-inner'}}
+    <p>my innter content</p>
+{{/block}}

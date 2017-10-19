@@ -90,7 +90,7 @@ class Compiler {
             [INCLUDE]: `function(src,data){var s=${OPTIONS}.include(src,data||${DATA},arguments[2]||${BLOCKS},${OPTIONS});${OUT}+=s;return s}`,
             [EXTEND]: `function(from){${FROM}=from}`,
             [SLICE]: `function(c,p,s){p=${OUT};${OUT}='';c();s=${OUT};${OUT}=p+s;return s}`,
-            [BLOCK]: `function(){var a=arguments,s;if(typeof a[0]==='function'){return ${SLICE}(a[0])}else if(${FROM}){${BLOCKS}[a[0]]=${SLICE}(a[1])}else{s=${BLOCKS}[a[0]];if(typeof s==='string'){${OUT}+=s}else{s=${SLICE}(a[1])}return s}}`
+            [BLOCK]: `function(){var a=arguments,s;if(typeof a[0]==='function'){return ${SLICE}(a[0])}else if(${FROM}){if(!${BLOCKS}[a[0]]){${BLOCKS}[a[0]]=${SLICE}(a[1])}else{${OUT}+=${BLOCKS}[a[0]]}}else{s=${BLOCKS}[a[0]];if(typeof s==='string'){${OUT}+=s}else{s=${SLICE}(a[1])}return s}}`
         };
 
         // 内置函数依赖关系声明
@@ -131,7 +131,7 @@ class Compiler {
 
     /**
      * 将模板代码转换成 tplToken 数组
-     * @param   {string} source 
+     * @param   {string} source
      * @return  {Object[]}
      */
     getTplTokens(...args) {
@@ -142,7 +142,7 @@ class Compiler {
 
     /**
      * 将模板表达式转换成 esToken 数组
-     * @param   {string} source 
+     * @param   {string} source
      * @return  {Object[]}
      */
     getEsTokens(source) {
@@ -175,7 +175,7 @@ class Compiler {
 
     /**
      * 导入模板上下文
-     * @param {string} name 
+     * @param {string} name
      */
     importContext(name) {
 
@@ -216,7 +216,7 @@ class Compiler {
 
     /**
      * 解析字符串（HTML）直接输出语句
-     * @param {Object} tplToken 
+     * @param {Object} tplToken
      */
     parseString(tplToken) {
 
@@ -238,7 +238,7 @@ class Compiler {
 
     /**
      * 解析逻辑表达式语句
-     * @param {Object} tplToken 
+     * @param {Object} tplToken
      */
     parseExpression(tplToken) {
 
@@ -274,7 +274,7 @@ class Compiler {
 
     /**
      * 检查解析后的模板语句是否存在语法错误
-     * @param  {string} script 
+     * @param  {string} script
      * @return {boolean}
      */
     checkExpression(script) {
@@ -373,7 +373,6 @@ class Compiler {
             name,
             value
         }) => `${name}=${value}`).join(`,`));
-
 
         if (options.compileDebug) {
 

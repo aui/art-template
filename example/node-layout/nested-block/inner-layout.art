@@ -1,0 +1,15 @@
+{{extend './outer-layout.art'}}
+
+{{block 'content-1'}}
+<div class="inner-layout-1">
+    {{block 'content-inner'}} <p>default inner</p> {{/block}}
+    {{title}}
+</div>
+{{/block}}
+
+{{block 'content-2'}}
+<div class="inner-layout-2">
+    <!-- test for use default innter -->
+    {{block 'content-inner-2'}} <p>default inner2</p> {{/block}}
+</div>
+{{/block}}
