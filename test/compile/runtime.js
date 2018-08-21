@@ -1,5 +1,5 @@
 const assert = require('assert');
-const runtime = require('../../lib/compile/runtime');
+const runtime = require('../../src/compile/runtime');
 
 module.exports = {
     'escape': {

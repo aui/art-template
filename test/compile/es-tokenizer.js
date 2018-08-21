@@ -1,5 +1,5 @@
 const assert = require('assert');
-const esTokenizer = require('../../lib/compile/es-tokenizer');
+const esTokenizer = require('../../src/compile/es-tokenizer');
 
 
 module.exports = {

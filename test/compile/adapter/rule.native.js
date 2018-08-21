@@ -1,6 +1,6 @@
 const assert = require('assert');
-const ruleNative = require('../../../lib/compile/adapter/rule.native');
-const esTokenizer = require('../../../lib/compile/es-tokenizer');
+const ruleNative = require('../../../src/compile/adapter/rule.native');
+const esTokenizer = require('../../../src/compile/es-tokenizer');
 
 const callRule = code => {
     const compiler = {

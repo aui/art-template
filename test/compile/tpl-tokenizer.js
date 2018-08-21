@@ -1,5 +1,5 @@
 const assert = require('assert');
-const tplTokenizer = require('../../lib/compile/tpl-tokenizer');
+const tplTokenizer = require('../../src/compile/tpl-tokenizer');
 
 module.exports = {
     'type & value': {
@@ -11,7 +11,8 @@ module.exports = {
                 value: 'value',
                 line: 0,
                 start: 0,
-                end: 5
+                end: 5,
+                script: null
             }], result);
         },
 
@@ -57,7 +58,8 @@ module.exports = {
                 value: 'hello, ',
                 line: 0,
                 start: 0,
-                end: 7
+                end: 7,
+                script: null
             }, {
                 type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%value%>',
@@ -100,7 +102,8 @@ module.exports = {
                 value: 'hello,\n ',
                 line: 0,
                 start: 0,
-                end: 8
+                end: 8,
+                script: null
             }, {
                 type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%value%>',
@@ -119,7 +122,8 @@ module.exports = {
                 value: 'hello,\n ',
                 line: 0,
                 start: 0,
-                end: 8
+                end: 8,
+                script: null
             }, {
                 type: tplTokenizer.TYPE_EXPRESSION,
                 value: '<%\nvalue\n%>',
@@ -135,7 +139,8 @@ module.exports = {
                 value: '\nxx',
                 line: 3,
                 start: 2,
-                end: 5
+                end: 5,
+                script: null
             }, {
                 type: tplTokenizer.TYPE_EXPRESSION,
                 value: '${abc}',
