@@ -1,0 +1,9 @@
+{
+    "presets": [
+      ["env", {
+        "targets": {
+          "browsers": ["Explorer >= 7"]
+        }
+      }]
+    ]
+  }

@@ -1,4 +1,4 @@
-const onerror = require('../../../lib/compile/adapter/onerror');
+const onerror = require('../../../src/compile/adapter/onerror');
 
 
 module.exports = {

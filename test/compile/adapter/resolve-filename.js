@@ -1,5 +1,5 @@
 const assert = require('assert');
-const resolveFilename = require('../../../lib/compile/adapter/resolve-filename');
+const resolveFilename = require('../../../src/compile/adapter/resolve-filename');
 
 module.exports = {
     'resolveFilename': {

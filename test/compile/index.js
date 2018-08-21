@@ -1,7 +1,7 @@
 const assert = require('assert');
-const compile = require('../../lib/compile/index');
-const tplTokenizer = require('../../lib/compile/tpl-tokenizer');
-const defaults = require('../../lib/compile/defaults');
+const compile = require('../../src/compile/index');
+const tplTokenizer = require('../../src/compile/tpl-tokenizer');
+const defaults = require('../../src/compile/defaults');
 const onerror = defaults.onerror;
 const path = require('path');
 

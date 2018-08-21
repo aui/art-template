@@ -1,5 +1,5 @@
 const assert = require('assert');
-const tplLoader = require('../../../lib/compile/adapter/loader');
+const tplLoader = require('../../../src/compile/adapter/loader');
 const path = require('path');
 
 module.exports = {

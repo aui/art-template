@@ -1,6 +1,6 @@
 const assert = require('assert');
-const ruleArt = require('../../../lib/compile/adapter/rule.art');
-const esTokenizer = require('../../../lib/compile/es-tokenizer');
+const ruleArt = require('../../../src/compile/adapter/rule.art');
+const esTokenizer = require('../../../src/compile/es-tokenizer');
 
 const callRule = code => {
     const compiler = {

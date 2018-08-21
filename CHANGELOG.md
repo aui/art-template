@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v4.13.0
+
+1. 修复超大模板编译性能问题 [#539](https://github.com/aui/art-template/issues/539)、[#4](https://github.com/aui/express-art-template/issues/4)
+2. 支持嵌套 block [#468](https://github.com/aui/art-template/issues/468)
+
 ## v4.12.2
 
 1. 修复 [#483](https://github.com/aui/art-template/issues/483)
