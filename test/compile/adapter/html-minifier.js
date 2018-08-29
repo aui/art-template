@@ -9,9 +9,8 @@ const htmlMinifierOptions = {
 };
 
 module.exports = {
-
     'html-minifier': {
-        'text': () => {
+        text: () => {
             const result = htmlMinifier('hello world', {
                 rules,
                 htmlMinifierOptions
@@ -19,7 +18,7 @@ module.exports = {
             assert.equal('hello world', result);
         },
 
-        'tag': () => {
+        tag: () => {
             let result;
             result = htmlMinifier('<div></div>   <a></a>', {
                 rules,
@@ -34,7 +33,7 @@ module.exports = {
             assert.equal('hello<div>world</div>', result);
         },
 
-        'script': () => {
+        script: () => {
             const result = htmlMinifier('<script>var x = "     ";</script>', {
                 rules,
                 htmlMinifierOptions

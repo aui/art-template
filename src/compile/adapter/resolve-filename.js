@@ -3,12 +3,11 @@ const LOCAL_MODULE = /^\.+\//;
 
 /**
  * 获取模板的绝对路径
- * @param   {string} filename 
- * @param   {Object} options 
+ * @param   {string} filename
+ * @param   {Object} options
  * @return  {string}
  */
 const resolveFilename = (filename, options) => {
-
     /* istanbul ignore else  */
     if (detectNode) {
         const path = require('path');

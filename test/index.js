@@ -10,13 +10,13 @@ module.exports = {
         console.log('#index');
     },
 
-    'template': {
-        'render': () => {
+    template: {
+        render: () => {
             const html = template(__dirname + '/res/template.file.html', {});
             assert.deepEqual('hello world', html);
         },
 
-        'compile': () => {
+        compile: () => {
             defaults.root = path.join(__dirname, 'res');
             const render = template('template.file.html');
             const html = render({});
@@ -24,28 +24,28 @@ module.exports = {
             defaults.root = root;
         },
 
-        'include': ()=>{
+        include: () => {
             defaults.root = path.join(__dirname, 'res');
-            const html = template('index/index.html', {name: 'aui'});
+            const html = template('index/index.html', { name: 'aui' });
             assert.deepEqual(true, html.indexOf('aui') !== -1);
             assert.deepEqual(true, html.indexOf('糖饼') !== -1);
             defaults.root = root;
         },
 
-        'cache': () => {
+        cache: () => {
             template('/index.html', 'hi, <%=value%>.');
             const html = template('/index.html', { value: 'aui' });
             assert.deepEqual('hi, aui.', html);
         },
 
-        'nestedBlockUseActualValue': () => {
+        nestedBlockUseActualValue: () => {
             defaults.root = path.join(__dirname, 'res');
-            const html = template('nested-block/index.art', {hello : 'hello'});
+            const html = template('nested-block/index.art', { hello: 'hello' });
             assert.deepEqual('hello', html);
             defaults.root = root;
         },
 
-        'nestedBlockUseDefaultValue': () => {
+        nestedBlockUseDefaultValue: () => {
             defaults.root = path.join(__dirname, 'res');
             const html = template('nested-block/default.art', {});
             assert.deepEqual('default', html);

@@ -6,7 +6,7 @@ const detectNode = require('detect-node');
  * @param   {?Object}   options
  * @return  {string}
  */
-const loader = (filename/*, options*/) => {
+const loader = (filename /*, options*/) => {
     /* istanbul ignore else  */
     if (detectNode) {
         const fs = require('fs');

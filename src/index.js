@@ -9,14 +9,17 @@ const defaults = require('./defaults');
  * @return  {string|function}            如果 content 为 string 则编译并缓存模板，否则渲染模板
  */
 const template = (filename, content) => {
-    return content instanceof Object ?
-        render({
-            filename
-        }, content) :
-        compile({
-            filename,
-            source: content
-        });
+    return content instanceof Object
+        ? render(
+              {
+                  filename
+              },
+              content
+          )
+        : compile({
+              filename,
+              source: content
+          });
 };
 
 template.render = render;

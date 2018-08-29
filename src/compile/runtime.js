@@ -4,8 +4,6 @@ const detectNode = require('detect-node');
 const runtime = Object.create(detectNode ? global : window);
 const ESCAPE_REG = /["&'<>]/;
 
-
-
 /**
  * 编码模板输出的内容
  * @param  {any}        content
@@ -13,12 +11,10 @@ const ESCAPE_REG = /["&'<>]/;
  */
 runtime.$escape = content => xmlEscape(toString(content));
 
-
-
 /**
  * 迭代器，支持数组与对象
- * @param {array|Object} data 
- * @param {function}     callback 
+ * @param {array|Object} data
+ * @param {function}     callback
  */
 runtime.$each = (data, callback) => {
     if (Array.isArray(data)) {
@@ -31,8 +27,6 @@ runtime.$each = (data, callback) => {
         }
     }
 };
-
-
 
 // 将目标转成字符
 function toString(value) {
@@ -47,8 +41,7 @@ function toString(value) {
     }
 
     return value;
-};
-
+}
 
 // 编码 HTML 内容
 function xmlEscape(content) {
@@ -61,7 +54,6 @@ function xmlEscape(content) {
     let result = '';
     let i, lastIndex, char;
     for (i = regexResult.index, lastIndex = 0; i < html.length; i++) {
-
         switch (html.charCodeAt(i)) {
             case 34:
                 char = '&#34;';
@@ -95,7 +87,6 @@ function xmlEscape(content) {
     } else {
         return result;
     }
-};
-
+}
 
 module.exports = runtime;

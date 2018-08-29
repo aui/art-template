@@ -3,50 +3,41 @@
  */
 const artRule = {
     test: /{{([@#]?)[ \t]*(\/?)([\w\W]*?)[ \t]*}}/,
-    use: function (match, raw, close, code) {
-
+    use: function(match, raw, close, code) {
         const compiler = this;
         const options = compiler.options;
         const esTokens = compiler.getEsTokens(code);
         const values = esTokens.map(token => token.value);
         const result = {};
 
-
         let group;
         let output = raw ? 'raw' : false;
         let key = close + values.shift();
 
-
         // 旧版语法升级提示
         const warn = (oldSyntax, newSyntax) => {
-            console.warn(`${options.filename || 'anonymous'}:${match.line + 1}:${match.start + 1}\n` +
-                `Template upgrade: {{${oldSyntax}}} -> {{${newSyntax}}}`);
+            console.warn(
+                `${options.filename || 'anonymous'}:${match.line + 1}:${match.start + 1}\n` +
+                    `Template upgrade: {{${oldSyntax}}} -> {{${newSyntax}}}`
+            );
         };
-
-
 
         // v3 compat: #value
         if (raw === '#') {
             warn('#value', '@value');
         }
 
-
-
         switch (key) {
-
             case 'set':
-
                 code = `var ${values.join('').trim()}`;
                 break;
 
             case 'if':
-
                 code = `if(${values.join('').trim()}){`;
 
                 break;
 
             case 'else':
-
                 const indexIf = values.indexOf('if');
 
                 if (~indexIf) {
@@ -59,12 +50,10 @@ const artRule = {
                 break;
 
             case '/if':
-
                 code = '}';
                 break;
 
             case 'each':
-
                 group = artRule._split(esTokens);
                 group.shift();
 
@@ -83,19 +72,16 @@ const artRule = {
                 break;
 
             case '/each':
-
                 code = '})';
                 break;
 
             case 'block':
-
                 group = artRule._split(esTokens);
                 group.shift();
                 code = `block(${group.join(',').trim()},function(){`;
                 break;
 
             case '/block':
-
                 code = '})';
                 break;
 
@@ -105,8 +91,12 @@ const artRule = {
             case 'print':
             case 'include':
             case 'extend':
-
-                if (values.join('').trim().indexOf('(') !== 0) {
+                if (
+                    values
+                        .join('')
+                        .trim()
+                        .indexOf('(') !== 0
+                ) {
                     // 执行函数省略 `()` 与 `,`
                     group = artRule._split(esTokens);
                     group.shift();
@@ -115,38 +105,42 @@ const artRule = {
                 }
 
             default:
-
                 if (~values.indexOf('|')) {
-
                     const v3split = ':'; // ... v3 compat ...
 
                     // 将过滤器解析成二维数组
-                    const group = esTokens.reduce((group, token) => {
-                        const {value, type} = token;
-                        if (value === '|') {
-                            group.push([]);
-                        } else if (type !== `whitespace` && type !== `comment`) {
-                            if (!group.length) {
+                    const group = esTokens
+                        .reduce((group, token) => {
+                            const { value, type } = token;
+                            if (value === '|') {
                                 group.push([]);
+                            } else if (type !== `whitespace` && type !== `comment`) {
+                                if (!group.length) {
+                                    group.push([]);
+                                }
+                                if (value === v3split && group[group.length - 1].length === 1) {
+                                    warn('value | filter: argv', 'value | filter argv');
+                                } else {
+                                    group[group.length - 1].push(token);
+                                }
                             }
-                            if (value === v3split && group[group.length - 1].length === 1) {
-                                warn('value | filter: argv', 'value | filter argv');
-                            } else {
-                                group[group.length - 1].push(token);
-                            }
-                        }
-                        return group;
-                    }, []).map(g => artRule._split(g));
-
+                            return group;
+                        }, [])
+                        .map(g => artRule._split(g));
 
                     // 将过滤器管道化
-                    code = group.reduce((accumulator, filter) => {
-                        const name = filter.shift();
-                        filter.unshift(accumulator);
-                        
-                        return `$imports.${name}(${filter.join(',')})`;
-                    }, group.shift().join(` `).trim());
+                    code = group.reduce(
+                        (accumulator, filter) => {
+                            const name = filter.shift();
+                            filter.unshift(accumulator);
 
+                            return `$imports.${name}(${filter.join(',')})`;
+                        },
+                        group
+                            .shift()
+                            .join(` `)
+                            .trim()
+                    );
                 }
 
                 output = output || 'escape';
@@ -154,23 +148,17 @@ const artRule = {
                 break;
         }
 
-
         result.code = code;
         result.output = output;
 
-
         return result;
     },
-
 
     // 将多个 javascript 表达式拆分成组
     // 支持基本运算、三元表达式、取值、运行函数，不支持 `typeof value` 操作
     // 只支持 string、number、boolean、null、undefined 这几种类型声明，不支持 function、object、array
     _split: esTokens => {
-
-        esTokens = esTokens.filter(({
-            type
-        }) => {
+        esTokens = esTokens.filter(({ type }) => {
             return type !== `whitespace` && type !== `comment`;
         });
 
@@ -178,14 +166,15 @@ const artRule = {
         let lastToken = esTokens.shift();
         const punctuator = `punctuator`;
         const close = /\]|\)/;
-        const group = [
-            [lastToken]
-        ];
+        const group = [[lastToken]];
 
         while (current < esTokens.length) {
             const esToken = esTokens[current];
 
-            if (esToken.type === punctuator || lastToken.type === punctuator && !close.test(lastToken.value)) {
+            if (
+                esToken.type === punctuator ||
+                (lastToken.type === punctuator && !close.test(lastToken.value))
+            ) {
                 group[group.length - 1].push(esToken);
             } else {
                 group.push([esToken]);
@@ -199,6 +188,5 @@ const artRule = {
         return group.map(g => g.map(g => g.value).join(``));
     }
 };
-
 
 module.exports = artRule;

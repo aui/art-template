@@ -8,7 +8,6 @@ const path = require('path');
 let render, data, result;
 
 module.exports = {
-
     before: () => {
         defaults.onerror = () => {
             return () => '{Template Error}';
@@ -20,10 +19,7 @@ module.exports = {
     },
 
     'rule.native': {
-
-        'output': () => {
-
-
+        output: () => {
             render = compile('hello <%=value%>.');
             data = {
                 value: 'aui'
@@ -33,7 +29,7 @@ module.exports = {
 
             render = compile('hello <%=值%>.');
             data = {
-                '值': 'aui'
+                值: 'aui'
             };
             result = render(data);
             assert.deepEqual('hello aui.', result);
@@ -60,8 +56,7 @@ module.exports = {
             // todo empty
         },
 
-        'block': () => {
-
+        block: () => {
             render = compile('<% block(function(){ %>hello <%= value %>.<% }) %>', {
                 bail: true
             });
@@ -70,12 +65,9 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('hello aui.', result);
-
         },
 
         'syntax compat: art-template@v3': () => {
-
-
             render = compile('<%== value %>');
             data = {
                 value: '<aui>'
@@ -92,8 +84,6 @@ module.exports = {
         },
 
         'syntax compat: ejs': () => {
-
-
             render = compile('<%# value %>');
             data = {
                 value: 'aui'
@@ -108,12 +98,10 @@ module.exports = {
             result = render(data);
             assert.deepEqual('aui', result);
         }
-
     },
 
     'rule.art': {
-        'output': () => {
-
+        output: () => {
             render = compile('hello');
             data = {};
             result = render(data);
@@ -166,11 +154,9 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('1', result);
-
         },
 
         'syntax compat: art-template@v3': () => {
-
             render = compile('{{#value}}');
             data = {
                 value: '<>'
@@ -179,24 +165,24 @@ module.exports = {
             assert.deepEqual('<>', result);
         },
 
-        'filter': () => {
+        filter: () => {
             const dateFormat = (date, format) => {
                 date = new Date(date);
                 const map = {
                     // 月份
-                    "M": date.getMonth() + 1,
-                    // 日  
-                    "d": date.getDate(),
-                    // 小时    
-                    "h": date.getHours(),
-                    // 分      
-                    "m": date.getMinutes(),
-                    // 秒     
-                    "s": date.getSeconds(),
-                    // 季度                      
-                    "q": Math.floor((date.getMonth() + 3) / 3),
-                    // 毫秒 
-                    "S": date.getMilliseconds()
+                    M: date.getMonth() + 1,
+                    // 日
+                    d: date.getDate(),
+                    // 小时
+                    h: date.getHours(),
+                    // 分
+                    m: date.getMinutes(),
+                    // 秒
+                    s: date.getSeconds(),
+                    // 季度
+                    q: Math.floor((date.getMonth() + 3) / 3),
+                    // 毫秒
+                    S: date.getMilliseconds()
                 };
                 format = format.replace(/([yMdhmsqS])+/g, (all, t) => {
                     let v = map[t];
@@ -229,34 +215,68 @@ module.exports = {
             };
 
             test(`{{print 'hello' '-' 'world'}}`, {}, `hello-world`, options);
-            test(`{{value | brackets}}`, {
-                value: '糖饼'
-            }, '『糖饼』', options);
-            test(`{{value.name | brackets}}`, {
-                value: {
-                    name: '糖饼'
-                }
-            }, '『糖饼』', options);
-            test(`{{time | dateFormat 'yyyy-MM-dd'}}`, {
-                time: 1491566794863
-            }, `2017-04-07`, options);
-            test(`{{time|dateFormat 'yyyy-MM-dd'}}`, {
-                time: 1491566794863
-            }, `2017-04-07`, options);
-            test(`{{time | dateFormat 'yyyy-MM-dd' | brackets}}`, {
-                time: 1491566794863
-            }, `『2017-04-07』`, options);
-            test(`{{time * 1000 | dateFormat 'yyyy-MM-dd'}}`, {
-                time: 1491566794
-            }, `2017-04-07`, options);
+            test(
+                `{{value | brackets}}`,
+                {
+                    value: '糖饼'
+                },
+                '『糖饼』',
+                options
+            );
+            test(
+                `{{value.name | brackets}}`,
+                {
+                    value: {
+                        name: '糖饼'
+                    }
+                },
+                '『糖饼』',
+                options
+            );
+            test(
+                `{{time | dateFormat 'yyyy-MM-dd'}}`,
+                {
+                    time: 1491566794863
+                },
+                `2017-04-07`,
+                options
+            );
+            test(
+                `{{time|dateFormat 'yyyy-MM-dd'}}`,
+                {
+                    time: 1491566794863
+                },
+                `2017-04-07`,
+                options
+            );
+            test(
+                `{{time | dateFormat 'yyyy-MM-dd' | brackets}}`,
+                {
+                    time: 1491566794863
+                },
+                `『2017-04-07』`,
+                options
+            );
+            test(
+                `{{time * 1000 | dateFormat 'yyyy-MM-dd'}}`,
+                {
+                    time: 1491566794
+                },
+                `2017-04-07`,
+                options
+            );
             test(`{{3.14 | parseInt}}`, {}, `3`, options);
-            test(`{{time | dateFormat:'yyyy-MM-dd'}}`, {
-                time: 1491566794863
-            }, `2017-04-07`, options); // ... v3 compat ...
+            test(
+                `{{time | dateFormat:'yyyy-MM-dd'}}`,
+                {
+                    time: 1491566794863
+                },
+                `2017-04-07`,
+                options
+            ); // ... v3 compat ...
         },
 
-
-        'include': () => {
+        include: () => {
             compile('#title: {{title}}', {
                 root: '/',
                 filename: '/header.html',
@@ -322,22 +342,35 @@ module.exports = {
             assert.deepEqual(`#title: 糖饼\ncontent: world`, result);
 
             render = compile({
-                filename: path.resolve(__dirname, '..', '..', 'example', 'node-include', 'index.art'),
+                filename: path.resolve(
+                    __dirname,
+                    '..',
+                    '..',
+                    'example',
+                    'node-include',
+                    'index.art'
+                ),
                 minimize: true
             });
             data = {
                 title: 'My Page'
             };
-            result = render(data)
+            result = render(data);
             assert.equal(true, result.indexOf('<title>My Page</title>') > -1);
             assert.equal(true, result.indexOf('</head>') > -1);
             assert.equal(false, /<\/html>.+/.test(result));
         },
 
-
-        'layout': () => {
+        layout: () => {
             render = compile({
-                filename: path.resolve(__dirname, '..', '..', 'example', 'node-layout', 'index.art'),
+                filename: path.resolve(
+                    __dirname,
+                    '..',
+                    '..',
+                    'example',
+                    'node-layout',
+                    'index.art'
+                ),
                 minimize: true,
                 bail: true
             });
@@ -349,8 +382,7 @@ module.exports = {
             assert.equal(true, result.indexOf('</head>') > -1);
         },
 
-
-        'echo': () => {
+        echo: () => {
             render = compile('{{echo 2017}}');
             data = {};
             result = render(data);
@@ -363,8 +395,7 @@ module.exports = {
             assert.deepEqual('hello', result);
         },
 
-
-        'each': () => {
+        each: () => {
             render = compile('{{each}}{{$index}}{{$value}}{{/each}}');
             data = ['a', 'b', 'c'];
             result = render(data);
@@ -440,8 +471,7 @@ module.exports = {
             assert.deepEqual('0a1b2c', result);
         },
 
-
-        'if': () => {
+        if: () => {
             render = compile('{{if value}}hello world{{/if}}');
             data = {
                 value: true
@@ -503,7 +533,6 @@ module.exports = {
             };
             result = render(data);
             assert.deepEqual('😊', result);
-
             render = compile('{{if a}}hello world{{else if b}}😊{{/if}}');
             data = {
                 a: 0,
@@ -512,46 +541,48 @@ module.exports = {
             result = render(data);
             assert.deepEqual('', result);
         },
-
-
-        'set': () => {
+        set: () => {
             render = compile('{{set value="😊"}}{{value}}');
             data = {};
             result = render(data);
             assert.deepEqual('😊', result);
         }
-
-
     },
-
-
-    'options': {
-        'minimize': {
-            'basic': () => {
+    options: {
+        minimize: {
+            basic: () => {
                 const render = compile('<div>     </div>\n     <%=value%>', {
                     minimize: true
                 });
-                assert.deepEqual('<div></div> aui', render({
-                    value: 'aui'
-                }));
+                assert.deepEqual(
+                    '<div></div> aui',
+                    render({
+                        value: 'aui'
+                    })
+                );
             },
             'Do not compress unclosed tags': () => {
                 const render = compile('<div>x</div>   <a href="{{url}}">link</a>   <div', {
                     minimize: true
                 });
-                assert.deepEqual('<div>x</div>   <a href="###">link</a>   <div', render({
-                    url: '###'
-                }));
+                assert.deepEqual(
+                    '<div>x</div>   <a href="###">link</a>   <div',
+                    render({
+                        url: '###'
+                    })
+                );
             },
             'Not compressed "pre"': () => {
                 let render;
-
                 render = compile('<pre>\n\n\n</pre>{{value}}', {
                     minimize: true
                 });
-                assert.deepEqual('<pre>\n\n\n</pre>aui', render({
-                    value: 'aui'
-                }));
+                assert.deepEqual(
+                    '<pre>\n\n\n</pre>aui',
+                    render({
+                        value: 'aui'
+                    })
+                );
 
                 // TODO
                 // render = compile('<pre>\n<span></span>\n<%=value%></pre>', {
@@ -563,45 +594,47 @@ module.exports = {
             },
             'Not compressed "textarea"': () => {
                 let render;
-
                 render = compile('<textarea>\n\n\n</textarea>{{value}}', {
                     minimize: true
                 });
-                assert.deepEqual('<textarea>\n\n\n</textarea>aui', render({
-                    value: 'aui'
-                }));
+                assert.deepEqual(
+                    '<textarea>\n\n\n</textarea>aui',
+                    render({
+                        value: 'aui'
+                    })
+                );
             }
         },
-
-        'rules': () => {
+        rules: () => {
             const source = 'hello ${name} <%=name%>';
             const options = {
-                rules: [{
-                    test: /\${([\w\W]*?)}/,
-                    use: (match, code) => {
-                        return {
-                            code,
-                            output: tplTokenizer.TYPE_ESCAPE
-                        };
+                rules: [
+                    {
+                        test: /\${([\w\W]*?)}/,
+                        use: (match, code) => {
+                            return {
+                                code,
+                                output: tplTokenizer.TYPE_ESCAPE
+                            };
+                        }
                     }
-                }]
+                ]
             };
             const render = compile(source, options);
-
-            assert.deepEqual('hello aui <%=name%>', render({
-                name: 'aui'
-            }));
+            assert.deepEqual(
+                'hello aui <%=name%>',
+                render({
+                    name: 'aui'
+                })
+            );
         },
-
-        'filename': () => {
+        filename: () => {
             let render, html;
-
             render = compile({
                 filename: path.resolve(__dirname, '..', 'res', 'file')
             });
             html = render({});
             assert.deepEqual('hello world', html);
-
             render = compile({
                 extname: '.html',
                 filename: path.resolve(__dirname, '..', 'res', 'file')
@@ -609,28 +642,27 @@ module.exports = {
             html = render({});
             assert.deepEqual('hello world', html);
         },
-
         'include: extend options': () => {
             let render, html;
-
             render = compile({
                 bail: true,
                 filename: path.resolve(__dirname, '..', 'res', 'extend-options', 'file'),
-                rules: [{
-                    test: /\${([\w\W]*?)}/,
-                    use: function (match, code) {
-                        return {
-                            code: code,
-                            output: false
+                rules: [
+                    {
+                        test: /\${([\w\W]*?)}/,
+                        use: function(match, code) {
+                            return {
+                                code: code,
+                                output: false
+                            };
                         }
                     }
-                }]
+                ]
             });
             html = render({
                 value: 'hello world'
             });
             assert.deepEqual('hello world', html);
-
             render = compile({
                 bail: true,
                 filename: path.resolve(__dirname, '..', 'res', 'extend-options', 'file2')
@@ -640,8 +672,7 @@ module.exports = {
             });
             assert.deepEqual('${value}hello world', html);
         },
-
-        'imports': () => {
+        imports: () => {
             const render = compile('<%= $imports.stringify(value) %>', {
                 bail: true,
                 imports: {
@@ -649,23 +680,23 @@ module.exports = {
                     log: console.log
                 }
             });
-            assert.deepEqual('&#34;hello&#34;', render({
-                value: 'hello'
-            }));
+            assert.deepEqual(
+                '&#34;hello&#34;',
+                render({
+                    value: 'hello'
+                })
+            );
         }
     },
-
     'rule.mix': {},
-
-    'errors': {
-        'RuntimeError': {
-            'error': () => {
+    errors: {
+        RuntimeError: {
+            error: () => {
                 const render = compile('<%=a.b.c%>', {
                     bail: false
                 });
                 assert.deepEqual('{Template Error}', render({}));
             },
-
             'throw error': () => {
                 const filename = '/test.html';
                 const render = compile({
@@ -673,7 +704,6 @@ module.exports = {
                     source: '<%=a.b.c%>',
                     bail: true
                 });
-
                 try {
                     render({});
                 } catch (e) {
@@ -682,23 +712,18 @@ module.exports = {
                 }
             }
         },
-
-
-        'CompileError': {
-
-            'error': () => {
+        CompileError: {
+            error: () => {
                 let render;
                 render = compile('<%=a b c%>', {
                     bail: false
                 });
                 assert.deepEqual('{Template Error}', render({}));
-
                 render = compile('{{a b c}}', {
                     bail: false
                 });
                 assert.deepEqual('{Template Error}', render({}));
             },
-
             'throw error': () => {
                 let render;
                 try {
@@ -711,7 +736,6 @@ module.exports = {
                 }
                 assert.deepEqual(undefined, render);
             },
-
             //             'error line': () => {
             //                 const tpl = `<!--template-->
             // {{if user}}
@@ -734,7 +758,6 @@ module.exports = {
             //                 }
             //                 assert.deepEqual(undefined, render);
             //             },
-
             'template not found': () => {
                 const render = compile({
                     filename: '/404.html',
@@ -742,7 +765,6 @@ module.exports = {
                 });
                 assert.deepEqual('{Template Error}', render({}));
             },
-
             'throw error: template not found': () => {
                 try {
                     compile({
@@ -755,12 +777,11 @@ module.exports = {
             }
         }
     },
-
-    'toString': {
+    toString: {
         'compile to string': () => {
             const render = compile('<%=value%>');
             assert.deepEqual('string', typeof render.toString());
-            assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'))
+            assert.deepEqual(-1, render.toString.toString().indexOf('[native code]'));
         }
     }
 };

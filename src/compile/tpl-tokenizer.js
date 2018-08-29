@@ -11,14 +11,13 @@ function wrapString(token) {
     return value;
 }
 
-
 function Token(type, value, prevToken) {
     this.type = type;
     this.value = value;
     this.script = null;
 
     if (prevToken) {
-        this.line = prevToken.line + prevToken.value.split(/\n/).length - 1
+        this.line = prevToken.line + prevToken.value.split(/\n/).length - 1;
         if (this.line === prevToken.line) {
             this.start = prevToken.end;
         } else {
@@ -32,16 +31,14 @@ function Token(type, value, prevToken) {
     this.end = this.start + this.value.length;
 }
 
-
 /**
  * 将模板转换为 Tokens
- * @param {string}      source 
+ * @param {string}      source
  * @param {Object[]}    rules     @see defaults.rules
  * @param {Object}      context
  * @return {Object[]}
  */
 const tplTokenizer = (source, rules, context = {}) => {
-
     const tokens = [new Token(TYPE_STRING, source)];
 
     for (let i = 0; i < rules.length; i++) {
@@ -50,15 +47,15 @@ const tplTokenizer = (source, rules, context = {}) => {
         const regexp = new RegExp(rule.test.source, flags);
 
         for (let i = 0; i < tokens.length; i++) {
-
             const token = tokens[i];
             let prevToken = tokens[i - 1];
-            
+
             if (token.type !== TYPE_STRING) {
                 continue;
             }
-            
-            let match, index = 0;
+
+            let match,
+                index = 0;
             const substitute = [];
             const value = token.value;
 
@@ -75,25 +72,23 @@ const tplTokenizer = (source, rules, context = {}) => {
 
                 index = match.index + match[0].length;
             }
-        
+
             if (index < value.length) {
                 prevToken = new Token(TYPE_STRING, value.slice(index), prevToken);
                 substitute.push(prevToken);
             }
 
             tokens.splice(i, 1, ...substitute);
-            i += (substitute.length - 1);
+            i += substitute.length - 1;
         }
     }
 
     return tokens;
 };
 
-
 tplTokenizer.TYPE_STRING = TYPE_STRING;
 tplTokenizer.TYPE_EXPRESSION = TYPE_EXPRESSION;
 tplTokenizer.TYPE_RAW = TYPE_RAW;
 tplTokenizer.TYPE_ESCAPE = TYPE_ESCAPE;
-
 
 module.exports = tplTokenizer;

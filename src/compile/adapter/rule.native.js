@@ -3,16 +3,15 @@
  */
 const nativeRule = {
     test: /<%(#?)((?:==|=#|[=-])?)[ \t]*([\w\W]*?)[ \t]*(-?)%>/,
-    use: (match, comment, output, code/*, trimMode*/) => {
-
-        output = ({
+    use: (match, comment, output, code /*, trimMode*/) => {
+        output = {
             '-': 'raw',
             '=': 'escape',
             '': false,
             // v3 compat: raw output
             '==': 'raw',
-            '=#': 'raw',
-        })[output];
+            '=#': 'raw'
+        }[output];
 
         // ejs compat: comment tag
         if (comment) {
@@ -27,9 +26,7 @@ const nativeRule = {
             code,
             output
         };
-
     }
 };
-
 
 module.exports = nativeRule;

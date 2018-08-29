@@ -4,14 +4,13 @@ const toType = value => {
     return value === null ? 'Null' : toString.call(value).slice(8, -1);
 };
 
-
 /**
  * 快速继承默认配置
  * @param   {Object}    options
  * @param   {?Object}   defaults
  * @return  {Object}
  */
-const extend = function (target, defaults) {
+const extend = function(target, defaults) {
     let object;
     const type = toType(target);
 

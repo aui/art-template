@@ -1,7 +1,6 @@
 const esTokenizer = require('./es-tokenizer');
 const tplTokenizer = require('./tpl-tokenizer');
 
-
 /** 传递给模板的数据引用 */
 const DATA = `$data`;
 
@@ -44,23 +43,18 @@ const FROM = `$$from`;
 /** 编译设置变量 */
 const OPTIONS = `$$options`;
 
-
 const has = (object, key) => Object.hasOwnProperty.call(object, key);
 const stringify = JSON.stringify;
 
 class Compiler {
-
     /**
      * 模板编译器
      * @param   {Object}    options
      */
     constructor(options) {
-
-
         let source = options.source;
         const minimize = options.minimize;
         const htmlMinifier = options.htmlMinifier;
-
 
         // 编译选项
         this.options = options;
@@ -97,10 +91,9 @@ class Compiler {
         this.dependencies = {
             [PRINT]: [OUT],
             [INCLUDE]: [OUT, OPTIONS, DATA, BLOCKS],
-            [EXTEND]: [FROM, /*[*/ INCLUDE /*]*/ ],
+            [EXTEND]: [FROM, /*[*/ INCLUDE /*]*/],
             [BLOCK]: [SLICE, FROM, OUT, BLOCKS]
         };
-
 
         this.importContext(OUT);
 
@@ -108,13 +101,11 @@ class Compiler {
             this.importContext(LINE);
         }
 
-
         if (minimize) {
             try {
                 source = htmlMinifier(source, options);
             } catch (error) {}
         }
-
 
         this.source = source;
         this.getTplTokens(source, options.rules, this).forEach(tokens => {
@@ -124,10 +115,7 @@ class Compiler {
                 this.parseExpression(tokens);
             }
         });
-
     }
-
-
 
     /**
      * 将模板代码转换成 tplToken 数组
@@ -138,8 +126,6 @@ class Compiler {
         return tplTokenizer(...args);
     }
 
-
-
     /**
      * 将模板表达式转换成 esToken 数组
      * @param   {string} source
@@ -149,8 +135,6 @@ class Compiler {
         return esTokenizer(source);
     }
 
-
-
     /**
      * 获取变量列表
      * @param {Object[]} esTokens
@@ -158,27 +142,27 @@ class Compiler {
      */
     getVariables(esTokens) {
         let ignore = false;
-        return esTokens.filter(esToken => {
-            return esToken.type !== `whitespace` && esToken.type !== `comment`;
-        }).filter(esToken => {
-            if (esToken.type === `name` && !ignore) {
-                return true;
-            }
+        return esTokens
+            .filter(esToken => {
+                return esToken.type !== `whitespace` && esToken.type !== `comment`;
+            })
+            .filter(esToken => {
+                if (esToken.type === `name` && !ignore) {
+                    return true;
+                }
 
-            ignore = esToken.type === `punctuator` && esToken.value === `.`;
+                ignore = esToken.type === `punctuator` && esToken.value === `.`;
 
-            return false;
-        }).map(tooken => tooken.value);
+                return false;
+            })
+            .map(tooken => tooken.value);
     }
-
-
 
     /**
      * 导入模板上下文
      * @param {string} name
      */
     importContext(name) {
-
         let value = ``;
         const internal = this.internal;
         const dependencies = this.dependencies;
@@ -189,7 +173,6 @@ class Compiler {
         const contextMap = this.CONTEXT_MAP;
 
         if (!has(contextMap, name) && ignore.indexOf(name) === -1) {
-
             if (has(internal, name)) {
                 value = internal[name];
 
@@ -212,14 +195,11 @@ class Compiler {
         }
     }
 
-
-
     /**
      * 解析字符串（HTML）直接输出语句
      * @param {Object} tplToken
      */
     parseString(tplToken) {
-
         let source = tplToken.value;
 
         if (!source) {
@@ -234,21 +214,16 @@ class Compiler {
         });
     }
 
-
-
     /**
      * 解析逻辑表达式语句
      * @param {Object} tplToken
      */
     parseExpression(tplToken) {
-
-
         const source = tplToken.value;
         const script = tplToken.script;
         const output = script.output;
         const escape = this.options.escape;
         let code = script.code;
-
 
         if (output) {
             if (escape === false || output === tplTokenizer.TYPE_RAW) {
@@ -258,10 +233,8 @@ class Compiler {
             }
         }
 
-
         const esToken = this.getEsTokens(code);
         this.getVariables(esToken).forEach(name => this.importContext(name));
-
 
         this.scripts.push({
             source,
@@ -270,20 +243,16 @@ class Compiler {
         });
     }
 
-
-
     /**
      * 检查解析后的模板语句是否存在语法错误
      * @param  {string} script
      * @return {boolean}
      */
     checkExpression(script) {
-
         // 没有闭合的块级模板语句规则
         // 基于正则规则来补全语法不能保证 100% 准确，
         // 但是在绝大多数情况下足以满足辅助开发调试的需要
         const rules = [
-
             // <% } %>
             // <% }else{ %>
             // <% }else if(a){ %>
@@ -297,9 +266,7 @@ class Compiler {
             // <% if(a){ %>
             // <% for(var i in d){ %>
             [/(^[\w\W]*?\([\w\W]*?\)\s*{[\s;]*$)/, '$1}']
-
         ];
-
 
         let index = 0;
         while (index < rules.length) {
@@ -308,8 +275,7 @@ class Compiler {
                 break;
             }
             index++;
-        };
-
+        }
 
         try {
             new Function(script);
@@ -319,14 +285,11 @@ class Compiler {
         }
     }
 
-
-
     /**
      * 编译
      * @return  {function}
      */
     build() {
-
         const options = this.options;
         const context = this.context;
         const scripts = this.scripts;
@@ -340,10 +303,7 @@ class Compiler {
         let offsetLine = 0;
 
         // Create SourceMap: mapping
-        const mapping = (code, {
-            line,
-            start
-        }) => {
+        const mapping = (code, { line, start }) => {
             const node = {
                 generated: {
                     line: stacks.length + offsetLine + 1,
@@ -359,32 +319,24 @@ class Compiler {
             return node;
         };
 
-
         // Trim code
         const trim = code => {
             return code.replace(/^[\t ]+|[\t ]$/g, '');
         };
 
-
         stacks.push(`function(${DATA}){`);
         stacks.push(`'use strict'`);
         stacks.push(`${DATA}=${DATA}||{}`);
-        stacks.push(`var ` + context.map(({
-            name,
-            value
-        }) => `${name}=${value}`).join(`,`));
+        stacks.push(`var ` + context.map(({ name, value }) => `${name}=${value}`).join(`,`));
 
         if (options.compileDebug) {
-
             stacks.push(`try{`);
 
             scripts.forEach(script => {
-
                 if (script.tplToken.type === tplTokenizer.TYPE_EXPRESSION) {
-                    stacks.push(`${LINE}=[${[
-                        script.tplToken.line,
-                        script.tplToken.start
-                    ].join(',')}]`);
+                    stacks.push(
+                        `${LINE}=[${[script.tplToken.line, script.tplToken.start].join(',')}]`
+                    );
                 }
 
                 mappings.push(mapping(script.code, script.tplToken));
@@ -393,25 +345,27 @@ class Compiler {
 
             stacks.push(`}catch(error){`);
 
-            stacks.push('throw {' + [
-                `name:'RuntimeError'`,
-                `path:${stringify(filename)}`,
-                `message:error.message`,
-                `line:${LINE}[0]+1`,
-                `column:${LINE}[1]+1`,
-                `source:${stringify(source)}`,
-                `stack:error.stack`
-            ].join(`,`) + '}');
+            stacks.push(
+                'throw {' +
+                    [
+                        `name:'RuntimeError'`,
+                        `path:${stringify(filename)}`,
+                        `message:error.message`,
+                        `line:${LINE}[0]+1`,
+                        `column:${LINE}[1]+1`,
+                        `source:${stringify(source)}`,
+                        `stack:error.stack`
+                    ].join(`,`) +
+                    '}'
+            );
 
             stacks.push(`}`);
-
         } else {
             scripts.forEach(script => {
                 mappings.push(mapping(script.code, script.tplToken));
                 stacks.push(trim(script.code));
             });
         }
-
 
         if (extendMode) {
             stacks.push(`${OUT}=''`);
@@ -421,7 +375,6 @@ class Compiler {
         stacks.push(`return ${OUT}`);
         stacks.push(`}`);
 
-
         const renderCode = stacks.join(`\n`);
 
         try {
@@ -430,7 +383,6 @@ class Compiler {
             result.sourcesContent = [source];
             return result;
         } catch (error) {
-
             let index = 0;
             let line = 0;
             let start = 0;
@@ -445,7 +397,7 @@ class Compiler {
                     break;
                 }
                 index++;
-            };
+            }
 
             throw {
                 name: `CompileError`,
@@ -458,10 +410,8 @@ class Compiler {
                 stack: error.stack
             };
         }
-
     }
-};
-
+}
 
 /**
  * 模板内置常量
@@ -482,6 +432,5 @@ Compiler.CONSTS = {
     ESCAPE,
     EACH
 };
-
 
 module.exports = Compiler;

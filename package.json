@@ -44,9 +44,11 @@
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
+    "eslint-plugin-prettier": "^2.6.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "mocha": "^5.2.0",
     "node-noop": "^1.0.0",
+    "prettier": "^1.14.2",
     "webpack": "^3.0.0"
   },
   "license": "MIT"

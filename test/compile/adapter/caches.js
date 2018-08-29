@@ -1,9 +1,8 @@
 const assert = require('assert');
 const caches = require('../../../src/compile/adapter/caches');
 
-
 module.exports = {
-    'caches': {
+    caches: {
         'set value': () => {
             caches.set('test', 'hello');
             assert.deepEqual('hello', caches.get('test'));
@@ -17,6 +16,6 @@ module.exports = {
             caches.set('test', 9);
             caches.reset();
             assert.deepEqual(undefined, caches.get('test'));
-        },
+        }
     }
 };

@@ -12,7 +12,6 @@ const resolveFilename = require('./adapter/resolve-filename');
 
 /** 模板编译器默认配置 */
 const settings = {
-
     // 模板内容。如果没有此字段，则会根据 filename 来加载模板内容
     source: null,
 
@@ -80,16 +79,14 @@ const settings = {
 
     // 导入的模板变量
     imports: runtime
-
 };
-
 
 function Defaults() {
-    this.$extend = function (options) {
+    this.$extend = function(options) {
         options = options || {};
         return extend(options, options instanceof Defaults ? options : this);
-    }
-};
+    };
+}
 Defaults.prototype = settings;
 
 module.exports = new Defaults();

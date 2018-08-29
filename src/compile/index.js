@@ -2,7 +2,6 @@ const Compiler = require('./compiler');
 const defaults = require('./defaults');
 const TemplateError = require('./error');
 
-
 const debugRender = (error, options) => {
     options.onerror(error, options);
     const render = () => `{Template Error}`;
@@ -11,7 +10,6 @@ const debugRender = (error, options) => {
     return render;
 };
 
-
 /**
  * 编译模版
  * @param {string|Object} source   模板内容
@@ -19,7 +17,6 @@ const debugRender = (error, options) => {
  * @return {function}
  */
 const compile = (source, options = {}) => {
-
     if (typeof source !== 'string') {
         options = source;
     } else {
@@ -38,22 +35,18 @@ const compile = (source, options = {}) => {
         options.compileDebug = true;
     }
 
-
     if (options.compileDebug) {
         options.minimize = false;
     }
-
 
     // 转换成绝对路径
     if (options.filename) {
         options.filename = options.resolveFilename(options.filename, options);
     }
 
-
     const filename = options.filename;
     const cache = options.cache;
     const caches = options.caches;
-
 
     // 匹配缓存
     if (cache && filename) {
@@ -63,15 +56,12 @@ const compile = (source, options = {}) => {
         }
     }
 
-
     // 加载外部模板
     if (!source) {
-
         try {
             source = options.loader(filename, options);
             options.source = source;
         } catch (e) {
-
             const error = new TemplateError({
                 name: 'CompileError',
                 path: filename,
@@ -84,14 +74,11 @@ const compile = (source, options = {}) => {
             } else {
                 return debugRender(error, options);
             }
-
         }
-
     }
 
     let fn;
     const compiler = new Compiler(options);
-
 
     try {
         fn = compiler.build();
@@ -104,13 +91,10 @@ const compile = (source, options = {}) => {
         }
     }
 
-
     const render = (data, blocks) => {
-
         try {
             return fn(data, blocks);
         } catch (error) {
-
             // 运行时出错以调试模式重载
             if (!options.compileDebug) {
                 options.cache = false;
@@ -125,7 +109,6 @@ const compile = (source, options = {}) => {
             } else {
                 return debugRender(error, options)();
             }
-
         }
     };
 

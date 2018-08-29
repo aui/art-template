@@ -11,8 +11,6 @@ const runtimePath = require.resolve('./runtime');
 const CONSTS = compile.Compiler.CONSTS;
 const LOCAL_MODULE = /^\.+\//;
 
-
-
 // 获取默认设置
 const getDefaults = options => {
     // new defaults
@@ -32,8 +30,6 @@ const getDefaults = options => {
 
     return defaults.$extend(setting);
 };
-
-
 
 // 转换外部模板文件引入语句的 filename 参数节点
 // 所有绝对路径都转换成相对路径
@@ -55,14 +51,8 @@ const convertFilenameNode = (node, options) => {
     return node;
 };
 
-
-
 // 获取原始渲染函数的 sourceMap
-const getOldSourceMap = (mappings, {
-    sourceRoot,
-    source,
-    file
-}) => {
+const getOldSourceMap = (mappings, { sourceRoot, source, file }) => {
     const oldSourceMap = new sourceMap.SourceMapGenerator({
         file,
         sourceRoot
@@ -76,8 +66,6 @@ const getOldSourceMap = (mappings, {
     return oldSourceMap.toJSON();
 };
 
-
-
 /**
  * 预编译模版，将模板编译成 javascript 代码
  * 使用静态分析，将模板内部之间依赖转换成 `require()`
@@ -85,13 +73,11 @@ const getOldSourceMap = (mappings, {
  * @return {Object}
  */
 const precompile = (options = {}) => {
-
     if (typeof options.filename !== 'string') {
         throw Error('template.precompile(): "options.filename" required');
     }
 
     options = getDefaults(options);
-
 
     let code = null;
     let sourceMap = null;
@@ -100,117 +86,124 @@ const precompile = (options = {}) => {
     const functions = [CONSTS.INCLUDE, CONSTS.EXTEND];
 
     if (typeof imports !== 'string') {
-        throw Error('template.precompile(): "options.imports" is a file. Example:\n' +
-            'options: { imports: require.resolve("art-template/lib/runtime") }\n');
+        throw Error(
+            'template.precompile(): "options.imports" is a file. Example:\n' +
+                'options: { imports: require.resolve("art-template/lib/runtime") }\n'
+        );
     } else {
         options.imports = require(imports);
     }
 
-
     const isLocalModule = LOCAL_MODULE.test(imports);
-    const tplImportsPath = isLocalModule ? imports : path.relative(path.dirname(options.filename), imports);
+    const tplImportsPath = isLocalModule
+        ? imports
+        : path.relative(path.dirname(options.filename), imports);
     const fn = compile(options);
-
 
     code = '(' + fn.toString() + ')';
     ast = acorn.parse(code, {
         locations: options.sourceMap
     });
 
-
     let extendNode = null;
-    const enter = function (node) {
-        if (node.type === 'VariableDeclarator' &&
-            functions.indexOf(node.id.name) !== -1) {
-
+    const enter = function(node) {
+        if (node.type === 'VariableDeclarator' && functions.indexOf(node.id.name) !== -1) {
             // TODO 对变量覆盖进行抛错
             if (node.id.name === CONSTS.INCLUDE) {
-                node["init"] = {
-                    "type": "FunctionExpression",
-                    "params": [{
-                        "type": "Identifier",
-                        "name": "content"
-                    }],
-                    "body": {
-                        "type": "BlockStatement",
-                        "body": [{
-                                "type": "ExpressionStatement",
-                                "expression": {
-                                    "type": "AssignmentExpression",
-                                    "operator": "+=",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": CONSTS.OUT
+                node['init'] = {
+                    type: 'FunctionExpression',
+                    params: [
+                        {
+                            type: 'Identifier',
+                            name: 'content'
+                        }
+                    ],
+                    body: {
+                        type: 'BlockStatement',
+                        body: [
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'AssignmentExpression',
+                                    operator: '+=',
+                                    left: {
+                                        type: 'Identifier',
+                                        name: CONSTS.OUT
                                     },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "content"
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'content'
                                     }
                                 }
                             },
                             {
-                                "type": "ReturnStatement",
-                                "argument": {
-                                    "type": "Identifier",
-                                    "name": CONSTS.OUT
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: CONSTS.OUT
                                 }
                             }
                         ]
                     }
                 };
                 return node;
-
             } else {
                 this.remove();
             }
-
-        } else if (node.type === 'CallExpression' &&
+        } else if (
+            node.type === 'CallExpression' &&
             node.callee.type === 'Identifier' &&
-            functions.indexOf(node.callee.name) !== -1) {
-
+            functions.indexOf(node.callee.name) !== -1
+        ) {
             let replaceNode;
             switch (node.callee.name) {
-
                 case CONSTS.EXTEND:
-
                     extendNode = convertFilenameNode(node.arguments[0], options);
                     replaceNode = {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                            "type": "Identifier",
-                            "name": CONSTS.FROM
+                        type: 'AssignmentExpression',
+                        operator: '=',
+                        left: {
+                            type: 'Identifier',
+                            name: CONSTS.FROM
                         },
-                        "right": {
-                            "type": "Literal",
-                            "value": true
+                        right: {
+                            type: 'Literal',
+                            value: true
                         }
                     };
 
                     break;
 
                 case CONSTS.INCLUDE:
-
                     const filename = node.arguments.shift();
-                    const filenameNode = filename.name === CONSTS.FROM ? extendNode : convertFilenameNode(filename, options);
-                    const paramNodes = node.arguments.length ? node.arguments : [{
-                        "type": "Identifier",
-                        "name": CONSTS.DATA
-                    }];
+                    const filenameNode =
+                        filename.name === CONSTS.FROM
+                            ? extendNode
+                            : convertFilenameNode(filename, options);
+                    const paramNodes = node.arguments.length
+                        ? node.arguments
+                        : [
+                              {
+                                  type: 'Identifier',
+                                  name: CONSTS.DATA
+                              }
+                          ];
 
                     replaceNode = node;
-                    replaceNode["arguments"] = [{
-                        "type": "CallExpression",
-                        "callee": {
-                            "type": "CallExpression",
-                            "callee": {
-                                "type": "Identifier",
-                                "name": "require"
+                    replaceNode['arguments'] = [
+                        {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'Identifier',
+                                    name: 'require'
+                                },
+                                arguments: [filenameNode]
                             },
-                            "arguments": [filenameNode]
-                        },
-                        "arguments": paramNodes
-                    }]
+                            arguments: paramNodes
+                        }
+                    ];
 
                     break;
             }
@@ -219,14 +212,11 @@ const precompile = (options = {}) => {
         }
     };
 
-
     ast = estraverse.replace(ast, {
         enter: enter
     });
 
-
     if (options.sourceMap) {
-
         const sourceRoot = options.sourceRoot;
         const source = path.relative(sourceRoot, options.filename);
         const file = path.basename(source);
@@ -247,15 +237,20 @@ const precompile = (options = {}) => {
         sourceMap = mergeSourceMap(oldSourceMap, newSourceMap);
         sourceMap.file = file;
         sourceMap.sourcesContent = fn.sourcesContent;
-
     } else {
         code = escodegen.generate(ast);
     }
 
-
     code = code.replace(/^\(|\)[;\s]*?$/g, '');
-    code = 'var ' + CONSTS.IMPORTS + ' = require(' + JSON.stringify(tplImportsPath) + ');\n' +
-        'module.exports = ' + code + ';';
+    code =
+        'var ' +
+        CONSTS.IMPORTS +
+        ' = require(' +
+        JSON.stringify(tplImportsPath) +
+        ');\n' +
+        'module.exports = ' +
+        code +
+        ';';
 
     return {
         code,
@@ -264,6 +259,5 @@ const precompile = (options = {}) => {
         toString: () => code
     };
 };
-
 
 module.exports = precompile;

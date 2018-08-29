@@ -1,8 +1,8 @@
 const assert = require('assert');
 const defaults = require('../../src/compile/defaults');
 module.exports = {
-    'defaults': {
-        'imports': () => {
+    defaults: {
+        imports: () => {
             const imports = defaults.imports;
             const options = defaults.$extend({
                 imports: {
@@ -15,7 +15,7 @@ module.exports = {
             assert.deepEqual(undefined, imports.test);
         },
 
-        'rules': () => {
+        rules: () => {
             const rules = defaults.rules;
             const length = rules.length;
             const options = defaults.$extend({

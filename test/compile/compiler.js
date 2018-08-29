@@ -3,18 +3,13 @@ const Compiler = require('../../src/compile/compiler');
 const defaults = require('../../src/compile/defaults');
 const ruleNative = require('../../src/compile/adapter/rule.native');
 
-const htmlMinifier = ({
-    source
-}) => {
-    return source
-        .replace(/\s+/g, ` `)
-        .replace(/<!--[\w\W]*?-->/g, ``);
+const htmlMinifier = ({ source }) => {
+    return source.replace(/\s+/g, ` `).replace(/<!--[\w\W]*?-->/g, ``);
 };
 
-
 module.exports = {
-    'getVariables': {
-        'basic': () => {
+    getVariables: {
+        basic: () => {
             const test = (code, result) => {
                 const tokens = Compiler.prototype.getEsTokens(code);
                 const variables = Compiler.prototype.getVariables(tokens);
@@ -43,9 +38,8 @@ module.exports = {
         }
     },
 
-    'importContext': {
-
-        'basic': () => {
+    importContext: {
+        basic: () => {
             const test = (code, result, options) => {
                 options = defaults.$extend(options);
                 options.source = '';
@@ -67,23 +61,25 @@ module.exports = {
             test('$escape', {
                 $escape: '$imports.$escape'
             });
-
         },
 
-        'imports': () => {
+        imports: () => {
             const options = defaults.$extend({});
             options.imports.Math = Math;
             options.source = '';
             const compiler = new Compiler(options);
             compiler.importContext('Math');
-            assert.deepEqual({
-                $$out: `''`,
-                Math: '$imports.Math'
-            }, compiler.CONTEXT_MAP);
+            assert.deepEqual(
+                {
+                    $$out: `''`,
+                    Math: '$imports.Math'
+                },
+                compiler.CONTEXT_MAP
+            );
         }
     },
 
-    'addSource': {
+    addSource: {
         basic: () => {
             const test = (code, result, options) => {
                 options = defaults.$extend(options);
@@ -101,8 +97,8 @@ module.exports = {
         }
     },
 
-    'parseString': {
-        'basic': () => {
+    parseString: {
+        basic: () => {
             const test = (code, result, options) => {
                 it(code, () => {
                     options = defaults.$extend(options);
@@ -116,7 +112,7 @@ module.exports = {
 
             // raw
             test('hello', ['$$out+="hello"']);
-            test('\'hello\'', ['$$out+="\'hello\'"']);
+            test("'hello'", ['$$out+="\'hello\'"']);
             test('"hello    world"', ['$$out+="\\"hello    world\\""']);
             test('<div>hello</div>', ['$$out+="<div>hello</div>"']);
             test('<div id="test">hello</div>', ['$$out+="<div id=\\"test\\">hello</div>"']);
@@ -131,12 +127,12 @@ module.exports = {
             test('"hello    world"', ['$$out+="\\"hello world\\""'], {
                 htmlMinifier
             });
-            test('\'hello    world\'', ['$$out+="\'hello world\'"'], {
+            test("'hello    world'", ['$$out+="\'hello world\'"'], {
                 htmlMinifier
             });
         },
 
-        'parseExpression': () => {
+        parseExpression: () => {
             const test = (code, result, options) => {
                 it(code, () => {
                     options = defaults.$extend(options);
@@ -171,8 +167,8 @@ module.exports = {
         }
     },
 
-    'checkExpression': {
-        'basic': () => {
+    checkExpression: {
+        basic: () => {
             const test = (code, result, options) => {
                 options = defaults.$extend(options);
                 options.source = code;
@@ -217,7 +213,7 @@ module.exports = {
         }
     },
 
-    'mappings': {
+    mappings: {
         basic: () => {
             const test = (source, result) => {
                 const options = defaults.$extend({
@@ -230,102 +226,113 @@ module.exports = {
                 assert.deepEqual(result, mappings);
             };
 
-            test(`{{value}}`, [{
-                generated: {
-                    line: 5,
-                    column: 1
-                },
-                original: {
-                    line: 1,
-                    column: 1
+            test(`{{value}}`, [
+                {
+                    generated: {
+                        line: 5,
+                        column: 1
+                    },
+                    original: {
+                        line: 1,
+                        column: 1
+                    }
                 }
-            }]);
+            ]);
 
-            test(`abc{{value}}`, [{
-                generated: {
-                    line: 5,
-                    column: 1
+            test(`abc{{value}}`, [
+                {
+                    generated: {
+                        line: 5,
+                        column: 1
+                    },
+                    original: {
+                        line: 1,
+                        column: 1
+                    }
                 },
-                original: {
-                    line: 1,
-                    column: 1
+                {
+                    generated: {
+                        line: 6,
+                        column: 1
+                    },
+                    original: {
+                        line: 1,
+                        column: 4
+                    }
                 }
-            }, {
-                generated: {
-                    line: 6,
-                    column: 1
-                },
-                original: {
-                    line: 1,
-                    column: 4
-                }
-            }]);
+            ]);
 
-            test(`abc\n{{value}}`, [{
-                generated: {
-                    line: 5,
-                    column: 1
+            test(`abc\n{{value}}`, [
+                {
+                    generated: {
+                        line: 5,
+                        column: 1
+                    },
+                    original: {
+                        line: 1,
+                        column: 1
+                    }
                 },
-                original: {
-                    line: 1,
-                    column: 1
+                {
+                    generated: {
+                        line: 6,
+                        column: 1
+                    },
+                    original: {
+                        line: 2,
+                        column: 1
+                    }
                 }
-            }, {
-                generated: {
-                    line: 6,
-                    column: 1
-                },
-                original: {
-                    line: 2,
-                    column: 1
-                }
-            }]);
+            ]);
 
-
-            test(`abc\n<%\n print('s') \n eeee(2) %>\n{{a}}`, [{
-                generated: {
-                    line: 5,
-                    column: 1
+            test(`abc\n<%\n print('s') \n eeee(2) %>\n{{a}}`, [
+                {
+                    generated: {
+                        line: 5,
+                        column: 1
+                    },
+                    original: {
+                        line: 1,
+                        column: 1
+                    }
                 },
-                original: {
-                    line: 1,
-                    column: 1
-                }
-            }, {
-                generated: {
-                    line: 6,
-                    column: 1
+                {
+                    generated: {
+                        line: 6,
+                        column: 1
+                    },
+                    original: {
+                        line: 2,
+                        column: 1
+                    }
                 },
-                original: {
-                    line: 2,
-                    column: 1
-                }
-            }, {
-                generated: {
-                    line: 9,
-                    column: 1
+                {
+                    generated: {
+                        line: 9,
+                        column: 1
+                    },
+                    original: {
+                        line: 4,
+                        column: 12
+                    }
                 },
-                original: {
-                    line: 4,
-                    column: 12
+                {
+                    generated: {
+                        line: 10,
+                        column: 1
+                    },
+                    original: {
+                        line: 5,
+                        column: 1
+                    }
                 }
-            }, {
-                generated: {
-                    line: 10,
-                    column: 1
-                },
-                original: {
-                    line: 5,
-                    column: 1
-                }
-            }]);
+            ]);
         }
     },
 
-    'build': {
-
-        'CompileError': {
-            'throw': () => {
+    build: {
+        CompileError: {
+            throw: () => {
                 const options = Object.create(defaults);
                 options.minimize = false;
                 options.source = 'hello\n\n<% a b c d %>';
@@ -339,6 +346,5 @@ module.exports = {
                 }
             }
         }
-
     }
 };

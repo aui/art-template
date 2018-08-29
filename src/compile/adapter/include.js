@@ -16,5 +16,4 @@ const include = (filename, data, blocks, options) => {
     return compile(options)(data, blocks);
 };
 
-
 module.exports = include;

@@ -4,7 +4,7 @@
  * @param   {?Object}   options
  * @return  {string}
  */
-const onerror = (error/*, options*/) => {
+const onerror = (error /*, options*/) => {
     console.error(error.name, error.message);
 };
 

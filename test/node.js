@@ -5,7 +5,6 @@ const path = require('path');
 const resetBail = defaults.bail;
 const onerror = defaults.onerror;
 
-
 module.exports = {
     before: () => {
         console.log('#node');
@@ -13,8 +12,8 @@ module.exports = {
         require.extensions['.html'] = template.extension;
         require.extensions['.tpl'] = template.extension;
 
-        defaults.onerror = ()=>{
-            return ()=> '{Template Error}';
+        defaults.onerror = () => {
+            return () => '{Template Error}';
         };
     },
 
@@ -22,8 +21,7 @@ module.exports = {
         defaults.onerror = onerror;
     },
 
-    'extension': {
-
+    extension: {
         'require .art': () => {
             const render = require(path.join(__dirname, 'res', 'file'));
             assert.deepEqual('hello world', render({}));
@@ -53,7 +51,6 @@ module.exports = {
 
             try {
                 runder = require(filename);
-                
             } catch (e) {
                 assert.deepEqual('TemplateError', e.name);
                 assert.deepEqual(true, e.message.indexOf(filename) !== -1);
@@ -63,14 +60,12 @@ module.exports = {
             defaults.bail = resetBail;
         },
 
-
         'RuntimeError: bail=false': () => {
             defaults.bail = false;
             const render = require(path.join(__dirname, 'res', 'extension.runtime-error.tpl'));
             assert.deepEqual('{Template Error}', render({}));
             defaults.bail = resetBail;
         },
-
 
         'RuntimeError: bail=true': () => {
             defaults.bail = true;
@@ -85,5 +80,4 @@ module.exports = {
             defaults.bail = resetBail;
         }
     }
-
 };
