@@ -1,4 +1,4 @@
-const detectNode = require('detect-node');
+const detectNode = typeof window === 'undefined';
 const LOCAL_MODULE = /^\.+\//;
 
 /**

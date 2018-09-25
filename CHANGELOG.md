@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.13.1
+
+1. 修复在某些情况 runtime 提示 window 未定义的问题 [#553](https://github.com/aui/art-template/issues/553)
+
 ## v4.13.0
 
 1. 修复超大模板编译性能问题 [#539](https://github.com/aui/art-template/issues/539)、[#4](https://github.com/aui/express-art-template/issues/4)

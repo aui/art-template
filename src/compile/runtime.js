@@ -1,6 +1,6 @@
 /*! art-template@runtime | https://github.com/aui/art-template */
 
-const detectNode = require('detect-node');
+const detectNode = typeof window === 'undefined';
 const runtime = Object.create(detectNode ? global : window);
 const ESCAPE_REG = /["&'<>]/;
 

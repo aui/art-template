@@ -1,4 +1,4 @@
-const detectNode = require('detect-node');
+const detectNode = typeof window === 'undefined';
 
 /**
  * 读取模板内容（同步方法）

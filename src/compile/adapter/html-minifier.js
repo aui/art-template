@@ -1,4 +1,4 @@
-const detectNode = require('detect-node');
+const detectNode = typeof window === 'undefined';
 
 /**
  * HTML 压缩器

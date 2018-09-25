@@ -1,4 +1,3 @@
-const detectNode = require('detect-node');
 const runtime = require('./runtime');
 const extend = require('./adapter/extend');
 const include = require('./adapter/include');
@@ -9,6 +8,8 @@ const artRule = require('./adapter/rule.art');
 const nativeRule = require('./adapter/rule.native');
 const htmlMinifier = require('./adapter/html-minifier');
 const resolveFilename = require('./adapter/resolve-filename');
+
+const detectNode = typeof window === 'undefined';
 
 /** 模板编译器默认配置 */
 const settings = {
