@@ -1,15 +1,11 @@
 /*! art-template@runtime | https://github.com/aui/art-template */
 
-
 // const detectNode = require('detect-node');
 // const runtime = Object.create(detectNode ? global : window);
-const globalThis = typeof self !== 'undefined' ? self
-    : typeof window !== 'undefined' ? window
-    : typeof global !== 'undefined' ? global : {};
+var globalThis = typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : {};
 
-const runtime = Object.create(globalThis);
-
-const ESCAPE_REG = /["&'<>]/;
+var runtime = Object.create(globalThis);
+var ESCAPE_REG = /["&'<>]/;
 
 /**
  * 编码模板输出的内容
