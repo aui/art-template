@@ -1,11 +1,11 @@
 /*! art-template@runtime | https://github.com/aui/art-template */
 
-var globalThis = typeof self !== 'undefined' ? self
+const globalThis = typeof self !== 'undefined' ? self
     : typeof window !== 'undefined' ? window
     : typeof global !== 'undefined' ? global : {};
 
-var runtime = Object.create(globalThis);
-var ESCAPE_REG = /["&'<>]/;
+const runtime = Object.create(globalThis);
+const ESCAPE_REG = /["&'<>]/;
 
 /**
  * 编码模板输出的内容
