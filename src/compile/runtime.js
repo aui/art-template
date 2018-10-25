@@ -1,7 +1,10 @@
 /*! art-template@runtime | https://github.com/aui/art-template */
 
-const detectNode = typeof window === 'undefined';
-const runtime = Object.create(detectNode ? global : window);
+const globalThis = typeof self !== 'undefined' ? self
+    : typeof window !== 'undefined' ? window
+    : typeof global !== 'undefined' ? global : {};
+
+const runtime = Object.create(globalThis);
 const ESCAPE_REG = /["&'<>]/;
 
 /**
