@@ -20,8 +20,10 @@ module.exports = {
             test('var a', ['a']);
             test('a', ['a']);
             test('a.b', ['a']);
+            test('a.b.c', ['a']);
             test('a.b;c', ['a', 'c']);
             test('a.b\nd', ['a', 'd']);
+            test('a.\nb', ['a']);
             test('0.99 + a', ['a']);
             test('0.99 + a + b.c', ['a', 'b']);
             test('a /*.*/. b /**/; c', ['a', 'c']);
@@ -35,6 +37,7 @@ module.exports = {
             test(`var a, b, c`, ['a', 'b', 'c']);
             test(`function a(b,c){d}`, ['a', 'b', 'c', 'd']);
             test(`try{a}catch(b){c}`, ['a', 'b', 'c']);
+            test(`{...a,\nb}`, ['a', 'b']);
         }
     },
 

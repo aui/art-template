@@ -90,6 +90,37 @@ module.exports = {
                 }
             ]);
 
+            test('[...a][b]', [
+                {
+                    type: 'punctuator',
+                    value: '['
+                },
+                {
+                    type: 'punctuator',
+                    value: '...'
+                },
+                {
+                    type: 'name',
+                    value: 'a'
+                },
+                {
+                    type: 'punctuator',
+                    value: ']'
+                },
+                {
+                    type: 'punctuator',
+                    value: '['
+                },
+                {
+                    type: 'name',
+                    value: 'b'
+                },
+                {
+                    type: 'punctuator',
+                    value: ']'
+                }
+            ]);
+
             test('@if a + b === 0', [
                 {
                     type: 'invalid',
