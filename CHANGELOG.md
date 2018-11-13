@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.13.2
+
+1. 修复 npm 包 index.d.ts 丢失的问题
+
 ## v4.13.1
 
 1. 修复在某些情况 runtime 提示 window 未定义的问题 [#553](https://github.com/aui/art-template/issues/553)
