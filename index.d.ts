@@ -11,7 +11,7 @@ declare type artTemplateDefaults = {
    * whether to automatically encode output statements of template. Setting false will close that functionality
    * escape can prevent XSS attacks
    */
-  excape: boolean;
+  escape: boolean;
   /**
    * enable debug mode. If true: {cache:false, minimize:false, compileDebug:true}
    */
