@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="page-docs">
+<head prefix="og: http://ogp.me/ns#"><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <title>调试 - art-template</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://aui.github.io/zh-cn/docs/debug.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/docs/debug.html">
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/docs/debug.html">
+    
+  
+  <!-- Icon -->
+  <!--<link rel="apple-touch-icon" sizes="57x57" href="/art-template/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/art-template/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/art-template/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/art-template/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/art-template/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/art-template/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/art-template/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/art-template/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/art-template/icon/mstile-144x144.png">
+  -->
+  <!-- CSS -->
+  <!-- build:css build/css/art.css -->
+  <link rel="stylesheet" href="/art-template/css/art.css">
+  <!-- endbuild -->
+  <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+  <!-- RSS -->
+  <link rel="alternate" href="/art-template/atom.xml" title="art-template">
+  <!-- Open Graph -->
+  <meta name="description" content="template.defaults.debug art-template 内建调试器，能够捕获到语法与运行错误，并且支持自定义的语法。在 NodeJS 中调试模式会根据环境变量自动开启：process.env.NODE_ENV !== &amp;#39;production&amp;#39; 设置 template.defaults.debug=true 后，等同于： &amp;#123;    &quot;cache&quot;: fal">
+<meta property="og:type" content="website">
+<meta property="og:title" content="调试">
+<meta property="og:url" content="http://aui.github.io/zh-cn/docs/debug.html">
+<meta property="og:site_name" content="art-template">
+<meta property="og:description" content="template.defaults.debug art-template 内建调试器，能够捕获到语法与运行错误，并且支持自定义的语法。在 NodeJS 中调试模式会根据环境变量自动开启：process.env.NODE_ENV !== &amp;#39;production&amp;#39; 设置 template.defaults.debug=true 后，等同于： &amp;#123;    &quot;cache&quot;: fal">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-07-25T04:59:08.635Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="调试">
+<meta name="twitter:description" content="template.defaults.debug art-template 内建调试器，能够捕获到语法与运行错误，并且支持自定义的语法。在 NodeJS 中调试模式会根据环境变量自动开启：process.env.NODE_ENV !== &amp;#39;production&amp;#39; 设置 template.defaults.debug=true 后，等同于： &amp;#123;    &quot;cache&quot;: fal">
+  <!-- Google Analytics -->
+  
+  <!-- Github Button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+    <h1 id="logo-wrap">
+      <a href="/art-template/zh-cn" id="logo">art-template</a>
+    </h1>
+    <div id="lang-select-wrap">
+      <label id="lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></label>
+      <select id="lang-select" data-root="/art-template/" data-lang="zh-cn" data-canonical="docs/debug.html">
+        
+          <option value="en">English</option>
+        
+          <option value="zh-cn" selected>简体中文</option>
+        
+      </select>
+    </div>
+    <nav id="main-nav">
+      <div id="search-input-wrap">
+        <div id="search-input-icon">
+          <i class="fa fa-search"></i>
+        </div>
+        <input type="search" id="search-input">
+      </div>
+      <a href="/art-template/zh-cn/docs/" class="main-nav-link current">Docs</a><a href="/art-template/webpack/" class="main-nav-link ">Webpack</a><a href="/art-template/express/" class="main-nav-link ">Express</a><a href="/art-template/koa/" class="main-nav-link ">Koa</a>
+      <!--<a href="https://github.com/aui/art-template" class="main-nav-link"><i class="fa fa-github-alt"></i></a>-->
+    </nav>
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+</header>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper">
+    <div id="content-inner">
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article">
+            <div class="inner">
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">调试</h1>
+              </header>
+              <div class="article-content" itemprop="articleBody">
+                <p><code>template.defaults.debug</code></p>
+<p>art-template 内建调试器，能够捕获到语法与运行错误，并且支持自定义的语法。在 NodeJS 中调试模式会根据环境变量自动开启：<code>process.env.NODE_ENV !== &#39;production&#39;</code></p>
+<p>设置 <code>template.defaults.debug=true</code> 后，等同于：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"cache"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"minimize"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"compileDebug"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更多参见 <a href="./options.html">选项</a>。</p>
+
+              </div>
+              <footer class="article-footer">
+                <a href="https://github.com/aui/art-template-docs/edit/master/source/zh-cn/docs/debug.md" class="article-edit-link">改进本文</a>.
+                (<time class="article-footer-updated" datetime="2019-07-25T04:59:08.635Z" itemprop="dateModified">上次更新：2019-07-25</time>)
+                <a href="syntax.html" class="article-footer-prev" title="sidebar.docs.syntax"><i class="fa fa-chevron-left"></i><span>上一页</span></a><a href="imports.html" class="article-footer-next" title="sidebar.docs.imports"><span>下一页</span><i class="fa fa-chevron-right"></i></a>
+              </footer>
+              
+            </div>
+          </div>
+        </div>
+      </article>
+      <aside id="sidebar" role="navigation">
+  <div class="inner"><ul class="sidebar"><li><a data-scroll href="/art-template/zh-cn/docs/index.html" class="sidebar-link">介绍</a></li><li><a data-scroll href="/art-template/zh-cn/docs/installation.html" class="sidebar-link">安装</a></li><li><a data-scroll href="/art-template/zh-cn/docs/syntax.html" class="sidebar-link">语法</a></li><li><a data-scroll href="/art-template/zh-cn/docs/debug.html" class="sidebar-link current">调试</a></li><li><a data-scroll href="/art-template/zh-cn/docs/imports.html" class="sidebar-link">模板变量</a></li><li><a data-scroll href="/art-template/zh-cn/docs/rules.html" class="sidebar-link">解析规则</a></li><li><a data-scroll href="/art-template/zh-cn/docs/minimize.html" class="sidebar-link">压缩页面</a></li><li><a data-scroll href="/art-template/zh-cn/docs/options.html" class="sidebar-link">选项</a></li><li><a data-scroll href="/art-template/zh-cn/docs/api.html" class="sidebar-link">API</a></li></ul></div>
+</aside>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="wrapper">
+  <div class="inner">
+    <div id="footer-copyright">
+      &copy; 2019 aui<br>
+      Documentation licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.
+    </div>
+    <div id="footer-links">
+      <a href="http://weibo.com/planeart" class="footer-link" target="_blank"><i class="fa fa-weibo"></i></a>
+      
+      <a href="https://github.com/aui/art-template" class="footer-link" target="_blank"><i class="fa fa-github-alt"></i></a>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <nav id="mobile-nav-list">
+      <a href="/art-template/zh-cn/docs/" class="mobile-nav-link current">Docs</a><a href="/art-template/webpack/" class="mobile-nav-link ">Webpack</a><a href="/art-template/express/" class="mobile-nav-link ">Express</a><a href="/art-template/koa/" class="mobile-nav-link ">Koa</a>
+    </nav>
+    
+      <ul class="mobile-nav"><li><a data-scroll href="/art-template/zh-cn/docs/index.html" class="mobile-nav-link">介绍</a></li><li><a data-scroll href="/art-template/zh-cn/docs/installation.html" class="mobile-nav-link">安装</a></li><li><a data-scroll href="/art-template/zh-cn/docs/syntax.html" class="mobile-nav-link">语法</a></li><li><a data-scroll href="/art-template/zh-cn/docs/debug.html" class="mobile-nav-link current">调试</a></li><li><a data-scroll href="/art-template/zh-cn/docs/imports.html" class="mobile-nav-link">模板变量</a></li><li><a data-scroll href="/art-template/zh-cn/docs/rules.html" class="mobile-nav-link">解析规则</a></li><li><a data-scroll href="/art-template/zh-cn/docs/minimize.html" class="mobile-nav-link">压缩页面</a></li><li><a data-scroll href="/art-template/zh-cn/docs/options.html" class="mobile-nav-link">选项</a></li><li><a data-scroll href="/art-template/zh-cn/docs/api.html" class="mobile-nav-link">API</a></li></ul>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></span>
+    <select id="mobile-lang-select" data-canonical>
+      
+        <option value="en">English</option>
+      
+        <option value="zh-cn" selected>简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+  <!-- Scripts -->
+<!-- build:js build/js/main.js -->
+<script src="/art-template/js/lang_select.js"></script>
+<script src="/art-template/js/scrollingelement.js"></script>
+<script src="/art-template/js/mobile_nav.js"></script>
+<!-- endbuild -->
+<script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
+
+<!-- Algolia -->
+
+
+</body>
+</html>

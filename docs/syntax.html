@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" id="page-docs">
+<head prefix="og: http://ogp.me/ns#"><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <title>Syntax - art-template</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://aui.github.io/docs/syntax.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/docs/syntax.html">
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/docs/syntax.html">
+    
+  
+  <!-- Icon -->
+  <!--<link rel="apple-touch-icon" sizes="57x57" href="/art-template/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/art-template/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/art-template/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/art-template/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/art-template/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/art-template/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/art-template/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/art-template/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/art-template/icon/mstile-144x144.png">
+  -->
+  <!-- CSS -->
+  <!-- build:css build/css/art.css -->
+  <link rel="stylesheet" href="/art-template/css/art.css">
+  <!-- endbuild -->
+  <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+  <!-- RSS -->
+  <link rel="alternate" href="/art-template/atom.xml" title="art-template">
+  <!-- Open Graph -->
+  <meta name="description" content="art-template supports standard syntax and original syntax. Standard syntax allows templates to be easier to read and write. While original syntax has powerful logical processing ability. Standard synt">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Syntax">
+<meta property="og:url" content="http://aui.github.io/docs/syntax.html">
+<meta property="og:site_name" content="art-template">
+<meta property="og:description" content="art-template supports standard syntax and original syntax. Standard syntax allows templates to be easier to read and write. While original syntax has powerful logical processing ability. Standard synt">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-07-25T04:59:08.635Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Syntax">
+<meta name="twitter:description" content="art-template supports standard syntax and original syntax. Standard syntax allows templates to be easier to read and write. While original syntax has powerful logical processing ability. Standard synt">
+  <!-- Google Analytics -->
+  
+  <!-- Github Button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+    <h1 id="logo-wrap">
+      <a href="/art-template/" id="logo">art-template</a>
+    </h1>
+    <div id="lang-select-wrap">
+      <label id="lang-select-label"><i class="fa fa-globe"></i><span>English</span></label>
+      <select id="lang-select" data-root="/art-template/" data-lang="en" data-canonical="docs/syntax.html">
+        
+          <option value="en" selected>English</option>
+        
+          <option value="zh-cn">简体中文</option>
+        
+      </select>
+    </div>
+    <nav id="main-nav">
+      <div id="search-input-wrap">
+        <div id="search-input-icon">
+          <i class="fa fa-search"></i>
+        </div>
+        <input type="search" id="search-input">
+      </div>
+      <a href="/art-template/docs/" class="main-nav-link current">Docs</a><a href="/art-template/webpack/" class="main-nav-link ">Webpack</a><a href="/art-template/express/" class="main-nav-link ">Express</a><a href="/art-template/koa/" class="main-nav-link ">Koa</a>
+      <!--<a href="https://github.com/aui/art-template" class="main-nav-link"><i class="fa fa-github-alt"></i></a>-->
+    </nav>
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+</header>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper">
+    <div id="content-inner">
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article">
+            <div class="inner">
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">Syntax</h1>
+              </header>
+              <div class="article-content" itemprop="articleBody">
+                <p>art-template supports standard syntax and original syntax. Standard syntax allows templates to be easier to read and write. While original syntax has powerful logical processing ability.</p>
+<p>Standard syntax supports basic templating syntax and JavaScript expression. Original syntax supports arbitrary JavaScript statement, the same as EJS.</p>
+<h2 id="Output" class="article-heading"><a href="#Output" class="headerlink" title="Output"></a>Output<a class="article-anchor" href="#Output" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;value&#125;&#125;</span><br><span class="line">&#123;&#123;data.key&#125;&#125;</span><br><span class="line">&#123;&#123;data['key']&#125;&#125;</span><br><span class="line">&#123;&#123;a ? b : c&#125;&#125;</span><br><span class="line">&#123;&#123;a || b&#125;&#125;</span><br><span class="line">&#123;&#123;a + b&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">value</span> %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">data.key</span> %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">data</span>['<span class="attr">key</span>'] %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> ? <span class="attr">b</span> <span class="attr">:</span> <span class="attr">c</span> %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> || <span class="attr">b</span> %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%=</span> <span class="attr">a</span> + <span class="attr">b</span> %&gt;</span></span><br></pre></td></tr></table></figure>
+<p>You can use <code>$data</code> with bracket notation to access a first-class variable of templates (such as keyword, reserved word, etc):</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;$data['user list']&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Raw-output" class="article-heading"><a href="#Raw-output" class="headerlink" title="Raw output"></a>Raw output<a class="article-anchor" href="#Raw-output" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;@ value &#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%-</span> <span class="attr">value</span> %&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>raw output will not escape the content of <code>HTML</code>, so there may be security problems. Please be careful.</p>
+</blockquote>
+<h2 id="Condition" class="article-heading"><a href="#Condition" class="headerlink" title="Condition"></a>Condition<a class="article-anchor" href="#Condition" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;if value&#125;&#125; ... &#123;&#123;/if&#125;&#125;</span><br><span class="line">&#123;&#123;if v1&#125;&#125; ... &#123;&#123;else if v2&#125;&#125; ... &#123;&#123;/if&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">value</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">v1</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; <span class="attr">else</span> <span class="attr">if</span> (<span class="attr">v2</span>) &#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Loop" class="article-heading"><a href="#Loop" class="headerlink" title="Loop"></a>Loop<a class="article-anchor" href="#Loop" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;each target&#125;&#125;</span><br><span class="line">    &#123;&#123;$index&#125;&#125; &#123;&#123;$value&#125;&#125;</span><br><span class="line">&#123;&#123;/each&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% for(var i = 0; i &lt; target.length; i++)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">%=</span> <span class="attr">i</span> %&gt;</span> <span class="tag">&lt;<span class="name">%=</span> <span class="attr">target</span>[<span class="attr">i</span>] %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>target</code> supports iteration of <code>array</code> and <code>object</code>, and its default value is <code>$data</code>.</li>
+<li><code>$value</code> and <code>$index</code> can be customized: <code>{{each target val key}}</code>.</li>
+</ol>
+<h2 id="Variable" class="article-heading"><a href="#Variable" class="headerlink" title="Variable"></a>Variable<a class="article-anchor" href="#Variable" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;set temp = data.sub.content&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">var</span> <span class="attr">temp</span> = <span class="string">data.sub.content;</span> %&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Template-inheritance" class="article-heading"><a href="#Template-inheritance" class="headerlink" title="Template inheritance"></a>Template inheritance<a class="article-anchor" href="#Template-inheritance" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;extend './layout.art'&#125;&#125;</span><br><span class="line">&#123;&#123;block 'head'&#125;&#125; ... &#123;&#123;/block&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">extend</span>('<span class="attr">.</span>/<span class="attr">layout.art</span>') %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">block</span>('<span class="attr">head</span>', <span class="attr">function</span>()&#123; %&gt;</span> ... <span class="tag">&lt;<span class="name">%</span> &#125;) %&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Template inheritance allows you to build a basic templating “skeleton” that contains common parts of your site. Example:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--layout.art--&gt;</span></span><br><span class="line"><span class="meta">&lt;!doctype html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>&#123;&#123;block 'title'&#125;&#125;My Site&#123;&#123;/block&#125;&#125;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    &#123;&#123;block 'head'&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"main.css"</span>&gt;</span></span><br><span class="line">    &#123;&#123;/block&#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    &#123;&#123;block 'content'&#125;&#125;&#123;&#123;/block&#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--index.art--&gt;</span></span><br><span class="line">&#123;&#123;extend './layout.art'&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;block 'title'&#125;&#125;&#123;&#123;title&#125;&#125;&#123;&#123;/block&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;block 'head'&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"custom.css"</span>&gt;</span></span><br><span class="line">&#123;&#123;/block&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;block 'content'&#125;&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>This is just an awesome page.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">&#123;&#123;/block&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>After rendering index.art, layout skeleton will be automatically applied.</p>
+<h2 id="Sub-template" class="article-heading"><a href="#Sub-template" class="headerlink" title="Sub template"></a>Sub template<a class="article-anchor" href="#Sub-template" aria-hidden="true"></a></h2><p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;include './header.art'&#125;&#125;</span><br><span class="line">&#123;&#123;include './header.art' data&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">include</span>('<span class="attr">.</span>/<span class="attr">header.art</span>') %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">include</span>('<span class="attr">.</span>/<span class="attr">header.art</span>', <span class="attr">data</span>) %&gt;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>data</code> value is <code>$data</code> by default. Standard syntax doesn’t support declaration of <code>object</code> and <code>array</code> but reference variable. However, original syntax is no limits.</li>
+<li>art-template has built-in HTML minifier and please avoid writing abnormal closing tag in sub templates. Otherwise, tags may be unexpectedly “optimized” when <code>minimize</code> option is open.</li>
+</ol>
+<h2 id="Filters" class="article-heading"><a href="#Filters" class="headerlink" title="Filters"></a>Filters<a class="article-anchor" href="#Filters" aria-hidden="true"></a></h2><p><strong>register filters</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">template.defaults.imports.dateFormat = <span class="function"><span class="keyword">function</span>(<span class="params">date, format</span>)</span>&#123;<span class="comment">/*[code..]*/</span>&#125;;</span><br><span class="line">template.defaults.imports.timestamp = <span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;<span class="keyword">return</span> value * <span class="number">1000</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>The first parameter of filter function accepts target value.</p>
+<p><strong>standard syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123;date | timestamp | dateFormat 'yyyy-MM-dd hh:mm:ss'&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><code>{{value | filter}}</code> filter syntax is similar to pipe operator. Its last output will be the next input.</p>
+<p><strong>original syntax</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%=</span> $<span class="attr">imports.dateFormat</span>($<span class="attr">imports.timestamp</span>(<span class="attr">date</span>), '<span class="attr">yyyy-MM-dd</span> <span class="attr">hh:mm:ss</span>') %&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>If you want to modify <code>{{</code> <code>}}</code> and <code>&lt;%</code> <code>%&gt;</code>,please refer to <a href="rules.html">rules</a>.</p>
+</blockquote>
+
+              </div>
+              <footer class="article-footer">
+                <a href="https://github.com/aui/art-template-docs/edit/master/source/docs/syntax.md" class="article-edit-link">Improve this doc</a>.
+                (<time class="article-footer-updated" datetime="2019-07-25T04:59:08.635Z" itemprop="dateModified">Last updated: 2019-07-25</time>)
+                <a href="installation.html" class="article-footer-prev" title="sidebar.docs.installation"><i class="fa fa-chevron-left"></i><span>Prev</span></a><a href="debug.html" class="article-footer-next" title="sidebar.docs.debug"><span>Next</span><i class="fa fa-chevron-right"></i></a>
+              </footer>
+              
+            </div>
+          </div>
+        </div>
+      </article>
+      <aside id="sidebar" role="navigation">
+  <div class="inner"><ul class="sidebar"><li><a data-scroll href="/art-template/docs/index.html" class="sidebar-link">Introduction</a></li><li><a data-scroll href="/art-template/docs/installation.html" class="sidebar-link">Installation</a></li><li><a data-scroll href="/art-template/docs/syntax.html" class="sidebar-link current">Syntax</a><ol class="sidebar-sub"><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Output"><span class="sidebar-sub-text">Output</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Raw-output"><span class="sidebar-sub-text">Raw output</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Condition"><span class="sidebar-sub-text">Condition</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Loop"><span class="sidebar-sub-text">Loop</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Variable"><span class="sidebar-sub-text">Variable</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Template-inheritance"><span class="sidebar-sub-text">Template inheritance</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Sub-template"><span class="sidebar-sub-text">Sub template</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/docs/syntax.html#Filters"><span class="sidebar-sub-text">Filters</span></a></li></ol></li><li><a data-scroll href="/art-template/docs/debug.html" class="sidebar-link">Debug</a></li><li><a data-scroll href="/art-template/docs/imports.html" class="sidebar-link">Template variable</a></li><li><a data-scroll href="/art-template/docs/rules.html" class="sidebar-link">Parsing rules</a></li><li><a data-scroll href="/art-template/docs/minimize.html" class="sidebar-link">Minimize</a></li><li><a data-scroll href="/art-template/docs/options.html" class="sidebar-link">Options</a></li><li><a data-scroll href="/art-template/docs/api.html" class="sidebar-link">API</a></li></ul></div>
+</aside>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="wrapper">
+  <div class="inner">
+    <div id="footer-copyright">
+      &copy; 2019 aui<br>
+      Documentation licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.
+    </div>
+    <div id="footer-links">
+      <a href="http://weibo.com/planeart" class="footer-link" target="_blank"><i class="fa fa-weibo"></i></a>
+      
+      <a href="https://github.com/aui/art-template" class="footer-link" target="_blank"><i class="fa fa-github-alt"></i></a>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <nav id="mobile-nav-list">
+      <a href="/art-template/docs/" class="mobile-nav-link current">Docs</a><a href="/art-template/webpack/" class="mobile-nav-link ">Webpack</a><a href="/art-template/express/" class="mobile-nav-link ">Express</a><a href="/art-template/koa/" class="mobile-nav-link ">Koa</a>
+    </nav>
+    
+      <ul class="mobile-nav"><li><a data-scroll href="/art-template/docs/index.html" class="mobile-nav-link">Introduction</a></li><li><a data-scroll href="/art-template/docs/installation.html" class="mobile-nav-link">Installation</a></li><li><a data-scroll href="/art-template/docs/syntax.html" class="mobile-nav-link current">Syntax</a><ol class="mobile-nav-sub"><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Output"><span class="mobile-nav-sub-text">Output</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Raw-output"><span class="mobile-nav-sub-text">Raw output</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Condition"><span class="mobile-nav-sub-text">Condition</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Loop"><span class="mobile-nav-sub-text">Loop</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Variable"><span class="mobile-nav-sub-text">Variable</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Template-inheritance"><span class="mobile-nav-sub-text">Template inheritance</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Sub-template"><span class="mobile-nav-sub-text">Sub template</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/docs/syntax.html#Filters"><span class="mobile-nav-sub-text">Filters</span></a></li></ol></li><li><a data-scroll href="/art-template/docs/debug.html" class="mobile-nav-link">Debug</a></li><li><a data-scroll href="/art-template/docs/imports.html" class="mobile-nav-link">Template variable</a></li><li><a data-scroll href="/art-template/docs/rules.html" class="mobile-nav-link">Parsing rules</a></li><li><a data-scroll href="/art-template/docs/minimize.html" class="mobile-nav-link">Minimize</a></li><li><a data-scroll href="/art-template/docs/options.html" class="mobile-nav-link">Options</a></li><li><a data-scroll href="/art-template/docs/api.html" class="mobile-nav-link">API</a></li></ul>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>English</span></span>
+    <select id="mobile-lang-select" data-canonical>
+      
+        <option value="en" selected>English</option>
+      
+        <option value="zh-cn">简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+  <!-- Scripts -->
+<!-- build:js build/js/main.js -->
+<script src="/art-template/js/lang_select.js"></script>
+<script src="/art-template/js/scrollingelement.js"></script>
+<script src="/art-template/js/mobile_nav.js"></script>
+<!-- endbuild -->
+<script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
+
+<!-- Algolia -->
+
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="page-koa">
+<head prefix="og: http://ogp.me/ns#"><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <title>Koa - art-template</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://aui.github.io/zh-cn/koa/index.html">
+  <!-- Alternative links -->
+  
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/koa/index.html">
+    
+      <link rel="alternative" hreflang href="http://aui.github.io/art-template/koa/index.html">
+    
+  
+  <!-- Icon -->
+  <!--<link rel="apple-touch-icon" sizes="57x57" href="/art-template/icon/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/art-template/icon/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/art-template/icon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/art-template/icon/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/art-template/icon/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/art-template/icon/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/art-template/icon/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/art-template/icon/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/art-template/icon/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#2f83cd">
+  <meta name="msapplication-TileImage" content="/art-template/icon/mstile-144x144.png">
+  -->
+  <!-- CSS -->
+  <!-- build:css build/css/art.css -->
+  <link rel="stylesheet" href="/art-template/css/art.css">
+  <!-- endbuild -->
+  <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css">
+  <!-- RSS -->
+  <link rel="alternate" href="/art-template/atom.xml" title="art-template">
+  <!-- Open Graph -->
+  <meta name="description" content="Koa art-template view render middleware. support all feature of art-template. Installnpm install --save art-templatenpm install --save koa-art-template Exampleconst Koa = require(&apos;koa&apos;);const render =">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Koa">
+<meta property="og:url" content="http://aui.github.io/zh-cn/koa/index.html">
+<meta property="og:site_name" content="art-template">
+<meta property="og:description" content="Koa art-template view render middleware. support all feature of art-template. Installnpm install --save art-templatenpm install --save koa-art-template Exampleconst Koa = require(&apos;koa&apos;);const render =">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-07-25T04:59:08.635Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Koa">
+<meta name="twitter:description" content="Koa art-template view render middleware. support all feature of art-template. Installnpm install --save art-templatenpm install --save koa-art-template Exampleconst Koa = require(&apos;koa&apos;);const render =">
+  <!-- Google Analytics -->
+  
+  <!-- Github Button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+    <h1 id="logo-wrap">
+      <a href="/art-template/zh-cn" id="logo">art-template</a>
+    </h1>
+    <div id="lang-select-wrap">
+      <label id="lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></label>
+      <select id="lang-select" data-root="/art-template/" data-lang="zh-cn" data-canonical="koa/index.html">
+        
+          <option value="en">English</option>
+        
+          <option value="zh-cn" selected>简体中文</option>
+        
+      </select>
+    </div>
+    <nav id="main-nav">
+      <div id="search-input-wrap">
+        <div id="search-input-icon">
+          <i class="fa fa-search"></i>
+        </div>
+        <input type="search" id="search-input">
+      </div>
+      <a href="/art-template/zh-cn/docs/" class="main-nav-link ">Docs</a><a href="/art-template/webpack/" class="main-nav-link ">Webpack</a><a href="/art-template/express/" class="main-nav-link ">Express</a><a href="/art-template/koa/" class="main-nav-link ">Koa</a>
+      <!--<a href="https://github.com/aui/art-template" class="main-nav-link"><i class="fa fa-github-alt"></i></a>-->
+    </nav>
+    <a id="mobile-nav-toggle">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </a>
+</header>
+
+    <div id="content-wrap">
+  <div id="content" class="wrapper">
+    <div id="content-inner">
+      <article class="article-container" itemscope itemtype="http://schema.org/Article">
+        <div class="article-inner">
+          <div class="article">
+            <div class="inner">
+              <header class="article-header">
+                <h1 class="article-title" itemprop="name">Koa</h1>
+              </header>
+              <div class="article-content" itemprop="articleBody">
+                <p>Koa art-template view render middleware. support all feature of art-template.</p>
+<h2 id="Install" class="article-heading"><a href="#Install" class="headerlink" title="Install"></a>Install<a class="article-anchor" href="#Install" aria-hidden="true"></a></h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install --save art-template</span><br><span class="line">npm install --save koa-art-template</span><br></pre></td></tr></table></figure>
+<h2 id="Example" class="article-heading"><a href="#Example" class="headerlink" title="Example"></a>Example<a class="article-anchor" href="#Example" aria-hidden="true"></a></h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="keyword">const</span> render = <span class="built_in">require</span>(<span class="string">'koa-art-template'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line">render(app, &#123;</span><br><span class="line">  root: path.join(__dirname, <span class="string">'view'</span>),</span><br><span class="line">  extname: <span class="string">'.art'</span>,</span><br><span class="line">  debug: process.env.NODE_ENV !== <span class="string">'production'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.use(<span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params">ctx</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> ctx.render(<span class="string">'user'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">8080</span>);</span><br></pre></td></tr></table></figure>
+<p>Or you can checkout the <a href="https://github.com/aui/koa-art-template/tree/master/example" target="_blank" rel="noopener">example</a>.</p>
+<h2 id="Options" class="article-heading"><a href="#Options" class="headerlink" title="Options"></a>Options<a class="article-anchor" href="#Options" aria-hidden="true"></a></h2><p>You can pass <a href="../docs/options.html">art-template options</a>.</p>
+<h2 id="State" class="article-heading"><a href="#State" class="headerlink" title="State"></a>State<a class="article-anchor" href="#State" aria-hidden="true"></a></h2><p>Support <a href="https://github.com/koajs/koa/blob/master/docs/api/context.md#ctxstate" target="_blank" rel="noopener"><code>ctx.state</code> in koa</a>.</p>
+<h2 id="Github" class="article-heading"><a href="#Github" class="headerlink" title="Github"></a>Github<a class="article-anchor" href="#Github" aria-hidden="true"></a></h2><p>Home: <a href="https://github.com/aui/koa-art-template" target="_blank" rel="noopener">https://github.com/aui/koa-art-template</a></p>
+
+              </div>
+              <footer class="article-footer">
+                <a href="https://github.com/aui/art-template-docs/edit/master/source/zh-cn/koa/index.md" class="article-edit-link">改进本文</a>.
+                (<time class="article-footer-updated" datetime="2019-07-25T04:59:08.635Z" itemprop="dateModified">上次更新：2019-07-25</time>)
+                
+              </footer>
+              
+            </div>
+          </div>
+        </div>
+      </article>
+      <aside id="sidebar" role="navigation">
+  <div class="inner"><ul class="sidebar"><li><a data-scroll href="/art-template/zh-cn/koa/index.html" class="sidebar-link current">Koa</a><ol class="sidebar-sub"><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/koa/index.html#Install"><span class="sidebar-sub-text">Install</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/koa/index.html#Example"><span class="sidebar-sub-text">Example</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/koa/index.html#Options"><span class="sidebar-sub-text">Options</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/koa/index.html#State"><span class="sidebar-sub-text">State</span></a></li><li class="sidebar-sub-item sidebar-sub-level-2"><a class="sidebar-sub-link" href="/art-template/zh-cn/koa/index.html#Github"><span class="sidebar-sub-text">Github</span></a></li></ol></li></ul></div>
+</aside>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="wrapper">
+  <div class="inner">
+    <div id="footer-copyright">
+      &copy; 2019 aui<br>
+      Documentation licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.
+    </div>
+    <div id="footer-links">
+      <a href="http://weibo.com/planeart" class="footer-link" target="_blank"><i class="fa fa-weibo"></i></a>
+      
+      <a href="https://github.com/aui/art-template" class="footer-link" target="_blank"><i class="fa fa-github-alt"></i></a>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <div id="mobile-nav-dimmer"></div>
+  <nav id="mobile-nav">
+  <div id="mobile-nav-inner">
+    <nav id="mobile-nav-list">
+      <a href="/art-template/zh-cn/docs/" class="mobile-nav-link ">Docs</a><a href="/art-template/webpack/" class="mobile-nav-link ">Webpack</a><a href="/art-template/express/" class="mobile-nav-link ">Express</a><a href="/art-template/koa/" class="mobile-nav-link ">Koa</a>
+    </nav>
+    
+      <ul class="mobile-nav"><li><a data-scroll href="/art-template/zh-cn/koa/index.html" class="mobile-nav-link current">Koa</a><ol class="mobile-nav-sub"><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/koa/index.html#Install"><span class="mobile-nav-sub-text">Install</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/koa/index.html#Example"><span class="mobile-nav-sub-text">Example</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/koa/index.html#Options"><span class="mobile-nav-sub-text">Options</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/koa/index.html#State"><span class="mobile-nav-sub-text">State</span></a></li><li class="mobile-nav-sub-item mobile-nav-sub-level-2"><a class="mobile-nav-sub-link" href="/art-template/zh-cn/koa/index.html#Github"><span class="mobile-nav-sub-text">Github</span></a></li></ol></li></ul>
+    
+  </div>
+  <div id="mobile-lang-select-wrap">
+    <span id="mobile-lang-select-label"><i class="fa fa-globe"></i><span>简体中文</span></span>
+    <select id="mobile-lang-select" data-canonical>
+      
+        <option value="en">English</option>
+      
+        <option value="zh-cn" selected>简体中文</option>
+      
+    </select>
+  </div>
+</nav>
+  <!-- Scripts -->
+<!-- build:js build/js/main.js -->
+<script src="/art-template/js/lang_select.js"></script>
+<script src="/art-template/js/scrollingelement.js"></script>
+<script src="/art-template/js/mobile_nav.js"></script>
+<!-- endbuild -->
+<script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
+
+<!-- Algolia -->
+
+
+</body>
+</html>
