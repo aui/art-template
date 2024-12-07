@@ -10,7 +10,7 @@
 
 art-template is a simple and superfast templating engine that optimizes template rendering speed by scope pre-declared technique, hence achieving runtime performance which is close to the limits of JavaScript. At the same time, it supports both NodeJS and browser. [speed test online](https://goofychris.github.io/art-template/rendering-test/).
 
-art-template 是一个简约、超快的模板引擎。它采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。[在线速度测试](https://aui.github.io/art-template/rendering-test/)。
+art-template 是一个简约、超快的模板引擎。它采用作用域预声明的技术来优化模板渲染速度，从而获得接近 JavaScript 极限的运行性能，并且同时支持 NodeJS 和浏览器。[在线速度测试](https://goofychris.github.io/art-template/rendering-test/)。
 
 [![chart](https://goofychris.github.io/art-template/images/chart@2x.png)](https://goofychris.github.io/art-template/rendering-test/)
 
